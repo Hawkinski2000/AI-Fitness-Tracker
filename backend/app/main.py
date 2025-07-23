@@ -1,7 +1,14 @@
 from fastapi import FastAPI, Response, status
-from pydantic import BaseModel
-from typing import Optional
-from datetime import datetime
+from app.schemas.user import User
+from app.schemas.meal_log import MealLog
+from app.schemas.food import Food
+from app.schemas.workout_log import WorkoutLog
+from app.schemas.exercise import Exercise
+from app.schemas.sleep_log import SleepLog
+from app.schemas.mood_log import MoodLog
+from app.schemas.insight_log import InsightLog
+from app.schemas.insight import Insight
+from app.schemas.weight_log import WeightLog
 
 
 app = FastAPI()
@@ -13,20 +20,6 @@ def root():
 
 # ----------------------------------------------------------------------------
 # ---- Users ----
-
-class User(BaseModel):
-    id: Optional[int] = None
-    username: str
-    email: str
-    password_hash: str
-    settings: dict
-    sex: str
-    age: int
-    weight: float
-    height: int
-    goal: str
-    streak: int
-    created_at: datetime
 
 # Create a user
 @app.post("/users")
@@ -61,14 +54,6 @@ def delete_user(id: int):
 # ----------------------------------------------------------------------------
 # ---- Meal Logs ----
 
-class MealLog(BaseModel):
-    id: Optional[int] = None
-    user_id: int
-    date: datetime
-    meal_type: str
-    total_calories: Optional[int] = None
-    nutrients: Optional[dict] = None
-
 # Create a meal log
 @app.post("/meal-logs")
 def create_meal_log(meal_log: MealLog):
@@ -101,16 +86,6 @@ def delete_meal_log(id: int):
 
 # ----------------------------------------------------------------------------
 # ---- Foods ----
-
-class Food(BaseModel):
-    id: Optional[int] = None
-    name: str
-    base_num_servings: float
-    base_serving_size: float
-    calories: Optional[int] = None
-    nutrients: Optional[dict] = None
-    user_id: Optional[int] = None
-    user_created_at: Optional[datetime] = None
 
 # Create a food
 @app.post("/foods")
@@ -145,13 +120,6 @@ def delete_food(id: int):
 # ----------------------------------------------------------------------------
 # ---- Workout Logs ----
 
-class WorkoutLog(BaseModel):
-    id: Optional[int] = None
-    user_id: int
-    date: datetime
-    workout_type: Optional[str] = None
-    total_calories_burned: Optional[int] = None
-
 # Create a workout log
 @app.post("/workout-logs")
 def create_workout_log(workout_log: WorkoutLog):
@@ -184,14 +152,6 @@ def delete_workout_log(id: int):
 
 # ----------------------------------------------------------------------------
 # ---- Exercises ----
-
-class Exercise(BaseModel):
-    id: Optional[int] = None
-    name: str
-    base_unit: Optional[str] = None
-    notes: Optional[dict] = None
-    user_id: Optional[int] = None
-    user_created_at: Optional[datetime] = None
 
 # Create an exercise
 @app.post("/exercises")
@@ -226,17 +186,6 @@ def delete_exercise(id: int):
 # ----------------------------------------------------------------------------
 # ---- Sleep Logs ----
 
-class SleepLog(BaseModel):
-    id: Optional[int] = None
-    user_id: int
-    date: datetime
-    time_to_bed: datetime
-    time_awake: datetime
-    duration: int
-    sleep_score: Optional[int] = None
-    notes: Optional[dict] = None
-
-
 # Create a sleep log
 @app.post("/sleep-logs")
 def create_sleep_log(sleep_log: SleepLog):
@@ -269,14 +218,6 @@ def delete_sleep_log(id: int):
 
 # ----------------------------------------------------------------------------
 # ---- Mood Logs ----
-
-class MoodLog(BaseModel):
-    id: Optional[int] = None
-    user_id: int
-    date: datetime
-    mood_score: Optional[int] = None
-    notes: Optional[dict] = None
-
 
 # Create a mood log
 @app.post("/mood-logs")
@@ -311,13 +252,6 @@ def delete_mood_log(id: int):
 # ----------------------------------------------------------------------------
 # ---- Insight Logs ----
 
-class InsightLog(BaseModel):
-    id: Optional[int] = None
-    user_id: int
-    created_at: datetime
-    raw_text: str
-    summary: Optional[str] = None
-
 # Create an insight log
 @app.post("/insight-logs")
 def create_insight_log(insight_log: InsightLog):
@@ -351,13 +285,6 @@ def delete_insight_log(id: int):
 # ----------------------------------------------------------------------------
 # ---- Insights ----
 
-class Insight(BaseModel):
-    id: Optional[int] = None
-    insights_log_id: int
-    insight: str
-    created_at: datetime
-    category: Optional[str] = None
-
 # Create an insight
 @app.post("/insights")
 def create_insight(insight: Insight):
@@ -390,13 +317,6 @@ def delete_insight(id: int):
 
 # ----------------------------------------------------------------------------
 # ---- Weight Logs ----
-
-class WeightLog(BaseModel):
-    id: Optional[int] = None
-    user_id: int
-    weight: float
-    unit: str
-    created_at: datetime
 
 # Create a weight log
 @app.post("/weight-logs")
