@@ -55,6 +55,8 @@ class User(Base):
     mood_logs: Mapped[list["MoodLog"]] = relationship("MoodLog", back_populates="user", cascade="all, delete-orphan")
     insight_logs: Mapped[list["InsightLog"]] = relationship("InsightLog", back_populates="user", cascade="all, delete-orphan")
     weight_logs: Mapped[list["WeightLog"]] = relationship("WeightLog", back_populates="user", cascade="all, delete-orphan")
+    meal_log_stats: Mapped[list["MealLogStats"]] = relationship("MealLogStats", back_populates="user", cascade="all, delete-orphan")
+    exercise_stats: Mapped[list["ExerciseStats"]] = relationship("ExerciseStats", back_populates="user", cascade="all, delete-orphan")
 
 # ----------------------------------------------------------------------------
 
@@ -181,3 +183,52 @@ class WeightLog(Base):
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False)
 
     user: Mapped["User"] = relationship("User", back_populates="weight_logs")
+
+# ----------------------------------------------------------------------------
+
+class MealLogStats(Base):
+    __tablename__ = "meal_log_stats"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
+    min_calories: Mapped[Optional[int]] = mapped_column(Integer)
+    max_calories: Mapped[Optional[int]] = mapped_column(Integer)
+    avg_calories: Mapped[Optional[int]] = mapped_column(Integer)
+    avg_nutrients: Mapped[Optional[dict]] = mapped_column(Integer)
+
+    user: Mapped["User"] = relationship("User", back_populates="meal_log_stats")
+
+# ----------------------------------------------------------------------------
+
+class ExerciseStats(Base):
+    __tablename__ = "exercise_stats"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
+    exercise_id: Mapped[int] = mapped_column(Integer, ForeignKey("exercise.id"), nullable=False)
+    num_workouts: Mapped[int] = mapped_column(Integer)
+    min_weight: Mapped[Optional[float]] = mapped_column(Float)
+    max_weight: Mapped[Optional[float]] = mapped_column(Float)
+    total_weight: Mapped[Optional[float]] = mapped_column(Float)
+    avg_weight: Mapped[Optional[float]] = mapped_column(Float)
+    min_sets: Mapped[Optional[int]] = mapped_column(Integer)
+    max_sets: Mapped[Optional[int]] = mapped_column(Integer)
+    total_sets: Mapped[Optional[int]] = mapped_column(Integer)
+    avg_sets: Mapped[Optional[float]] = mapped_column(Float)
+    min_reps: Mapped[Optional[int]] = mapped_column(Integer)
+    max_reps: Mapped[Optional[int]] = mapped_column(Integer)
+    total_reps: Mapped[Optional[int]] = mapped_column(Integer)
+    avg_reps: Mapped[Optional[float]] = mapped_column(Float)
+    min_one_rep_max: Mapped[Optional[float]] = mapped_column(Float)
+    max_one_rep_max: Mapped[Optional[float]] = mapped_column(Float)
+    avg_one_rep_max: Mapped[Optional[float]] = mapped_column(Float)
+    min_duration: Mapped[Optional[int]] = mapped_column(Integer)
+    max_duration: Mapped[Optional[int]] = mapped_column(Integer)
+    total_duration: Mapped[Optional[int]] = mapped_column(Integer)
+    avg_duration: Mapped[Optional[float]] = mapped_column(Float)
+    min_rest_time: Mapped[Optional[int]] = mapped_column(Integer)
+    max_rest_time: Mapped[Optional[int]] = mapped_column(Integer)
+    total_rest_time: Mapped[Optional[int]] = mapped_column(Integer)
+    avg_rest_time: Mapped[Optional[float]] = mapped_column(Float)
+
+    user: Mapped["User"] = relationship("User", back_populates="exercise_stats")
