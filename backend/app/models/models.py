@@ -57,6 +57,9 @@ class User(Base):
     weight_logs: Mapped[list["WeightLog"]] = relationship("WeightLog", back_populates="user", cascade="all, delete-orphan")
     meal_log_stats: Mapped[list["MealLogStats"]] = relationship("MealLogStats", back_populates="user", cascade="all, delete-orphan")
     exercise_stats: Mapped[list["ExerciseStats"]] = relationship("ExerciseStats", back_populates="user", cascade="all, delete-orphan")
+    sleep_log_stats: Mapped[list["SleepLogStats"]] = relationship("SleepLogStats", back_populates="user", cascade="all, delete-orphan")
+    mood_log_stats: Mapped[list["MoodLogStats"]] = relationship("MoodLogStats", back_populates="user", cascade="all, delete-orphan")
+    weight_log_stats: Mapped[list["WeightLogStats"]] = relationship("WeightLogStats", back_populates="user", cascade="all, delete-orphan")
 
 # ----------------------------------------------------------------------------
 
@@ -232,3 +235,52 @@ class ExerciseStats(Base):
     avg_rest_time: Mapped[Optional[float]] = mapped_column(Float)
 
     user: Mapped["User"] = relationship("User", back_populates="exercise_stats")
+
+# ----------------------------------------------------------------------------
+
+class SleepLogStats(Base):
+    __tablename__ = "sleep_log_stats"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
+    earliest_time_to_bed: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=True))
+    latest_time_to_bed: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=True))
+    earliest_time_awake: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=True))
+    latest_time_awake: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=True))
+    avg_time_to_bed: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=True))
+    avg_time_awake: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=True))
+    min_duration: Mapped[Optional[int]] = mapped_column(Integer)
+    max_duration: Mapped[Optional[int]] = mapped_column(Integer)
+    total_duration: Mapped[Optional[int]] = mapped_column(Integer)
+    avg_duration: Mapped[Optional[float]] = mapped_column(Float)
+    min_sleep_score: Mapped[Optional[int]] = mapped_column(Integer)
+    max_sleep_score: Mapped[Optional[int]] = mapped_column(Integer)
+    avg_sleep_score: Mapped[Optional[float]] = mapped_column(Float)
+
+    user: Mapped["User"] = relationship("User", back_populates="sleep_log_stats")
+
+# ----------------------------------------------------------------------------
+
+class MoodLogStats(Base):
+    __tablename__ = "mood_log_stats"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
+    min_mood_score: Mapped[Optional[int]] = mapped_column(Integer)
+    max_mood_score: Mapped[Optional[int]] = mapped_column(Integer)
+    avg_mood_score: Mapped[Optional[float]] = mapped_column(Float)
+
+    user: Mapped["User"] = relationship("User", back_populates="mood_log_stats")
+
+# ----------------------------------------------------------------------------
+
+class WeightLogStats(Base):
+    __tablename__ = "weight_log_stats"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
+    min_weight: Mapped[Optional[float]] = mapped_column(Float)
+    max_weight: Mapped[Optional[float]] = mapped_column(Float)
+    avg_weight: Mapped[Optional[float]] = mapped_column(Float)
+
+    user: Mapped["User"] = relationship("User", back_populates="weight_log_stats")
