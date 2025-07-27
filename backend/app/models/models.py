@@ -196,8 +196,8 @@ class MealLogStats(Base):
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
     min_calories: Mapped[Optional[int]] = mapped_column(Integer)
     max_calories: Mapped[Optional[int]] = mapped_column(Integer)
-    avg_calories: Mapped[Optional[int]] = mapped_column(Integer)
-    avg_nutrients: Mapped[Optional[dict]] = mapped_column(Integer)
+    avg_calories: Mapped[Optional[float]] = mapped_column(Float)
+    avg_nutrients: Mapped[Optional[dict]] = mapped_column(JSONB)
 
     user: Mapped["User"] = relationship("User", back_populates="meal_log_stats")
 
