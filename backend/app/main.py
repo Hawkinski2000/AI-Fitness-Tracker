@@ -5,6 +5,20 @@ from .api.endpoints import (users, meal_logs, foods, workout_logs, exercises,
                             sleep_log_stats, mood_log_stats, weight_log_stats)
 
 
+"""
+==============================================================================
+Todo:
+    - Split Pydantic schemas into separate models for each type of operation
+      (e.g., create, read, update, delete) as needed by different routes.
+
+    - Start FastAPI routes for interacting with meal_log_food,
+      meal_log_nutrients, meal_log_food_nutrients, food_nutrients,
+      meal_log_stats_nutrients, workout_log_exercise, and exercise_set tables.
+
+==============================================================================
+"""
+
+
 app = FastAPI()
 
 @app.get("/")
