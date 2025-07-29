@@ -9,5 +9,3 @@ class MealLog(BaseModel):
     date: datetime
     meal_type: str
     total_calories: Optional[int] = None
-    nutrients: Optional[dict] = None
-    

@@ -13,13 +13,6 @@ Todo:
       instead of using integer arrays for the weights, reps, etc. in 
       workout_log_exercise, create a Set table that stores this data for an
       individual set.
-      
-      Another example is the "nutrients" rows like in the meal_log and food
-      tables, which could have their own Nutrients table. It could be shared
-      between them by adding something like a "type" column, e.g., the type
-      could be "meal_log" or "food".
-    
-    - Add stats tables.
 
     - Add insight_visualization table.
 
@@ -48,6 +41,7 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False)
 
     meal_logs: Mapped[list["MealLog"]] = relationship("MealLog", back_populates="user", cascade="all, delete-orphan")
+    meal_log_foods: Mapped[list["MealLogFood"]] = relationship("MealLogFood", back_populates="user", cascade="all, delete-orphan")
     foods: Mapped[list["Food"]] = relationship("Food", back_populates="user", cascade="all, delete-orphan")
     workout_logs: Mapped[list["WorkoutLog"]] = relationship("WorkoutLog", back_populates="user", cascade="all, delete-orphan")
     exercises: Mapped[list["Exercise"]] = relationship("Exercise", back_populates="user", cascade="all, delete-orphan")
@@ -71,9 +65,27 @@ class MealLog(Base):
     log_date: Mapped[date] = mapped_column(Date, nullable=False)
     meal_type: Mapped[str] = mapped_column(String, nullable=False)
     total_calories: Mapped[Optional[int]] = mapped_column(Integer)
-    nutrients: Mapped[Optional[dict]] = mapped_column(JSONB)
 
     user: Mapped["User"] = relationship("User", back_populates="meal_logs")
+    meal_log_foods: Mapped[list["MealLogFood"]] = relationship("MealLogFood", back_populates="meal_log", cascade="all, delete-orphan")
+    meal_log_nutrients: Mapped["MealLogNutrients"] = relationship("MealLogNutrients", back_populates="meal_log", cascade="all, delete-orphan", uselist=False)
+
+# ----------------------------------------------------------------------------
+
+class MealLogFood(Base):
+    __tablename__ = "meal_log_food"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    meal_log_id: Mapped[int] = mapped_column(Integer, ForeignKey("meal_log.id"), nullable=False)
+    food_id: Mapped[int] = mapped_column(Integer, ForeignKey("food.id"), nullable=False)
+    num_servings: Mapped[float] = mapped_column(Float, nullable=False)
+    serving_size: Mapped[float] = mapped_column(Float, nullable=False)
+    serving_unit: Mapped[str] = mapped_column(String, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False)
+
+    meal_log: Mapped["MealLog"] = relationship("MealLog", back_populates="meal_log_foods")
+    food: Mapped["Food"] = relationship("Food", back_populates="meal_log_food")
+    meal_log_food_nutrients: Mapped["MealLogFoodNutrients"] = relationship("MealLogFoodNutrients", back_populates="meal_log_food", cascade="all, delete-orphan", uselist=False)
 
 # ----------------------------------------------------------------------------
 
@@ -82,14 +94,51 @@ class Food(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
     name: Mapped[str] = mapped_column(String, nullable=False)
-    based_num_servings: Mapped[float] = mapped_column(Float, nullable=False)
-    based_serving_size: Mapped[float] = mapped_column(Float, nullable=False)
+    base_num_servings: Mapped[float] = mapped_column(Float, nullable=False)
+    base_serving_size: Mapped[float] = mapped_column(Float, nullable=False)
     calories: Mapped[Optional[int]] = mapped_column(Integer)
-    nutrients: Mapped[Optional[dict]] = mapped_column(JSONB)
     user_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("user.id"))
     user_created_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=True))
 
     user: Mapped["User"] = relationship("User", back_populates="foods")
+    meal_log_foods: Mapped[list["MealLogFood"]] = relationship("MealLogFood", back_populates="food", cascade="all, delete-orphan")
+    food_nutrients: Mapped["FoodNutrients"] = relationship("FoodNutrients", back_populates="food", cascade="all, delete-orphan", uselist=False)
+
+# ----------------------------------------------------------------------------
+
+class MealLogNutrients(Base):
+    __tablename__ = "meal_log_nutrients"
+
+    meal_log_id: Mapped[int] = mapped_column(Integer, ForeignKey("meal_log.id", ondelete="CASCADE"), primary_key=True, nullable=False)
+    protein: Mapped[Optional[float]] = mapped_column(Float)
+    total_fat: Mapped[Optional[float]] = mapped_column(Float)
+    total_carbs: Mapped[Optional[float]] = mapped_column(Float)
+
+    meal_log: Mapped["MealLog"] = relationship("MealLog", back_populates="meal_log_nutrients")
+
+# ----------------------------------------------------------------------------
+
+class MealLogFoodNutrients(Base):
+    __tablename__ = "meal_log_food_nutrients"
+    
+    meal_log_food_id: Mapped[int] = mapped_column(Integer, ForeignKey("meal_log_food.id", ondelete="CASCADE"), primary_key=True, nullable=False)
+    protein: Mapped[Optional[float]] = mapped_column(Float)
+    total_fat: Mapped[Optional[float]] = mapped_column(Float)
+    total_carbs: Mapped[Optional[float]] = mapped_column(Float)
+
+    meal_log_food: Mapped["MealLogFood"] = relationship("MealLogFood", back_populates="meal_log_food_nutrients")
+
+# ----------------------------------------------------------------------------
+
+class FoodNutrients(Base):
+    __tablename__ = "food_nutrients"
+
+    food_id: Mapped[int] = mapped_column(Integer, ForeignKey("food.id", ondelete="CASCADE"), primary_key=True, nullable=False)
+    protein: Mapped[Optional[float]] = mapped_column(Float)
+    total_fat: Mapped[Optional[float]] = mapped_column(Float)
+    total_carbs: Mapped[Optional[float]] = mapped_column(Float)
+
+    food: Mapped["Food"] = relationship("Food", back_populates="food_nutrients")
 
 # ----------------------------------------------------------------------------
 
@@ -103,6 +152,22 @@ class WorkoutLog(Base):
     total_calories_burned: Mapped[Optional[int]] = mapped_column(Integer)
 
     user: Mapped["User"] = relationship("User", back_populates="workout_logs")
+
+# ----------------------------------------------------------------------------
+
+class WorkoutLogExercise(Base):
+    __tablename__ = "workout_log_exercise"
+
+    id: int
+
+
+# ----------------------------------------------------------------------------
+
+class Set(Base):
+    __tablename__ = "workout_log_exercise"
+
+    id: int
+
 
 # ----------------------------------------------------------------------------
 
