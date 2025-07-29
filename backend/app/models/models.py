@@ -262,9 +262,21 @@ class MealLogStats(Base):
     min_calories: Mapped[Optional[int]] = mapped_column(Integer)
     max_calories: Mapped[Optional[int]] = mapped_column(Integer)
     avg_calories: Mapped[Optional[float]] = mapped_column(Float)
-    avg_nutrients: Mapped[Optional[dict]] = mapped_column(JSONB)
 
     user: Mapped["User"] = relationship("User", back_populates="meal_log_stats")
+    meal_log_stats_nutrients: Mapped["MealLogStatsNutrients"] = relationship("MealLogStatsNutrients", back_populates="meal_log_stats", cascade="all, delete-orphan", uselist=False)
+
+# ----------------------------------------------------------------------------
+
+class MealLogStatsNutrients(Base):
+    __tablename__ = "meal_log_stats_nutrients"
+
+    meal_log_stats_id: Mapped[int] = mapped_column(Integer, ForeignKey("meal_log_stats.id", ondelete="CASCADE"), primary_key=True, nullable=False)
+    protein: Mapped[Optional[float]] = mapped_column(Float)
+    total_fat: Mapped[Optional[float]] = mapped_column(Float)
+    total_carbs: Mapped[Optional[float]] = mapped_column(Float)
+
+    meal_log_stats: Mapped["MealLogStats"] = relationship("MealLogStats", back_populates="meal_log_stats_nutrients")
 
 # ----------------------------------------------------------------------------
 

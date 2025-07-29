@@ -8,4 +8,3 @@ class MealLogStats(BaseModel):
     min_calories: int
     max_calories: int
     avg_calories: float
-    avg_nutrients: dict
