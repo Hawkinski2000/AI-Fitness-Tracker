@@ -8,11 +8,7 @@ from typing import Optional
 """
 ==============================================================================
 Todo:
-    - Add association tables for many-to-many relationships. Consider adding 
-      additional tables and modifying the ER diagram to normalize data, e.g., 
-      instead of using integer arrays for the weights, reps, etc. in 
-      workout_log_exercise, create a Set table that stores this data for an
-      individual set.
+    - Modify ER diagram to include new/modified tables.
 
     - Add insight_visualization table.
 
@@ -152,22 +148,39 @@ class WorkoutLog(Base):
     total_calories_burned: Mapped[Optional[int]] = mapped_column(Integer)
 
     user: Mapped["User"] = relationship("User", back_populates="workout_logs")
+    workout_log_exercises: Mapped[list["WorkoutLogExercise"]] = relationship("WorkoutLogExercise", back_populates="workout_log", cascade="all, delete-orphan")
 
 # ----------------------------------------------------------------------------
 
 class WorkoutLogExercise(Base):
     __tablename__ = "workout_log_exercise"
 
-    id: int
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    workout_log_id: Mapped[int] = mapped_column(Integer, ForeignKey("workout_log.id"), nullable=False)
+    exercise_id: Mapped[int] = mapped_column(Integer, ForeignKey("exercise.id"), nullable=False)
+    num_sets: Mapped[Optional[int]] = mapped_column(Integer)
 
+    workout_log: Mapped["WorkoutLog"] = relationship("WorkoutLog", back_populates="workout_log_exercises")
+    exercise: Mapped["Exercise"] = relationship("Exercise", back_populates="workout_log_exercises")
+    exercise_sets: Mapped[list["ExerciseSet"]] = relationship("ExerciseSet", back_populates="workout_log_exercise", cascade="all, delete-orphan")
 
 # ----------------------------------------------------------------------------
 
-class Set(Base):
-    __tablename__ = "workout_log_exercise"
+class ExerciseSet(Base):
+    __tablename__ = "exercise_set"
 
-    id: int
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    workout_log_exercise_id: Mapped[int] = mapped_column(Integer, ForeignKey("workout_log_exercise.id"), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False)
+    weight: Mapped[Optional[float]] = mapped_column(Float)
+    reps: Mapped[Optional[int]] = mapped_column(Integer)
+    unit: Mapped[Optional[str]] = mapped_column(String)
+    one_rep_max: Mapped[Optional[float]] = mapped_column(Float)
+    rest_after_secs: Mapped[Optional[int]] = mapped_column(Integer)
+    duration_secs: Mapped[Optional[int]] = mapped_column(Integer)
+    calories_burned: Mapped[Optional[int]] = mapped_column(Integer)
 
+    workout_log_exercise: Mapped["WorkoutLogExercise"] = relationship("WorkoutLogExercise", back_populates="exercise_sets")
 
 # ----------------------------------------------------------------------------
 
@@ -182,6 +195,7 @@ class Exercise(Base):
     user_created_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=True))
 
     user: Mapped["User"] = relationship("User", back_populates="exercises")
+    workout_log_exercises: Mapped[list["WorkoutLogExercise"]] = relationship("WorkoutLogExercise", back_populates="exercise", cascade="all, delete-orphan")
 
 # ----------------------------------------------------------------------------
 
