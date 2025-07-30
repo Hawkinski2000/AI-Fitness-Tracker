@@ -9,8 +9,9 @@ from .api.v1.endpoints import (users, meal_logs, foods, workout_logs, exercises,
 ==============================================================================
 Todo:
     - Start FastAPI routes for interacting with meal_log_food,
-      meal_log_nutrients, meal_log_food_nutrients, food_nutrients,
-      meal_log_stats_nutrients, workout_log_exercise, and exercise_set tables.
+      meal_log_nutrient, meal_log_food_nutrient, food_nutrient,
+      meal_log_stats_nutrient, nutrient, workout_log_exercise, and
+      exercise_set tables.
     
     - Set up database engine and session in db.py.
 
