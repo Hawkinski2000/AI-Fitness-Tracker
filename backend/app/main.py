@@ -6,6 +6,7 @@ from .api.v1.endpoints import (
   meal_logs,
   meal_log_foods,
   foods,
+  branded_foods,
   meal_log_nutrients,
   meal_log_food_nutrients,
   food_nutrients,
@@ -30,8 +31,7 @@ from .api.v1.endpoints import (
 
 """
 ==============================================================================
-Todo:    
-    - Set up database engine and session in db.py.
+Todo:
 
     - Split Pydantic schemas into separate models for each type of operation
       (e.g., create, read, update, delete) as needed by different routes.
@@ -44,7 +44,7 @@ Todo:
 ==============================================================================
 """
 
-MealLog.__table__.create(bind=engine)
+MealLog.__table__.create(bind=engine, checkfirst=True)
 
 app = FastAPI()
 
@@ -58,6 +58,7 @@ app.include_router(users.router)
 app.include_router(meal_logs.router)
 app.include_router(meal_log_foods.router)
 app.include_router(foods.router)
+app.include_router(branded_foods.router)
 app.include_router(meal_log_nutrients.router)
 app.include_router(meal_log_food_nutrients.router)
 app.include_router(food_nutrients.router)
