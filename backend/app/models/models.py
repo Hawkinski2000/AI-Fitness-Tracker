@@ -64,7 +64,7 @@ class MealLog(Base):
 
     user: Mapped["User"] = relationship("User", back_populates="meal_logs")
     meal_log_foods: Mapped[list["MealLogFood"]] = relationship("MealLogFood", back_populates="meal_log", cascade="all, delete-orphan")
-    meal_log_nutrients: Mapped["MealLogNutrients"] = relationship("MealLogNutrients", back_populates="meal_log", cascade="all, delete-orphan", uselist=False)
+    meal_log_nutrients: Mapped[list["MealLogNutrient"]] = relationship("MealLogNutrient", back_populates="meal_log", cascade="all, delete-orphan")
 
 # ----------------------------------------------------------------------------
 
@@ -78,10 +78,11 @@ class MealLogFood(Base):
     serving_size: Mapped[float] = mapped_column(Float, nullable=False)
     serving_unit: Mapped[str] = mapped_column(String, nullable=False)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False)
+    calories: Mapped[Optional[int]] = mapped_column(Integer)
 
     meal_log: Mapped["MealLog"] = relationship("MealLog", back_populates="meal_log_foods")
-    food: Mapped["Food"] = relationship("Food", back_populates="meal_log_food")
-    meal_log_food_nutrients: Mapped["MealLogFoodNutrients"] = relationship("MealLogFoodNutrients", back_populates="meal_log_food", cascade="all, delete-orphan", uselist=False)
+    food: Mapped["Food"] = relationship("Food", back_populates="meal_log_foods")
+    meal_log_food_nutrients: Mapped[list["MealLogFoodNutrient"]] = relationship("MealLogFoodNutrient", back_populates="meal_log_food", cascade="all, delete-orphan")
 
 # ----------------------------------------------------------------------------
 
@@ -89,52 +90,72 @@ class Food(Base):
     __tablename__ = "food"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
-    name: Mapped[str] = mapped_column(String, nullable=False)
-    base_num_servings: Mapped[float] = mapped_column(Float, nullable=False)
-    base_serving_size: Mapped[float] = mapped_column(Float, nullable=False)
+    brand_owner: Mapped[str] = mapped_column(String)
+    brand_name: Mapped[str] = mapped_column(String)
+    subbrand_name: Mapped[str] = mapped_column(String)
+    ingredients: Mapped[str] = mapped_column(String)
+    serving_size: Mapped[float] = mapped_column(Float, nullable=False)
+    serving_size_unit: Mapped[str] = mapped_column(String)
+    food_category: Mapped[str] = mapped_column(String)
     calories: Mapped[Optional[int]] = mapped_column(Integer)
     user_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("user.id"))
     user_created_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=True))
 
     user: Mapped["User"] = relationship("User", back_populates="foods")
     meal_log_foods: Mapped[list["MealLogFood"]] = relationship("MealLogFood", back_populates="food", cascade="all, delete-orphan")
-    food_nutrients: Mapped["FoodNutrients"] = relationship("FoodNutrients", back_populates="food", cascade="all, delete-orphan", uselist=False)
+    food_nutrients: Mapped[list["FoodNutrient"]] = relationship("FoodNutrient", back_populates="food", cascade="all, delete-orphan")
 
 # ----------------------------------------------------------------------------
 
-class MealLogNutrients(Base):
-    __tablename__ = "meal_log_nutrients"
+class MealLogNutrient(Base):
+    __tablename__ = "meal_log_nutrient"
 
-    meal_log_id: Mapped[int] = mapped_column(Integer, ForeignKey("meal_log.id", ondelete="CASCADE"), primary_key=True, nullable=False)
-    protein: Mapped[Optional[float]] = mapped_column(Float)
-    total_fat: Mapped[Optional[float]] = mapped_column(Float)
-    total_carbs: Mapped[Optional[float]] = mapped_column(Float)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    meal_log_id: Mapped[int] = mapped_column(Integer, ForeignKey("meal_log.id", ondelete="CASCADE"), nullable=False)
+    nutrient_id: Mapped[int] = mapped_column(Integer, ForeignKey("nutrient.id", ondelete="CASCADE"), nullable=False)
+    amount: Mapped[float] = mapped_column(Float, nullable=False)
 
-    meal_log: Mapped["MealLog"] = relationship("MealLog", back_populates="meal_log_nutrients")
+    meal_log: Mapped["MealLog"] = relationship("MealLog", back_populates="meal_log_nutrients", uselist=False)
+    nutrient: Mapped["Nutrient"] = relationship("Nutrient", back_populates="meal_log_nutrient", uselist=False)
 
 # ----------------------------------------------------------------------------
 
-class MealLogFoodNutrients(Base):
-    __tablename__ = "meal_log_food_nutrients"
+class MealLogFoodNutrient(Base):
+    __tablename__ = "meal_log_food_nutrient"
     
-    meal_log_food_id: Mapped[int] = mapped_column(Integer, ForeignKey("meal_log_food.id", ondelete="CASCADE"), primary_key=True, nullable=False)
-    protein: Mapped[Optional[float]] = mapped_column(Float)
-    total_fat: Mapped[Optional[float]] = mapped_column(Float)
-    total_carbs: Mapped[Optional[float]] = mapped_column(Float)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    meal_log_food_id: Mapped[int] = mapped_column(Integer, ForeignKey("meal_log_food.id", ondelete="CASCADE"), nullable=False)
+    nutrient_id: Mapped[int] = mapped_column(Integer, ForeignKey("nutrient.id", ondelete="CASCADE"), nullable=False)
+    amount: Mapped[float] = mapped_column(Float, nullable=False)
 
-    meal_log_food: Mapped["MealLogFood"] = relationship("MealLogFood", back_populates="meal_log_food_nutrients")
+    meal_log_food: Mapped["MealLogFood"] = relationship("MealLogFood", back_populates="meal_log_food_nutrients", uselist=False)
+    nutrient: Mapped["Nutrient"] = relationship("Nutrient", back_populates="meal_log_food_nutrient", uselist=False)
 
 # ----------------------------------------------------------------------------
 
-class FoodNutrients(Base):
-    __tablename__ = "food_nutrients"
+class FoodNutrient(Base):
+    __tablename__ = "food_nutrient"
 
-    food_id: Mapped[int] = mapped_column(Integer, ForeignKey("food.id", ondelete="CASCADE"), primary_key=True, nullable=False)
-    protein: Mapped[Optional[float]] = mapped_column(Float)
-    total_fat: Mapped[Optional[float]] = mapped_column(Float)
-    total_carbs: Mapped[Optional[float]] = mapped_column(Float)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    food_id: Mapped[int] = mapped_column(Integer, ForeignKey("food.id", ondelete="CASCADE"), nullable=False)
+    nutrient_id: Mapped[int] = mapped_column(Integer, ForeignKey("nutrient.id", ondelete="CASCADE"), nullable=False)
+    amount: Mapped[float] = mapped_column(Float, nullable=False)
 
-    food: Mapped["Food"] = relationship("Food", back_populates="food_nutrients")
+    food: Mapped["Food"] = relationship("Food", back_populates="food_nutrients", uselist=False)
+    nutrient: Mapped["Nutrient"] = relationship("Nutrient", back_populates="food_nutrient", uselist=False)
+
+# ----------------------------------------------------------------------------
+
+class Nutrient(Base):
+    __tablename__ = "nutrient"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    name: Mapped[str] = mapped_column(String, nullable=False)
+    unit_name: Mapped[str] = mapped_column(String, nullable=False)
+
+    meal_log_nutrients: Mapped[list["MealLogNutrient"]] = relationship("MealLogNutrient", back_populates="nutrient")
+    meal_log_food_nutrients: Mapped[list["MealLogFoodNutrient"]] = relationship("MealLogFoodNutrient", back_populates="nutrient")
+    food_nutrients: Mapped[list["FoodNutrient"]] = relationship("FoodNutrient", back_populates="nutrient")
 
 # ----------------------------------------------------------------------------
 
@@ -278,19 +299,20 @@ class MealLogStats(Base):
     avg_calories: Mapped[Optional[float]] = mapped_column(Float)
 
     user: Mapped["User"] = relationship("User", back_populates="meal_log_stats")
-    meal_log_stats_nutrients: Mapped["MealLogStatsNutrients"] = relationship("MealLogStatsNutrients", back_populates="meal_log_stats", cascade="all, delete-orphan", uselist=False)
+    meal_log_stats_nutrients: Mapped[list["MealLogStatsNutrient"]] = relationship("MealLogStatsNutrient", back_populates="meal_log_stats", cascade="all, delete-orphan")
 
 # ----------------------------------------------------------------------------
 
-class MealLogStatsNutrients(Base):
-    __tablename__ = "meal_log_stats_nutrients"
+class MealLogStatsNutrient(Base):
+    __tablename__ = "meal_log_stats_nutrient"
 
-    meal_log_stats_id: Mapped[int] = mapped_column(Integer, ForeignKey("meal_log_stats.id", ondelete="CASCADE"), primary_key=True, nullable=False)
-    protein: Mapped[Optional[float]] = mapped_column(Float)
-    total_fat: Mapped[Optional[float]] = mapped_column(Float)
-    total_carbs: Mapped[Optional[float]] = mapped_column(Float)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    meal_log_stats_id: Mapped[int] = mapped_column(Integer, ForeignKey("meal_log_stats.id", ondelete="CASCADE"), nullable=False)
+    nutrient_id: Mapped[int] = mapped_column(Integer, ForeignKey("nutrient.id", ondelete="CASCADE"), nullable=False)
+    amount: Mapped[float] = mapped_column(Float, nullable=False)
 
     meal_log_stats: Mapped["MealLogStats"] = relationship("MealLogStats", back_populates="meal_log_stats_nutrients")
+    nutrient: Mapped["Nutrient"] = relationship("Nutrient", back_populates="meal_log_stats_nutrient", uselist=False)
 
 # ----------------------------------------------------------------------------
 

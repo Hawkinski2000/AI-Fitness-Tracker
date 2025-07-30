@@ -17,6 +17,11 @@ Todo:
     - Split Pydantic schemas into separate models for each type of operation
       (e.g., create, read, update, delete) as needed by different routes.
 
+    - Start crud.py functions for interacting with the database in FastAPI
+      endpoint functions.
+
+    - Set up automated testing.
+
 ==============================================================================
 """
 
