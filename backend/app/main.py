@@ -1,18 +1,34 @@
 from fastapi import FastAPI
-from .api.v1.endpoints import (users, meal_logs, foods, workout_logs, exercises,
-                            sleep_logs, mood_logs, insight_logs, insights,
-                            weight_logs, meal_log_stats, exercise_stats,
-                            sleep_log_stats, mood_log_stats, weight_log_stats)
+from .api.v1.endpoints import (
+  users,
+  meal_logs,
+  meal_log_foods,
+  foods,
+  meal_log_nutrients,
+  meal_log_food_nutrients,
+  food_nutrients,
+  nutrients,
+  workout_logs,
+  workout_log_exercises,
+  exercise_sets,
+  exercises,
+  sleep_logs,
+  mood_logs,
+  insight_logs,
+  insights,
+  weight_logs,
+  meal_log_stats,
+  meal_log_stats_nutrients,
+  exercise_stats,
+  sleep_log_stats,
+  mood_log_stats,
+  weight_log_stats
+)
 
 
 """
 ==============================================================================
-Todo:
-    - Start FastAPI routes for interacting with meal_log_food,
-      meal_log_nutrient, meal_log_food_nutrient, food_nutrient,
-      meal_log_stats_nutrient, nutrient, workout_log_exercise, and
-      exercise_set tables.
-    
+Todo:    
     - Set up database engine and session in db.py.
 
     - Split Pydantic schemas into separate models for each type of operation
@@ -35,16 +51,31 @@ def root():
     return {"data": "root"}
 
 app.include_router(users.router)
+
 app.include_router(meal_logs.router)
+app.include_router(meal_log_foods.router)
 app.include_router(foods.router)
+app.include_router(meal_log_nutrients.router)
+app.include_router(meal_log_food_nutrients.router)
+app.include_router(food_nutrients.router)
+app.include_router(nutrients.router)
+
 app.include_router(workout_logs.router)
+app.include_router(workout_log_exercises.router)
+app.include_router(exercise_sets.router)
 app.include_router(exercises.router)
+
 app.include_router(sleep_logs.router)
+
 app.include_router(mood_logs.router)
+
 app.include_router(insight_logs.router)
 app.include_router(insights.router)
+
 app.include_router(weight_logs.router)
+
 app.include_router(meal_log_stats.router)
+app.include_router(meal_log_stats_nutrients.router)
 app.include_router(exercise_stats.router)
 app.include_router(sleep_log_stats.router)
 app.include_router(mood_log_stats.router)
