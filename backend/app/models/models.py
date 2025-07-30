@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, String, Float, Date, Text, TIMESTAMP, ForeignKey
+from sqlalchemy import Integer, String, Float, Date, Text, TIMESTAMP, ForeignKey, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import JSONB
 from datetime import datetime, date
@@ -57,14 +57,14 @@ class MealLog(Base):
     __tablename__ = "meal_log"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
-    log_date: Mapped[date] = mapped_column(Date, nullable=False)
+    # user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
+    log_date: Mapped[date] = mapped_column(Date, nullable=False, server_default=func.current_date())
     meal_type: Mapped[str] = mapped_column(String, nullable=False)
     total_calories: Mapped[Optional[int]] = mapped_column(Integer)
 
-    user: Mapped["User"] = relationship("User", back_populates="meal_logs")
-    meal_log_foods: Mapped[list["MealLogFood"]] = relationship("MealLogFood", back_populates="meal_log", cascade="all, delete-orphan")
-    meal_log_nutrients: Mapped[list["MealLogNutrient"]] = relationship("MealLogNutrient", back_populates="meal_log", cascade="all, delete-orphan")
+    # user: Mapped["User"] = relationship("User", back_populates="meal_logs")
+    # meal_log_foods: Mapped[list["MealLogFood"]] = relationship("MealLogFood", back_populates="meal_log", cascade="all, delete-orphan")
+    # meal_log_nutrients: Mapped[list["MealLogNutrient"]] = relationship("MealLogNutrient", back_populates="meal_log", cascade="all, delete-orphan")
 
 # ----------------------------------------------------------------------------
 

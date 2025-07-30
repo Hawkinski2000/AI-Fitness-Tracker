@@ -1,3 +1,5 @@
+from .core.db import engine
+from .models.models import MealLog
 from fastapi import FastAPI
 from .api.v1.endpoints import (
   users,
@@ -42,6 +44,7 @@ Todo:
 ==============================================================================
 """
 
+MealLog.__table__.create(bind=engine)
 
 app = FastAPI()
 
