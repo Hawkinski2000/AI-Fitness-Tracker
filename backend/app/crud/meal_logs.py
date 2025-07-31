@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from app.schemas import meal_log
-from app.models.models import MealLog
+from app.models.models import MealLog, MealLogFood
 
 
 def create_meal_log(meal_log: meal_log.MealLogCreate, db: Session):
@@ -28,4 +29,15 @@ def update_meal_log(id: int, meal_log: meal_log.MealLogCreate, db: Session):
 def delete_meal_log(id: int, db: Session):
     meal_log_query = db.query(MealLog).filter(MealLog.id == id)
     meal_log_query.delete(synchronize_session=False)
+    db.commit()
+
+# ----------------------------------------------------------------------------
+
+def recalculate_total_calories(meal_log_id: int, db: Session):
+    total_calories = db.query(func.sum(MealLogFood.calories)) \
+              .filter(MealLogFood.meal_log_id == meal_log_id) \
+              .scalar()
+
+    meal_log_query = db.query(MealLog).filter(MealLog.id == meal_log_id)
+    meal_log_query.update({"total_calories":total_calories}, synchronize_session=False)
     db.commit()

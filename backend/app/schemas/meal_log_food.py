@@ -6,15 +6,17 @@ from datetime import datetime
 class MealLogFoodBase(BaseModel):
     meal_log_id: int
     food_id: int
-    num_servings: float
-    serving_size: float
-    serving_unit: str
 
 class MealLogFoodCreate(MealLogFoodBase):
-    pass
+    num_servings: Optional[float] = None
+    serving_size: Optional[float] = None
+    serving_unit: Optional[str] = None
 
 class MealLogFoodResponse(MealLogFoodBase):
     id: int
+    num_servings: float
+    serving_size: float
+    serving_unit: str
     created_at: datetime
     calories: Optional[int] = None
 
