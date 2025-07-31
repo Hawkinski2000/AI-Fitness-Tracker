@@ -39,6 +39,10 @@ Todo:
     - Start crud.py functions for interacting with the database in FastAPI
       endpoint functions.
 
+    - Add exceptions to crud functions.
+
+    - Add PATCH routes for partial updates?
+
     - Set up automated testing.
 
 ==============================================================================

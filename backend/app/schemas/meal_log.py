@@ -1,12 +1,17 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from datetime import datetime
 
 
-class MealLog(BaseModel):
-    id: Optional[int] = None
-    # user_id: int
-    log_date: datetime
+class MealLogBase(BaseModel):
     meal_type: str
+    log_date: datetime
     total_calories: Optional[int] = None
 
+class MealLogCreate(MealLogBase):
+    pass
+
+class MealLogResponse(MealLogBase):
+    id: int
+
+    model_config = ConfigDict(from_attributes=True)
