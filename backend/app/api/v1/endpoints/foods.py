@@ -1,36 +1,39 @@
-from fastapi import Response, status, APIRouter
-from app.schemas.food import Food
+from fastapi import Response, status, APIRouter, Depends
+from sqlalchemy.orm import Session
+from app.core.db import get_db
+from app.schemas import food
+from app.crud import foods as crud_foods
 
 
 router = APIRouter(prefix="/foods",
                    tags=['Foods'])
 
 # Create a food
-@router.post("/")
-def create_food(food: Food):
-    # TODO
-    return {"data": "food"}
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=food.FoodResponse)
+def create_food(food: food.FoodCreate, db: Session = Depends(get_db)):
+    new_food = crud_foods.create_food(food, db)
+    return new_food
 
 # Get all foods
-@router.get("/")
-def get_foods():
-    # TODO  
-    return {"data": "foods"}
+@router.get("/", response_model=list[food.FoodResponse])
+def get_foods(db: Session = Depends(get_db)):
+    foods = crud_foods.get_foods(db)
+    return foods
 
 # Get a food
-@router.get("/{id}")
-def get_food(id: int):
-    # TODO
-    return {"data": "food"}
+@router.get("/{id}", response_model=food.FoodResponse)
+def get_food(id: int, db: Session = Depends(get_db)):
+    food = crud_foods.get_food(id, db)
+    return food
 
 # Update a food
-@router.put("/{id}")
-def update_food(id: int, food: Food):
-    # TODO
-    return {"data": "food"}
+@router.put("/{id}", response_model=food.FoodResponse)
+def update_food(id: int, food: food.FoodCreate, db: Session = Depends(get_db)):
+    updated_food = crud_foods.update_food(id, food, db)
+    return updated_food
 
 # Delete a food
 @router.delete("/{id}")
-def delete_food(id: int):
-    # TODO
+def delete_food(id: int, db: Session = Depends(get_db)):
+    crud_foods.delete_food(id, db)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

@@ -1,10 +1,13 @@
 from sqlalchemy.orm import Session
 from app.schemas import meal_log_food
-from app.models.models import MealLogFood
+from app.models.models import MealLogFood, Food
 
 
 def create_meal_log_food(meal_log_food: meal_log_food.MealLogFoodCreate, db: Session):
-    new_meal_log_food = MealLogFood(**meal_log_food.model_dump(exclude_unset=True))
+    food = db.query(Food).filter(Food.id == meal_log_food.food_id).first()
+
+    new_meal_log_food = MealLogFood(**meal_log_food.model_dump(exclude_unset=True),
+                                    calories=food.calories * meal_log_food.num_servings)
     db.add(new_meal_log_food)
     db.commit()
     db.refresh(new_meal_log_food)

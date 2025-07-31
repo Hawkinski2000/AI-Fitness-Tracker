@@ -1,11 +1,17 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from datetime import datetime
 
 
-class Food(BaseModel):
-    id: Optional[int] = None
+class FoodBase(BaseModel):
     description: str
-    calories: int
-    user_id: int
+    calories: Optional[int] = None
+
+class FoodCreate(FoodBase):
+    pass
+
+class FoodResponse(FoodBase):
+    id: int
     user_created_at: Optional[datetime] = None
+
+    model_config = ConfigDict(from_attributes=True)
