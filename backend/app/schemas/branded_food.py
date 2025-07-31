@@ -1,13 +1,21 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 
 
-class BrandedFood(BaseModel):
-    id: Optional[int] = None
-    brand_owner: str
-    brand_name: str
-    subbrand_name: str
-    ingredients: str
-    serving_size: float
-    serving_size_unit: str
-    food_category: str
+class BrandedFoodBase(BaseModel):
+    food_id: int
+    brand_owner: Optional[str] = None
+    brand_name: Optional[str] = None
+    subbrand_name: Optional[str] = None
+    ingredients: Optional[str] = None
+    serving_size: Optional[float] = None
+    serving_size_unit: Optional[str] = None
+    food_category: Optional[str] = None
+
+class BrandedFoodCreate(BrandedFoodBase):
+    pass
+
+class BrandedFoodResponse(BrandedFoodBase):
+    pass
+
+    model_config = ConfigDict(from_attributes=True)

@@ -73,7 +73,7 @@ class MealLogFood(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
     meal_log_id: Mapped[int] = mapped_column(Integer, ForeignKey("meal_log.id"), nullable=False)
-    food_id: Mapped[int] = mapped_column(Integer, ForeignKey("food.id", ondelete="CASCADE"), nullable=False)
+    food_id: Mapped[int] = mapped_column(Integer, ForeignKey("food.id"), nullable=False)
     num_servings: Mapped[float] = mapped_column(Float, nullable=False)
     serving_size: Mapped[float] = mapped_column(Float, nullable=False)
     serving_unit: Mapped[str] = mapped_column(String, nullable=False)
@@ -98,25 +98,25 @@ class Food(Base):
     # user: Mapped["User"] = relationship("User", back_populates="foods")
     meal_log_foods: Mapped[list["MealLogFood"]] = relationship("MealLogFood", back_populates="food", cascade="all, delete-orphan")
     # food_nutrients: Mapped[list["FoodNutrient"]] = relationship("FoodNutrient", back_populates="food", cascade="all, delete-orphan")
-    # branded_food: Mapped["BrandedFood"] = relationship("BrandedFood", back_populates="food", uselist=False)
+    branded_food: Mapped["BrandedFood"] = relationship("BrandedFood", back_populates="food", uselist=False)
 
-# # ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-# class BrandedFood(Base):
-#     __tablename__ = "branded_food"
+class BrandedFood(Base):
+    __tablename__ = "branded_food"
 
-#     id: Mapped[int] = mapped_column(Integer, ForeignKey("food.id"), primary_key=True, nullable=False)
-#     brand_owner: Mapped[Optional[str]] = mapped_column(String)
-#     brand_name: Mapped[Optional[str]] = mapped_column(String)
-#     subbrand_name: Mapped[Optional[str]] = mapped_column(String)
-#     ingredients: Mapped[Optional[str]] = mapped_column(String)
-#     serving_size: Mapped[Optional[float]] = mapped_column(Float)
-#     serving_size_unit: Mapped[Optional[str]] = mapped_column(String)
-#     food_category: Mapped[Optional[str]] = mapped_column(String)
+    food_id: Mapped[int] = mapped_column(Integer, ForeignKey("food.id"), primary_key=True, nullable=False)
+    brand_owner: Mapped[Optional[str]] = mapped_column(String)
+    brand_name: Mapped[Optional[str]] = mapped_column(String)
+    subbrand_name: Mapped[Optional[str]] = mapped_column(String)
+    ingredients: Mapped[Optional[str]] = mapped_column(String)
+    serving_size: Mapped[Optional[float]] = mapped_column(Float)
+    serving_size_unit: Mapped[Optional[str]] = mapped_column(String)
+    food_category: Mapped[Optional[str]] = mapped_column(String)
 
-#     food: Mapped["Food"] = relationship("Food", back_populates="branded_food", uselist=False)
+    food: Mapped["Food"] = relationship("Food", back_populates="branded_food", uselist=False)
 
-# # ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 # class MealLogNutrient(Base):
 #     __tablename__ = "meal_log_nutrient"
