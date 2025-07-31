@@ -1,9 +1,15 @@
-from pydantic import BaseModel
-from typing import Optional
+from pydantic import BaseModel, ConfigDict
 
 
-class MealLogFoodNutrient(BaseModel):
-    id: Optional[int] = None
+class MealLogFoodNutrientBase(BaseModel):
     meal_log_food_id: int
-    nutrient_id: int
+    # nutrient_id: int
     amount: float
+
+class MealLogFoodNutrientCreate(MealLogFoodNutrientBase):
+    pass
+
+class MealLogFoodNutrientResponse(MealLogFoodNutrientBase):
+    id: int
+
+    model_config = ConfigDict(from_attributes=True)
