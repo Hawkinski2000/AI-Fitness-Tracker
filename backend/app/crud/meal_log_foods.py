@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.schemas import meal_log_food
-from app.models.models import MealLogFood, Food, BrandedFood
+from app.models.models import MealLogFood, Food, BrandedFood, MealLogFoodNutrient, FoodNutrient
 from app.crud import meal_logs as crud_meal_logs
 
 
@@ -32,7 +32,17 @@ def create_meal_log_food(meal_log_food: meal_log_food.MealLogFoodCreate, db: Ses
     db.commit()
     db.refresh(new_meal_log_food)
 
-    crud_meal_logs.recalculate_total_calories(meal_log_id=meal_log_food.meal_log_id, db=db)
+    food_nutrients = db.query(FoodNutrient).filter(FoodNutrient.food_id == food.id).all()
+    
+    for food_nutrient in food_nutrients:
+        new_meal_log_food_nutrient = MealLogFoodNutrient(meal_log_food_id=new_meal_log_food.id,
+                                                         nutrient_id=food_nutrient.nutrient_id,
+                                                         amount=food_nutrient.amount * num_servings)
+        db.add(new_meal_log_food_nutrient)
+    db.commit()
+
+    crud_meal_logs.recalculate_meal_log_calories(meal_log_id=meal_log_food.meal_log_id, db=db)
+    crud_meal_logs.recalculate_meal_log_nutrients(meal_log_id=meal_log_food.meal_log_id, db=db)
     
     return new_meal_log_food
 
@@ -50,7 +60,8 @@ def update_meal_log_food(id: int, meal_log_food: meal_log_food.MealLogFoodCreate
     db.commit()
     updated_meal_log_food = meal_log_food_query.first()
 
-    crud_meal_logs.recalculate_total_calories(meal_log_id=updated_meal_log_food.meal_log_id, db=db)
+    crud_meal_logs.recalculate_meal_log_calories(meal_log_id=updated_meal_log_food.meal_log_id, db=db)
+    crud_meal_logs.recalculate_meal_log_nutrients(meal_log_id=meal_log_food.meal_log_id, db=db)
 
     return updated_meal_log_food
 
@@ -60,4 +71,5 @@ def delete_meal_log_food(id: int, db: Session):
     meal_log_food_query.delete(synchronize_session=False)
     db.commit()
 
-    crud_meal_logs.recalculate_total_calories(meal_log_id=meal_log_food.meal_log_id, db=db)
+    crud_meal_logs.recalculate_meal_log_calories(meal_log_id=meal_log_food.meal_log_id, db=db)
+    crud_meal_logs.recalculate_meal_log_nutrients(meal_log_id=meal_log_food.meal_log_id, db=db)

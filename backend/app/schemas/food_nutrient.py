@@ -3,7 +3,7 @@ from pydantic import BaseModel, ConfigDict
 
 class FoodNutrientBase(BaseModel):
     food_id: int
-    # nutrient_id: int
+    nutrient_id: int
     amount: float
 
 class FoodNutrientCreate(FoodNutrientBase):

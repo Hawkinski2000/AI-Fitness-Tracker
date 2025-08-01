@@ -123,11 +123,11 @@ class MealLogNutrient(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
     meal_log_id: Mapped[int] = mapped_column(Integer, ForeignKey("meal_log.id", ondelete="CASCADE"), nullable=False)
-    # nutrient_id: Mapped[int] = mapped_column(Integer, ForeignKey("nutrient.id", ondelete="CASCADE"), nullable=False)
+    nutrient_id: Mapped[int] = mapped_column(Integer, ForeignKey("nutrient.id", ondelete="CASCADE"), nullable=False)
     amount: Mapped[float] = mapped_column(Float, nullable=False)
 
     meal_log: Mapped["MealLog"] = relationship("MealLog", back_populates="meal_log_nutrients", uselist=False)
-    # nutrient: Mapped["Nutrient"] = relationship("Nutrient", back_populates="meal_log_nutrient", uselist=False)
+    nutrient: Mapped["Nutrient"] = relationship("Nutrient", back_populates="meal_log_nutrients", uselist=False)
 
 # ----------------------------------------------------------------------------
 
@@ -136,11 +136,11 @@ class MealLogFoodNutrient(Base):
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
     meal_log_food_id: Mapped[int] = mapped_column(Integer, ForeignKey("meal_log_food.id", ondelete="CASCADE"), nullable=False)
-    # nutrient_id: Mapped[int] = mapped_column(Integer, ForeignKey("nutrient.id", ondelete="CASCADE"), nullable=False)
+    nutrient_id: Mapped[int] = mapped_column(Integer, ForeignKey("nutrient.id", ondelete="CASCADE"), nullable=False)
     amount: Mapped[float] = mapped_column(Float, nullable=False)
 
     meal_log_food: Mapped["MealLogFood"] = relationship("MealLogFood", back_populates="meal_log_food_nutrients", uselist=False)
-    # nutrient: Mapped["Nutrient"] = relationship("Nutrient", back_populates="meal_log_food_nutrient", uselist=False)
+    nutrient: Mapped["Nutrient"] = relationship("Nutrient", back_populates="meal_log_food_nutrients", uselist=False)
 
 # ----------------------------------------------------------------------------
 
@@ -149,24 +149,24 @@ class FoodNutrient(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
     food_id: Mapped[int] = mapped_column(Integer, ForeignKey("food.id", ondelete="CASCADE"), nullable=False)
-    # nutrient_id: Mapped[int] = mapped_column(Integer, ForeignKey("nutrient.id", ondelete="CASCADE"), nullable=False)
+    nutrient_id: Mapped[int] = mapped_column(Integer, ForeignKey("nutrient.id", ondelete="CASCADE"), nullable=False)
     amount: Mapped[float] = mapped_column(Float, nullable=False)
 
     food: Mapped["Food"] = relationship("Food", back_populates="food_nutrients", uselist=False)
-    # nutrient: Mapped["Nutrient"] = relationship("Nutrient", back_populates="food_nutrient", uselist=False)
+    nutrient: Mapped["Nutrient"] = relationship("Nutrient", back_populates="food_nutrients", uselist=False)
 
-# # ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-# class Nutrient(Base):
-#     __tablename__ = "nutrient"
+class Nutrient(Base):
+    __tablename__ = "nutrient"
 
-#     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
-#     name: Mapped[str] = mapped_column(String, nullable=False)
-#     unit_name: Mapped[str] = mapped_column(String, nullable=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    name: Mapped[str] = mapped_column(String, nullable=False)
+    unit_name: Mapped[str] = mapped_column(String, nullable=False)
 
-#     meal_log_nutrients: Mapped[list["MealLogNutrient"]] = relationship("MealLogNutrient", back_populates="nutrient")
-#     meal_log_food_nutrients: Mapped[list["MealLogFoodNutrient"]] = relationship("MealLogFoodNutrient", back_populates="nutrient")
-#     food_nutrients: Mapped[list["FoodNutrient"]] = relationship("FoodNutrient", back_populates="nutrient")
+    meal_log_nutrients: Mapped[list["MealLogNutrient"]] = relationship("MealLogNutrient", back_populates="nutrient")
+    meal_log_food_nutrients: Mapped[list["MealLogFoodNutrient"]] = relationship("MealLogFoodNutrient", back_populates="nutrient")
+    food_nutrients: Mapped[list["FoodNutrient"]] = relationship("FoodNutrient", back_populates="nutrient")
 
 # # ----------------------------------------------------------------------------
 
