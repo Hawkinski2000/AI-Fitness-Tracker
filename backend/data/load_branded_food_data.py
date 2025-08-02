@@ -8,7 +8,7 @@ from app.core.db import engine, get_db
 def load_branded_food_data():
     Base.metadata.create_all(bind=engine)
 
-    df = pd.read_csv("data/FoodData_Central_branded_food/branded_food_sample.csv", na_values=[""], keep_default_na=True)
+    df = pd.read_csv("data/FoodData_Central_branded_food/branded_food_sample.csv")
 
     df = df.replace({np.nan: None})
 

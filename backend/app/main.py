@@ -71,9 +71,20 @@ To load all data into the database, in AI-Fitness-Tracker/backend, run:
 To load food data into the database, in AI-Fitness-Tracker/backend, run:
     python -m app.main --load_food_data
 
-To load branded_food data into the database, in AI-Fitness-Tracker/backend, run:
+To load branded_food data into the database, in AI-Fitness-Tracker/backend,
+run:
     python -m app.main --load_branded_food_data
 Note: The food table must already exist since branded_food depends on it.
+
+To load nutrient data into the database, in AI-Fitness-Tracker/backend, run:
+    python -m app.main --load_nutrient_data
+
+To load food_nutrient data into the database, in AI-Fitness-Tracker/backend,
+run:
+    python -m app.main --load_food_nutrient_data
+Note: The food and nutrient tables must already exist since food_nutrient
+depends on it.
+
 
 ==============================================================================
 """
@@ -139,12 +150,24 @@ def main():
         action="store_true",
         help="Load branded_food data into the database"
     )
+    parser.add_argument(
+        "--load_nutrient_data",
+        action="store_true",
+        help="Load nutrient data into the database"
+    )
+    parser.add_argument(
+        "--load_food_nutrient_data",
+        action="store_true",
+        help="Load food_nutrient data into the database"
+    )
 
     args = parser.parse_args()
 
     if args.load_all_data:
         args.load_food_data = True
         args.load_branded_food_data = True
+        args.load_nutrient_data = True
+        args.load_food_nutrient_data = True
 
     if args.load_food_data:
         from data.load_food_data import load_food_data
@@ -157,6 +180,18 @@ def main():
         print("\nLoading branded_food data...\n")
         load_branded_food_data()
         print("\nbranded_food data was loaded into the database.\n")
+    
+    if args.load_nutrient_data:
+        from data.load_nutrient_data import load_nutrient_data
+        print("\nLoading nutrient data...\n")
+        load_nutrient_data()
+        print("\nnutrient data was loaded into the database.\n")
+
+    if args.load_food_nutrient_data:
+        from data.load_food_nutrient_data import load_food_nutrient_data
+        print("\nLoading food_nutrient data...\n")
+        load_food_nutrient_data()
+        print("\nfood_nutrient data was loaded into the database.\n")
     
 if __name__ == "__main__":
     main()
