@@ -1,44 +1,72 @@
-from sqlalchemy.orm import Session
+import psycopg2
 import pandas as pd
 import numpy as np
-from app.models.models import Base, FoodNutrient, Food
-from app.core.db import engine, get_db
+from tqdm import tqdm
+import os
+from app.core.db import DATABASE_URL
 
 
 def load_food_nutrient_data():
-    Base.metadata.create_all(bind=engine)
+    conn = psycopg2.connect(DATABASE_URL)
+    cursor = conn.cursor()
 
-    df = pd.read_csv("data/FoodData_Central_branded_food/food_nutrient_sample.csv")
+    cursor.execute("SELECT id FROM food;")
+    valid_food_ids = set(row[0] for row in cursor.fetchall())
 
-    df = df.replace({np.nan: None})
-
-    df = df[["id",
-             "fdc_id",
-             "nutrient_id",
-             "amount"]]
-
-    db_gen = get_db()
-    db: Session = next(db_gen)
-
-    for _, row in df.iterrows():
-        food_nutrient = FoodNutrient(
-            id=int(row["id"]),
-            food_id=row["fdc_id"],
-            nutrient_id=row["nutrient_id"],
-            amount=row["amount"]
-        )
-        db.add(food_nutrient)
-
-    db.commit()
-
-    food_calorie_entries = (
-        db.query(FoodNutrient.food_id, FoodNutrient.amount)
-        .filter(FoodNutrient.nutrient_id == 1008)
-        .all()
+    chunk_size = 1000000
+    chunk_iter = pd.read_csv(
+        "data/FoodData_Central_branded_food/food_nutrient.csv",
+        usecols=["id", "fdc_id", "nutrient_id", "amount"],
+        chunksize=chunk_size
     )
 
-    for food_id, calories in food_calorie_entries:
-        db.query(Food).filter(Food.id == food_id).update({"calories": calories})
+    total_rows = 25652682
+    for chunk in tqdm(chunk_iter, total=total_rows // chunk_size + 1, desc="Loading food_nutrient data"):
+        chunk = chunk.replace({np.nan: None})
 
-    db.commit()
-    db.close()
+        chunk = chunk[chunk["fdc_id"].isin(valid_food_ids)]
+
+        if chunk.empty:
+            continue
+
+        chunk = chunk.rename(columns={
+            "id": "id",
+            "fdc_id": "food_id"
+        })
+
+        temp_csv_path = "temp_food_nutrient.csv"
+        chunk.to_csv(temp_csv_path, index=False, header=False)
+
+        with open(temp_csv_path, "r", encoding="utf-8") as f:
+            cursor.copy_expert(
+                """
+                    COPY food_nutrient (
+                        id,
+                        food_id,
+                        nutrient_id,
+                        amount
+                    )
+                    FROM STDIN WITH CSV
+                """,
+                f
+            )
+
+        conn.commit()
+        os.remove(temp_csv_path)
+
+    print("\nUpdating food calories...\n")
+    cursor.execute("""
+        WITH calories_cte AS (
+            SELECT food_id, amount
+            FROM food_nutrient
+            WHERE nutrient_id = 1008
+        )
+        UPDATE food
+        SET calories = calories_cte.amount
+        FROM calories_cte
+        WHERE food.id = calories_cte.food_id;
+    """)
+    conn.commit()
+
+    cursor.close()
+    conn.close()

@@ -4,7 +4,7 @@ from typing import Generator
 from .config import settings
 
 
-SQLALCHEMY_DATABASE_URL = (
+DATABASE_URL = (
     f"postgresql://"
     f"{settings.database_username}:"
     f"{settings.database_password}@"
@@ -13,7 +13,7 @@ SQLALCHEMY_DATABASE_URL = (
     f"{settings.database_name}"
 )
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=True, future=True)
+engine = create_engine(DATABASE_URL, echo=False, future=True)
 
 SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False, expire_on_commit=False, future=True)
 

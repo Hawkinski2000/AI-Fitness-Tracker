@@ -1,28 +1,51 @@
-from sqlalchemy.orm import Session
 import pandas as pd
 import numpy as np
-from app.models.models import Base, Food
-from app.core.db import engine, get_db
+import psycopg2
+from tqdm import tqdm
+import os
+from app.core.db import DATABASE_URL
 
 
 def load_food_data():
-    Base.metadata.create_all(bind=engine)
+    conn = psycopg2.connect(DATABASE_URL)
+    cursor = conn.cursor()
 
-    df = pd.read_csv("data/FoodData_Central_branded_food/food_sample.csv")
+    chunk_size = 500000
+    chunk_iter = pd.read_csv(
+        "data/FoodData_Central_branded_food/food.csv",
+        usecols=["fdc_id", "description"],
+        chunksize=chunk_size
+    )
 
-    df = df.replace({np.nan: None})
+    total_rows = 1977397
+    for chunk in tqdm(chunk_iter, total=total_rows // chunk_size + 1, desc="Loading food data"):
+        chunk = chunk.replace({np.nan: None})
+        chunk = chunk[chunk["description"].notnull()]
 
-    df = df[["fdc_id", "description"]]
+        chunk = chunk.rename(columns={
+            "fdc_id": "id",
+            "description": "description"
+        })
 
-    db_gen = get_db()
-    db: Session = next(db_gen)
+        if chunk.empty:
+            continue
 
-    for _, row in df.iterrows():
-        food = Food(
-            id=int(row["fdc_id"]),
-            description=row["description"],
-        )
-        db.add(food)
+        temp_csv_path = "temp_food.csv"
+        chunk.to_csv(temp_csv_path, index=False, header=False)
 
-    db.commit()
-    db.close()
+        with open(temp_csv_path, "r", encoding="utf-8") as f:
+            cursor.copy_expert(
+                """
+                    COPY food (
+                        id,
+                        description
+                    )
+                    FROM STDIN WITH CSV
+                """,
+                f
+            )
+        conn.commit()
+        os.remove(temp_csv_path)
+
+    cursor.close()
+    conn.close()

@@ -1,41 +1,70 @@
-from sqlalchemy.orm import Session
 import pandas as pd
 import numpy as np
-from app.models.models import Base, BrandedFood
-from app.core.db import engine, get_db
+import psycopg2
+from tqdm import tqdm
+import os
+from app.core.db import DATABASE_URL
 
 
 def load_branded_food_data():
-    Base.metadata.create_all(bind=engine)
+    conn = psycopg2.connect(DATABASE_URL)
+    cursor = conn.cursor()
 
-    df = pd.read_csv("data/FoodData_Central_branded_food/branded_food_sample.csv")
+    cursor.execute("SELECT id FROM food")
+    valid_food_ids = set(row[0] for row in cursor.fetchall())
 
-    df = df.replace({np.nan: None})
+    chunk_size = 100000
+    chunk_iter = pd.read_csv(
+        "data/FoodData_Central_branded_food/branded_food.csv",
+        usecols=[
+            "fdc_id",
+            "brand_owner",
+            "brand_name",
+            "subbrand_name",
+            "ingredients",
+            "serving_size",
+            "serving_size_unit",
+            "branded_food_category",
+        ],
+        chunksize=chunk_size
+    )
 
-    df = df[["fdc_id",
-             "brand_owner",
-             "brand_name",
-             "subbrand_name",
-             "ingredients",
-             "serving_size",
-             "serving_size_unit",
-             "branded_food_category"]]
+    total_rows = 1977397
+    for chunk in tqdm(chunk_iter, total=total_rows // chunk_size + 1, desc="Loading branded_food data"):
+        chunk = chunk.replace({np.nan: None})
 
-    db_gen = get_db()
-    db: Session = next(db_gen)
+        chunk = chunk[chunk["fdc_id"].isin(valid_food_ids)]
 
-    for _, row in df.iterrows():
-        branded_food = BrandedFood(
-            food_id=int(row["fdc_id"]),
-            brand_owner=row["brand_owner"],
-            brand_name=row["brand_name"],
-            subbrand_name=row["subbrand_name"],
-            ingredients=row["ingredients"],
-            serving_size=row["serving_size"],
-            serving_size_unit=row["serving_size_unit"],
-            food_category=row["branded_food_category"]
-        )
-        db.add(branded_food)
+        if chunk.empty:
+            continue
 
-    db.commit()
-    db.close()
+        chunk = chunk.rename(columns={
+            "fdc_id": "food_id",
+            "branded_food_category": "food_category"
+        })
+
+        temp_csv_path = f"temp_branded_food.csv"
+        chunk.to_csv(temp_csv_path, index=False, header=False)
+
+        with open(temp_csv_path, "r", encoding="utf-8") as f:
+            cursor.copy_expert(
+                """
+                    COPY branded_food (
+                        food_id,
+                        brand_owner,
+                        brand_name,
+                        subbrand_name,
+                        ingredients,
+                        serving_size,
+                        serving_size_unit,
+                        food_category
+                    )
+                    FROM STDIN WITH CSV
+                """,
+                f
+            )
+        conn.commit()
+        os.remove(temp_csv_path)
+
+    cursor.close()
+    conn.close()
