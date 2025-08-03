@@ -10,8 +10,12 @@ def create_branded_food(branded_food: branded_food.BrandedFoodCreate, db: Sessio
     db.refresh(new_branded_food)
     return new_branded_food
 
-def get_branded_foods(db: Session):
-    branded_foods = db.query(BrandedFood).all()
+def get_branded_foods(db: Session,
+                      limit: int,
+                      skip: int,
+                      search: str):
+    branded_foods = db.query(BrandedFood).filter(BrandedFood.brand_owner.ilike(f"%{search}%"))\
+        .limit(limit).offset(skip).all()
     return branded_foods
 
 def get_branded_food(id: int, db: Session):

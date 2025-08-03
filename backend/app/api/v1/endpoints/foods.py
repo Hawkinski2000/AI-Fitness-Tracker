@@ -1,5 +1,6 @@
 from fastapi import Response, status, APIRouter, Depends
 from sqlalchemy.orm import Session
+from typing import Optional
 from app.core.db import get_db
 from app.schemas import food
 from app.crud import foods as crud_foods
@@ -16,8 +17,11 @@ def create_food(food: food.FoodCreate, db: Session = Depends(get_db)):
 
 # Get all foods
 @router.get("/", response_model=list[food.FoodResponse])
-def get_foods(db: Session = Depends(get_db)):
-    foods = crud_foods.get_foods(db)
+def get_foods(db: Session = Depends(get_db),
+              limit: int = 10,
+              skip: int = 0,
+              search: Optional[str] = ""):
+    foods = crud_foods.get_foods(db, limit, skip, search)
     return foods
 
 # Get a food

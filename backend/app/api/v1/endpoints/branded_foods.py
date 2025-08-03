@@ -1,5 +1,6 @@
 from fastapi import Response, status, APIRouter, Depends
 from sqlalchemy.orm import Session
+from typing import Optional
 from app.core.db import get_db
 from app.schemas import branded_food
 from app.crud import branded_foods as crud_branded_foods
@@ -16,8 +17,11 @@ def create_branded_food(branded_food: branded_food.BrandedFoodCreate, db: Sessio
 
 # Get all branded foods
 @router.get("/", response_model=list[branded_food.BrandedFoodResponse])
-def get_branded_foods(db: Session = Depends(get_db)):
-    branded_foods = crud_branded_foods.get_branded_foods(db)
+def get_branded_foods(db: Session = Depends(get_db),
+                      limit: int = 10,
+                      skip: int = 0,
+                      search: Optional[str] = ""):
+    branded_foods = crud_branded_foods.get_branded_foods(db, limit, skip, search)
     return branded_foods
 
 # Get a branded food

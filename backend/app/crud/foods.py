@@ -10,8 +10,12 @@ def create_food(food: food.FoodCreate, db: Session):
     db.refresh(new_food)
     return new_food
 
-def get_foods(db: Session):
-    foods = db.query(Food).all()
+def get_foods(db: Session,
+              limit: int,
+              skip: int,
+              search: str):
+    foods = db.query(Food).filter(Food.description.ilike(f"%{search}%"))\
+        .limit(limit).offset(skip).all()
     return foods
 
 def get_food(id: int, db: Session):
