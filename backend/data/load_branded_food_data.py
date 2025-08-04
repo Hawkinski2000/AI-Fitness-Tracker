@@ -38,6 +38,15 @@ def load_branded_food_data():
         if chunk.empty:
             continue
 
+        chunk["serving_size_unit"] = chunk["serving_size_unit"].replace({
+            "MC": "g",
+            "GM": "g",
+            "GRM": "g",
+            "MG": "g",
+            "IU": "g",
+            "MLT": "ml"
+        })
+
         chunk = chunk.rename(columns={
             "fdc_id": "food_id",
             "branded_food_category": "food_category"

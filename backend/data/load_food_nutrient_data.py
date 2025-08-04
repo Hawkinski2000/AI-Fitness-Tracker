@@ -6,6 +6,17 @@ import os
 from app.core.db import DATABASE_URL
 
 
+"""
+==============================================================================
+Todo:
+    - Nutrients are based on 100 g or 100 ml samples depending on if the food
+      is solid or liquid. the amount column in food_nutrient needs to be
+      adjusted based on the actual serving sizes in g or ml in branded_food.
+      
+      
+======
+"""
+
 def load_food_nutrient_data():
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
@@ -53,6 +64,8 @@ def load_food_nutrient_data():
 
         conn.commit()
         os.remove(temp_csv_path)
+
+
 
     print("\nUpdating food calories...\n")
     cursor.execute("""
