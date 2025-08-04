@@ -6,23 +6,19 @@ import os
 from app.core.db import DATABASE_URL
 
 
-"""
-==============================================================================
-Todo:
-    - Nutrients are based on 100 g or 100 ml samples depending on if the food
-      is solid or liquid. the amount column in food_nutrient needs to be
-      adjusted based on the actual serving sizes in g or ml in branded_food.
-      
-      
-======
-"""
-
 def load_food_nutrient_data():
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
 
     cursor.execute("SELECT id FROM food;")
     valid_food_ids = set(row[0] for row in cursor.fetchall())
+
+    cursor.execute("""
+        SELECT food_id, serving_size, serving_size_unit
+        FROM branded_food
+        WHERE serving_size IS NOT NULL AND serving_size_unit IN ('g', 'ml');
+    """)
+    serving_size_map = {row[0]: row[1] for row in cursor.fetchall()}
 
     chunk_size = 1000000
     chunk_iter = pd.read_csv(
@@ -40,10 +36,11 @@ def load_food_nutrient_data():
         if chunk.empty:
             continue
 
-        chunk = chunk.rename(columns={
-            "id": "id",
-            "fdc_id": "food_id"
-        })
+        chunk = chunk.rename(columns={"fdc_id": "food_id"})
+
+        chunk["serving_size"] = chunk["food_id"].map(serving_size_map)
+        chunk["amount"] = (chunk["amount"] * (chunk["serving_size"] / 100)).fillna(chunk["amount"])
+        chunk = chunk.drop(columns=["serving_size"])
 
         temp_csv_path = "temp_food_nutrient.csv"
         chunk.to_csv(temp_csv_path, index=False, header=False)
@@ -61,11 +58,8 @@ def load_food_nutrient_data():
                 """,
                 f
             )
-
         conn.commit()
         os.remove(temp_csv_path)
-
-
 
     print("\nUpdating food calories...\n")
     cursor.execute("""

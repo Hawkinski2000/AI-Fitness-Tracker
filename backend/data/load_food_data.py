@@ -22,10 +22,7 @@ def load_food_data():
         chunk = chunk.replace({np.nan: None})
         chunk = chunk[chunk["description"].notnull()]
 
-        chunk = chunk.rename(columns={
-            "fdc_id": "id",
-            "description": "description"
-        })
+        chunk = chunk.rename(columns={"fdc_id": "id"})
 
         if chunk.empty:
             continue
