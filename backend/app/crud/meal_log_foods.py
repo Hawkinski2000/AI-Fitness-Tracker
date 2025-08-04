@@ -11,8 +11,8 @@ def create_meal_log_food(meal_log_food: meal_log_food.MealLogFoodCreate, db: Ses
     serving_size = meal_log_food.serving_size
     serving_unit = meal_log_food.serving_unit
 
+    branded_food = db.query(BrandedFood).filter(BrandedFood.food_id == food.id).first()
     if num_servings is None or serving_size is None or serving_unit is None:
-        branded_food = db.query(BrandedFood).filter(BrandedFood.food_id == food.id).first()
         if num_servings is None:
             num_servings = 1.0
         if serving_size is None:
@@ -23,8 +23,14 @@ def create_meal_log_food(meal_log_food: meal_log_food.MealLogFoodCreate, db: Ses
     if food.calories is None:
         calories = None
     else:
-        calories = food.calories * num_servings
+        calories = num_servings * serving_size * food.calories / branded_food.serving_size or 1.0
     
+    print(num_servings)
+    print(serving_size)
+    print(branded_food.serving_size)
+    print(serving_unit)
+    print(calories)
+
     new_meal_log_food = MealLogFood(**meal_log_food.model_dump(exclude_unset=True, 
                                                                exclude={"num_servings",
                                                                         "serving_size",
@@ -42,7 +48,8 @@ def create_meal_log_food(meal_log_food: meal_log_food.MealLogFoodCreate, db: Ses
     for food_nutrient in food_nutrients:
         new_meal_log_food_nutrient = MealLogFoodNutrient(meal_log_food_id=new_meal_log_food.id,
                                                          nutrient_id=food_nutrient.nutrient_id,
-                                                         amount=food_nutrient.amount * num_servings)
+                                                         amount=num_servings * serving_size * \
+                                                            food_nutrient.amount / branded_food.serving_size or 1.0)
         db.add(new_meal_log_food_nutrient)
     db.commit()
 
