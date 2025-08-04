@@ -4,16 +4,6 @@ from app.models.models import MealLogFood, Food, BrandedFood, MealLogFoodNutrien
 from app.crud import meal_logs as crud_meal_logs
 
 
-"""
-==============================================================================
-Todo:
-    - Some food entries don't have calories, so need to handle this by setting
-      calories to None when creating a new_meal_log_food.
-      
-      
-======
-"""
-
 def create_meal_log_food(meal_log_food: meal_log_food.MealLogFoodCreate, db: Session):
     food = db.query(Food).filter(Food.id == meal_log_food.food_id).first()
 
@@ -30,6 +20,11 @@ def create_meal_log_food(meal_log_food: meal_log_food.MealLogFoodCreate, db: Ses
         if serving_unit is None:
             serving_unit = branded_food.serving_size_unit or "unit"
 
+    if food.calories is None:
+        calories = None
+    else:
+        calories = food.calories * num_servings
+    
     new_meal_log_food = MealLogFood(**meal_log_food.model_dump(exclude_unset=True, 
                                                                exclude={"num_servings",
                                                                         "serving_size",
@@ -37,7 +32,7 @@ def create_meal_log_food(meal_log_food: meal_log_food.MealLogFoodCreate, db: Ses
                                     num_servings=num_servings,
                                     serving_size=serving_size,
                                     serving_unit=serving_unit,
-                                    calories=food.calories * num_servings)
+                                    calories=calories)
     db.add(new_meal_log_food)
     db.commit()
     db.refresh(new_meal_log_food)
