@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, String, Float, Date, Text, TIMESTAMP, ForeignKey, func
+from sqlalchemy import Integer, String, Float, Date, Text, TIMESTAMP, ForeignKey, func, text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import JSONB
 from datetime import datetime, date
@@ -59,7 +59,6 @@ class MealLog(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
     # user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
     log_date: Mapped[date] = mapped_column(Date, nullable=False)
-    meal_type: Mapped[str] = mapped_column(String, nullable=False)
     total_calories: Mapped[Optional[int]] = mapped_column(Integer)
 
     # user: Mapped["User"] = relationship("User", back_populates="meal_logs")
@@ -74,6 +73,7 @@ class MealLogFood(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
     meal_log_id: Mapped[int] = mapped_column(Integer, ForeignKey("meal_log.id"), nullable=False)
     food_id: Mapped[int] = mapped_column(Integer, ForeignKey("food.id"), nullable=False)
+    meal_type: Mapped[str] = mapped_column(String, nullable=False)
     num_servings: Mapped[float] = mapped_column(Float, nullable=False)
     serving_size: Mapped[float] = mapped_column(Float, nullable=False)
     serving_unit: Mapped[str] = mapped_column(String, nullable=False)
@@ -177,6 +177,7 @@ class WorkoutLog(Base):
     # user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
     log_date: Mapped[date] = mapped_column(Date, nullable=False)
     workout_type: Mapped[Optional[str]] = mapped_column(String)
+    total_num_sets: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
     total_calories_burned: Mapped[Optional[int]] = mapped_column(Integer)
 
     # user: Mapped["User"] = relationship("User", back_populates="workout_logs")
@@ -188,12 +189,12 @@ class WorkoutLogExercise(Base):
     __tablename__ = "workout_log_exercise"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
-    workout_log_id: Mapped[int] = mapped_column(Integer, ForeignKey("workout_log.id"), nullable=False)
-    # exercise_id: Mapped[int] = mapped_column(Integer, ForeignKey("exercise.id"), nullable=False)
-    num_sets: Mapped[Optional[int]] = mapped_column(Integer)
+    workout_log_id: Mapped[int] = mapped_column(Integer, ForeignKey("workout_log.id", ondelete="CASCADE"), nullable=False)
+    exercise_id: Mapped[int] = mapped_column(Integer, ForeignKey("exercise.id"), nullable=False)
+    num_sets: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
 
     workout_log: Mapped["WorkoutLog"] = relationship("WorkoutLog", back_populates="workout_log_exercises")
-    # exercise: Mapped["Exercise"] = relationship("Exercise", back_populates="workout_log_exercises")
+    exercise: Mapped["Exercise"] = relationship("Exercise", back_populates="workout_log_exercises")
     exercise_sets: Mapped[list["ExerciseSet"]] = relationship("ExerciseSet", back_populates="workout_log_exercise", cascade="all, delete-orphan")
 
 # ----------------------------------------------------------------------------
@@ -202,7 +203,7 @@ class ExerciseSet(Base):
     __tablename__ = "exercise_set"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
-    workout_log_exercise_id: Mapped[int] = mapped_column(Integer, ForeignKey("workout_log_exercise.id"), nullable=False)
+    workout_log_exercise_id: Mapped[int] = mapped_column(Integer, ForeignKey("workout_log_exercise.id", ondelete="CASCADE"), nullable=False)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
     weight: Mapped[Optional[float]] = mapped_column(Float)
     reps: Mapped[Optional[int]] = mapped_column(Integer)
@@ -214,20 +215,25 @@ class ExerciseSet(Base):
 
     workout_log_exercise: Mapped["WorkoutLogExercise"] = relationship("WorkoutLogExercise", back_populates="exercise_sets")
 
-# # ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-# class Exercise(Base):
-#     __tablename__ = "exercise"
+class Exercise(Base):
+    __tablename__ = "exercise"
 
-#     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
-#     name: Mapped[str] = mapped_column(String, nullable=False)
-#     base_unit: Mapped[Optional[str]] = mapped_column(String)
-#     notes: Mapped[Optional[dict]] = mapped_column(JSONB)
-#     user_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("user.id"))
-#     user_created_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=True))
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    name: Mapped[str] = mapped_column(String, nullable=False)
+    description: Mapped[Optional[str]] = mapped_column(String)
+    exercise_type: Mapped[Optional[str]] = mapped_column(String)
+    body_part: Mapped[Optional[str]] = mapped_column(String)
+    equipment: Mapped[Optional[str]] = mapped_column(String)
+    level: Mapped[Optional[str]] = mapped_column(String)
+    notes: Mapped[Optional[dict]] = mapped_column(JSONB)
+    base_unit: Mapped[Optional[str]] = mapped_column(String)
+    # user_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("user.id"))
+    user_created_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
 
-#     user: Mapped["User"] = relationship("User", back_populates="exercises")
-#     workout_log_exercises: Mapped[list["WorkoutLogExercise"]] = relationship("WorkoutLogExercise", back_populates="exercise", cascade="all, delete-orphan")
+    # user: Mapped["User"] = relationship("User", back_populates="exercises")
+    workout_log_exercises: Mapped[list["WorkoutLogExercise"]] = relationship("WorkoutLogExercise", back_populates="exercise", cascade="all, delete-orphan")
 
 # # ----------------------------------------------------------------------------
 

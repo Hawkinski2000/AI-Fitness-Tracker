@@ -8,7 +8,6 @@ class ExerciseSetBase(BaseModel):
     weight: Optional[float] = None
     reps: Optional[int] = None
     unit: Optional[str] = None
-    one_rep_max: Optional[float] = None
     rest_after_secs: Optional[int] = None
     duration_secs: Optional[int] = None
     calories_burned: Optional[int] = None
@@ -19,5 +18,6 @@ class ExerciseSetCreate(ExerciseSetBase):
 class ExerciseSetResponse(ExerciseSetBase):
     id: int
     created_at: datetime
+    one_rep_max: Optional[float] = None
 
     model_config = ConfigDict(from_attributes=True)

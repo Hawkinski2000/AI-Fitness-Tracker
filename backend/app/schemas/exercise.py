@@ -1,12 +1,24 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from datetime import datetime
 
 
-class Exercise(BaseModel):
-    id: Optional[int] = None
+class ExerciseBase(BaseModel):
     name: str
-    base_unit: Optional[str] = None
+    description: Optional[str] = None
+    exercise_type: Optional[str] = None
+    body_part: Optional[str] = None
+    equipment: Optional[str] = None
+    level: Optional[str] = None
     notes: Optional[dict] = None
-    user_id: Optional[int] = None
+    base_unit: Optional[str] = None
+    # user_id: Optional[int] = None
     user_created_at: Optional[datetime] = None
+
+class ExerciseCreate(ExerciseBase):
+    pass
+
+class ExerciseResponse(ExerciseBase):
+    id: int
+
+    model_config = ConfigDict(from_attributes=True)

@@ -3,6 +3,14 @@ from app.schemas import meal_log_food
 from app.models.models import MealLogFood, Food, BrandedFood, MealLogFoodNutrient, FoodNutrient
 from app.crud import meal_logs as crud_meal_logs
 
+"""
+==============================================================================
+Todo:
+    - A user should be able to add a meal_log_food to a day and a meal_log
+      will be automatically created for it.
+
+==============================================================================
+"""
 
 def create_meal_log_food(meal_log_food: meal_log_food.MealLogFoodCreate, db: Session):
     food = db.query(Food).filter(Food.id == meal_log_food.food_id).first()

@@ -4,7 +4,6 @@ from datetime import datetime
 
 
 class MealLogBase(BaseModel):
-    meal_type: str
     log_date: datetime
     total_calories: Optional[int] = None
 

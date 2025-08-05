@@ -6,6 +6,7 @@ from datetime import datetime
 class MealLogFoodBase(BaseModel):
     meal_log_id: int
     food_id: int
+    meal_type: str
 
 class MealLogFoodCreate(MealLogFoodBase):
     num_servings: Optional[float] = None
