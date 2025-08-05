@@ -1,36 +1,39 @@
-from fastapi import Response, status, APIRouter
-from app.schemas.exercise_set import ExerciseSet
+from fastapi import Response, status, APIRouter, Depends
+from sqlalchemy.orm import Session
+from app.core.db import get_db
+from app.schemas import exercise_set
+from app.crud import exercise_sets as crud_exercise_sets
 
 
 router = APIRouter(prefix="/exercise-sets",
                    tags=['Exercise Sets'])
 
 # Create an exercise set
-@router.post("/")
-def create_exercise_set(exercise_set: ExerciseSet):
-    # TODO
-    return {"data": "exercise set"}
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=exercise_set.ExerciseSetResponse)
+def create_exercise_set(exercise_set: exercise_set.ExerciseSetCreate, db: Session = Depends(get_db)):
+    new_exercise_set = crud_exercise_sets.create_exercise_set(exercise_set, db)
+    return new_exercise_set
 
 # Get all exercise sets
-@router.get("/")
-def get_exercise_sets():
-    # TODO
-    return {"data": "exercise sets"}
+@router.get("/", response_model=list[exercise_set.ExerciseSetResponse])
+def get_exercise_sets(db: Session = Depends(get_db)):
+    exercise_sets = crud_exercise_sets.get_exercise_sets(db)
+    return exercise_sets
 
 # Get an exercise set
-@router.get("/{id}")
-def get_exercise_set(id: int):
-    # TODO
-    return {"data": "exercise set"}
+@router.get("/{id}", response_model=exercise_set.ExerciseSetResponse)
+def get_exercise_set(id: int, db: Session = Depends(get_db)):
+    exercise_set = crud_exercise_sets.get_exercise_set(id, db)
+    return exercise_set
 
 # Update an exercise set
-@router.put("/{id}")
-def update_exercise_set(id: int, exercise_set: ExerciseSet):
-    # TODO
-    return {"data": "exercise set"}
+@router.put("/{id}", response_model=exercise_set.ExerciseSetResponse)
+def update_exercise_set(id: int, exercise_set: exercise_set.ExerciseSetCreate, db: Session = Depends(get_db)):
+    updated_exercise_set = crud_exercise_sets.update_exercise_set(id, exercise_set, db)
+    return updated_exercise_set
 
 # Delete an exercise set
 @router.delete("/{id}")
-def delete_exercise_set(id: int):
-    # TODO
+def delete_exercise_set(id: int, db: Session = Depends(get_db)):
+    crud_exercise_sets.delete_exercise_set(id, db)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

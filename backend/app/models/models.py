@@ -58,7 +58,7 @@ class MealLog(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
     # user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
-    log_date: Mapped[date] = mapped_column(Date, nullable=False, server_default=func.current_date())
+    log_date: Mapped[date] = mapped_column(Date, nullable=False)
     meal_type: Mapped[str] = mapped_column(String, nullable=False)
     total_calories: Mapped[Optional[int]] = mapped_column(Integer)
 
@@ -93,7 +93,7 @@ class Food(Base):
     description: Mapped[str] = mapped_column(String, nullable=False)
     calories: Mapped[Optional[int]] = mapped_column(Integer)
     # user_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("user.id"))
-    user_created_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=True))
+    user_created_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
 
     # user: Mapped["User"] = relationship("User", back_populates="foods")
     meal_log_foods: Mapped[list["MealLogFood"]] = relationship("MealLogFood", back_populates="food", cascade="all, delete-orphan")
@@ -194,25 +194,25 @@ class WorkoutLogExercise(Base):
 
     workout_log: Mapped["WorkoutLog"] = relationship("WorkoutLog", back_populates="workout_log_exercises")
     # exercise: Mapped["Exercise"] = relationship("Exercise", back_populates="workout_log_exercises")
-    # exercise_sets: Mapped[list["ExerciseSet"]] = relationship("ExerciseSet", back_populates="workout_log_exercise", cascade="all, delete-orphan")
+    exercise_sets: Mapped[list["ExerciseSet"]] = relationship("ExerciseSet", back_populates="workout_log_exercise", cascade="all, delete-orphan")
 
-# # ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-# class ExerciseSet(Base):
-#     __tablename__ = "exercise_set"
+class ExerciseSet(Base):
+    __tablename__ = "exercise_set"
 
-#     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
-#     workout_log_exercise_id: Mapped[int] = mapped_column(Integer, ForeignKey("workout_log_exercise.id"), nullable=False)
-#     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False)
-#     weight: Mapped[Optional[float]] = mapped_column(Float)
-#     reps: Mapped[Optional[int]] = mapped_column(Integer)
-#     unit: Mapped[Optional[str]] = mapped_column(String)
-#     one_rep_max: Mapped[Optional[float]] = mapped_column(Float)
-#     rest_after_secs: Mapped[Optional[int]] = mapped_column(Integer)
-#     duration_secs: Mapped[Optional[int]] = mapped_column(Integer)
-#     calories_burned: Mapped[Optional[int]] = mapped_column(Integer)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    workout_log_exercise_id: Mapped[int] = mapped_column(Integer, ForeignKey("workout_log_exercise.id"), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
+    weight: Mapped[Optional[float]] = mapped_column(Float)
+    reps: Mapped[Optional[int]] = mapped_column(Integer)
+    unit: Mapped[Optional[str]] = mapped_column(String)
+    one_rep_max: Mapped[Optional[float]] = mapped_column(Float)
+    rest_after_secs: Mapped[Optional[int]] = mapped_column(Integer)
+    duration_secs: Mapped[Optional[int]] = mapped_column(Integer)
+    calories_burned: Mapped[Optional[int]] = mapped_column(Integer)
 
-#     workout_log_exercise: Mapped["WorkoutLogExercise"] = relationship("WorkoutLogExercise", back_populates="exercise_sets")
+    workout_log_exercise: Mapped["WorkoutLogExercise"] = relationship("WorkoutLogExercise", back_populates="exercise_sets")
 
 # # ----------------------------------------------------------------------------
 
