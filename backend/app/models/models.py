@@ -180,21 +180,21 @@ class WorkoutLog(Base):
     total_calories_burned: Mapped[Optional[int]] = mapped_column(Integer)
 
     # user: Mapped["User"] = relationship("User", back_populates="workout_logs")
-    # workout_log_exercises: Mapped[list["WorkoutLogExercise"]] = relationship("WorkoutLogExercise", back_populates="workout_log", cascade="all, delete-orphan")
+    workout_log_exercises: Mapped[list["WorkoutLogExercise"]] = relationship("WorkoutLogExercise", back_populates="workout_log", cascade="all, delete-orphan")
 
-# # ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-# class WorkoutLogExercise(Base):
-#     __tablename__ = "workout_log_exercise"
+class WorkoutLogExercise(Base):
+    __tablename__ = "workout_log_exercise"
 
-#     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
-#     workout_log_id: Mapped[int] = mapped_column(Integer, ForeignKey("workout_log.id"), nullable=False)
-#     exercise_id: Mapped[int] = mapped_column(Integer, ForeignKey("exercise.id"), nullable=False)
-#     num_sets: Mapped[Optional[int]] = mapped_column(Integer)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    workout_log_id: Mapped[int] = mapped_column(Integer, ForeignKey("workout_log.id"), nullable=False)
+    # exercise_id: Mapped[int] = mapped_column(Integer, ForeignKey("exercise.id"), nullable=False)
+    num_sets: Mapped[Optional[int]] = mapped_column(Integer)
 
-#     workout_log: Mapped["WorkoutLog"] = relationship("WorkoutLog", back_populates="workout_log_exercises")
-#     exercise: Mapped["Exercise"] = relationship("Exercise", back_populates="workout_log_exercises")
-#     exercise_sets: Mapped[list["ExerciseSet"]] = relationship("ExerciseSet", back_populates="workout_log_exercise", cascade="all, delete-orphan")
+    workout_log: Mapped["WorkoutLog"] = relationship("WorkoutLog", back_populates="workout_log_exercises")
+    # exercise: Mapped["Exercise"] = relationship("Exercise", back_populates="workout_log_exercises")
+    # exercise_sets: Mapped[list["ExerciseSet"]] = relationship("ExerciseSet", back_populates="workout_log_exercise", cascade="all, delete-orphan")
 
 # # ----------------------------------------------------------------------------
 

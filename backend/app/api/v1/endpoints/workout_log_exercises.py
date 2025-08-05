@@ -1,36 +1,39 @@
-from fastapi import Response, status, APIRouter
-from app.schemas.workout_log_exercise import WorkoutLogExercise
+from fastapi import Response, status, APIRouter, Depends
+from sqlalchemy.orm import Session
+from app.core.db import get_db
+from app.schemas import workout_log_exercise
+from app.crud import workout_log_exercises as crud_workout_log_exercises
 
 
 router = APIRouter(prefix="/workout-log-exercises",
                    tags=['Workout Log Exercises'])
 
 # Create a workout log exercise
-@router.post("/")
-def create_workout_log_exercise(workout_log_exercise: WorkoutLogExercise):
-    # TODO
-    return {"data": "workout log exercise"}
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=workout_log_exercise.WorkoutLogExerciseResponse)
+def create_workout_log_exercise(workout_log_exercise: workout_log_exercise.WorkoutLogExerciseCreate, db: Session = Depends(get_db)):
+    new_workout_log_exercise = crud_workout_log_exercises.create_workout_log_exercise(workout_log_exercise, db)
+    return new_workout_log_exercise
 
 # Get all workout log exercises
-@router.get("/")
-def get_workout_log_exercises():
-    # TODO
-    return {"data": "workout log exercises"}
+@router.get("/", response_model=list[workout_log_exercise.WorkoutLogExerciseResponse])
+def get_workout_log_exercises(db: Session = Depends(get_db)):
+    workout_log_exercises = crud_workout_log_exercises.get_workout_log_exercises(db)
+    return workout_log_exercises
 
 # Get a workout log exercise
-@router.get("/{id}")
-def get_workout_log_exercise(id: int):
-    # TODO
-    return {"data": "workout log exercise"}
+@router.get("/{id}", response_model=workout_log_exercise.WorkoutLogExerciseResponse)
+def get_workout_log_exercise(id: int, db: Session = Depends(get_db)):
+    workout_log_exercise = crud_workout_log_exercises.get_workout_log_exercise(id, db)
+    return workout_log_exercise
 
 # Update a workout log exercise
-@router.put("/{id}")
-def update_workout_log_exercise(id: int, workout_log_exercise: WorkoutLogExercise):
-    # TODO
-    return {"data": "workout log exercise"}
+@router.put("/{id}", response_model=workout_log_exercise.WorkoutLogExerciseResponse)
+def update_workout_log_exercise(id: int, workout_log_exercise: workout_log_exercise.WorkoutLogExerciseCreate, db: Session = Depends(get_db)):
+    updated_workout_log_exercise = crud_workout_log_exercises.update_workout_log_exercise(id, workout_log_exercise, db)
+    return updated_workout_log_exercise
 
 # Delete a workout log exercise
 @router.delete("/{id}")
-def delete_workout_log_exercise(id: int):
-    # TODO
+def delete_workout_log_exercise(id: int, db: Session = Depends(get_db)):
+    crud_workout_log_exercises.delete_workout_log_exercise(id, db)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
