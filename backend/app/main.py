@@ -35,8 +35,6 @@ from .api.v1.endpoints import (
 Todo:
     - When creating a food, a food_nutrient should be created for it.
 
-    - Test loading a small portion of the the USDA foods dataset.
-
     - Split Pydantic schemas into separate models for each type of operation
         (e.g., create, read, update, delete) as needed by different routes.
 
@@ -84,7 +82,6 @@ run:
     python -m app.main --load_food_nutrient_data
 Note: The food and nutrient tables must already exist since food_nutrient
 depends on it.
-
 
 ==============================================================================
 """

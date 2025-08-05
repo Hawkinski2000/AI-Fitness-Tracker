@@ -1,36 +1,39 @@
-from fastapi import Response, status, APIRouter
-from app.schemas.workout_log import WorkoutLog
+from fastapi import Response, status, APIRouter, Depends
+from sqlalchemy.orm import Session
+from app.core.db import get_db
+from app.schemas import workout_log
+from app.crud import workout_logs as crud_workout_logs
 
 
 router = APIRouter(prefix="/workout-logs",
                    tags=['Workout Logs'])
 
 # Create a workout log
-@router.post("/")
-def create_workout_log(workout_log: WorkoutLog):
-    # TODO
-    return {"data": "workout log"}
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=workout_log.WorkoutLogResponse)
+def create_workout_log(workout_log: workout_log.WorkoutLogCreate, db: Session = Depends(get_db)):
+    new_workout_log = crud_workout_logs.create_workout_log(workout_log, db)
+    return new_workout_log
 
 # Get all workout logs
-@router.get("/")
-def get_workout_logs():
-    # TODO
-    return {"data": "workout logs"}
+@router.get("/", response_model=list[workout_log.WorkoutLogResponse])
+def get_workout_logs(db: Session = Depends(get_db)):
+    workout_logs = crud_workout_logs.get_workout_logs(db)
+    return workout_logs
 
 # Get a workout log
-@router.get("/{id}")
-def get_workout_log(id: int):
-    # TODO
-    return {"data": "workout log"}
+@router.get("/{id}", response_model=workout_log.WorkoutLogResponse)
+def get_workout_log(id: int, db: Session = Depends(get_db)):
+    workout_log = crud_workout_logs.get_workout_log(id, db)
+    return workout_log
 
 # Update a workout log
-@router.put("/{id}")
-def update_workout_log(id: int, workout_log: WorkoutLog):
-    # TODO
-    return {"data": "workout log"}
+@router.put("/{id}", response_model=workout_log.WorkoutLogResponse)
+def update_workout_log(id: int, workout_log: workout_log.WorkoutLogCreate, db: Session = Depends(get_db)):
+    updated_workout_log = crud_workout_logs.update_workout_log(id, workout_log, db)
+    return updated_workout_log
 
 # Delete a workout log
 @router.delete("/{id}")
-def delete_workout_log(id: int):
-    # TODO
+def delete_workout_log(id: int, db: Session = Depends(get_db)):
+    crud_workout_logs.delete_workout_log(id, db)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

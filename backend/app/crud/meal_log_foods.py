@@ -24,12 +24,6 @@ def create_meal_log_food(meal_log_food: meal_log_food.MealLogFoodCreate, db: Ses
         calories = None
     else:
         calories = num_servings * serving_size * food.calories / branded_food.serving_size or 1.0
-    
-    print(num_servings)
-    print(serving_size)
-    print(branded_food.serving_size)
-    print(serving_unit)
-    print(calories)
 
     new_meal_log_food = MealLogFood(**meal_log_food.model_dump(exclude_unset=True, 
                                                                exclude={"num_servings",

@@ -168,19 +168,19 @@ class Nutrient(Base):
     meal_log_food_nutrients: Mapped[list["MealLogFoodNutrient"]] = relationship("MealLogFoodNutrient", back_populates="nutrient")
     food_nutrients: Mapped[list["FoodNutrient"]] = relationship("FoodNutrient", back_populates="nutrient")
 
-# # ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-# class WorkoutLog(Base):
-#     __tablename__ = "workout_log"
+class WorkoutLog(Base):
+    __tablename__ = "workout_log"
 
-#     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
-#     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
-#     log_date: Mapped[date] = mapped_column(Date, nullable=False)
-#     workout_type: Mapped[Optional[str]] = mapped_column(String)
-#     total_calories_burned: Mapped[Optional[int]] = mapped_column(Integer)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    # user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
+    log_date: Mapped[date] = mapped_column(Date, nullable=False)
+    workout_type: Mapped[Optional[str]] = mapped_column(String)
+    total_calories_burned: Mapped[Optional[int]] = mapped_column(Integer)
 
-#     user: Mapped["User"] = relationship("User", back_populates="workout_logs")
-#     workout_log_exercises: Mapped[list["WorkoutLogExercise"]] = relationship("WorkoutLogExercise", back_populates="workout_log", cascade="all, delete-orphan")
+    # user: Mapped["User"] = relationship("User", back_populates="workout_logs")
+    # workout_log_exercises: Mapped[list["WorkoutLogExercise"]] = relationship("WorkoutLogExercise", back_populates="workout_log", cascade="all, delete-orphan")
 
 # # ----------------------------------------------------------------------------
 
