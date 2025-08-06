@@ -251,18 +251,18 @@ class SleepLog(Base):
 
     # user: Mapped["User"] = relationship("User", back_populates="sleep_logs")
 
-# # ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-# class MoodLog(Base):
-#     __tablename__ = "mood_log"
+class MoodLog(Base):
+    __tablename__ = "mood_log"
 
-#     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
-#     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
-#     log_date: Mapped[date] = mapped_column(Date, nullable=False)
-#     mood_score: Mapped[Optional[int]] = mapped_column(Integer)
-#     notes: Mapped[Optional[dict]] = mapped_column(JSONB)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    # user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
+    log_date: Mapped[date] = mapped_column(Date, nullable=False)
+    mood_score: Mapped[Optional[int]] = mapped_column(Integer)
+    notes: Mapped[Optional[dict]] = mapped_column(JSONB)
 
-#     user: Mapped["User"] = relationship("User", back_populates="mood_logs")
+    # user: Mapped["User"] = relationship("User", back_populates="mood_logs")
 
 # # ----------------------------------------------------------------------------
 

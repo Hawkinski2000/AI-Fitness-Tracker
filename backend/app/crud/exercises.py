@@ -10,8 +10,12 @@ def create_exercise(exercise: exercise.ExerciseCreate, db: Session):
     db.refresh(new_exercise)
     return new_exercise
 
-def get_exercises(db: Session):
-    exercises = db.query(Exercise).all()
+def get_exercises(db: Session,
+                  limit: int,
+                  skip: int,
+                  search: str):
+    exercises = db.query(Exercise).filter(Exercise.name.ilike(f"%{search}%"))\
+        .limit(limit).offset(skip).all()
     return exercises
 
 def get_exercise(id: int, db: Session):

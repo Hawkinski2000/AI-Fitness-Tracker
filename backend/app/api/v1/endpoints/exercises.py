@@ -1,5 +1,6 @@
 from fastapi import Response, status, APIRouter, Depends
 from sqlalchemy.orm import Session
+from typing import Optional
 from app.core.db import get_db
 from app.schemas import exercise
 from app.crud import exercises as crud_exercises
@@ -16,8 +17,11 @@ def create_exercise(exercise: exercise.ExerciseCreate, db: Session = Depends(get
 
 # Get all exercises
 @router.get("/", response_model=list[exercise.ExerciseResponse])
-def get_exercises(db: Session = Depends(get_db)):
-    exercises = crud_exercises.get_exercises(db)
+def get_exercises(db: Session = Depends(get_db),
+                  limit: int = 10,
+                  skip: int = 0,
+                  search: Optional[str] = ""):
+    exercises = crud_exercises.get_exercises(db, limit, skip, search)
     return exercises
 
 # Get an exercise
