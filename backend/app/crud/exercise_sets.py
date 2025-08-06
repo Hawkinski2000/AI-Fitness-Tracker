@@ -15,6 +15,10 @@ def create_exercise_set(exercise_set: exercise_set.ExerciseSetCreate, db: Sessio
     workout_log = db.query(WorkoutLog).filter(WorkoutLog.id == workout_log_exercise.workout_log_id).first()
     workout_log.total_num_sets += 1
     
+    if new_exercise_set.weight and new_exercise_set.reps:
+        one_rep_max = estimate_one_rep_max(new_exercise_set.weight, new_exercise_set.reps)
+        new_exercise_set.one_rep_max = one_rep_max
+
     db.commit()
 
     return new_exercise_set
@@ -54,3 +58,10 @@ def delete_exercise_set(id: int, db: Session):
         db.delete(workout_log)
 
     db.commit()
+
+# ----------------------------------------------------------------------------
+
+def estimate_one_rep_max(weight: float, reps: int):
+    # Epley formula
+    one_rep_max = weight * (1 + 0.0333 * reps)
+    return one_rep_max
