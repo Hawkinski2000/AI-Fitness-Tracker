@@ -264,19 +264,19 @@ class MoodLog(Base):
 
     # user: Mapped["User"] = relationship("User", back_populates="mood_logs")
 
-# # ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-# class InsightLog(Base):
-#     __tablename__ = "insight_log"
+class InsightLog(Base):
+    __tablename__ = "insight_log"
 
-#     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
-#     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
-#     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False)
-#     raw_text: Mapped[str] = mapped_column(Text, nullable=False)
-#     summary: Mapped[Optional[str]] = mapped_column(Text)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    # user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
+    raw_text: Mapped[str] = mapped_column(Text, nullable=False)
+    summary: Mapped[Optional[str]] = mapped_column(Text)
 
-#     user: Mapped["User"] = relationship("User", back_populates="insight_logs")
-#     insights: Mapped[list["Insight"]] = relationship("Insight", back_populates="insight_log", cascade="all, delete-orphan")
+    # user: Mapped["User"] = relationship("User", back_populates="insight_logs")
+    # insights: Mapped[list["Insight"]] = relationship("Insight", back_populates="insight_log", cascade="all, delete-orphan")
 
 # # ----------------------------------------------------------------------------
 
