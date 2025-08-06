@@ -36,6 +36,11 @@ def update_exercise_set(id: int, exercise_set: exercise_set.ExerciseSetCreate, d
     exercise_set_query.update(exercise_set.model_dump(), synchronize_session=False)
     db.commit()
     updated_exercise_set = exercise_set_query.first()
+
+    if updated_exercise_set.weight and updated_exercise_set.reps:
+        one_rep_max = estimate_one_rep_max(updated_exercise_set.weight, updated_exercise_set.reps)
+        updated_exercise_set.one_rep_max = one_rep_max
+
     return updated_exercise_set
 
 def delete_exercise_set(id: int, db: Session):

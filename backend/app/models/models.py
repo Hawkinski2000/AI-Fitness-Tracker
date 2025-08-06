@@ -235,21 +235,21 @@ class Exercise(Base):
     # user: Mapped["User"] = relationship("User", back_populates="exercises")
     workout_log_exercises: Mapped[list["WorkoutLogExercise"]] = relationship("WorkoutLogExercise", back_populates="exercise", cascade="all, delete-orphan")
 
-# # ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-# class SleepLog(Base):
-#     __tablename__ = "sleep_log"
+class SleepLog(Base):
+    __tablename__ = "sleep_log"
 
-#     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
-#     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
-#     log_date: Mapped[date] = mapped_column(Date, nullable=False)
-#     time_to_bed: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False)
-#     time_awake: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False)
-#     duration: Mapped[int] = mapped_column(Integer, nullable=False)
-#     sleep_score: Mapped[Optional[int]] = mapped_column(Integer)
-#     notes: Mapped[Optional[dict]] = mapped_column(JSONB)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    # user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
+    log_date: Mapped[date] = mapped_column(Date, nullable=False)
+    time_to_bed: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False)
+    time_awake: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False)
+    duration: Mapped[int] = mapped_column(Integer, nullable=False)
+    sleep_score: Mapped[Optional[int]] = mapped_column(Integer)
+    notes: Mapped[Optional[dict]] = mapped_column(JSONB)
 
-#     user: Mapped["User"] = relationship("User", back_populates="sleep_logs")
+    # user: Mapped["User"] = relationship("User", back_populates="sleep_logs")
 
 # # ----------------------------------------------------------------------------
 

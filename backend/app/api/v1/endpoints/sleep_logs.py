@@ -1,36 +1,39 @@
-from fastapi import Response, status, APIRouter
-from app.schemas.sleep_log import SleepLog
+from fastapi import Response, status, APIRouter, Depends
+from sqlalchemy.orm import Session
+from app.core.db import get_db
+from app.schemas import sleep_log
+from app.crud import sleep_logs as crud_sleep_logs
 
 
 router = APIRouter(prefix="/sleep-logs",
                    tags=['Sleep Logs'])
 
 # Create a sleep log
-@router.post("/")
-def create_sleep_log(sleep_log: SleepLog):
-    # TODO
-    return {"data": "sleep log"}
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=sleep_log.SleepLogResponse)
+def create_sleep_log(sleep_log: sleep_log.SleepLogCreate, db: Session = Depends(get_db)):
+    new_sleep_log = crud_sleep_logs.create_sleep_log(sleep_log, db)
+    return new_sleep_log
 
 # Get all sleep logs
-@router.get("/")
-def get_sleep_logs():
-    # TODO
-    return {"data": "sleep logs"}
+@router.get("/", response_model=list[sleep_log.SleepLogResponse])
+def get_sleep_logs(db: Session = Depends(get_db)):
+    sleep_logs = crud_sleep_logs.get_sleep_logs(db)
+    return sleep_logs
 
 # Get a sleep log
-@router.get("/{id}")
-def get_sleep_log(id: int):
-    # TODO
-    return {"data": "sleep log"}
+@router.get("/{id}", response_model=sleep_log.SleepLogResponse)
+def get_sleep_log(id: int, db: Session = Depends(get_db)):
+    sleep_log = crud_sleep_logs.get_sleep_log(id, db)
+    return sleep_log
 
 # Update a sleep log
-@router.put("/{id}")
-def update_sleep_log(id: int, sleep_log: SleepLog):
-    # TODO
-    return {"data": "sleep log"}
+@router.put("/{id}", response_model=sleep_log.SleepLogResponse)
+def update_sleep_log(id: int, sleep_log: sleep_log.SleepLogCreate, db: Session = Depends(get_db)):
+    updated_sleep_log = crud_sleep_logs.update_sleep_log(id, sleep_log, db)
+    return updated_sleep_log
 
 # Delete a sleep log
 @router.delete("/{id}")
-def delete_sleep_log(id: int):
-    # TODO
+def delete_sleep_log(id: int, db: Session = Depends(get_db)):
+    crud_sleep_logs.delete_sleep_log(id, db)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
