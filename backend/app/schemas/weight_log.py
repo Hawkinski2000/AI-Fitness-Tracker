@@ -1,11 +1,17 @@
-from pydantic import BaseModel
-from typing import Optional
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
 
-class WeightLog(BaseModel):
-    id: Optional[int] = None
-    user_id: int
+class WeightLogBase(BaseModel):
+    # user_id: int
+    log_date: datetime
     weight: float
     unit: str
-    created_at: datetime
+
+class WeightLogCreate(WeightLogBase):
+    pass
+
+class WeightLogResponse(WeightLogBase):
+    id: int
+
+    model_config = ConfigDict(from_attributes=True)

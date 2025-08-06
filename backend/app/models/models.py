@@ -291,18 +291,18 @@ class Insight(Base):
 
     insight_log: Mapped["InsightLog"] = relationship("InsightLog", back_populates="insights")
 
-# # ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-# class WeightLog(Base):
-#     __tablename__ = "weight_log"
+class WeightLog(Base):
+    __tablename__ = "weight_log"
 
-#     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
-#     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
-#     weight: Mapped[float] = mapped_column(Float, nullable=False)
-#     unit: Mapped[str] = mapped_column(String, nullable=False)
-#     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    # user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
+    log_date: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False)
+    weight: Mapped[float] = mapped_column(Float, nullable=False)
+    unit: Mapped[str] = mapped_column(String, nullable=False)
 
-#     user: Mapped["User"] = relationship("User", back_populates="weight_logs")
+    # user: Mapped["User"] = relationship("User", back_populates="weight_logs")
 
 # # ----------------------------------------------------------------------------
 
