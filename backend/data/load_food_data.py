@@ -44,5 +44,9 @@ def load_food_data():
         conn.commit()
         os.remove(temp_csv_path)
 
+    # Ensure when new foods are created they use the next available id to avoid primary key conflicts.
+    cursor.execute("SELECT setval('food_id_seq', (SELECT MAX(id) FROM food))")
+    conn.commit()
+
     cursor.close()
     conn.close()

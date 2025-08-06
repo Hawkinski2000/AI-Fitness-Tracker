@@ -20,36 +20,35 @@ class Base(DeclarativeBase):
     pass
 
 
-# class User(Base):
-#     __tablename__ = "user"
+class User(Base):
+    __tablename__ = "user"
 
-#     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
-#     username: Mapped[str] = mapped_column(String, nullable=False)
-#     email: Mapped[str] = mapped_column(String, nullable=False)
-#     password_hash: Mapped[str] = mapped_column(String, nullable=False)
-#     settings: Mapped[dict] = mapped_column(JSONB, nullable=False)
-#     sex: Mapped[str] = mapped_column(String, nullable=False)
-#     age: Mapped[int] = mapped_column(Integer, nullable=False)
-#     weight: Mapped[float] = mapped_column(Float, nullable=False)
-#     height: Mapped[int] = mapped_column(Integer, nullable=False)
-#     goal: Mapped[str] = mapped_column(String, nullable=False)
-#     streak: Mapped[int] = mapped_column(Integer, nullable=False)
-#     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    username: Mapped[str] = mapped_column(String, nullable=False)
+    email: Mapped[str] = mapped_column(String, nullable=False)
+    password_hash: Mapped[str] = mapped_column(String, nullable=False)
+    settings: Mapped[dict] = mapped_column(JSONB, nullable=False)
+    sex: Mapped[str] = mapped_column(String, nullable=False)
+    age: Mapped[int] = mapped_column(Integer, nullable=False)
+    weight: Mapped[float] = mapped_column(Float, nullable=False)
+    height: Mapped[int] = mapped_column(Integer, nullable=False)
+    goal: Mapped[str] = mapped_column(String, nullable=False)
+    streak: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
 
-#     meal_logs: Mapped[list["MealLog"]] = relationship("MealLog", back_populates="user", cascade="all, delete-orphan")
-#     meal_log_foods: Mapped[list["MealLogFood"]] = relationship("MealLogFood", back_populates="user", cascade="all, delete-orphan")
-#     foods: Mapped[list["Food"]] = relationship("Food", back_populates="user", cascade="all, delete-orphan")
-#     workout_logs: Mapped[list["WorkoutLog"]] = relationship("WorkoutLog", back_populates="user", cascade="all, delete-orphan")
-#     exercises: Mapped[list["Exercise"]] = relationship("Exercise", back_populates="user", cascade="all, delete-orphan")
-#     sleep_logs: Mapped[list["SleepLog"]] = relationship("SleepLog", back_populates="user", cascade="all, delete-orphan")
-#     mood_logs: Mapped[list["MoodLog"]] = relationship("MoodLog", back_populates="user", cascade="all, delete-orphan")
-#     insight_logs: Mapped[list["InsightLog"]] = relationship("InsightLog", back_populates="user", cascade="all, delete-orphan")
-#     weight_logs: Mapped[list["WeightLog"]] = relationship("WeightLog", back_populates="user", cascade="all, delete-orphan")
-#     meal_log_stats: Mapped[list["MealLogStats"]] = relationship("MealLogStats", back_populates="user", cascade="all, delete-orphan")
-#     exercise_stats: Mapped[list["ExerciseStats"]] = relationship("ExerciseStats", back_populates="user", cascade="all, delete-orphan")
-#     sleep_log_stats: Mapped[list["SleepLogStats"]] = relationship("SleepLogStats", back_populates="user", cascade="all, delete-orphan")
-#     mood_log_stats: Mapped[list["MoodLogStats"]] = relationship("MoodLogStats", back_populates="user", cascade="all, delete-orphan")
-#     weight_log_stats: Mapped[list["WeightLogStats"]] = relationship("WeightLogStats", back_populates="user", cascade="all, delete-orphan")
+    meal_logs: Mapped[list["MealLog"]] = relationship("MealLog", back_populates="user", cascade="all, delete-orphan")
+    foods: Mapped[list["Food"]] = relationship("Food", back_populates="user", cascade="all, delete-orphan")
+    workout_logs: Mapped[list["WorkoutLog"]] = relationship("WorkoutLog", back_populates="user", cascade="all, delete-orphan")
+    exercises: Mapped[list["Exercise"]] = relationship("Exercise", back_populates="user", cascade="all, delete-orphan")
+    sleep_logs: Mapped[list["SleepLog"]] = relationship("SleepLog", back_populates="user", cascade="all, delete-orphan")
+    mood_logs: Mapped[list["MoodLog"]] = relationship("MoodLog", back_populates="user", cascade="all, delete-orphan")
+    insight_logs: Mapped[list["InsightLog"]] = relationship("InsightLog", back_populates="user", cascade="all, delete-orphan")
+    weight_logs: Mapped[list["WeightLog"]] = relationship("WeightLog", back_populates="user", cascade="all, delete-orphan")
+    # meal_log_stats: Mapped[list["MealLogStats"]] = relationship("MealLogStats", back_populates="user", cascade="all, delete-orphan")
+    # exercise_stats: Mapped[list["ExerciseStats"]] = relationship("ExerciseStats", back_populates="user", cascade="all, delete-orphan")
+    # sleep_log_stats: Mapped[list["SleepLogStats"]] = relationship("SleepLogStats", back_populates="user", cascade="all, delete-orphan")
+    # mood_log_stats: Mapped[list["MoodLogStats"]] = relationship("MoodLogStats", back_populates="user", cascade="all, delete-orphan")
+    # weight_log_stats: Mapped[list["WeightLogStats"]] = relationship("WeightLogStats", back_populates="user", cascade="all, delete-orphan")
 
 # ----------------------------------------------------------------------------
 
@@ -57,11 +56,11 @@ class MealLog(Base):
     __tablename__ = "meal_log"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
-    # user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
     log_date: Mapped[date] = mapped_column(Date, nullable=False)
     total_calories: Mapped[Optional[int]] = mapped_column(Integer)
 
-    # user: Mapped["User"] = relationship("User", back_populates="meal_logs")
+    user: Mapped["User"] = relationship("User", back_populates="meal_logs")
     meal_log_foods: Mapped[list["MealLogFood"]] = relationship("MealLogFood", back_populates="meal_log", cascade="all, delete-orphan")
     meal_log_nutrients: Mapped[list["MealLogNutrient"]] = relationship("MealLogNutrient", back_populates="meal_log", cascade="all, delete-orphan")
 
@@ -92,10 +91,10 @@ class Food(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
     description: Mapped[str] = mapped_column(String, nullable=False)
     calories: Mapped[Optional[int]] = mapped_column(Integer)
-    # user_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("user.id"))
+    user_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("user.id"))
     user_created_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
 
-    # user: Mapped["User"] = relationship("User", back_populates="foods")
+    user: Mapped["User"] = relationship("User", back_populates="foods")
     meal_log_foods: Mapped[list["MealLogFood"]] = relationship("MealLogFood", back_populates="food", cascade="all, delete-orphan")
     food_nutrients: Mapped[list["FoodNutrient"]] = relationship("FoodNutrient", back_populates="food", cascade="all, delete-orphan")
     branded_food: Mapped["BrandedFood"] = relationship("BrandedFood", back_populates="food", uselist=False)
@@ -174,13 +173,13 @@ class WorkoutLog(Base):
     __tablename__ = "workout_log"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
-    # user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
     log_date: Mapped[date] = mapped_column(Date, nullable=False)
     workout_type: Mapped[Optional[str]] = mapped_column(String)
     total_num_sets: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
     total_calories_burned: Mapped[Optional[int]] = mapped_column(Integer)
 
-    # user: Mapped["User"] = relationship("User", back_populates="workout_logs")
+    user: Mapped["User"] = relationship("User", back_populates="workout_logs")
     workout_log_exercises: Mapped[list["WorkoutLogExercise"]] = relationship("WorkoutLogExercise", back_populates="workout_log", cascade="all, delete-orphan")
 
 # ----------------------------------------------------------------------------
@@ -229,10 +228,10 @@ class Exercise(Base):
     level: Mapped[Optional[str]] = mapped_column(String)
     notes: Mapped[Optional[dict]] = mapped_column(JSONB)
     base_unit: Mapped[Optional[str]] = mapped_column(String)
-    # user_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("user.id"))
+    user_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("user.id"))
     user_created_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
 
-    # user: Mapped["User"] = relationship("User", back_populates="exercises")
+    user: Mapped["User"] = relationship("User", back_populates="exercises")
     workout_log_exercises: Mapped[list["WorkoutLogExercise"]] = relationship("WorkoutLogExercise", back_populates="exercise", cascade="all, delete-orphan")
 
 # ----------------------------------------------------------------------------
@@ -241,7 +240,7 @@ class SleepLog(Base):
     __tablename__ = "sleep_log"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
-    # user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
     log_date: Mapped[date] = mapped_column(Date, nullable=False)
     time_to_bed: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False)
     time_awake: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False)
@@ -249,7 +248,7 @@ class SleepLog(Base):
     sleep_score: Mapped[Optional[int]] = mapped_column(Integer)
     notes: Mapped[Optional[dict]] = mapped_column(JSONB)
 
-    # user: Mapped["User"] = relationship("User", back_populates="sleep_logs")
+    user: Mapped["User"] = relationship("User", back_populates="sleep_logs")
 
 # ----------------------------------------------------------------------------
 
@@ -257,12 +256,12 @@ class MoodLog(Base):
     __tablename__ = "mood_log"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
-    # user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
     log_date: Mapped[date] = mapped_column(Date, nullable=False)
     mood_score: Mapped[Optional[int]] = mapped_column(Integer)
     notes: Mapped[Optional[dict]] = mapped_column(JSONB)
 
-    # user: Mapped["User"] = relationship("User", back_populates="mood_logs")
+    user: Mapped["User"] = relationship("User", back_populates="mood_logs")
 
 # ----------------------------------------------------------------------------
 
@@ -270,12 +269,12 @@ class InsightLog(Base):
     __tablename__ = "insight_log"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
-    # user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
     raw_text: Mapped[str] = mapped_column(Text, nullable=False)
     summary: Mapped[Optional[str]] = mapped_column(Text)
 
-    # user: Mapped["User"] = relationship("User", back_populates="insight_logs")
+    user: Mapped["User"] = relationship("User", back_populates="insight_logs")
     insights: Mapped[list["Insight"]] = relationship("Insight", back_populates="insight_log", cascade="all, delete-orphan")
 
 # ----------------------------------------------------------------------------
@@ -297,12 +296,12 @@ class WeightLog(Base):
     __tablename__ = "weight_log"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
-    # user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
     log_date: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False)
     weight: Mapped[float] = mapped_column(Float, nullable=False)
     unit: Mapped[str] = mapped_column(String, nullable=False)
 
-    # user: Mapped["User"] = relationship("User", back_populates="weight_logs")
+    user: Mapped["User"] = relationship("User", back_populates="weight_logs")
 
 # # ----------------------------------------------------------------------------
 

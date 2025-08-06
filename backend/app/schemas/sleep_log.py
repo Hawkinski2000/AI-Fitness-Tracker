@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 class SleepLogBase(BaseModel):
-    # user_id: int
+    user_id: int
     log_date: datetime
     time_to_bed: datetime
     time_awake: datetime

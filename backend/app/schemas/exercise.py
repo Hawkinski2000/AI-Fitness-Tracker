@@ -12,13 +12,13 @@ class ExerciseBase(BaseModel):
     level: Optional[str] = None
     notes: Optional[dict] = None
     base_unit: Optional[str] = None
-    # user_id: Optional[int] = None
-    user_created_at: Optional[datetime] = None
+    user_id: Optional[int] = None
 
 class ExerciseCreate(ExerciseBase):
     pass
 
 class ExerciseResponse(ExerciseBase):
     id: int
+    user_created_at: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)

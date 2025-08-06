@@ -3,7 +3,7 @@ from datetime import datetime
 
 
 class WeightLogBase(BaseModel):
-    # user_id: int
+    user_id: int
     log_date: datetime
     weight: float
     unit: str

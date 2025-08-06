@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 class InsightLogBase(BaseModel):
-    # user_id: int
+    user_id: int
     raw_text: str
     summary: Optional[str] = None
 

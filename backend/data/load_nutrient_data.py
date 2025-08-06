@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 import pandas as pd
 import numpy as np
 from app.models.models import Base, Nutrient
@@ -26,6 +27,10 @@ def load_nutrient_data():
             unit_name=row["unit_name"]
         )
         db.add(nutrient)
+    db.flush()
+
+    # Ensure when new nutrients are created they use the next available id to avoid primary key conflicts.
+    db.execute(text("SELECT setval('nutrient_id_seq', (SELECT MAX(id) FROM nutrient))"))
 
     db.commit()
     db.close()

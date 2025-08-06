@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 class WorkoutLogBase(BaseModel):
-    # user_id: int
+    user_id: int
     log_date: datetime
     workout_type: Optional[str] = None
 

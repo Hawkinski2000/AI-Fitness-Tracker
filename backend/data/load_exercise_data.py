@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 import pandas as pd
 import numpy as np
 from app.models.models import Base, Exercise
@@ -40,6 +41,10 @@ def load_exercise_data():
             base_unit=base_unit
         )
         db.add(exercise)
+    db.flush()
+
+    # Ensure when new exercises are created they use the next available id to avoid primary key conflicts.
+    db.execute(text("SELECT setval('exercise_id_seq', (SELECT MAX(id) FROM exercise))"))
 
     db.commit()
     db.close()

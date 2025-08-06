@@ -75,5 +75,9 @@ def load_food_nutrient_data():
     """)
     conn.commit()
 
+    # Ensure when new food_nutrients are created they use the next available id to avoid primary key conflicts.
+    cursor.execute("SELECT setval('food_nutrient_id_seq', (SELECT MAX(id) FROM food_nutrient))")
+    conn.commit()
+
     cursor.close()
     conn.close()

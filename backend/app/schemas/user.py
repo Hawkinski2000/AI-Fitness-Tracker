@@ -1,10 +1,9 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from datetime import datetime
 
 
-class User(BaseModel):
-    id: Optional[int] = None
+class UserBase(BaseModel):
     username: str
     email: str
     password_hash: str
@@ -14,5 +13,13 @@ class User(BaseModel):
     weight: float
     height: int
     goal: str
+
+class UserCreate(UserBase):
+    pass
+
+class UserResponse(UserBase):
+    id: int
     streak: int
     created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
