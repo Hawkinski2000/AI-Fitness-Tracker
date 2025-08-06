@@ -3,17 +3,6 @@ from app.schemas import exercise_set
 from app.models.models import ExerciseSet, WorkoutLog, WorkoutLogExercise
 
 
-"""
-==============================================================================
-Todo:
-    - If a unit is not specified, use the base_unit of the exercise.
-
-    - A user should be able to add an exercise_set to a day and a workout_log
-      and workout_log_exercise will be automatically created for it.
-
-==============================================================================
-"""
-
 def create_exercise_set(exercise_set: exercise_set.ExerciseSetCreate, db: Session):
     new_exercise_set = ExerciseSet(**exercise_set.model_dump(exclude_unset=True))
     db.add(new_exercise_set)
