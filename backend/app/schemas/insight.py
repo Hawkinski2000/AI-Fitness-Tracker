@@ -1,11 +1,18 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from datetime import datetime
 
 
-class Insight(BaseModel):
-    id: Optional[int] = None
-    insights_log_id: int
+class InsightBase(BaseModel):
+    insight_log_id: int
     insight: str
-    created_at: datetime
     category: Optional[str] = None
+
+class InsightCreate(InsightBase):
+    pass
+
+class InsightResponse(InsightBase):
+    id: int
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
