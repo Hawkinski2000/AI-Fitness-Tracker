@@ -1,10 +1,16 @@
 from sqlalchemy.orm import Session
 from app.schemas import insight
 from app.models.models import Insight
+import app.agent.agent as agent
 
 
 def create_insight(insight: insight.InsightCreate, db: Session):
     new_insight = Insight(**insight.model_dump(exclude_unset=True))
+
+    new_insight.insight = agent.generate_insight()
+
+    agent.get_history()
+
     db.add(new_insight)
     db.commit()
     db.refresh(new_insight)

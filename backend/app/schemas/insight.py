@@ -5,7 +5,6 @@ from datetime import datetime
 
 class InsightBase(BaseModel):
     insight_log_id: int
-    insight: str
     category: Optional[str] = None
 
 class InsightCreate(InsightBase):
@@ -13,6 +12,7 @@ class InsightCreate(InsightBase):
 
 class InsightResponse(InsightBase):
     id: int
+    insight: str
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
