@@ -20,25 +20,61 @@ def greet_user(greeting: str):
     print(greeting + "\n")
 
 @function_tool
-def get_meal_logs(user_id: int) -> List[dict]:
+def get_meal_log_summaries(user_id: int, days_back: int, view_micronutrients: bool = False) -> List[dict]:
     """
-    Get a user's meal logs.
+    Retrieve a summary of a user's meal logs for the past "days_back" days.
 
     Args:
-        user_id (int): The user's user_id.
+        user_id (int): The user's ID.
+        days_back (int): Number of days in the past to include in the summary.
+        view_micronutrients (bool, optional): If True, include detailed micronutrient data 
+            in the summaries. Defaults to False.  
+            **Note:** Set this to True only if micronutrient details are important, as 
+            it significantly increases the amount of data returned.
 
     Returns:
-    List[dict]: A list of MealLog objects. Each dictionary contains:
-        - id (int)
-        - user_id (int)
-        - log_date (str, ISO 8601)
-        - total_calories (int | None)
+        List[dict]: A list of meal log summaries, each containing:
+            - meal_log_id (int): The id of the meal log.
+            - date (str): The log date in ISO format (YYYY-MM-DD).
+            - total_calories (float): Total calories consumed on that date.
+            - nutrients (list of dict): Daily nutrient totals, each with:
+                - name (str): Nutrient name.
+                - amount (str): Nutrient amount formatted to 1 decimal place.
+                - unit (str): Unit of measurement for the nutrient.
     """
-    meal_logs = crud.meal_logs.get_meal_logs(db)
-    response_models = [schemas.meal_log.MealLogResponse.model_validate(log) for log in meal_logs]
-    response = [m.model_dump() for m in response_models]
+    meal_log_summaries = crud.meal_logs.get_meal_log_summaries(user_id, days_back, view_micronutrients, db)
 
-    return response
+    return meal_log_summaries
+
+@function_tool
+def get_meal_log_foods(meal_log_ids: List[int], view_nutrients: bool = False):
+    """
+    Retrieve foods for multiple meal logs specified by their IDs.
+
+    Args:
+        meal_log_ids (List[int]): List of meal_log IDs to fetch foods for.
+            These can be accessed with the get_meal_log_summaries tool.
+        view_nutrients (bool, optional): Whether to include nutrient details for each food.
+            Defaults to False.
+
+    Returns:
+        str: JSON string of a list of meal log food entries, each containing:
+            - meal_log_id (int)
+            - food_id (int)
+            - description (str)
+            - meal_type (str)
+            - num_servings (float)
+            - serving_size (float)
+            - serving_unit (str)
+            - calories (int or None)
+            - nutrients (optional list of dict), each dict with:
+                - name (str)
+                - amount (str, formatted to 1 decimal place)
+                - unit (str)
+    """
+    meal_log_foods = crud.meal_log_foods.get_meal_log_foods(meal_log_ids, view_nutrients, db)
+
+    return meal_log_foods
 
 @function_tool
 def get_sleep_logs(user_id: int) -> List[dict]:

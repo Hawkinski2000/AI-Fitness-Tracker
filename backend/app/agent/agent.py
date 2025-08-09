@@ -25,7 +25,8 @@ agent = Agent(
         name="AI fitness tracker assistant",
         instructions="system_prompt",
         tools=[tools.greet_user,
-               tools.get_meal_logs,
+               tools.get_meal_log_summaries,
+               tools.get_meal_log_foods,
                tools.get_sleep_logs]
 )
 
@@ -36,29 +37,39 @@ async def generate_insight_async():
                                  input=user_prompt,
                                  session=agent_memory)
     
-    get_meal_logs_call_id = ""
+    get_meal_log_summaries_call_id = ""
+    get_meal_log_foods_call_id = ""
     get_sleep_logs_call_id = ""
     async for event in result.stream_events():
         if event.type == "run_item_stream_event":
             if event.name == "tool_called":
-                if event.item.raw_item.name == "get_meal_logs":
+                if event.item.raw_item.name == "get_meal_log_summaries":
                     print("Getting meal logs...\n")
-                    get_meal_logs_call_id = event.item.raw_item.call_id
+                    get_meal_log_summaries_call_id = event.item.raw_item.call_id
+
+                elif event.item.raw_item.name == "get_meal_log_foods":
+                    print("Getting meal log foods...\n")
+                    get_meal_log_foods_call_id = event.item.raw_item.call_id
 
                 elif event.item.raw_item.name == "get_sleep_logs":
                     print("Getting sleep logs...\n")
                     get_sleep_logs_call_id = event.item.raw_item.call_id
 
             elif event.name == "tool_output":
-                if get_meal_logs_call_id == event.item.raw_item.get("call_id"):
+                if get_meal_log_summaries_call_id == event.item.raw_item.get("call_id"):
                     print("Found meal logs.\n")
-                    get_meal_logs_call_id = ""
+                    get_meal_log_summaries_call_id = ""
+
+                elif get_meal_log_foods_call_id == event.item.raw_item.get("call_id"):
+                    print("Found meal log foods.\n")
+                    get_meal_log_foods_call_id = ""
 
                 elif get_sleep_logs_call_id == event.item.raw_item.get("call_id"):
                     print("Found sleep logs.\n")
                     get_sleep_logs_call_id = ""
 
     print(result.final_output)
+    
     return result.final_output
 
 def generate_insight():

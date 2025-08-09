@@ -1,8 +1,9 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 from collections import defaultdict
+import json
 from app.schemas import meal_log
-from app.models.models import MealLog, MealLogFood, MealLogNutrient, MealLogFoodNutrient
+from app.models.models import MealLog, MealLogFood, MealLogNutrient, MealLogFoodNutrient, Food
 
 
 def create_meal_log(meal_log: meal_log.MealLogCreate, db: Session):
@@ -76,3 +77,41 @@ def recalculate_meal_log_nutrients(meal_log_id: int, db: Session):
 
     db.add_all(new_meal_log_nutrients)
     db.commit()
+
+# ----------------------------------------------------------------------------
+
+def get_meal_log_summaries(user_id: int, days_back: int, view_micronutrients: bool, db: Session):
+    meal_logs = (
+        db.query(MealLog)
+        .filter(MealLog.user_id == user_id)
+        .filter(MealLog.log_date >= func.current_date() - days_back)
+        .options(
+            joinedload(MealLog.meal_log_nutrients)
+            .joinedload(MealLogNutrient.nutrient)
+        )
+        .all()
+    )
+
+    meal_log_summaries = []
+
+    macronutrients = {"Energy", "Protein", "Total lipid (fat)", "Carbohydrate, by difference"}
+
+    for log in meal_logs:
+        nutrients_list = []
+        for n in log.meal_log_nutrients:
+            if view_micronutrients or n.nutrient.name in macronutrients:
+                nutrients_list.append({
+                    "name": n.nutrient.name,
+                    "amount": f"{n.amount:.1f}",
+                    "unit": n.nutrient.unit_name
+                })
+
+        meal_log_summary = {
+            "meal_log_id": log.id,
+            "date": log.log_date.isoformat(),
+            "nutrients": nutrients_list
+        }
+
+        meal_log_summaries.append(meal_log_summary)
+        
+    return json.dumps(meal_log_summaries)
