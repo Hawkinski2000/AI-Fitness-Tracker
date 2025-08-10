@@ -39,6 +39,7 @@ def get_workout_log_summaries(user_id: int, days_back: int, db: Session):
         db.query(WorkoutLog)
         .filter(WorkoutLog.user_id == user_id)
         .filter(WorkoutLog.log_date >= func.current_date() - days_back)
+        .order_by(WorkoutLog.log_date)
         .all()
     )
 

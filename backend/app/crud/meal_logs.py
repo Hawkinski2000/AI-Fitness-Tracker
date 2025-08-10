@@ -89,6 +89,7 @@ def get_meal_log_summaries(user_id: int, days_back: int, view_micronutrients: bo
             joinedload(MealLog.meal_log_nutrients)
             .joinedload(MealLogNutrient.nutrient)
         )
+        .order_by(MealLog.log_date)
         .all()
     )
 
@@ -113,5 +114,5 @@ def get_meal_log_summaries(user_id: int, days_back: int, view_micronutrients: bo
         }
 
         meal_log_summaries.append(meal_log_summary)
-        
+
     return json.dumps(meal_log_summaries)

@@ -39,6 +39,7 @@ def get_sleep_logs(user_id: int, days_back: int, db: Session):
         db.query(SleepLog)
         .filter(SleepLog.user_id == user_id)
         .filter(SleepLog.log_date >= func.current_date() - days_back)
+        .order_by(SleepLog.log_date)
         .all()
     )
 

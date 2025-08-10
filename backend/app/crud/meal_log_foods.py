@@ -91,6 +91,7 @@ def get_meal_log_foods(meal_log_ids: List[int], view_nutrients: bool, db: Sessio
         .options(
             joinedload(MealLogFood.food)
         )
+        .order_by(MealLogFood.created_at)
     )
     
     if view_nutrients:

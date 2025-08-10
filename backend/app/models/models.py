@@ -198,7 +198,7 @@ class WorkoutLogExercise(Base):
 
     workout_log: Mapped["WorkoutLog"] = relationship("WorkoutLog", back_populates="workout_log_exercises")
     exercise: Mapped["Exercise"] = relationship("Exercise", back_populates="workout_log_exercises")
-    exercise_sets: Mapped[list["ExerciseSet"]] = relationship("ExerciseSet", back_populates="workout_log_exercise", cascade="all, delete-orphan")
+    exercise_sets: Mapped[list["ExerciseSet"]] = relationship("ExerciseSet", order_by="ExerciseSet.created_at", back_populates="workout_log_exercise", cascade="all, delete-orphan")
 
 # ----------------------------------------------------------------------------
 

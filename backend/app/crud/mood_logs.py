@@ -39,6 +39,7 @@ def get_mood_logs(user_id: int, days_back: int, db: Session):
         db.query(MoodLog)
         .filter(MoodLog.user_id == user_id)
         .filter(MoodLog.log_date >= func.current_date() - days_back)
+        .order_by(MoodLog.log_date)
         .all()
     )
 
@@ -51,5 +52,5 @@ def get_mood_logs(user_id: int, days_back: int, db: Session):
         }
 
         results.append(mood_log)
-
+    print(json.dumps(results, indent=2))
     return json.dumps(results)

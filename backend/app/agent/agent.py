@@ -12,9 +12,7 @@ from app.agent.prompts import system_prompt, user_prompt
 
 """
 ==============================================================================
-Todo:
-    - Tool for viewing weight data.
-    
+Todo:    
     - Tools to create visualizations of data.
 
     - Allow the agent to create meals or workouts?

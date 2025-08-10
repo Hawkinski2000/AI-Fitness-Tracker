@@ -39,6 +39,7 @@ def get_weight_logs(user_id: int, days_back: int, db: Session):
         db.query(WeightLog)
         .filter(WeightLog.user_id == user_id)
         .filter(WeightLog.log_date >= func.current_date() - days_back)
+        .order_by(WeightLog.log_date)
         .all()
     )
 
