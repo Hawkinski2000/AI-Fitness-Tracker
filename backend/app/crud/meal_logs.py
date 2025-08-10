@@ -41,7 +41,7 @@ def recalculate_meal_log_calories(meal_log_id: int, db: Session):
               .scalar()
 
     meal_log_query = db.query(MealLog).filter(MealLog.id == meal_log_id)
-    meal_log_query.update({"total_calories":total_calories}, synchronize_session=False)
+    meal_log_query.update({MealLog.total_calories: total_calories}, synchronize_session=False)
     db.commit()
 
 def recalculate_meal_log_nutrients(meal_log_id: int, db: Session):

@@ -110,6 +110,7 @@ def get_meal_log_foods(meal_log_ids: List[int], view_nutrients: bool, db: Sessio
             "num_servings": mlf.num_servings,
             "serving_size": mlf.serving_size,
             "serving_unit": mlf.serving_unit,
+            "created_at": mlf.created_at.isoformat(),
             "calories": mlf.calories,
         }
         

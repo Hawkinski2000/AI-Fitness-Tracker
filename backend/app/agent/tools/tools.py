@@ -36,7 +36,7 @@ def get_meal_log_summaries(user_id: int, days_back: int, view_micronutrients: bo
         List[dict]: A list of meal log summaries, each containing:
             - meal_log_id (int): The id of the meal log.
             - date (str): The log date in ISO format (YYYY-MM-DD).
-            - total_calories (float): Total calories consumed on that date.
+            - total_calories (float | None): Total calories consumed on that date.
             - nutrients (list of dict): Daily nutrient totals, each with:
                 - name (str): Nutrient name.
                 - amount (str): Nutrient amount formatted to 1 decimal place.
@@ -56,16 +56,18 @@ def get_meal_log_foods(meal_log_ids: List[int], view_nutrients: bool = False):
             These can be accessed with the get_meal_log_summaries tool.
         view_nutrients (bool, optional): Whether to include nutrient details for each food.
             Defaults to False.
+            **Note:** Set this to True only if nutrient details are important, as 
+            it significantly increases the amount of data returned.
 
     Returns:
         str: JSON string of a list of meal log food entries, each containing:
             - meal_log_id (int)
-            - food_id (int)
             - description (str)
             - meal_type (str)
             - num_servings (float)
             - serving_size (float)
             - serving_unit (str)
+            - created_at (str, ISO 8601)
             - calories (int or None)
             - nutrients (optional list of dict), each dict with:
                 - name (str)
@@ -90,12 +92,53 @@ def get_workout_log_summaries(user_id: int, days_back: int) -> List[dict]:
             - workout_log_id (int): The id of the meal log.
             - date (str): The log date in ISO format (YYYY-MM-DD).
             - workout_type (str | None): The type of workout (e.g., resistance or cardio).
-            - total_num_sets (int | None): The total number of sets.
+            - total_num_sets (int): The total number of sets.
             - total_calories_burned (int | None): The approximate total calories burned.
     """
     workout_log_summaries = crud.workout_logs.get_workout_log_summaries(user_id, days_back, db)
 
     return workout_log_summaries
+
+@function_tool
+def get_workout_log_exercises(workout_log_ids: List[int], view_sets: bool = False):
+    """
+    Retrieve exercises for multiple workout logs specified by their IDs.
+
+    Args:
+        workout_log_ids (List[int]): List of workout_log IDs to fetch exercises for.
+            These can be accessed with the get_workout_log_summaries tool.
+        view_sets (bool, optional): Whether to include set details for each exercise.
+            Defaults to False.
+            **Note:** Set this to True only if set details are important, as 
+            it significantly increases the amount of data returned.
+
+    Returns:
+        str: JSON string of a list of workout log exercise entries, each containing:
+            - workout_log_id (int)
+            - num_sets (int)
+            - greatest_one_rep_max (float | None): The greatest estimated one-rep-max in all sets.
+            - unit (str | None): The unit (e.g. lbs or kg) associated with the greatest_one_rep_max.
+            - name (str)
+            - description (str | None)
+            - exercise_type (str | None)
+            - body_part (str | None)
+            - equipment (str | None)
+            - level (str | None)
+            - notes (dict | None)
+            - base_unit (str | None)
+            - sets (optional list of dict), each dict with:
+                - created_at (str, ISO 8601)
+                - weight (float | None)
+                - reps (int | None)
+                - unit (str | None)
+                - one_rep_max (float | None): Estimated one-rep-max for the set (uses Epley formula).
+                - rest_after_secs (int | None): The approximate rest duration in seconds after the set.
+                - duration_secs (int | None): The approximate duration in seconds of the set (e.g., cardio).
+                - calories_burned (int | None)
+    """
+    workout_log_exercises = crud.workout_log_exercises.get_workout_log_exercises(workout_log_ids, view_sets, db)
+
+    return workout_log_exercises
 
 @function_tool
 def get_sleep_logs(user_id: int) -> List[dict]:

@@ -49,6 +49,7 @@ agent = Agent(
                tools.get_meal_log_summaries,
                tools.get_meal_log_foods,
                tools.get_workout_log_summaries,
+               tools.get_workout_log_exercises,
                tools.get_sleep_logs]
 )
 
@@ -61,6 +62,8 @@ async def generate_insight_async():
     
     get_meal_log_summaries_call_id = ""
     get_meal_log_foods_call_id = ""
+    get_workout_log_summaries_call_id = ""
+    get_workout_log_exercises_call_id = ""
     get_sleep_logs_call_id = ""
     async for event in result.stream_events():
         if event.type == "run_item_stream_event":
@@ -72,6 +75,14 @@ async def generate_insight_async():
                 elif event.item.raw_item.name == "get_meal_log_foods":
                     print("Getting meal log foods...\n")
                     get_meal_log_foods_call_id = event.item.raw_item.call_id
+
+                elif event.item.raw_item.name == "get_workout_log_summaries":
+                    print("Getting workout logs...\n")
+                    get_workout_log_summaries_call_id = event.item.raw_item.call_id
+
+                elif event.item.raw_item.name == "get_workout_log_exercises":
+                    print("Getting workout log exercises...\n")
+                    get_workout_log_exercises_call_id = event.item.raw_item.call_id
 
                 elif event.item.raw_item.name == "get_sleep_logs":
                     print("Getting sleep logs...\n")
@@ -85,6 +96,14 @@ async def generate_insight_async():
                 elif get_meal_log_foods_call_id == event.item.raw_item.get("call_id"):
                     print("Found meal log foods.\n")
                     get_meal_log_foods_call_id = ""
+
+                elif get_workout_log_summaries_call_id == event.item.raw_item.get("call_id"):
+                    print("Found workout logs.\n")
+                    get_workout_log_summaries_call_id = ""
+                
+                elif get_workout_log_exercises_call_id == event.item.raw_item.get("call_id"):
+                    print("Found workout log exercises.\n")
+                    get_workout_log_exercises_call_id = ""
 
                 elif get_sleep_logs_call_id == event.item.raw_item.get("call_id"):
                     print("Found sleep logs.\n")

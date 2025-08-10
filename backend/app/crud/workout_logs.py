@@ -54,5 +54,5 @@ def get_workout_log_summaries(user_id: int, days_back: int, db: Session):
         }
 
         workout_log_summaries.append(workout_log_summary)
-        
+
     return json.dumps(workout_log_summaries)

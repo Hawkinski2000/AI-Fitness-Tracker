@@ -12,5 +12,7 @@ class WorkoutLogExerciseCreate(WorkoutLogExerciseBase):
 class WorkoutLogExerciseResponse(WorkoutLogExerciseBase):
     id: int
     num_sets: int
+    greatest_one_rep_max: Optional[float] = None
+    unit: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)

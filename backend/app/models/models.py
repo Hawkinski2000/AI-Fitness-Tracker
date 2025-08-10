@@ -8,6 +8,8 @@ from typing import Optional
 """
 ==============================================================================
 Todo:
+    - Update calories in a workout_log when creating a new exercise_set.
+
     - Modify ER diagram to include new/modified tables.
 
     - Add insight_visualization table.
@@ -191,6 +193,8 @@ class WorkoutLogExercise(Base):
     workout_log_id: Mapped[int] = mapped_column(Integer, ForeignKey("workout_log.id", ondelete="CASCADE"), nullable=False)
     exercise_id: Mapped[int] = mapped_column(Integer, ForeignKey("exercise.id"), nullable=False)
     num_sets: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
+    greatest_one_rep_max: Mapped[Optional[float]] = mapped_column(Float)
+    unit: Mapped[Optional[str]] = mapped_column(String)
 
     workout_log: Mapped["WorkoutLog"] = relationship("WorkoutLog", back_populates="workout_log_exercises")
     exercise: Mapped["Exercise"] = relationship("Exercise", back_populates="workout_log_exercises")
