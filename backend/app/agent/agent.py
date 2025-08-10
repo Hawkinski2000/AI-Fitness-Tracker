@@ -50,7 +50,8 @@ agent = Agent(
                tools.get_meal_log_foods,
                tools.get_workout_log_summaries,
                tools.get_workout_log_exercises,
-               tools.get_sleep_logs]
+               tools.get_sleep_logs,
+               tools.get_mood_logs]
 )
 
 agent_memory = MemorySession(session_id="local-session")
@@ -65,6 +66,7 @@ async def generate_insight_async():
     get_workout_log_summaries_call_id = ""
     get_workout_log_exercises_call_id = ""
     get_sleep_logs_call_id = ""
+    get_mood_logs_call_id = ""
     async for event in result.stream_events():
         if event.type == "run_item_stream_event":
             if event.name == "tool_called":
@@ -88,6 +90,10 @@ async def generate_insight_async():
                     print("Getting sleep logs...\n")
                     get_sleep_logs_call_id = event.item.raw_item.call_id
 
+                elif event.item.raw_item.name == "get_mood_logs":
+                    print("Getting mood logs...\n")
+                    get_mood_logs_call_id = event.item.raw_item.call_id
+
             elif event.name == "tool_output":
                 if get_meal_log_summaries_call_id == event.item.raw_item.get("call_id"):
                     print("Found meal logs.\n")
@@ -108,6 +114,10 @@ async def generate_insight_async():
                 elif get_sleep_logs_call_id == event.item.raw_item.get("call_id"):
                     print("Found sleep logs.\n")
                     get_sleep_logs_call_id = ""
+
+                elif get_mood_logs_call_id == event.item.raw_item.get("call_id"):
+                    print("Found mood logs.\n")
+                    get_mood_logs_call_id = ""
 
     print(result.final_output)
     

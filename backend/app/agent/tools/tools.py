@@ -1,6 +1,7 @@
 from agents import function_tool
-from typing import List
 from sqlalchemy.orm import Session
+from typing import List
+from pprint import pprint
 from app.core.db import get_db
 import app.schemas as schemas
 import app.crud as crud
@@ -141,26 +142,41 @@ def get_workout_log_exercises(workout_log_ids: List[int], view_sets: bool = Fals
     return workout_log_exercises
 
 @function_tool
-def get_sleep_logs(user_id: int) -> List[dict]:
+def get_sleep_logs(user_id: int, days_back: int) -> List[dict]:
     """
     Get a user's sleep logs.
 
     Args:
         user_id (int): The user's user_id.
+        days_back (int): Number of days in the past to include.
 
     Returns:
         List[dict]: A list of SleepLog objects. Each dictionary contains:
-            - id (int)
-            - user_id (int)
-            - log_date (str, ISO 8601)
+            - date (str): (str, ISO 8601)
             - time_to_bed (str, ISO 8601)
             - time_awake (str, ISO 8601)
             - duration int: Approximate minutes actually asleep.
             - sleep_score (int | None): Subjective sleep quality score out of 100.
             - notes (dict | None)
     """
-    sleep_logs = crud.sleep_logs.get_sleep_logs(db)
-    response_models = [schemas.sleep_log.SleepLogResponse.model_validate(log) for log in sleep_logs]
-    response = [m.model_dump() for m in response_models]
+    sleep_logs = crud.sleep_logs.get_sleep_logs(user_id, days_back, db)
 
-    return response
+    return sleep_logs
+
+@function_tool
+def get_mood_logs(user_id: int, days_back: int) -> List[dict]:
+    """
+    Get a user's mood logs.
+
+    Args:
+        user_id (int): The user's user_id.
+
+    Returns:
+        List[dict]: A list of MoodLog objects. Each dictionary contains:
+            - date (str, ISO 8601)
+            - mood_score (int | None): Subjective mood quality score out of 10.
+            - notes (dict | None)
+    """
+    mood_logs = crud.mood_logs.get_mood_logs(user_id, days_back, db)
+
+    return mood_logs

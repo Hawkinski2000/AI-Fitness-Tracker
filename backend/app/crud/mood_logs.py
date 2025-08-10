@@ -1,4 +1,6 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import func
+import json
 from app.schemas import mood_log
 from app.models.models import MoodLog
 
@@ -29,3 +31,25 @@ def delete_mood_log(id: int, db: Session):
     mood_log_query = db.query(MoodLog).filter(MoodLog.id == id)
     mood_log_query.delete(synchronize_session=False)
     db.commit()
+
+# ----------------------------------------------------------------------------
+
+def get_mood_logs(user_id: int, days_back: int, db: Session):
+    mood_logs = (
+        db.query(MoodLog)
+        .filter(MoodLog.user_id == user_id)
+        .filter(MoodLog.log_date >= func.current_date() - days_back)
+        .all()
+    )
+
+    results = []
+    for log in mood_logs:
+        mood_log = {
+            "date": log.log_date.isoformat(),
+            "mood_score": log.mood_score,
+            "notes": log.notes
+        }
+
+        results.append(mood_log)
+
+    return json.dumps(results)

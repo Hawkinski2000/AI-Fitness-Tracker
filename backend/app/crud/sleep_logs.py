@@ -1,4 +1,6 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import func
+import json
 from app.schemas import sleep_log
 from app.models.models import SleepLog
 
@@ -29,3 +31,28 @@ def delete_sleep_log(id: int, db: Session):
     sleep_log_query = db.query(SleepLog).filter(SleepLog.id == id)
     sleep_log_query.delete(synchronize_session=False)
     db.commit()
+
+# ----------------------------------------------------------------------------
+
+def get_sleep_logs(user_id: int, days_back: int, db: Session):
+    sleep_logs = (
+        db.query(SleepLog)
+        .filter(SleepLog.user_id == user_id)
+        .filter(SleepLog.log_date >= func.current_date() - days_back)
+        .all()
+    )
+
+    results = []
+    for log in sleep_logs:
+        sleep_log = {
+            "date": log.log_date.isoformat(),
+            "time_to_bed": log.time_to_bed.isoformat(),
+            "time_awake": log.time_awake.isoformat(),
+            "duration": log.duration,
+            "sleep_score": log.sleep_score,
+            "notes": log.notes
+        }
+
+        results.append(sleep_log)
+
+    return json.dumps(results)
