@@ -1,10 +1,16 @@
 from agents import function_tool
 from sqlalchemy.orm import Session
 from typing import List
-from pprint import pprint
 from app.core.db import get_db
-import app.schemas as schemas
-import app.crud as crud
+from app.crud import (
+    meal_logs,
+    meal_log_foods,
+    workout_logs,
+    workout_log_exercises,
+    sleep_logs,
+    mood_logs,
+    weight_logs
+)
 
 
 db_gen = get_db()
@@ -21,7 +27,7 @@ def greet_user(greeting: str):
     print(greeting + "\n")
 
 @function_tool
-def get_meal_log_summaries(user_id: int, days_back: int, view_micronutrients: bool = False) -> List[dict]:
+def get_meal_log_summaries(user_id: int, days_back: int, view_micronutrients: bool = False) -> str:
     """
     Retrieve a summary of a user's meal logs for the past "days_back" days.
 
@@ -34,7 +40,7 @@ def get_meal_log_summaries(user_id: int, days_back: int, view_micronutrients: bo
             it significantly increases the amount of data returned.
 
     Returns:
-        List[dict]: A list of meal log summaries, each containing:
+        str: JSON string of a list of meal log summaries, each containing:
             - meal_log_id (int): The id of the meal log.
             - date (str): The log date in ISO format (YYYY-MM-DD).
             - total_calories (float | None): Total calories consumed on that date.
@@ -43,12 +49,12 @@ def get_meal_log_summaries(user_id: int, days_back: int, view_micronutrients: bo
                 - amount (str): Nutrient amount formatted to 1 decimal place.
                 - unit (str): Unit of measurement for the nutrient.
     """
-    meal_log_summaries = crud.meal_logs.get_meal_log_summaries(user_id, days_back, view_micronutrients, db)
+    meal_log_summaries = meal_logs.get_meal_log_summaries(user_id, days_back, view_micronutrients, db)
 
     return meal_log_summaries
 
 @function_tool
-def get_meal_log_foods(meal_log_ids: List[int], view_nutrients: bool = False):
+def get_meal_log_foods(meal_log_ids: List[int], view_nutrients: bool = False) -> str:
     """
     Retrieve foods for multiple meal logs specified by their IDs.
 
@@ -75,12 +81,12 @@ def get_meal_log_foods(meal_log_ids: List[int], view_nutrients: bool = False):
                 - amount (str, formatted to 1 decimal place)
                 - unit (str)
     """
-    meal_log_foods = crud.meal_log_foods.get_meal_log_foods(meal_log_ids, view_nutrients, db)
+    meal_log_foods_data = meal_log_foods.get_meal_log_foods(meal_log_ids, view_nutrients, db)
 
-    return meal_log_foods
+    return meal_log_foods_data
 
 @function_tool
-def get_workout_log_summaries(user_id: int, days_back: int) -> List[dict]:
+def get_workout_log_summaries(user_id: int, days_back: int) -> str:
     """
     Retrieve a summary of a user's workout logs for the past "days_back" days.
 
@@ -89,19 +95,19 @@ def get_workout_log_summaries(user_id: int, days_back: int) -> List[dict]:
         days_back (int): Number of days in the past to include in the summary.
 
     Returns:
-        List[dict]: A list of workout log summaries, each containing:
+        str: JSON string of a list of workout log summaries, each containing:
             - workout_log_id (int): The id of the meal log.
             - date (str): The log date in ISO format (YYYY-MM-DD).
             - workout_type (str | None): The type of workout (e.g., resistance or cardio).
             - total_num_sets (int): The total number of sets.
             - total_calories_burned (int | None): The approximate total calories burned.
     """
-    workout_log_summaries = crud.workout_logs.get_workout_log_summaries(user_id, days_back, db)
+    workout_log_summaries = workout_logs.get_workout_log_summaries(user_id, days_back, db)
 
     return workout_log_summaries
 
 @function_tool
-def get_workout_log_exercises(workout_log_ids: List[int], view_sets: bool = False):
+def get_workout_log_exercises(workout_log_ids: List[int], view_sets: bool = False) -> str:
     """
     Retrieve exercises for multiple workout logs specified by their IDs.
 
@@ -137,12 +143,12 @@ def get_workout_log_exercises(workout_log_ids: List[int], view_sets: bool = Fals
                 - duration_secs (int | None): The approximate duration in seconds of the set (e.g., cardio).
                 - calories_burned (int | None)
     """
-    workout_log_exercises = crud.workout_log_exercises.get_workout_log_exercises(workout_log_ids, view_sets, db)
+    workout_log_exercises_data = workout_log_exercises.get_workout_log_exercises(workout_log_ids, view_sets, db)
 
-    return workout_log_exercises
+    return workout_log_exercises_data
 
 @function_tool
-def get_sleep_logs(user_id: int, days_back: int) -> List[dict]:
+def get_sleep_logs(user_id: int, days_back: int) -> str:
     """
     Get a user's sleep logs.
 
@@ -151,7 +157,7 @@ def get_sleep_logs(user_id: int, days_back: int) -> List[dict]:
         days_back (int): Number of days in the past to include.
 
     Returns:
-        List[dict]: A list of SleepLog objects. Each dictionary contains:
+        str: JSON string of a list of sleep log entries, each containing:
             - date (str): (str, ISO 8601)
             - time_to_bed (str, ISO 8601)
             - time_awake (str, ISO 8601)
@@ -159,24 +165,44 @@ def get_sleep_logs(user_id: int, days_back: int) -> List[dict]:
             - sleep_score (int | None): Subjective sleep quality score out of 100.
             - notes (dict | None)
     """
-    sleep_logs = crud.sleep_logs.get_sleep_logs(user_id, days_back, db)
+    sleep_logs_data = sleep_logs.get_sleep_logs(user_id, days_back, db)
 
-    return sleep_logs
+    return sleep_logs_data
 
 @function_tool
-def get_mood_logs(user_id: int, days_back: int) -> List[dict]:
+def get_mood_logs(user_id: int, days_back: int) -> str:
     """
     Get a user's mood logs.
 
     Args:
         user_id (int): The user's user_id.
+        days_back (int): Number of days in the past to include.
 
     Returns:
-        List[dict]: A list of MoodLog objects. Each dictionary contains:
+        str: JSON string of a list of mood log entries, each containing:
             - date (str, ISO 8601)
             - mood_score (int | None): Subjective mood quality score out of 10.
             - notes (dict | None)
     """
-    mood_logs = crud.mood_logs.get_mood_logs(user_id, days_back, db)
+    mood_logs_data = mood_logs.get_mood_logs(user_id, days_back, db)
 
-    return mood_logs
+    return mood_logs_data
+
+@function_tool
+def get_weight_logs(user_id: int, days_back: int) -> str:
+    """
+    Get a user's bodyweight logs.
+
+    Args:
+        user_id (int): The user's user_id.
+        days_back (int): Number of days in the past to include.
+
+    Returns:
+        str: JSON string of a list of weight log entries, each containing:
+            - date (str, ISO 8601)
+            - weight (float)
+            - unit (str)
+    """
+    weight_logs_data = weight_logs.get_weight_logs(user_id, days_back, db)
+
+    return weight_logs_data

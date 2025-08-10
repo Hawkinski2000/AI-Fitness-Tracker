@@ -1,4 +1,6 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import func
+import json
 from app.schemas import weight_log
 from app.models.models import WeightLog
 
@@ -29,3 +31,25 @@ def delete_weight_log(id: int, db: Session):
     weight_log_query = db.query(WeightLog).filter(WeightLog.id == id)
     weight_log_query.delete(synchronize_session=False)
     db.commit()
+
+# ----------------------------------------------------------------------------
+
+def get_weight_logs(user_id: int, days_back: int, db: Session):
+    weight_logs = (
+        db.query(WeightLog)
+        .filter(WeightLog.user_id == user_id)
+        .filter(WeightLog.log_date >= func.current_date() - days_back)
+        .all()
+    )
+
+    results = []
+    for log in weight_logs:
+        weight_log = {
+            "date": log.log_date.isoformat(),
+            "weight": log.weight,
+            "unit": log.unit
+        }
+
+        results.append(weight_log)
+
+    return json.dumps(results)
