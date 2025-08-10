@@ -10,6 +10,27 @@ from app.agent.tools import tools
 from app.agent.prompts import system_prompt, user_prompt
 
 
+"""
+==============================================================================
+Todo:
+    - Tools for viewing exercise data.
+    
+    - Tool for viewing mood data.
+
+    - Tool for viewing weight data.
+    
+    - Tools to create visualizations of data.
+
+    - Allow the agent to create meals or workouts?
+    
+    - Allow the agent to set reminders? Possibly through emails/texts?
+
+    - Store memory in the database instead of RAM.
+
+==============================================================================
+"""
+
+
 custom_client = AsyncOpenAI(api_key=settings.openai_api_key)
 set_default_openai_client(custom_client)
 
@@ -27,6 +48,7 @@ agent = Agent(
         tools=[tools.greet_user,
                tools.get_meal_log_summaries,
                tools.get_meal_log_foods,
+               tools.get_workout_log_summaries,
                tools.get_sleep_logs]
 )
 

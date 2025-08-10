@@ -77,6 +77,27 @@ def get_meal_log_foods(meal_log_ids: List[int], view_nutrients: bool = False):
     return meal_log_foods
 
 @function_tool
+def get_workout_log_summaries(user_id: int, days_back: int) -> List[dict]:
+    """
+    Retrieve a summary of a user's workout logs for the past "days_back" days.
+
+    Args:
+        user_id (int): The user's ID.
+        days_back (int): Number of days in the past to include in the summary.
+
+    Returns:
+        List[dict]: A list of workout log summaries, each containing:
+            - workout_log_id (int): The id of the meal log.
+            - date (str): The log date in ISO format (YYYY-MM-DD).
+            - workout_type (str | None): The type of workout (e.g., resistance or cardio).
+            - total_num_sets (int | None): The total number of sets.
+            - total_calories_burned (int | None): The approximate total calories burned.
+    """
+    workout_log_summaries = crud.workout_logs.get_workout_log_summaries(user_id, days_back, db)
+
+    return workout_log_summaries
+
+@function_tool
 def get_sleep_logs(user_id: int) -> List[dict]:
     """
     Get a user's sleep logs.
