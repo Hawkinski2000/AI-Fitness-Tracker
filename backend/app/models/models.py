@@ -44,6 +44,7 @@ class User(Base):
     exercises: Mapped[list["Exercise"]] = relationship("Exercise", back_populates="user", cascade="all, delete-orphan")
     sleep_logs: Mapped[list["SleepLog"]] = relationship("SleepLog", back_populates="user", cascade="all, delete-orphan")
     mood_logs: Mapped[list["MoodLog"]] = relationship("MoodLog", back_populates="user", cascade="all, delete-orphan")
+    chats: Mapped[list["Chat"]] = relationship("Chat", back_populates="user", cascade="all, delete-orphan")
     insight_logs: Mapped[list["InsightLog"]] = relationship("InsightLog", back_populates="user", cascade="all, delete-orphan")
     weight_logs: Mapped[list["WeightLog"]] = relationship("WeightLog", back_populates="user", cascade="all, delete-orphan")
     # meal_log_stats: Mapped[list["MealLogStats"]] = relationship("MealLogStats", back_populates="user", cascade="all, delete-orphan")
@@ -266,6 +267,19 @@ class MoodLog(Base):
     notes: Mapped[Optional[dict]] = mapped_column(JSONB)
 
     user: Mapped["User"] = relationship("User", back_populates="mood_logs")
+
+# ----------------------------------------------------------------------------
+
+class Chat(Base):
+    __tablename__ = "chat"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
+    title: Mapped[Optional[str]] = mapped_column(String)
+
+    user: Mapped["User"] = relationship("User", back_populates="chats")
+    # messages: Mapped[list["Message"]] = relationship("Message", back_populates="chat", cascade="all, delete-orphan")
 
 # ----------------------------------------------------------------------------
 
