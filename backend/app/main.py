@@ -19,6 +19,7 @@ from .api.v1.endpoints import (
     sleep_logs,
     mood_logs,
     chats,
+    messages,
     insight_logs,
     insights,
     weight_logs,
@@ -124,6 +125,7 @@ app.include_router(sleep_logs.router)
 app.include_router(mood_logs.router)
 
 app.include_router(chats.router)
+app.include_router(messages.router)
 
 app.include_router(insight_logs.router)
 app.include_router(insights.router)

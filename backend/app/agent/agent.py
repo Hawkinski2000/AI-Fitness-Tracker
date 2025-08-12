@@ -12,14 +12,22 @@ from app.agent.prompts import system_prompt, user_prompt
 
 """
 ==============================================================================
-Todo:    
+Todo:
+    - Have agent generate a chat title based on the first message.
+
+    - Fix update_message() for editing previous user messages.
+
+    - Fix delete_message() so any related messages are deleted as well (e.g., 
+      reasoning, tool calls, etc.).
+
+    - Summarize older message groups to still keep some relevant context in
+      the sliding window?
+
     - Tools to create visualizations of data.
 
     - Allow the agent to create meals or workouts?
     
     - Allow the agent to set reminders? Possibly through emails/texts?
-
-    - Store memory in the database instead of RAM.
 
 ==============================================================================
 """
@@ -32,13 +40,12 @@ db_gen = get_db()
 db: Session = next(db_gen)
 
 user = crud.users.get_user(2, db)
-system_prompt = system_prompt.get_system_prompt(user)
-user_prompt = user_prompt.get_user_prompt(user)
+instructions = system_prompt.get_system_prompt(user)
 
 agent = Agent(
         model="gpt-5",
         name="AI fitness tracker assistant",
-        instructions="system_prompt",
+        instructions=instructions,
         tools=[tools.greet_user,
                tools.get_meal_log_summaries,
                tools.get_meal_log_foods,
@@ -51,7 +58,11 @@ agent = Agent(
 
 agent_memory = MemorySession(session_id="local-session")
 
-async def generate_insight_async():
+async def generate_insight_async(chat_id: int, user_prompt: str):
+    old_messages = await crud.messages.load_messages(chat_id, db)
+    await agent_memory.clear_session()
+    await agent_memory.add_old_items(old_messages)
+
     result = Runner.run_streamed(agent,
                                  input=user_prompt,
                                  session=agent_memory)
@@ -124,17 +135,23 @@ async def generate_insight_async():
                     get_weight_logs_call_id = ""
 
     print(result.final_output)
-    
-    return result.final_output
 
-def generate_insight():
-    return asyncio.run(generate_insight_async())
+    new_messages = await agent_memory.get_new_items()
+    await agent_memory.clear_session()
+
+    return new_messages
+
+def generate_insight(chat_id: int, user_message: str = None):
+    print(f"User message: {user_message}\n")
+    prompt = user_prompt.get_user_prompt(user, user_message)
+    return asyncio.run(generate_insight_async(chat_id, prompt))
 
 async def get_history_async():
     return await agent_memory.get_items()
 
 def get_history():
     history = asyncio.run(get_history_async())
+    print("history: " + len(history))
     for i, item in enumerate(history):
         print(f"\nMessage {i+1}:")
         print(item)

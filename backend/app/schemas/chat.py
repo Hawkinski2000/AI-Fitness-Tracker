@@ -5,6 +5,7 @@ from datetime import datetime
 
 class ChatBase(BaseModel):
     user_id: int
+    title: Optional[str] = None
 
 class ChatCreate(ChatBase):
     pass
@@ -12,6 +13,5 @@ class ChatCreate(ChatBase):
 class ChatResponse(ChatBase):
     id: int
     created_at: datetime
-    title: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)

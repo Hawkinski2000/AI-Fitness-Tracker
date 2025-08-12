@@ -279,7 +279,22 @@ class Chat(Base):
     title: Mapped[Optional[str]] = mapped_column(String)
 
     user: Mapped["User"] = relationship("User", back_populates="chats")
-    # messages: Mapped[list["Message"]] = relationship("Message", back_populates="chat", cascade="all, delete-orphan")
+    messages: Mapped[list["Message"]] = relationship("Message", back_populates="chat", cascade="all, delete-orphan")
+
+# ----------------------------------------------------------------------------
+
+class Message(Base):
+    __tablename__ = "message"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    chat_id: Mapped[int] = mapped_column(Integer, ForeignKey("chat.id"), nullable=False)
+    interaction_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    message: Mapped[dict] = mapped_column(JSONB, nullable=False)
+    role: Mapped[str] = mapped_column(String, nullable=False)
+    type: Mapped[Optional[str]] = mapped_column(String)
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
+
+    chat: Mapped["Chat"] = relationship("Chat", back_populates="messages")
 
 # ----------------------------------------------------------------------------
 
