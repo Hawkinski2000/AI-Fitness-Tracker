@@ -3,13 +3,20 @@ from sqlalchemy import func
 from app.schemas import message
 from app.models.models import Message
 import app.agent.agent as agent
+from app.agent.memory import MemorySession
 
 
-def create_message(message: message.MessageCreate, db: Session):
+async def create_message(message: message.MessageCreate, db: Session):
+    agent_memory = MemorySession(session_id="user_id")
+    old_messages = await load_messages(message.chat_id, db)
+    await agent_memory.add_old_items(old_messages)
+
+    new_messages = await agent.generate_insight(agent_memory=agent_memory, user_message=message.content)
+
+    # await agent.print_history(agent_memory)
+
     max_interaction_id = db.query(func.max(Message.interaction_id)).filter(Message.chat_id == message.chat_id).scalar()
     new_interaction_id = (max_interaction_id or 0) + 1
-
-    new_messages = agent.generate_insight(chat_id=message.chat_id, user_message=message.content)
 
     saved_messages = []
     for msg in new_messages:
@@ -22,7 +29,6 @@ def create_message(message: message.MessageCreate, db: Session):
         )
         db.add(new_msg)
         saved_messages.append(new_msg)
-
     db.commit()
     
     for m in saved_messages:

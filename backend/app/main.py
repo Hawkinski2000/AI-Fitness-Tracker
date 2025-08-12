@@ -37,12 +37,6 @@ from .api.v1.endpoints import (
 Todo:
     - When creating a food, a food_nutrient should be created for it.
 
-    - Split Pydantic schemas into separate models for each type of operation
-        (e.g., create, read, update, delete) as needed by different routes.
-
-    - Start crud.py functions for interacting with the database in FastAPI
-        endpoint functions.
-
     - Add exceptions to crud functions.
 
     - Add PATCH routes for partial updates?

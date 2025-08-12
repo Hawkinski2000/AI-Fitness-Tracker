@@ -56,15 +56,12 @@ agent = Agent(
                tools.get_weight_logs]
 )
 
-agent_memory = MemorySession(session_id="local-session")
-
-async def generate_insight_async(chat_id: int, user_prompt: str):
-    old_messages = await crud.messages.load_messages(chat_id, db)
-    await agent_memory.clear_session()
-    await agent_memory.add_old_items(old_messages)
+async def generate_insight(agent_memory: MemorySession, user_message: str):
+    print(f"User message: {user_message}\n")
+    prompt = user_prompt.get_user_prompt(user, user_message)
 
     result = Runner.run_streamed(agent,
-                                 input=user_prompt,
+                                 input=prompt,
                                  session=agent_memory)
     
     get_meal_log_summaries_call_id = ""
@@ -137,21 +134,12 @@ async def generate_insight_async(chat_id: int, user_prompt: str):
     print(result.final_output)
 
     new_messages = await agent_memory.get_new_items()
-    await agent_memory.clear_session()
 
     return new_messages
 
-def generate_insight(chat_id: int, user_message: str = None):
-    print(f"User message: {user_message}\n")
-    prompt = user_prompt.get_user_prompt(user, user_message)
-    return asyncio.run(generate_insight_async(chat_id, prompt))
-
-async def get_history_async():
-    return await agent_memory.get_items()
-
-def get_history():
-    history = asyncio.run(get_history_async())
-    print("history: " + len(history))
+async def print_history(agent_memory: MemorySession):
+    history = await agent_memory.get_items()
+    print(f"\nhistory: {len(history)}")
     for i, item in enumerate(history):
         print(f"\nMessage {i+1}:")
         print(item)

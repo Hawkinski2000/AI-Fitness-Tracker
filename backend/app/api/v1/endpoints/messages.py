@@ -10,8 +10,8 @@ router = APIRouter(prefix="/messages",
 
 # Create a message
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=list[message.MessageResponse])
-def create_message(message: message.MessageCreate, db: Session = Depends(get_db)):
-    new_messages = crud_messages.create_message(message, db)
+async def create_message(message: message.MessageCreate, db: Session = Depends(get_db)):
+    new_messages = await crud_messages.create_message(message, db)
     return new_messages
 
 # Get all messages
