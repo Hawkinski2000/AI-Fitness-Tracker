@@ -7,7 +7,7 @@ import app.crud as crud
 from app.core.config import settings
 from app.agent.memory import MemorySession
 from app.agent.tools import tools
-from app.agent.prompts import system_prompt, user_prompt
+from app.agent.prompts import system_prompt
 
 
 """
@@ -43,7 +43,7 @@ user = crud.users.get_user(2, db)
 instructions = system_prompt.get_system_prompt(user)
 
 agent = Agent(
-        model="gpt-5",
+        model="gpt-5-mini",
         name="AI fitness tracker assistant",
         instructions=instructions,
         tools=[tools.greet_user,
@@ -56,10 +56,7 @@ agent = Agent(
                tools.get_weight_logs]
 )
 
-async def generate_insight(agent_memory: MemorySession, user_message: str):
-    print(f"User message: {user_message}\n")
-    prompt = user_prompt.get_user_prompt(user, user_message)
-
+async def generate_insight(agent_memory: MemorySession, prompt: str):
     result = Runner.run_streamed(agent,
                                  input=prompt,
                                  session=agent_memory)
@@ -131,11 +128,7 @@ async def generate_insight(agent_memory: MemorySession, user_message: str):
                     print("Found weight logs.\n")
                     get_weight_logs_call_id = ""
 
-    print(result.final_output)
-
-    new_messages = await agent_memory.get_new_items()
-
-    return new_messages
+    return result.final_output
 
 async def print_history(agent_memory: MemorySession):
     history = await agent_memory.get_items()

@@ -1,5 +1,6 @@
 from agents import function_tool
 from sqlalchemy.orm import Session
+import tiktoken
 from typing import List
 from app.core.db import get_db
 from app.crud import (
@@ -16,6 +17,8 @@ from app.crud import (
 db_gen = get_db()
 db: Session = next(db_gen)
 
+encoding = tiktoken.get_encoding("cl100k_base")
+
 @function_tool
 def greet_user(greeting: str):
     """
@@ -26,6 +29,9 @@ def greet_user(greeting: str):
     """
     print(greeting + "\n")
 
+    tokens = encoding.encode(greeting)
+    print(f"greeting has {len(tokens)} tokens.")
+
 @function_tool
 def get_meal_log_summaries(user_id: int, days_back: int, view_micronutrients: bool = False) -> str:
     """
@@ -33,7 +39,7 @@ def get_meal_log_summaries(user_id: int, days_back: int, view_micronutrients: bo
 
     Args:
         user_id (int): The user's ID.
-        days_back (int): Number of days in the past to include in the summary.
+        days_back (int): Number of days in the past to include in the summary. Do not exceed 7 days.
         view_micronutrients (bool, optional): If True, include detailed micronutrient data 
             in the summaries. Defaults to False.  
             **Note:** Set this to True only if micronutrient details are important, as 
@@ -49,22 +55,23 @@ def get_meal_log_summaries(user_id: int, days_back: int, view_micronutrients: bo
                 - amount (str): Nutrient amount formatted to 1 decimal place.
                 - unit (str): Unit of measurement for the nutrient.
     """
+    days_back = min(days_back, 7)
+
     meal_log_summaries = meal_logs.get_meal_log_summaries(user_id, days_back, view_micronutrients, db)
+
+    tokens = encoding.encode(meal_log_summaries)
+    print(f"meal_log_summaries has {len(tokens)} tokens.")
 
     return meal_log_summaries
 
 @function_tool
-def get_meal_log_foods(meal_log_ids: List[int], view_nutrients: bool = False) -> str:
+def get_meal_log_foods(meal_log_ids: List[int]) -> str:
     """
     Retrieve foods for multiple meal logs specified by their IDs.
 
     Args:
         meal_log_ids (List[int]): List of meal_log IDs to fetch foods for.
             These can be accessed with the get_meal_log_summaries tool.
-        view_nutrients (bool, optional): Whether to include nutrient details for each food.
-            Defaults to False.
-            **Note:** Set this to True only if nutrient details are important, as 
-            it significantly increases the amount of data returned.
 
     Returns:
         str: JSON string of a list of meal log food entries, each containing:
@@ -76,12 +83,13 @@ def get_meal_log_foods(meal_log_ids: List[int], view_nutrients: bool = False) ->
             - serving_unit (str)
             - created_at (str, ISO 8601)
             - calories (int or None)
-            - nutrients (optional list of dict), each dict with:
-                - name (str)
-                - amount (str, formatted to 1 decimal place)
-                - unit (str)
     """
+    view_nutrients = False
+
     meal_log_foods_data = meal_log_foods.get_meal_log_foods(meal_log_ids, view_nutrients, db)
+
+    tokens = encoding.encode(meal_log_foods_data)
+    print(f"meal_log_foods_data has {len(tokens)} tokens.")
 
     return meal_log_foods_data
 
@@ -92,7 +100,7 @@ def get_workout_log_summaries(user_id: int, days_back: int) -> str:
 
     Args:
         user_id (int): The user's ID.
-        days_back (int): Number of days in the past to include in the summary.
+        days_back (int): Number of days in the past to include in the summary. Do not exceed 7 days.
 
     Returns:
         str: JSON string of a list of workout log summaries, each containing:
@@ -102,7 +110,12 @@ def get_workout_log_summaries(user_id: int, days_back: int) -> str:
             - total_num_sets (int): The total number of sets.
             - total_calories_burned (int | None): The approximate total calories burned.
     """
+    days_back = min(days_back, 7)
+
     workout_log_summaries = workout_logs.get_workout_log_summaries(user_id, days_back, db)
+
+    tokens = encoding.encode(workout_log_summaries)
+    print(f"workout_log_summaries has {len(tokens)} tokens.")
 
     return workout_log_summaries
 
@@ -145,6 +158,9 @@ def get_workout_log_exercises(workout_log_ids: List[int], view_sets: bool = Fals
     """
     workout_log_exercises_data = workout_log_exercises.get_workout_log_exercises(workout_log_ids, view_sets, db)
 
+    tokens = encoding.encode(workout_log_exercises_data)
+    print(f"workout_log_exercises_data has {len(tokens)} tokens.")    
+
     return workout_log_exercises_data
 
 @function_tool
@@ -154,7 +170,7 @@ def get_sleep_logs(user_id: int, days_back: int) -> str:
 
     Args:
         user_id (int): The user's user_id.
-        days_back (int): Number of days in the past to include.
+        days_back (int): Number of days in the past to include. Do not exceed 7 days.
 
     Returns:
         str: JSON string of a list of sleep log entries, each containing:
@@ -165,7 +181,12 @@ def get_sleep_logs(user_id: int, days_back: int) -> str:
             - sleep_score (int | None): Subjective sleep quality score out of 100.
             - notes (dict | None)
     """
+    days_back = min(days_back, 7)
+
     sleep_logs_data = sleep_logs.get_sleep_logs(user_id, days_back, db)
+
+    tokens = encoding.encode(sleep_logs_data)
+    print(f"sleep_logs_data has {len(tokens)} tokens.")
 
     return sleep_logs_data
 
@@ -176,7 +197,7 @@ def get_mood_logs(user_id: int, days_back: int) -> str:
 
     Args:
         user_id (int): The user's user_id.
-        days_back (int): Number of days in the past to include.
+        days_back (int): Number of days in the past to include. Do not exceed 7 days.
 
     Returns:
         str: JSON string of a list of mood log entries, each containing:
@@ -184,7 +205,12 @@ def get_mood_logs(user_id: int, days_back: int) -> str:
             - mood_score (int | None): Subjective mood quality score out of 10.
             - notes (dict | None)
     """
+    days_back = min(days_back, 7)
+
     mood_logs_data = mood_logs.get_mood_logs(user_id, days_back, db)
+
+    tokens = encoding.encode(mood_logs_data)
+    print(f"mood_logs_data has {len(tokens)} tokens.")
 
     return mood_logs_data
 
@@ -195,7 +221,7 @@ def get_weight_logs(user_id: int, days_back: int) -> str:
 
     Args:
         user_id (int): The user's user_id.
-        days_back (int): Number of days in the past to include.
+        days_back (int): Number of days in the past to include. Do not exceed 7 days.
 
     Returns:
         str: JSON string of a list of weight log entries, each containing:
@@ -203,6 +229,11 @@ def get_weight_logs(user_id: int, days_back: int) -> str:
             - weight (float)
             - unit (str)
     """
+    days_back = min(days_back, 7)
+
     weight_logs_data = weight_logs.get_weight_logs(user_id, days_back, db)
+
+    tokens = encoding.encode(weight_logs_data)
+    print(f"weight_logs_data has {len(tokens)} tokens.")
 
     return weight_logs_data
