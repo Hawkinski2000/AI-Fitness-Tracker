@@ -3,6 +3,7 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import JSONB
 from datetime import datetime, date
 from typing import Optional
+from app.core.constants import MAX_INPUT_TOKENS, MAX_OUTPUT_TOKENS
 
 
 """
@@ -37,6 +38,9 @@ class User(Base):
     goal: Mapped[str] = mapped_column(String, nullable=False)
     streak: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
+    input_tokens_remaining: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text(str(MAX_INPUT_TOKENS)))
+    output_tokens_remaining: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text(str(MAX_OUTPUT_TOKENS)))
+    last_token_reset:  Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
 
     meal_logs: Mapped[list["MealLog"]] = relationship("MealLog", back_populates="user", cascade="all, delete-orphan")
     foods: Mapped[list["Food"]] = relationship("Food", back_populates="user", cascade="all, delete-orphan")

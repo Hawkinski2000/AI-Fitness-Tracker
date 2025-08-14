@@ -2,24 +2,36 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 import tiktoken
 import json
+from datetime import datetime, timezone, timedelta
 from fastapi import HTTPException
 from app.schemas import message
-from app.models.models import Message
-import app.crud as crud
+from app.models.models import Message, Chat
 import app.agent.agent as agent
 from app.agent.memory import MemorySession
 from app.agent.prompts import user_prompt
+from app.core.constants import (
+    MAX_INPUT_TOKENS,
+    MAX_OUTPUT_TOKENS,
+    MAX_OLD_MESSAGES,
+    MAX_HISTORY_TOKENS,
+    MAX_USER_MESSAGE_TOKENS
+)
 
 
-MAX_USER_MESSAGE_TOKENS = 50
-INPUT_TOKENS_REMAINING = 20000
-OUTPUT_TOKENS_REMAINING = 2500
+encoding = tiktoken.get_encoding("cl100k_base")
 
 async def create_message(message: message.MessageCreate, db: Session):
-    global INPUT_TOKENS_REMAINING
-    global OUTPUT_TOKENS_REMAINING
+    chat = db.query(Chat).filter(Chat.id == message.chat_id).first()
+    user = chat.user
 
-    if INPUT_TOKENS_REMAINING <= 0 or OUTPUT_TOKENS_REMAINING <= 0:
+    now_utc = datetime.now(timezone.utc)
+    if now_utc - user.last_token_reset >= timedelta(hours=24):
+        user.input_tokens_remaining = MAX_INPUT_TOKENS
+        user.output_tokens_remaining = MAX_OUTPUT_TOKENS
+        user.last_token_reset = now_utc
+        db.commit()
+
+    if user.input_tokens_remaining <= 0 or user.output_tokens_remaining <= 0:
         raise HTTPException(
             status_code=400,
             detail=f"You have no remaining tokens for today."
@@ -27,17 +39,13 @@ async def create_message(message: message.MessageCreate, db: Session):
 
     user_message = message.content
     print(f"User message: {user_message}\n")
-    encoding = tiktoken.get_encoding("cl100k_base")
     user_message_tokens = encoding.encode(user_message)
     user_message_tokens_count = len(user_message_tokens)
-    print(f"Your message has {user_message_tokens_count} tokens.")
     if user_message_tokens_count > MAX_USER_MESSAGE_TOKENS:
         raise HTTPException(
             status_code=400,
             detail=f"Your message is too long ({user_message_tokens_count} tokens). Limit is {MAX_USER_MESSAGE_TOKENS} tokens."
         )
-    INPUT_TOKENS_REMAINING -= user_message_tokens_count
-    print(f"You have {INPUT_TOKENS_REMAINING} input tokens remaining.")
 
     agent_memory = MemorySession(session_id="user_id")
     old_messages = await load_messages(message.chat_id, db)
@@ -48,33 +56,34 @@ async def create_message(message: message.MessageCreate, db: Session):
         old_message_str = json.dumps(old_message, separators=(",", ":"))
         old_message_tokens = encoding.encode(old_message_str)
         old_messages_token_count += len(old_message_tokens)
-    print(f"old_messages has {old_messages_token_count} tokens.")
-    INPUT_TOKENS_REMAINING -= old_messages_token_count
-    print(f"You have {INPUT_TOKENS_REMAINING} input tokens remaining.")
+    print(f"old_messages has {old_messages_token_count} tokens.\n")
 
     await agent_memory.add_old_items(old_messages)
 
-    user = crud.users.get_user(2, db)
     prompt = user_prompt.get_user_prompt(user, user_message)
 
-    final_output = await agent.generate_insight(agent_memory=agent_memory, prompt=prompt)
+    result = await agent.generate_insight(agent_memory=agent_memory, prompt=prompt)
+
+    final_output = result.final_output
     print(final_output)
     final_output_tokens = encoding.encode(final_output)
     final_output_tokens_count = len(final_output_tokens)
-    print(f"final_output has {len(final_output_tokens)} tokens.")
-    OUTPUT_TOKENS_REMAINING -= final_output_tokens_count
-    print(f"You have {OUTPUT_TOKENS_REMAINING} output tokens remaining.")
+    print(f"\nfinal_output has {final_output_tokens_count} tokens.")
 
-    new_messages = await agent_memory.get_new_items()
-
-    new_messages_token_count = 0
-    for new_message in new_messages:
-        new_message_str = json.dumps(new_message, separators=(",", ":"))
-        new_message_tokens = encoding.encode(new_message_str)
-        new_messages_token_count += len(new_message_tokens)
-    print(f"new_messages has {new_messages_token_count} tokens.")
+    usage = result.context_wrapper.usage
+    input_tokens_count = usage.input_tokens
+    output_tokens_count = usage.output_tokens
+    print(f"\nInput tokens used: {input_tokens_count}")
+    print(f"Output tokens used: {output_tokens_count}")
+    user.input_tokens_remaining -= input_tokens_count
+    user.output_tokens_remaining -= output_tokens_count
+    db.commit()
+    total_tokens_remaining = min(user.input_tokens_remaining, user.output_tokens_remaining)
+    print(f"\nYou have {total_tokens_remaining} tokens remaining.")
 
     # await agent.print_history(agent_memory)
+
+    new_messages = await agent_memory.get_new_items()
 
     max_interaction_id = db.query(func.max(Message.interaction_id)).filter(Message.chat_id == message.chat_id).scalar()
     new_interaction_id = (max_interaction_id or 0) + 1
@@ -119,7 +128,7 @@ def delete_message(interaction_id: int, db: Session):
 
 # ----------------------------------------------------------------------------
 
-async def load_messages(chat_id: int, db: Session, limit: int = 20):
+async def load_messages(chat_id: int, db: Session, limit: int = MAX_OLD_MESSAGES):
     # Get interaction groups for this chat, ordered newest first by interaction_id
     interaction_groups = (
         db.query(Message.interaction_id)
@@ -138,13 +147,24 @@ async def load_messages(chat_id: int, db: Session, limit: int = 20):
 
     # Add interactions from newest to oldest until limit is reached or exceeded
     for interaction_id in interaction_ids:
-        count = db.query(func.count(Message.id)).filter(
+        result = db.query(
+            func.count(Message.id).label("count"),
+            func.array_agg(Message.message).label("messages")
+        ).filter(
             Message.chat_id == chat_id,
             Message.interaction_id == interaction_id
-        ).scalar()
+        ).first()
+
+        count = result.count
+        messages = result.messages
+
+        for message in messages:
+            message_str = json.dumps(message, separators=(",", ":"))
+            message_tokens = encoding.encode(message_str)
+            token_count += len(message_tokens)
 
         # Stop before breaking interaction group
-        if total_messages + count > limit:
+        if total_messages + count > limit or token_count > MAX_HISTORY_TOKENS:
             break
 
         selected_interactions.append(interaction_id)

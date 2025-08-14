@@ -1,9 +1,5 @@
-import asyncio
 from openai import AsyncOpenAI
 from agents import Agent, Runner, set_default_openai_client
-from sqlalchemy.orm import Session
-from app.core.db import get_db
-import app.crud as crud
 from app.core.config import settings
 from app.agent.memory import MemorySession
 from app.agent.tools import tools
@@ -13,6 +9,9 @@ from app.agent.prompts import system_prompt
 """
 ==============================================================================
 Todo:
+    - Keep or remove the view_nutrients parameter in the get_meal_log_foods()
+      tool?
+
     - Have agent generate a chat title based on the first message.
 
     - Fix update_message() for editing previous user messages.
@@ -32,15 +31,10 @@ Todo:
 ==============================================================================
 """
 
-
 custom_client = AsyncOpenAI(api_key=settings.openai_api_key)
 set_default_openai_client(custom_client)
 
-db_gen = get_db()
-db: Session = next(db_gen)
-
-user = crud.users.get_user(2, db)
-instructions = system_prompt.get_system_prompt(user)
+instructions = system_prompt.get_system_prompt()
 
 agent = Agent(
         model="gpt-5-mini",
@@ -57,7 +51,7 @@ agent = Agent(
 )
 
 async def generate_insight(agent_memory: MemorySession, prompt: str):
-    result = Runner.run_streamed(agent,
+    result = Runner.run_streamed(starting_agent=agent,
                                  input=prompt,
                                  session=agent_memory)
     
@@ -128,7 +122,7 @@ async def generate_insight(agent_memory: MemorySession, prompt: str):
                     print("Found weight logs.\n")
                     get_weight_logs_call_id = ""
 
-    return result.final_output
+    return result
 
 async def print_history(agent_memory: MemorySession):
     history = await agent_memory.get_items()
