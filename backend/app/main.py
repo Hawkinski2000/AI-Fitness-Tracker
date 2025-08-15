@@ -35,6 +35,8 @@ from .api.v1.endpoints import (
 """
 ==============================================================================
 Todo:
+    - Authentication.
+
     - When creating a food, a food_nutrient should be created for it.
 
     - Add exceptions to crud functions.

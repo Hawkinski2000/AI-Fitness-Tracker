@@ -46,8 +46,10 @@ async def create_message(message: message.MessageCreate, db: Session):
             status_code=400,
             detail=f"Your message is too long ({user_message_tokens_count} tokens). Limit is {MAX_USER_MESSAGE_TOKENS} tokens."
         )
+    
+    prompt = user_prompt.get_user_prompt(user, user_message)
 
-    agent_memory = MemorySession(session_id="user_id")
+    agent_memory = MemorySession(session_id=user.id, user_id=user.id)
     old_messages = await load_messages(message.chat_id, db)
     print(f"old_messages has {len(old_messages)} messages.")
 
@@ -60,9 +62,7 @@ async def create_message(message: message.MessageCreate, db: Session):
 
     await agent_memory.add_old_items(old_messages)
 
-    prompt = user_prompt.get_user_prompt(user, user_message)
-
-    result = await agent.generate_insight(agent_memory=agent_memory, prompt=prompt)
+    result = await agent.generate_insight(prompt=prompt, agent_memory=agent_memory)
 
     final_output = result.final_output
     print(final_output)

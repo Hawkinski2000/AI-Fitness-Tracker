@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 import tiktoken
 from typing import List
 from app.core.db import get_db
+from app.models.models import MealLog, WorkoutLog
+from app.agent.session_context import current_session
 from app.crud import (
     meal_logs,
     meal_log_foods,
@@ -30,12 +32,11 @@ def greet_user(greeting: str):
     print(f"{greeting} \n")
 
 @function_tool
-def get_meal_log_summaries(user_id: int, days_back: int, view_micronutrients: bool = False) -> str:
+def get_meal_log_summaries(days_back: int, view_micronutrients: bool = False) -> str:
     """
     Retrieve a summary of a user's meal logs for the past "days_back" days.
 
     Args:
-        user_id (int): The user's ID.
         days_back (int): Number of days in the past to include in the summary. Do not exceed 7 days.
         view_micronutrients (bool, optional): If True, include detailed micronutrient data 
             in the summaries. Defaults to False.  
@@ -49,9 +50,12 @@ def get_meal_log_summaries(user_id: int, days_back: int, view_micronutrients: bo
             - total_calories (float | None): Total calories consumed on that date.
             - nutrients (list of dict): Daily nutrient totals, each with:
                 - name (str): Nutrient name.
-                - amount (str): Nutrient amount formatted to 1 decimal place.
+                - amount (float): Nutrient amount formatted to 1 decimal place.
                 - unit (str): Unit of measurement for the nutrient.
     """
+    session = current_session.get()
+    user_id = session.user_id
+
     days_back = min(days_back, 7)
 
     meal_log_summaries = meal_logs.get_meal_log_summaries(user_id, days_back, view_micronutrients, db)
@@ -84,6 +88,20 @@ def get_meal_log_foods(meal_log_ids: List[int]) -> str:
             - created_at (str, ISO 8601)
             - calories (int or None)
     """
+    session = current_session.get()
+    user_id = session.user_id
+    
+    valid_meal_log_ids = (
+        db.query(MealLog.id)
+        .filter(MealLog.id.in_(meal_log_ids))
+        .filter(MealLog.user_id == user_id)
+        .all()
+    )
+    valid_ids = [row.id for row in valid_meal_log_ids]
+
+    if set(valid_ids) != set(meal_log_ids):
+        raise ValueError("One or more meal_log_ids do not belong to the current user")
+
     view_nutrients = False
 
     meal_log_foods_data = meal_log_foods.get_meal_log_foods(meal_log_ids, view_nutrients, db)
@@ -97,12 +115,11 @@ def get_meal_log_foods(meal_log_ids: List[int]) -> str:
     return meal_log_foods_data
 
 @function_tool
-def get_workout_log_summaries(user_id: int, days_back: int) -> str:
+def get_workout_log_summaries(days_back: int) -> str:
     """
     Retrieve a summary of a user's workout logs for the past "days_back" days.
 
     Args:
-        user_id (int): The user's ID.
         days_back (int): Number of days in the past to include in the summary. Do not exceed 7 days.
 
     Returns:
@@ -113,6 +130,9 @@ def get_workout_log_summaries(user_id: int, days_back: int) -> str:
             - total_num_sets (int): The total number of sets.
             - total_calories_burned (int | None): The approximate total calories burned.
     """
+    session = current_session.get()
+    user_id = session.user_id
+    
     days_back = min(days_back, 7)
 
     workout_log_summaries = workout_logs.get_workout_log_summaries(user_id, days_back, db)
@@ -162,6 +182,20 @@ def get_workout_log_exercises(workout_log_ids: List[int], view_sets: bool = Fals
                 - duration_secs (int | None): The approximate duration in seconds of the set (e.g., cardio).
                 - calories_burned (int | None)
     """
+    session = current_session.get()
+    user_id = session.user_id
+    
+    valid_workout_log_ids = (
+        db.query(WorkoutLog.id)
+        .filter(WorkoutLog.id.in_(workout_log_ids))
+        .filter(WorkoutLog.user_id == user_id)
+        .all()
+    )
+    valid_ids = [row.id for row in valid_workout_log_ids]
+
+    if set(valid_ids) != set(workout_log_ids):
+        raise ValueError("One or more workout_log_ids do not belong to the current user")
+
     workout_log_exercises_data = workout_log_exercises.get_workout_log_exercises(workout_log_ids, view_sets, db)
 
     tokens = encoding.encode(workout_log_exercises_data)
@@ -173,12 +207,11 @@ def get_workout_log_exercises(workout_log_ids: List[int], view_sets: bool = Fals
     return workout_log_exercises_data
 
 @function_tool
-def get_sleep_logs(user_id: int, days_back: int) -> str:
+def get_sleep_logs(days_back: int) -> str:
     """
     Get a user's sleep logs.
 
     Args:
-        user_id (int): The user's user_id.
         days_back (int): Number of days in the past to include. Do not exceed 7 days.
 
     Returns:
@@ -190,6 +223,9 @@ def get_sleep_logs(user_id: int, days_back: int) -> str:
             - sleep_score (int | None): Subjective sleep quality score out of 100.
             - notes (dict | None)
     """
+    session = current_session.get()
+    user_id = session.user_id
+    
     days_back = min(days_back, 7)
 
     sleep_logs_data = sleep_logs.get_sleep_logs(user_id, days_back, db)
@@ -203,12 +239,11 @@ def get_sleep_logs(user_id: int, days_back: int) -> str:
     return sleep_logs_data
 
 @function_tool
-def get_mood_logs(user_id: int, days_back: int) -> str:
+def get_mood_logs(days_back: int) -> str:
     """
     Get a user's mood logs.
 
     Args:
-        user_id (int): The user's user_id.
         days_back (int): Number of days in the past to include. Do not exceed 7 days.
 
     Returns:
@@ -217,6 +252,9 @@ def get_mood_logs(user_id: int, days_back: int) -> str:
             - mood_score (int | None): Subjective mood quality score out of 10.
             - notes (dict | None)
     """
+    session = current_session.get()
+    user_id = session.user_id
+    
     days_back = min(days_back, 7)
 
     mood_logs_data = mood_logs.get_mood_logs(user_id, days_back, db)
@@ -230,12 +268,11 @@ def get_mood_logs(user_id: int, days_back: int) -> str:
     return mood_logs_data
 
 @function_tool
-def get_weight_logs(user_id: int, days_back: int) -> str:
+def get_weight_logs(days_back: int) -> str:
     """
     Get a user's bodyweight logs.
 
     Args:
-        user_id (int): The user's user_id.
         days_back (int): Number of days in the past to include. Do not exceed 7 days.
 
     Returns:
@@ -244,6 +281,9 @@ def get_weight_logs(user_id: int, days_back: int) -> str:
             - weight (float)
             - unit (str)
     """
+    session = current_session.get()
+    user_id = session.user_id
+    
     days_back = min(days_back, 7)
 
     weight_logs_data = weight_logs.get_weight_logs(user_id, days_back, db)

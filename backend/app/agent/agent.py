@@ -2,6 +2,7 @@ from openai import AsyncOpenAI
 from agents import Agent, Runner, set_default_openai_client
 from app.core.config import settings
 from app.agent.memory import MemorySession
+from app.agent.session_context import current_session
 from app.agent.tools import tools
 from app.agent.prompts import system_prompt
 
@@ -50,10 +51,19 @@ agent = Agent(
                tools.get_weight_logs]
 )
 
+class SessionRunner(Runner):
+    @classmethod
+    def run_streamed(cls, starting_agent, input, session: MemorySession):
+        memory_session = current_session.set(session)
+        try:
+            return super().run_streamed(starting_agent, input)
+        finally:
+            current_session.reset(memory_session)
+
 async def generate_insight(agent_memory: MemorySession, prompt: str):
-    result = Runner.run_streamed(starting_agent=agent,
-                                 input=prompt,
-                                 session=agent_memory)
+    result = SessionRunner.run_streamed(starting_agent=agent,
+                                   input=prompt,
+                                   session=agent_memory)
     
     get_meal_log_summaries_call_id = ""
     get_meal_log_foods_call_id = ""
