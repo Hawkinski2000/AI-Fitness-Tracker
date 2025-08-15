@@ -1,10 +1,16 @@
 from sqlalchemy.orm import Session
+import bcrypt
 from app.schemas import user
 from app.models.models import User
 
 
 def create_user(user: user.UserCreate, db: Session):
-    new_user = User(**user.model_dump(exclude_unset=True))
+    new_user = User(**user.model_dump(exclude_unset=True, exclude={"password"}))
+
+    password = user.password.encode("utf-8")
+    password_hash = bcrypt.hashpw(password, bcrypt.gensalt()).decode("utf-8")
+    new_user.password_hash = password_hash
+
     db.add(new_user)
     db.commit()
     db.refresh(new_user)

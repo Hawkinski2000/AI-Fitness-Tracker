@@ -1,21 +1,20 @@
-from pydantic import BaseModel, ConfigDict
-from typing import Optional
+from pydantic import BaseModel, ConfigDict, EmailStr
 from datetime import datetime
 
 
 class UserBase(BaseModel):
     username: str
-    email: str
-    password_hash: str
-    settings: dict
+    email: EmailStr
+    first_name: str
     sex: str
     age: int
     weight: float
     height: int
     goal: str
+    settings: dict
 
 class UserCreate(UserBase):
-    pass
+    password: str
 
 class UserResponse(UserBase):
     id: int

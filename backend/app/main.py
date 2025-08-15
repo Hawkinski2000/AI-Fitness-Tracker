@@ -4,6 +4,7 @@ from .models.models import Base
 from .core.db import engine
 from .api.v1.endpoints import (
     users,
+    tokens,
     meal_logs,
     meal_log_foods,
     foods,
@@ -101,6 +102,7 @@ def root():
     return {"data": "root"}
 
 app.include_router(users.router)
+app.include_router(tokens.router)
 
 app.include_router(meal_logs.router)
 app.include_router(meal_log_foods.router)
