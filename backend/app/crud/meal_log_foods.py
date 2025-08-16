@@ -1,13 +1,37 @@
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session, joinedload
 from typing import List
 import json
 from app.schemas import meal_log_food
-from app.models.models import MealLogFood, Food, BrandedFood, MealLogFoodNutrient, FoodNutrient
+from app.models.models import MealLog, MealLogFood, Food, BrandedFood, MealLogFoodNutrient, FoodNutrient
 from app.crud import meal_logs as crud_meal_logs
 
 
-def create_meal_log_food(meal_log_food: meal_log_food.MealLogFoodCreate, db: Session):
-    food = db.query(Food).filter(Food.id == meal_log_food.food_id).first()
+def create_meal_log_food(meal_log_food: meal_log_food.MealLogFoodCreate, user_id: int, db: Session):
+    meal_log = (
+        db.query(MealLog)
+        .filter(MealLog.id == meal_log_food.meal_log_id, MealLog.user_id == user_id)
+        .first()
+    )
+
+    if not meal_log:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Meal log not found"
+        )
+    
+    food = (
+        db.query(Food)
+        .filter(Food.id == meal_log_food.food_id,
+                (Food.user_id == None) | (Food.user_id == user_id))
+        .first()
+    )
+
+    if not food:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Food not found"
+        )
 
     num_servings = meal_log_food.num_servings
     serving_size = meal_log_food.serving_size
@@ -54,37 +78,62 @@ def create_meal_log_food(meal_log_food: meal_log_food.MealLogFoodCreate, db: Ses
     
     return new_meal_log_food
 
-def get_meal_log_foods(db: Session):
-    meal_log_foods = db.query(MealLogFood).all()
+def get_meal_log_foods(user_id: int, db: Session):
+    meal_log_foods = (
+        db.query(MealLogFood)
+        .join(MealLog, MealLogFood.meal_log_id == MealLog.id)
+        .filter(MealLog.user_id == user_id)
+        .all()
+    )
     return meal_log_foods
 
-def get_meal_log_food(id: int, db: Session):
-    meal_log_food = db.query(MealLogFood).filter(MealLogFood.id == id).first()
+def get_meal_log_food(id: int, user_id: int, db: Session):
+    meal_log_food = (
+        db.query(MealLogFood)
+        .join(MealLog, MealLogFood.meal_log_id == MealLog.id)
+        .filter(MealLogFood.id == id, MealLog.user_id == user_id)
+        .first()
+    )
     return meal_log_food
 
-def update_meal_log_food(id: int, meal_log_food: meal_log_food.MealLogFoodCreate, db: Session):
-    meal_log_food_query = db.query(MealLogFood).filter(MealLogFood.id == id)
-    meal_log_food_query.update(meal_log_food.model_dump(), synchronize_session=False)
+def update_meal_log_food(id: int, meal_log_food: meal_log_food.MealLogFoodCreate, user_id: int, db: Session):
+    meal_log_food_row = (
+        db.query(MealLogFood)
+        .join(MealLog, MealLogFood.meal_log_id == MealLog.id)
+        .filter(MealLogFood.id == id, MealLog.user_id == user_id)
+        .first()
+    )
+
+    for key, value in meal_log_food.model_dump().items():
+        setattr(meal_log_food_row, key, value)
+
     db.commit()
-    updated_meal_log_food = meal_log_food_query.first()
+    db.refresh(meal_log_food_row)
 
-    crud_meal_logs.recalculate_meal_log_calories(meal_log_id=updated_meal_log_food.meal_log_id, db=db)
-    crud_meal_logs.recalculate_meal_log_nutrients(meal_log_id=meal_log_food.meal_log_id, db=db)
+    crud_meal_logs.recalculate_meal_log_calories(meal_log_id=meal_log_food_row.meal_log_id, db=db)
+    crud_meal_logs.recalculate_meal_log_nutrients(meal_log_id=meal_log_food_row.meal_log_id, db=db)
 
-    return updated_meal_log_food
+    return meal_log_food_row
 
-def delete_meal_log_food(id: int, db: Session):
-    meal_log_food_query = db.query(MealLogFood).filter(MealLogFood.id == id)
-    meal_log_food = meal_log_food_query.first()
-    meal_log_food_query.delete(synchronize_session=False)
+def delete_meal_log_food(id: int, user_id: int, db: Session):
+    meal_log_food_row = (
+        db.query(MealLogFood)
+        .join(MealLog, MealLogFood.meal_log_id == MealLog.id)
+        .filter(MealLogFood.id == id, MealLog.user_id == user_id)
+        .first()
+    )
+
+    meal_log_id = meal_log_food_row.meal_log_id
+    
+    db.delete(meal_log_food_row)
     db.commit()
 
-    crud_meal_logs.recalculate_meal_log_calories(meal_log_id=meal_log_food.meal_log_id, db=db)
-    crud_meal_logs.recalculate_meal_log_nutrients(meal_log_id=meal_log_food.meal_log_id, db=db)
+    crud_meal_logs.recalculate_meal_log_calories(meal_log_id=meal_log_id, db=db)
+    crud_meal_logs.recalculate_meal_log_nutrients(meal_log_id=meal_log_id, db=db)
 
 # ----------------------------------------------------------------------------
 
-def get_meal_log_foods(meal_log_ids: List[int], view_nutrients: bool, db: Session):
+def get_meal_log_food_summaries(meal_log_ids: List[int], view_nutrients: bool, db: Session):
     query = (
         db.query(MealLogFood)
         .filter(MealLogFood.meal_log_id.in_(meal_log_ids))

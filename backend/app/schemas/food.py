@@ -6,13 +6,13 @@ from datetime import datetime
 class FoodBase(BaseModel):
     description: str
     calories: Optional[int] = None
-    user_id: Optional[int] = None
 
 class FoodCreate(FoodBase):
     pass
 
 class FoodResponse(FoodBase):
     id: int
+    user_id: Optional[int] = None
     user_created_at: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)

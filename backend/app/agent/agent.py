@@ -43,7 +43,7 @@ agent = Agent(
         instructions=instructions,
         tools=[tools.greet_user,
                tools.get_meal_log_summaries,
-               tools.get_meal_log_foods,
+               tools.get_meal_log_food_summaries,
                tools.get_workout_log_summaries,
                tools.get_workout_log_exercises,
                tools.get_sleep_logs,

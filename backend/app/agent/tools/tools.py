@@ -69,7 +69,7 @@ def get_meal_log_summaries(days_back: int, view_micronutrients: bool = False) ->
     return meal_log_summaries
 
 @function_tool
-def get_meal_log_foods(meal_log_ids: List[int]) -> str:
+def get_meal_log_food_summaries(meal_log_ids: List[int]) -> str:
     """
     Retrieve foods for multiple meal logs specified by their IDs.
 
@@ -104,7 +104,7 @@ def get_meal_log_foods(meal_log_ids: List[int]) -> str:
 
     view_nutrients = False
 
-    meal_log_foods_data = meal_log_foods.get_meal_log_foods(meal_log_ids, view_nutrients, db)
+    meal_log_foods_data = meal_log_foods.get_meal_log_food_summaries(meal_log_ids, view_nutrients, db)
 
     tokens = encoding.encode(meal_log_foods_data)
     tokens_count = len(tokens)
