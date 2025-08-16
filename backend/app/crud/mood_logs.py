@@ -52,5 +52,5 @@ def get_mood_logs(user_id: int, days_back: int, db: Session):
         }
 
         results.append(mood_log)
-    print(json.dumps(results, indent=2))
+    
     return json.dumps(results)

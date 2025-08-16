@@ -146,7 +146,7 @@ def get_workout_log_summaries(days_back: int) -> str:
     return workout_log_summaries
 
 @function_tool
-def get_workout_log_exercises(workout_log_ids: List[int], view_sets: bool = False) -> str:
+def get_workout_log_exercise_summaries(workout_log_ids: List[int], view_sets: bool = False) -> str:
     """
     Retrieve exercises for multiple workout logs specified by their IDs.
 

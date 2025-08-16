@@ -1,10 +1,24 @@
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from app.schemas import exercise_set
 from app.models.models import ExerciseSet, WorkoutLog, WorkoutLogExercise
 from app.crud import workout_log_exercises as crud_workout_log_exercises
 
 
-def create_exercise_set(exercise_set: exercise_set.ExerciseSetCreate, db: Session):
+def create_exercise_set(exercise_set: exercise_set.ExerciseSetCreate, user_id: int, db: Session):
+    workout_log_exercise = (
+        db.query(WorkoutLogExercise)
+        .join(WorkoutLog, WorkoutLogExercise.workout_log_id == WorkoutLog.id)
+        .filter(WorkoutLogExercise.id == exercise_set.workout_log_exercise_id, WorkoutLog.user_id == user_id)
+        .first()
+    )
+
+    if not workout_log_exercise:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Workout log exercise not found"
+        )
+
     new_exercise_set = ExerciseSet(**exercise_set.model_dump(exclude_unset=True))
     db.add(new_exercise_set)
     db.commit()
@@ -26,33 +40,74 @@ def create_exercise_set(exercise_set: exercise_set.ExerciseSetCreate, db: Sessio
 
     return new_exercise_set
 
-def get_exercise_sets(db: Session):
-    exercise_sets = db.query(ExerciseSet).all()
+def get_exercise_sets(user_id: int, db: Session):
+    exercise_sets = (
+        db.query(ExerciseSet)
+        .join(WorkoutLogExercise, ExerciseSet.workout_log_exercise_id == WorkoutLogExercise.id)
+        .join(WorkoutLog, WorkoutLogExercise.workout_log_id == WorkoutLog.id)
+        .filter(WorkoutLog.user_id == user_id)
+        .all()
+    )
     return exercise_sets
 
-def get_exercise_set(id: int, db: Session):
-    exercise_set = db.query(ExerciseSet).filter(ExerciseSet.id == id).first()
+def get_exercise_set(id: int, user_id: int, db: Session):
+    exercise_set = (
+        db.query(ExerciseSet)
+        .join(WorkoutLogExercise, ExerciseSet.workout_log_exercise_id == WorkoutLogExercise.id)
+        .join(WorkoutLog, WorkoutLogExercise.workout_log_id == WorkoutLog.id)
+        .filter(ExerciseSet.id == id, WorkoutLog.user_id == user_id)
+        .first()
+    )
     return exercise_set
 
-def update_exercise_set(id: int, exercise_set: exercise_set.ExerciseSetCreate, db: Session):
-    exercise_set_query = db.query(ExerciseSet).filter(ExerciseSet.id == id)
-    exercise_set_query.update(exercise_set.model_dump(), synchronize_session=False)
+def update_exercise_set(id: int, exercise_set: exercise_set.ExerciseSetCreate, user_id: int, db: Session):
+    workout_log_exercise = (
+        db.query(WorkoutLogExercise)
+        .join(WorkoutLog, WorkoutLogExercise.workout_log_id == WorkoutLog.id)
+        .filter(WorkoutLogExercise.id == exercise_set.workout_log_exercise_id, WorkoutLog.user_id == user_id)
+        .first()
+    )
+
+    if not workout_log_exercise:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Workout log exercise not found"
+        )
+
+    exercise_set_row = (
+        db.query(ExerciseSet)
+        .join(ExerciseSet.workout_log_exercise)
+        .join(WorkoutLogExercise.workout_log)
+        .filter(ExerciseSet.id == id, WorkoutLog.user_id == user_id)
+        .first()
+    )
+
+    for key, value in exercise_set.model_dump().items():
+        setattr(exercise_set_row, key, value)
+
     db.commit()
-    updated_exercise_set = exercise_set_query.first()
+    db.refresh(exercise_set_row)
 
-    if updated_exercise_set.weight and updated_exercise_set.reps:
-        one_rep_max = estimate_one_rep_max(updated_exercise_set.weight, updated_exercise_set.reps)
-        updated_exercise_set.one_rep_max = one_rep_max
+    if exercise_set_row.weight and exercise_set_row.reps:
+        one_rep_max = estimate_one_rep_max(exercise_set_row.weight, exercise_set_row.reps)
+        exercise_set_row.one_rep_max = one_rep_max
         db.flush()
-        crud_workout_log_exercises.recalculate_greatest_one_rep_max(workout_log_exercise_id=updated_exercise_set.workout_log_exercise_id, db=db)
+        crud_workout_log_exercises.recalculate_greatest_one_rep_max(workout_log_exercise_id=exercise_set_row.workout_log_exercise_id, db=db)
 
-    return updated_exercise_set
+    return exercise_set_row
 
-def delete_exercise_set(id: int, db: Session):
-    exercise_set_query = db.query(ExerciseSet).filter(ExerciseSet.id == id)
-    exercise_set = exercise_set_query.first()
-    workout_log_exercise_id = exercise_set.workout_log_exercise_id
-    exercise_set_query.delete(synchronize_session=False)
+def delete_exercise_set(id: int, user_id: int, db: Session):
+    exercise_set_row = (
+        db.query(ExerciseSet)
+        .join(ExerciseSet.workout_log_exercise)
+        .join(WorkoutLogExercise.workout_log)
+        .filter(ExerciseSet.id == id, WorkoutLog.user_id == user_id)
+        .first()
+    )
+
+    workout_log_exercise_id = exercise_set_row.workout_log_exercise_id
+
+    db.delete(exercise_set_row)
     db.commit()
 
     workout_log_exercise = db.query(WorkoutLogExercise).filter(WorkoutLogExercise.id == workout_log_exercise_id).first()

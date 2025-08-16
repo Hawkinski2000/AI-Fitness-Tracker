@@ -5,30 +5,30 @@ from app.schemas import workout_log
 from app.models.models import WorkoutLog
 
 
-def create_workout_log(workout_log: workout_log.WorkoutLogCreate, db: Session):
-    new_workout_log = WorkoutLog(**workout_log.model_dump())
+def create_workout_log(workout_log: workout_log.WorkoutLogCreate, user_id: int, db: Session):
+    new_workout_log = WorkoutLog(**workout_log.model_dump(), user_id=user_id)
     db.add(new_workout_log)
     db.commit()
     db.refresh(new_workout_log)
     return new_workout_log
 
-def get_workout_logs(db: Session):
-    workout_logs = db.query(WorkoutLog).all()
+def get_workout_logs(user_id: int, db: Session):
+    workout_logs = db.query(WorkoutLog).filter(WorkoutLog.user_id == user_id).all()
     return workout_logs
 
-def get_workout_log(id: int, db: Session):
-    workout_log = db.query(WorkoutLog).filter(WorkoutLog.id == id).first()
+def get_workout_log(id: int, user_id: int, db: Session):
+    workout_log = db.query(WorkoutLog).filter(WorkoutLog.id == id, WorkoutLog.user_id == user_id).first()
     return workout_log
 
-def update_workout_log(id: int, workout_log: workout_log.WorkoutLogCreate, db: Session):
-    workout_log_query = db.query(WorkoutLog).filter(WorkoutLog.id == id)
+def update_workout_log(id: int, workout_log: workout_log.WorkoutLogCreate, user_id: int, db: Session):
+    workout_log_query = db.query(WorkoutLog).filter(WorkoutLog.id == id, WorkoutLog.user_id == user_id)
     workout_log_query.update(workout_log.model_dump(), synchronize_session=False)
     db.commit()
     updated_workout_log = workout_log_query.first()
     return updated_workout_log
 
-def delete_workout_log(id: int, db: Session):
-    workout_log_query = db.query(WorkoutLog).filter(WorkoutLog.id == id)
+def delete_workout_log(id: int, user_id: int, db: Session):
+    workout_log_query = db.query(WorkoutLog).filter(WorkoutLog.id == id, WorkoutLog.user_id == user_id)
     workout_log_query.delete(synchronize_session=False)
     db.commit()
 

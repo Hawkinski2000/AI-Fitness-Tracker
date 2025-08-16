@@ -45,7 +45,7 @@ agent = Agent(
                tools.get_meal_log_summaries,
                tools.get_meal_log_food_summaries,
                tools.get_workout_log_summaries,
-               tools.get_workout_log_exercises,
+               tools.get_workout_log_exercise_summaries,
                tools.get_sleep_logs,
                tools.get_mood_logs,
                tools.get_weight_logs]

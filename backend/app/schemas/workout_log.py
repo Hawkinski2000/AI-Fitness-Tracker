@@ -4,7 +4,6 @@ from datetime import datetime
 
 
 class WorkoutLogBase(BaseModel):
-    user_id: int
     log_date: datetime
     workout_type: Optional[str] = None
 
@@ -13,6 +12,7 @@ class WorkoutLogCreate(WorkoutLogBase):
 
 class WorkoutLogResponse(WorkoutLogBase):
     id: int
+    user_id: int
     total_num_sets: int
     total_calories_burned: Optional[int] = None
 

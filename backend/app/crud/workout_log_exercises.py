@@ -1,36 +1,116 @@
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import desc
 from typing import List
 import json
 from app.schemas import workout_log_exercise
-from app.models.models import WorkoutLogExercise, ExerciseSet
+from app.models.models import WorkoutLog, WorkoutLogExercise, Exercise, ExerciseSet
 
 
-def create_workout_log_exercise(workout_log_exercise: workout_log_exercise.WorkoutLogExerciseCreate, db: Session):
+def create_workout_log_exercise(workout_log_exercise: workout_log_exercise.WorkoutLogExerciseCreate, user_id: int, db: Session):
+    workout_log = (
+        db.query(WorkoutLog)
+        .filter(WorkoutLog.id == workout_log_exercise.workout_log_id, WorkoutLog.user_id == user_id)
+        .first()
+    )
+
+    if not workout_log:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Workout log not found"
+        )
+
+    exercise = (
+        db.query(Exercise)
+        .filter(Exercise.id == workout_log_exercise.exercise_id,
+                (Exercise.user_id == None) | (Exercise.user_id == user_id))
+        .first()
+    )
+
+    if not exercise:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Exercise not found"
+        )
+
     new_workout_log_exercise = WorkoutLogExercise(**workout_log_exercise.model_dump())
     db.add(new_workout_log_exercise)
     db.commit()
     db.refresh(new_workout_log_exercise)
+
     return new_workout_log_exercise
 
-def get_workout_log_exercises(db: Session):
-    workout_log_exercises = db.query(WorkoutLogExercise).all()
+def get_workout_log_exercises(user_id: int, db: Session):
+    workout_log_exercises = (
+        db.query(WorkoutLogExercise)
+        .join(WorkoutLog, WorkoutLogExercise.workout_log_id == WorkoutLog.id)
+        .filter(WorkoutLog.user_id == user_id)
+        .all()
+    )
     return workout_log_exercises
 
-def get_workout_log_exercise(id: int, db: Session):
-    workout_log_exercise = db.query(WorkoutLogExercise).filter(WorkoutLogExercise.id == id).first()
+def get_workout_log_exercise(id: int, user_id: int, db: Session):
+    workout_log_exercise = (
+        db.query(WorkoutLogExercise)
+        .join(WorkoutLog, WorkoutLogExercise.workout_log_id == WorkoutLog.id)
+        .filter(WorkoutLogExercise.id == id, WorkoutLog.user_id == user_id)
+        .first()
+    )
     return workout_log_exercise
 
-def update_workout_log_exercise(id: int, workout_log_exercise: workout_log_exercise.WorkoutLogExerciseCreate, db: Session):
-    workout_log_exercise_query = db.query(WorkoutLogExercise).filter(WorkoutLogExercise.id == id)
-    workout_log_exercise_query.update(workout_log_exercise.model_dump(), synchronize_session=False)
-    db.commit()
-    updated_workout_log_exercise = workout_log_exercise_query.first()
-    return updated_workout_log_exercise
+def update_workout_log_exercise(id: int, workout_log_exercise: workout_log_exercise.WorkoutLogExerciseCreate, user_id: int, db: Session):
+    workout_log = (
+        db.query(WorkoutLog)
+        .filter(WorkoutLog.id == workout_log_exercise.workout_log_id, WorkoutLog.user_id == user_id)
+        .first()
+    )
 
-def delete_workout_log_exercise(id: int, db: Session):
-    workout_log_exercise_query = db.query(WorkoutLogExercise).filter(WorkoutLogExercise.id == id)
-    workout_log_exercise_query.delete(synchronize_session=False)
+    if not workout_log:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Workout log not found"
+        )
+
+    exercise = (
+        db.query(Exercise)
+        .filter(Exercise.id == workout_log_exercise.exercise_id,
+                (Exercise.user_id == None) | (Exercise.user_id == user_id))
+        .first()
+    )
+
+    if not exercise:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Exercise not found"
+        )
+
+    workout_log_exercise_row = (
+        db.query(WorkoutLogExercise)
+        .join(WorkoutLog, WorkoutLogExercise.workout_log_id == WorkoutLog.id)
+        .filter(WorkoutLogExercise.id == id, WorkoutLog.user_id == user_id)
+        .first()
+    )
+
+    for key, value in workout_log_exercise.model_dump().items():
+        setattr(workout_log_exercise_row, key, value)
+
+    db.commit()
+    db.refresh(workout_log_exercise_row)
+
+    return workout_log_exercise_row
+
+def delete_workout_log_exercise(id: int, user_id: int, db: Session):
+    workout_log_exercise_row = (
+        db.query(WorkoutLogExercise)
+        .join(WorkoutLog, WorkoutLogExercise.workout_log_id == WorkoutLog.id)
+        .filter(WorkoutLogExercise.id == id, WorkoutLog.user_id == user_id)
+        .first()
+    )
+
+    workout_log = db.query(WorkoutLog).filter(WorkoutLog.id == workout_log_exercise_row.workout_log_id).first()
+    workout_log.total_num_sets -= workout_log_exercise_row.num_sets
+
+    db.delete(workout_log_exercise_row)
     db.commit()
 
 # ----------------------------------------------------------------------------
@@ -69,7 +149,7 @@ def recalculate_greatest_one_rep_max(workout_log_exercise_id: int, db: Session):
 
 # ----------------------------------------------------------------------------
 
-def get_workout_log_exercises(workout_log_ids: List[int], view_sets: bool, db: Session):
+def get_workout_log_exercise_summaries(workout_log_ids: List[int], view_sets: bool, db: Session):
     query = (
         db.query(WorkoutLogExercise)
         .filter(WorkoutLogExercise.workout_log_id.in_(workout_log_ids))
