@@ -1,5 +1,6 @@
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, delete
 import tiktoken
 import json
 from datetime import datetime, timezone, timedelta
@@ -20,8 +21,19 @@ from app.core.constants import (
 
 encoding = tiktoken.get_encoding("cl100k_base")
 
-async def create_message(message: message.MessageCreate, db: Session):
-    chat = db.query(Chat).filter(Chat.id == message.chat_id).first()
+async def create_message(message: message.MessageCreate, user_id: int, db: Session):
+    chat = (
+        db.query(Chat)
+        .filter(Chat.id == message.chat_id, Chat.user_id == user_id)
+        .first()
+    )
+
+    if not chat:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Chat not found"
+        )
+    
     user = chat.user
 
     now_utc = datetime.now(timezone.utc)
@@ -49,17 +61,17 @@ async def create_message(message: message.MessageCreate, db: Session):
     
     prompt = user_prompt.get_user_prompt(user, user_message)
 
-    agent_memory = MemorySession(session_id=user.id, user_id=user.id)
     old_messages = await load_messages(message.chat_id, db)
-    print(f"old_messages has {len(old_messages)} messages.")
+    # print(f"old_messages has {len(old_messages)} messages.")
 
     old_messages_token_count = 0
     for old_message in old_messages:
         old_message_str = json.dumps(old_message, separators=(",", ":"))
         old_message_tokens = encoding.encode(old_message_str)
         old_messages_token_count += len(old_message_tokens)
-    print(f"old_messages has {old_messages_token_count} tokens.\n")
+    # print(f"old_messages has {old_messages_token_count} tokens.\n")
 
+    agent_memory = MemorySession(session_id=user.id, user_id=user.id)
     await agent_memory.add_old_items(old_messages)
 
     result = await agent.generate_insight(prompt=prompt, agent_memory=agent_memory)
@@ -68,7 +80,7 @@ async def create_message(message: message.MessageCreate, db: Session):
     print(final_output)
     final_output_tokens = encoding.encode(final_output)
     final_output_tokens_count = len(final_output_tokens)
-    print(f"\nfinal_output has {final_output_tokens_count} tokens.")
+    # print(f"\nfinal_output has {final_output_tokens_count} tokens.")
 
     usage = result.context_wrapper.usage
     input_tokens_count = usage.input_tokens
@@ -106,24 +118,41 @@ async def create_message(message: message.MessageCreate, db: Session):
 
     return saved_messages
 
-def get_messages(db: Session):
-    messages = db.query(Message).all()
+def get_messages(user_id: int, db: Session):
+    messages = (
+        db.query(Message)
+        .join(Chat, Message.chat_id == Chat.id)
+        .filter(Chat.user_id == user_id)
+        .all()
+    )
     return messages
 
-def get_message(id: int, db: Session):
-    message = db.query(Message).filter(Message.id == id).first()
+def get_message(id: int, user_id: int, db: Session):
+    message = (
+        db.query(Message)
+        .join(Chat, Message.chat_id == Chat.id)
+        .filter(Message.id == id, Chat.user_id == user_id)
+        .first()
+    )
     return message
 
-def update_message(id: int, message: message.MessageCreate, db: Session):
-    message_query = db.query(Message).filter(Message.id == id)
-    message_query.update(message.model_dump(), synchronize_session=False)
-    db.commit()
-    updated_message = message_query.first()
-    return updated_message
+# def update_message(id: int, message: message.MessageCreate, user_id: int, db: Session):
+#     message_query = db.query(Message).filter(Message.id == id)
+#     message_query.update(message.model_dump(), synchronize_session=False)
+#     db.commit()
+#     updated_message = message_query.first()
+#     return updated_message
 
-def delete_message(interaction_id: int, db: Session):
-    message_query = db.query(Message).filter(Message.interaction_id == interaction_id)
-    message_query.delete(synchronize_session=False)
+def delete_message_group(interaction_id: int, user_id: int, db: Session):
+    db.execute(
+        delete(Message)
+        .where(
+            Message.interaction_id == interaction_id,
+            Message.chat_id.in_(
+                db.query(Chat.id).filter(Chat.user_id == user_id)
+            )
+        )
+    )
     db.commit()
 
 # ----------------------------------------------------------------------------

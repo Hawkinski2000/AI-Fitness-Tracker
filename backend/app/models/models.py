@@ -11,6 +11,9 @@ from app.core.constants import MAX_INPUT_TOKENS, MAX_OUTPUT_TOKENS
 Todo:
     - Update calories in a workout_log when creating a new exercise_set.
 
+    - Add unique constraint on User.email (just in case, the exception in
+      create_user should already handle this).
+
     - Modify ER diagram to include new/modified tables.
 
     - Add insight_visualization table.

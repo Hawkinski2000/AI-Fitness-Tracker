@@ -53,25 +53,25 @@ agent = Agent(
 
 class SessionRunner(Runner):
     @classmethod
-    def run_streamed(cls, starting_agent, input, session: MemorySession):
+    def run_streamed(cls, starting_agent: Agent, input: str, session: MemorySession, **kwargs):
         memory_session = current_session.set(session)
         try:
-            return super().run_streamed(starting_agent, input)
+            return super().run_streamed(starting_agent=starting_agent, input=input, session=session, **kwargs)
         finally:
             current_session.reset(memory_session)
 
-async def generate_insight(agent_memory: MemorySession, prompt: str):
+async def generate_insight(prompt: str, agent_memory: MemorySession):
     result = SessionRunner.run_streamed(starting_agent=agent,
-                                   input=prompt,
-                                   session=agent_memory)
+                                        input=prompt,
+                                        session=agent_memory)
     
     get_meal_log_summaries_call_id = ""
-    get_meal_log_foods_call_id = ""
+    get_meal_log_food_summaries_call_id = ""
     get_workout_log_summaries_call_id = ""
-    get_workout_log_exercises_call_id = ""
-    get_sleep_logs_call_id = ""
-    get_mood_logs_call_id = ""
-    get_weight_logs_call_id = ""
+    get_workout_log_exercise_summaries_call_id = ""
+    get_sleep_log_summaries_call_id = ""
+    get_mood_log_summaries_call_id = ""
+    get_weight_log_summaries_call_id = ""
     async for event in result.stream_events():
         if event.type == "run_item_stream_event":
             if event.name == "tool_called":
@@ -79,58 +79,58 @@ async def generate_insight(agent_memory: MemorySession, prompt: str):
                     print("Getting meal logs...\n")
                     get_meal_log_summaries_call_id = event.item.raw_item.call_id
 
-                elif event.item.raw_item.name == "get_meal_log_foods":
+                elif event.item.raw_item.name == "get_meal_log_food_summaries":
                     print("Getting meal log foods...\n")
-                    get_meal_log_foods_call_id = event.item.raw_item.call_id
+                    get_meal_log_food_summaries_call_id = event.item.raw_item.call_id
 
                 elif event.item.raw_item.name == "get_workout_log_summaries":
                     print("Getting workout logs...\n")
                     get_workout_log_summaries_call_id = event.item.raw_item.call_id
 
-                elif event.item.raw_item.name == "get_workout_log_exercises":
+                elif event.item.raw_item.name == "get_workout_log_exercise_summaries":
                     print("Getting workout log exercises...\n")
-                    get_workout_log_exercises_call_id = event.item.raw_item.call_id
+                    get_workout_log_exercise_summaries_call_id = event.item.raw_item.call_id
 
-                elif event.item.raw_item.name == "get_sleep_logs":
+                elif event.item.raw_item.name == "get_sleep_log_summaries":
                     print("Getting sleep logs...\n")
-                    get_sleep_logs_call_id = event.item.raw_item.call_id
+                    get_sleep_log_summaries_call_id = event.item.raw_item.call_id
 
-                elif event.item.raw_item.name == "get_mood_logs":
+                elif event.item.raw_item.name == "get_mood_log_summaries":
                     print("Getting mood logs...\n")
-                    get_mood_logs_call_id = event.item.raw_item.call_id
+                    get_mood_log_summaries_call_id = event.item.raw_item.call_id
 
-                elif event.item.raw_item.name == "get_weight_logs":
+                elif event.item.raw_item.name == "get_weight_log_summaries":
                     print("Getting weight logs...\n")
-                    get_weight_logs_call_id = event.item.raw_item.call_id
+                    get_weight_log_summaries_call_id = event.item.raw_item.call_id
 
             elif event.name == "tool_output":
                 if get_meal_log_summaries_call_id == event.item.raw_item.get("call_id"):
                     print("Found meal logs.\n")
                     get_meal_log_summaries_call_id = ""
 
-                elif get_meal_log_foods_call_id == event.item.raw_item.get("call_id"):
+                elif get_meal_log_food_summaries_call_id == event.item.raw_item.get("call_id"):
                     print("Found meal log foods.\n")
-                    get_meal_log_foods_call_id = ""
+                    get_meal_log_food_summaries_call_id = ""
 
                 elif get_workout_log_summaries_call_id == event.item.raw_item.get("call_id"):
                     print("Found workout logs.\n")
                     get_workout_log_summaries_call_id = ""
                 
-                elif get_workout_log_exercises_call_id == event.item.raw_item.get("call_id"):
+                elif get_workout_log_exercise_summaries_call_id == event.item.raw_item.get("call_id"):
                     print("Found workout log exercises.\n")
-                    get_workout_log_exercises_call_id = ""
+                    get_workout_log_exercise_summaries_call_id = ""
 
-                elif get_sleep_logs_call_id == event.item.raw_item.get("call_id"):
+                elif get_sleep_log_summaries_call_id == event.item.raw_item.get("call_id"):
                     print("Found sleep logs.\n")
-                    get_sleep_logs_call_id = ""
+                    get_sleep_log_summaries_call_id = ""
 
-                elif get_mood_logs_call_id == event.item.raw_item.get("call_id"):
+                elif get_mood_log_summaries_call_id == event.item.raw_item.get("call_id"):
                     print("Found mood logs.\n")
-                    get_mood_logs_call_id = ""
+                    get_mood_log_summaries_call_id = ""
                 
-                elif get_weight_logs_call_id == event.item.raw_item.get("call_id"):
+                elif get_weight_log_summaries_call_id == event.item.raw_item.get("call_id"):
                     print("Found weight logs.\n")
-                    get_weight_logs_call_id = ""
+                    get_weight_log_summaries_call_id = ""
 
     return result
 

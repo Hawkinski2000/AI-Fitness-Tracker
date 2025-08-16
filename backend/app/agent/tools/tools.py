@@ -62,7 +62,7 @@ def get_meal_log_summaries(days_back: int, view_micronutrients: bool = False) ->
 
     tokens = encoding.encode(meal_log_summaries)
     tokens_count = len(tokens)
-    print(f"meal_log_summaries has {tokens_count} tokens.")
+    # print(f"meal_log_summaries has {tokens_count} tokens.")
     if tokens_count > 10000:
         meal_log_summaries = "[]"
 
@@ -108,7 +108,7 @@ def get_meal_log_food_summaries(meal_log_ids: List[int]) -> str:
 
     tokens = encoding.encode(meal_log_foods_data)
     tokens_count = len(tokens)
-    print(f"meal_log_foods_data has {len(tokens)} tokens.")
+    # print(f"meal_log_foods_data has {len(tokens)} tokens.")
     if tokens_count > 10000:
         meal_log_foods_data = "[]"
 
@@ -139,7 +139,7 @@ def get_workout_log_summaries(days_back: int) -> str:
 
     tokens = encoding.encode(workout_log_summaries)
     tokens_count = len(tokens)
-    print(f"workout_log_summaries has {len(tokens)} tokens.")
+    # print(f"workout_log_summaries has {len(tokens)} tokens.")
     if tokens_count > 10000:
         workout_log_summaries = "[]"
 
@@ -196,11 +196,11 @@ def get_workout_log_exercise_summaries(workout_log_ids: List[int], view_sets: bo
     if set(valid_ids) != set(workout_log_ids):
         raise ValueError("One or more workout_log_ids do not belong to the current user")
 
-    workout_log_exercises_data = workout_log_exercises.get_workout_log_exercises(workout_log_ids, view_sets, db)
+    workout_log_exercises_data = workout_log_exercises.get_workout_log_exercise_summaries(workout_log_ids, view_sets, db)
 
     tokens = encoding.encode(workout_log_exercises_data)
     tokens_count = len(tokens)
-    print(f"workout_log_exercises_data has {len(tokens)} tokens.")
+    # print(f"workout_log_exercises_data has {len(tokens)} tokens.")
     if tokens_count > 10000:
         workout_log_exercises_data = "[]"
 
@@ -228,11 +228,11 @@ def get_sleep_log_summaries(days_back: int) -> str:
     
     days_back = min(days_back, 7)
 
-    sleep_logs_data = sleep_logs.get_sleep_logs(user_id, days_back, db)
+    sleep_logs_data = sleep_logs.get_sleep_log_summaries(user_id, days_back, db)
 
     tokens = encoding.encode(sleep_logs_data)
     tokens_count = len(tokens)
-    print(f"sleep_logs_data has {len(tokens)} tokens.")
+    # print(f"sleep_logs_data has {len(tokens)} tokens.")
     if tokens_count > 10000:
         sleep_logs_data = "[]"
 
@@ -257,11 +257,11 @@ def get_mood_log_summaries(days_back: int) -> str:
     
     days_back = min(days_back, 7)
 
-    mood_logs_data = mood_logs.get_mood_logs(user_id, days_back, db)
+    mood_logs_data = mood_logs.get_mood_log_summaries(user_id, days_back, db)
 
     tokens = encoding.encode(mood_logs_data)
     tokens_count = len(tokens)
-    print(f"mood_logs_data has {len(tokens)} tokens.")
+    # print(f"mood_logs_data has {len(tokens)} tokens.")
     if tokens_count > 10000:
         mood_logs_data = "[]"
 
@@ -286,11 +286,11 @@ def get_weight_log_summaries(days_back: int) -> str:
     
     days_back = min(days_back, 7)
 
-    weight_logs_data = weight_logs.get_weight_logs(user_id, days_back, db)
+    weight_logs_data = weight_logs.get_weight_log_summaries(user_id, days_back, db)
 
     tokens = encoding.encode(weight_logs_data)
     tokens_count = len(tokens)
-    print(f"weight_logs_data has {len(tokens)} tokens.")
+    # print(f"weight_logs_data has {len(tokens)} tokens.")
     if tokens_count > 10000:
         weight_logs_data = "[]"
 
