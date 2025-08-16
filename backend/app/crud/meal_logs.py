@@ -3,7 +3,7 @@ from sqlalchemy import func
 from collections import defaultdict
 import json
 from app.schemas import meal_log
-from app.models.models import MealLog, MealLogFood, MealLogNutrient, MealLogFoodNutrient, Food
+from app.models.models import MealLog, MealLogFood, MealLogNutrient, MealLogFoodNutrient
 
 
 def create_meal_log(meal_log: meal_log.MealLogCreate, user_id: int, db: Session):

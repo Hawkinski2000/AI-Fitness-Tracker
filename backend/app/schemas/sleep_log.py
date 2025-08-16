@@ -4,7 +4,6 @@ from datetime import datetime
 
 
 class SleepLogBase(BaseModel):
-    user_id: int
     log_date: datetime
     time_to_bed: datetime
     time_awake: datetime
@@ -17,5 +16,6 @@ class SleepLogCreate(SleepLogBase):
 
 class SleepLogResponse(SleepLogBase):
     id: int
+    user_id: int
 
     model_config = ConfigDict(from_attributes=True)

@@ -207,7 +207,7 @@ def get_workout_log_exercise_summaries(workout_log_ids: List[int], view_sets: bo
     return workout_log_exercises_data
 
 @function_tool
-def get_sleep_logs(days_back: int) -> str:
+def get_sleep_log_summaries(days_back: int) -> str:
     """
     Get a user's sleep logs.
 
@@ -239,7 +239,7 @@ def get_sleep_logs(days_back: int) -> str:
     return sleep_logs_data
 
 @function_tool
-def get_mood_logs(days_back: int) -> str:
+def get_mood_log_summaries(days_back: int) -> str:
     """
     Get a user's mood logs.
 
@@ -268,7 +268,7 @@ def get_mood_logs(days_back: int) -> str:
     return mood_logs_data
 
 @function_tool
-def get_weight_logs(days_back: int) -> str:
+def get_weight_log_summaries(days_back: int) -> str:
     """
     Get a user's bodyweight logs.
 
