@@ -285,6 +285,7 @@ class Chat(Base):
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
     title: Mapped[Optional[str]] = mapped_column(String)
+    newest_response_id: Mapped[Optional[str]] = mapped_column(String)
 
     user: Mapped["User"] = relationship("User", back_populates="chats")
     messages: Mapped[list["Message"]] = relationship("Message", back_populates="chat", cascade="all, delete-orphan")

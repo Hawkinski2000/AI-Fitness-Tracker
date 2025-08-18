@@ -13,5 +13,6 @@ class ChatResponse(ChatBase):
     id: int
     user_id: int
     created_at: datetime
+    newest_response_id: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)

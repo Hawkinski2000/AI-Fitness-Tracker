@@ -50,7 +50,7 @@ async def create_message(message: message.MessageCreate, user_id: int, db: Sessi
         )
 
     user_message = message.content
-    print(f"User message: {user_message}\n")
+    print(f"User message: {user_message}")
     user_message_tokens = encoding.encode(user_message)
     user_message_tokens_count = len(user_message_tokens)
     if user_message_tokens_count > MAX_USER_MESSAGE_TOKENS:
@@ -60,31 +60,22 @@ async def create_message(message: message.MessageCreate, user_id: int, db: Sessi
         )
     
     prompt = user_prompt.get_user_prompt(user, user_message)
+    prompt = message.content # TEMP
+    previous_response_id = chat.newest_response_id
+    print(f"previous_response_id: {previous_response_id}\n")
 
-    old_messages = await load_messages(message.chat_id, db)
-    # print(f"old_messages has {len(old_messages)} messages.")
+    responses = await agent.generate_insight(user_id, prompt, previous_response_id)
 
-    old_messages_token_count = 0
-    for old_message in old_messages:
-        old_message_str = json.dumps(old_message, separators=(",", ":"))
-        old_message_tokens = encoding.encode(old_message_str)
-        old_messages_token_count += len(old_message_tokens)
-    # print(f"old_messages has {old_messages_token_count} tokens.\n")
+    outputs = []
+    input_tokens_count = 0
+    output_tokens_count = 0
+    for response in responses:
+        response_outputs = [item.model_dump() for item in response.output]
+        outputs.extend(response_outputs)
 
-    agent_memory = MemorySession(session_id=user.id, user_id=user.id)
-    await agent_memory.add_old_items(old_messages)
+        input_tokens_count += response.usage.input_tokens
+        output_tokens_count += response.usage.output_tokens
 
-    result = await agent.generate_insight(prompt=prompt, agent_memory=agent_memory)
-
-    final_output = result.final_output
-    print(final_output)
-    final_output_tokens = encoding.encode(final_output)
-    final_output_tokens_count = len(final_output_tokens)
-    # print(f"\nfinal_output has {final_output_tokens_count} tokens.")
-
-    usage = result.context_wrapper.usage
-    input_tokens_count = usage.input_tokens
-    output_tokens_count = usage.output_tokens
     print(f"\nInput tokens used: {input_tokens_count}")
     print(f"Output tokens used: {output_tokens_count}")
     user.input_tokens_remaining -= input_tokens_count
@@ -93,30 +84,44 @@ async def create_message(message: message.MessageCreate, user_id: int, db: Sessi
     total_tokens_remaining = min(user.input_tokens_remaining, user.output_tokens_remaining)
     print(f"\nYou have {total_tokens_remaining} tokens remaining.")
 
-    # await agent.print_history(agent_memory)
+    newest_response_id = responses[-1].id
+    chat.newest_response_id = newest_response_id
 
-    new_messages = await agent_memory.get_new_items()
+    new_messages = []
 
     max_interaction_id = db.query(func.max(Message.interaction_id)).filter(Message.chat_id == message.chat_id).scalar()
     new_interaction_id = (max_interaction_id or 0) + 1
 
-    saved_messages = []
-    for msg in new_messages:
-        new_msg = Message(
+    new_user_message = Message(
+        chat_id=message.chat_id,
+        interaction_id=new_interaction_id,
+        message={
+            "role": "user",
+            "content": user_message
+        },
+        role="user",
+        type="message"
+    )
+    db.add(new_user_message)
+    new_messages.append(new_user_message)
+
+    for output in outputs:
+        new_message = Message(
             chat_id=message.chat_id,
             interaction_id=new_interaction_id,
-            message=msg,
-            role=msg.get("role", "assistant"),
-            type=msg.get("type")
+            message=output,
+            role="assistant",
+            type=output.get("type")
         )
-        db.add(new_msg)
-        saved_messages.append(new_msg)
-    db.commit()
-    
-    for m in saved_messages:
-        db.refresh(m)
+        db.add(new_message)
+        new_messages.append(new_message)
 
-    return saved_messages
+    db.commit()
+
+    for message in new_messages:
+        db.refresh(message)
+
+    return new_messages
 
 def get_messages(user_id: int, db: Session):
     messages = (
