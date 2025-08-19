@@ -1,15 +1,18 @@
-from openai import AsyncOpenAI
-from agents import Agent, Runner, set_default_openai_client
+from openai import OpenAI
+from openai.types.responses import ResponseOutputItemDoneEvent, ResponseTextDeltaEvent, ResponseCompletedEvent
+import json
+from app.models.models import User
 from app.core.config import settings
-from app.agent.memory import MemorySession
-from app.agent.session_context import current_session
 from app.agent.tools import tools
-from app.agent.prompts import system_prompt
+from app.agent.prompts import system_prompt, user_prompt
 
 
 """
 ==============================================================================
 Todo:
+    - Migrate to asyncio and asyncpg to run long queries asynchronously so
+      tools can be made async?
+
     - Keep or remove the view_nutrients parameter in the get_meal_log_foods()
       tool?
 
@@ -20,9 +23,6 @@ Todo:
     - Fix delete_message() so any related messages are deleted as well (e.g., 
       reasoning, tool calls, etc.).
 
-    - Summarize older message groups to still keep some relevant context in
-      the sliding window?
-
     - Tools to create visualizations of data.
 
     - Allow the agent to create meals or workouts?
@@ -32,111 +32,54 @@ Todo:
 ==============================================================================
 """
 
-custom_client = AsyncOpenAI(api_key=settings.openai_api_key)
-set_default_openai_client(custom_client)
+client = OpenAI(api_key=settings.openai_api_key)
 
-instructions = system_prompt.get_system_prompt()
-
-agent = Agent(
-        model="gpt-5-mini",
-        name="AI fitness tracker assistant",
-        instructions=instructions,
-        tools=[tools.greet_user,
-               tools.get_meal_log_summaries,
-               tools.get_meal_log_food_summaries,
-               tools.get_workout_log_summaries,
-               tools.get_workout_log_exercise_summaries,
-               tools.get_sleep_log_summaries,
-               tools.get_mood_log_summaries,
-               tools.get_weight_log_summaries]
-)
-
-class SessionRunner(Runner):
-    @classmethod
-    def run_streamed(cls, starting_agent: Agent, input: str, session: MemorySession, **kwargs):
-        memory_session = current_session.set(session)
-        try:
-            return super().run_streamed(starting_agent=starting_agent, input=input, session=session, **kwargs)
-        finally:
-            current_session.reset(memory_session)
-
-async def generate_insight(prompt: str, agent_memory: MemorySession):
-    result = SessionRunner.run_streamed(starting_agent=agent,
-                                        input=prompt,
-                                        session=agent_memory)
+async def generate_insight(user: User, user_message: str, newest_response_id: str):
+    responses = []
     
-    get_meal_log_summaries_call_id = ""
-    get_meal_log_food_summaries_call_id = ""
-    get_workout_log_summaries_call_id = ""
-    get_workout_log_exercise_summaries_call_id = ""
-    get_sleep_log_summaries_call_id = ""
-    get_mood_log_summaries_call_id = ""
-    get_weight_log_summaries_call_id = ""
-    async for event in result.stream_events():
-        if event.type == "run_item_stream_event":
-            if event.name == "tool_called":
-                if event.item.raw_item.name == "get_meal_log_summaries":
-                    print("Getting meal logs...\n")
-                    get_meal_log_summaries_call_id = event.item.raw_item.call_id
+    user_id = user.id
 
-                elif event.item.raw_item.name == "get_meal_log_food_summaries":
-                    print("Getting meal log foods...\n")
-                    get_meal_log_food_summaries_call_id = event.item.raw_item.call_id
+    instructions = system_prompt.get_system_prompt()
+    prompt = user_prompt.get_user_prompt(user, user_message)
+    previous_response_id = newest_response_id
 
-                elif event.item.raw_item.name == "get_workout_log_summaries":
-                    print("Getting workout logs...\n")
-                    get_workout_log_summaries_call_id = event.item.raw_item.call_id
+    while True:
+        stream = client.responses.create(
+            input=prompt,
+            instructions=instructions,
+            model="gpt-5",
+            previous_response_id=previous_response_id,
+            stream=True,
+            tools=tools.tools_list
+        )
+            
+        function_call_outputs = []
 
-                elif event.item.raw_item.name == "get_workout_log_exercise_summaries":
-                    print("Getting workout log exercises...\n")
-                    get_workout_log_exercise_summaries_call_id = event.item.raw_item.call_id
+        for event in stream:
+            if type(event) == ResponseOutputItemDoneEvent:
+                if event.item.type == "function_call":
+                    name = event.item.name
+                    args = json.loads(event.item.arguments)
 
-                elif event.item.raw_item.name == "get_sleep_log_summaries":
-                    print("Getting sleep logs...\n")
-                    get_sleep_log_summaries_call_id = event.item.raw_item.call_id
+                    result = tools.call_function(name, args, user_id)
+                    function_call_outputs.append({
+                        "type": "function_call_output",
+                        "call_id": event.item.call_id,
+                        "output": json.dumps(result)
+                    })
 
-                elif event.item.raw_item.name == "get_mood_log_summaries":
-                    print("Getting mood logs...\n")
-                    get_mood_log_summaries_call_id = event.item.raw_item.call_id
+            elif type(event) == ResponseTextDeltaEvent:
+                print(event.delta, end="", flush=True)
 
-                elif event.item.raw_item.name == "get_weight_log_summaries":
-                    print("Getting weight logs...\n")
-                    get_weight_log_summaries_call_id = event.item.raw_item.call_id
+            elif type(event) == ResponseCompletedEvent:
+                previous_response_id = event.response.id
+                responses.append(event.response)
 
-            elif event.name == "tool_output":
-                if get_meal_log_summaries_call_id == event.item.raw_item.get("call_id"):
-                    print("Found meal logs.\n")
-                    get_meal_log_summaries_call_id = ""
+        if function_call_outputs:
+            instructions = "Summarize these tool outputs in a friendly way."
+            prompt = function_call_outputs
+        else:
+            print()
+            break
 
-                elif get_meal_log_food_summaries_call_id == event.item.raw_item.get("call_id"):
-                    print("Found meal log foods.\n")
-                    get_meal_log_food_summaries_call_id = ""
-
-                elif get_workout_log_summaries_call_id == event.item.raw_item.get("call_id"):
-                    print("Found workout logs.\n")
-                    get_workout_log_summaries_call_id = ""
-                
-                elif get_workout_log_exercise_summaries_call_id == event.item.raw_item.get("call_id"):
-                    print("Found workout log exercises.\n")
-                    get_workout_log_exercise_summaries_call_id = ""
-
-                elif get_sleep_log_summaries_call_id == event.item.raw_item.get("call_id"):
-                    print("Found sleep logs.\n")
-                    get_sleep_log_summaries_call_id = ""
-
-                elif get_mood_log_summaries_call_id == event.item.raw_item.get("call_id"):
-                    print("Found mood logs.\n")
-                    get_mood_log_summaries_call_id = ""
-                
-                elif get_weight_log_summaries_call_id == event.item.raw_item.get("call_id"):
-                    print("Found weight logs.\n")
-                    get_weight_log_summaries_call_id = ""
-
-    return result
-
-async def print_history(agent_memory: MemorySession):
-    history = await agent_memory.get_items()
-    print(f"\nhistory: {len(history)}")
-    for i, item in enumerate(history):
-        print(f"\nMessage {i+1}:")
-        print(item)
+    return responses

@@ -2,19 +2,14 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import func, delete
 import tiktoken
-import json
 from datetime import datetime, timezone, timedelta
 from fastapi import HTTPException
 from app.schemas import message
 from app.models.models import Message, Chat
 import app.agent.agent as agent
-from app.agent.memory import MemorySession
-from app.agent.prompts import user_prompt
 from app.core.constants import (
     MAX_INPUT_TOKENS,
     MAX_OUTPUT_TOKENS,
-    MAX_OLD_MESSAGES,
-    MAX_HISTORY_TOKENS,
     MAX_USER_MESSAGE_TOKENS
 )
 
@@ -59,12 +54,10 @@ async def create_message(message: message.MessageCreate, user_id: int, db: Sessi
             detail=f"Your message is too long ({user_message_tokens_count} tokens). Limit is {MAX_USER_MESSAGE_TOKENS} tokens."
         )
     
-    prompt = user_prompt.get_user_prompt(user, user_message)
-    prompt = message.content # TEMP
-    previous_response_id = chat.newest_response_id
-    print(f"previous_response_id: {previous_response_id}\n")
+    newest_response_id = chat.newest_response_id
+    print(f"newest_response_id: {newest_response_id}\n")
 
-    responses = await agent.generate_insight(user_id, prompt, previous_response_id)
+    responses = await agent.generate_insight(user, user_message, newest_response_id)
 
     outputs = []
     input_tokens_count = 0
@@ -84,8 +77,9 @@ async def create_message(message: message.MessageCreate, user_id: int, db: Sessi
     total_tokens_remaining = min(user.input_tokens_remaining, user.output_tokens_remaining)
     print(f"\nYou have {total_tokens_remaining} tokens remaining.")
 
-    newest_response_id = responses[-1].id
-    chat.newest_response_id = newest_response_id
+    if responses:
+        newest_response_id = responses[-1].id
+        chat.newest_response_id = newest_response_id
 
     new_messages = []
 
@@ -159,69 +153,3 @@ def delete_message_group(interaction_id: int, user_id: int, db: Session):
         )
     )
     db.commit()
-
-# ----------------------------------------------------------------------------
-
-async def load_messages(chat_id: int, db: Session, limit: int = MAX_OLD_MESSAGES):
-    # Get interaction groups for this chat, ordered newest first by interaction_id
-    interaction_groups = (
-        db.query(Message.interaction_id)
-        .filter(Message.chat_id == chat_id)
-        .group_by(Message.interaction_id)
-        .order_by(Message.interaction_id.desc())
-        .all()
-    )
-
-    # Get list of unique interaction_ids
-    interaction_ids = [group_id[0] for group_id in interaction_groups]
-
-    selected_interactions = []
-    total_messages = 0
-    token_count = 0
-
-    # Add interactions from newest to oldest until limit is reached or exceeded
-    for interaction_id in interaction_ids:
-        result = db.query(
-            func.count(Message.id).label("count"),
-            func.array_agg(Message.message).label("messages")
-        ).filter(
-            Message.chat_id == chat_id,
-            Message.interaction_id == interaction_id
-        ).first()
-
-        count = result.count
-        messages = result.messages
-
-        for message in messages:
-            message_str = json.dumps(message, separators=(",", ":"))
-            message_tokens = encoding.encode(message_str)
-            token_count += len(message_tokens)
-
-        # Stop before breaking interaction group
-        if total_messages + count > limit or token_count > MAX_HISTORY_TOKENS:
-            break
-
-        selected_interactions.append(interaction_id)
-        total_messages += count
-
-    # No messages found or first group exceeds limit
-    if not selected_interactions:
-        messages = []
-        
-    # Load messages belonging to selected interaction groups, ordered oldest first
-    else:
-        selected_interactions.reverse()
-
-        messages = (
-            db.query(Message)
-            .filter(
-                Message.chat_id == chat_id,
-                Message.interaction_id.in_(selected_interactions)
-            )
-            .order_by(Message.id)
-            .all()
-        )
-
-    items = [m.message for m in messages]
-
-    return items
