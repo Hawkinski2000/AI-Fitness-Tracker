@@ -30,8 +30,8 @@ class User(Base):
     __tablename__ = "user"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
-    username: Mapped[str] = mapped_column(String, nullable=False)
-    email: Mapped[str] = mapped_column(String, nullable=False)
+    username: Mapped[str] = mapped_column(String, nullable=False, unique=True)
+    email: Mapped[str] = mapped_column(String, nullable=False, unique=True)
     password_hash: Mapped[str] = mapped_column(String, nullable=False)
     first_name: Mapped[str] = mapped_column(String, nullable=False)
     sex: Mapped[str] = mapped_column(String, nullable=False)

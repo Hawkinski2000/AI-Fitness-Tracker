@@ -92,8 +92,6 @@ To load exercise data into the database, in AI-Fitness-Tracker/backend, run:
 ==============================================================================
 """
 
-Base.metadata.create_all(bind=engine)
-
 app = FastAPI()
 
 @app.get("/")
