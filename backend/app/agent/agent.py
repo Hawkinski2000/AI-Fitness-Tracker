@@ -47,10 +47,10 @@ async def generate_insight(user: User, user_message: str, newest_response_id: st
         stream = client.responses.create(
             input=prompt,
             instructions=instructions,
-            model="gpt-5",
+            model="gpt-5-mini",
             previous_response_id=previous_response_id,
             stream=True,
-            tools=tools.tools_list
+            tools=tools.tools_list,
         )
             
         function_call_outputs = []
@@ -76,7 +76,7 @@ async def generate_insight(user: User, user_message: str, newest_response_id: st
                 responses.append(event.response)
 
         if function_call_outputs:
-            instructions = "Summarize these tool outputs in a friendly way."
+            instructions = "Here are the outputs of the tools that you called."
             prompt = function_call_outputs
         else:
             print()

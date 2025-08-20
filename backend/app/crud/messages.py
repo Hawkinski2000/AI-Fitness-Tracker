@@ -55,7 +55,7 @@ async def create_message(message: message.MessageCreate, user_id: int, db: Sessi
         )
     
     newest_response_id = chat.newest_response_id
-    print(f"newest_response_id: {newest_response_id}\n")
+    # print(f"newest_response_id: {newest_response_id}\n")
 
     responses = await agent.generate_insight(user, user_message, newest_response_id)
 
