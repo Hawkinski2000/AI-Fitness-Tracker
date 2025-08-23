@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 import json
@@ -18,10 +19,20 @@ def get_workout_logs(user_id: int, db: Session):
 
 def get_workout_log(id: int, user_id: int, db: Session):
     workout_log = db.query(WorkoutLog).filter(WorkoutLog.id == id, WorkoutLog.user_id == user_id).first()
+
+    if not workout_log:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="Workout log not found")
+
     return workout_log
 
 def update_workout_log(id: int, workout_log: workout_log.WorkoutLogCreate, user_id: int, db: Session):
     workout_log_query = db.query(WorkoutLog).filter(WorkoutLog.id == id, WorkoutLog.user_id == user_id)
+
+    if not workout_log_query.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="Workout log not found")
+
     workout_log_query.update(workout_log.model_dump(), synchronize_session=False)
     db.commit()
     updated_workout_log = workout_log_query.first()
@@ -29,6 +40,11 @@ def update_workout_log(id: int, workout_log: workout_log.WorkoutLogCreate, user_
 
 def delete_workout_log(id: int, user_id: int, db: Session):
     workout_log_query = db.query(WorkoutLog).filter(WorkoutLog.id == id, WorkoutLog.user_id == user_id)
+
+    if not workout_log_query.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="Workout log not found")
+
     workout_log_query.delete(synchronize_session=False)
     db.commit()
 
