@@ -156,25 +156,25 @@ def test_update_user_duplicate(authorized_client, data, another_user, status_cod
 
 def test_update_user_unauthorized(client, user):
     res = client.put(f"/users/{user["id"]}",
-                     json=({"username": "username",
+                     json={"username": "username",
                             "email": "email@gmail.com",
-                            "password": "password"}))
+                            "password": "password"})
     assert res.status_code == 401
 
 def test_update_user_not_owner(authorized_client, another_user):
     res = authorized_client.put(f"/users/{another_user["id"]}",
-                                json=({"username": "username",
+                                json={"username": "username",
                                        "email": "email@gmail.com",
-                                       "password": "password"}))
+                                       "password": "password"})
     assert res.status_code == 404
 
 def test_update_user_not_found(authorized_client, session):
     max_id = session.query(User.id).order_by(User.id.desc()).first()[0]
     non_existent_id = max_id + 1000
     res = authorized_client.put(f"/users/{non_existent_id}",
-                                json=({"username": "username",
+                                json={"username": "username",
                                        "email": "email@gmail.com",
-                                       "password": "password"}))
+                                       "password": "password"})
     assert res.status_code == 404
 
 # ----------------------------------------------------------------------------
