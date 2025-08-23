@@ -6,8 +6,15 @@ from app.models.models import User
 
 
 def create_user(user: user.UserCreate, db: Session):
-    existing_user = db.query(User).filter(User.email == user.email).first()
-    if existing_user:
+    existing_user_username = db.query(User).filter(User.username == user.username).first()
+    if existing_user_username:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Username is already taken",
+        )
+    
+    existing_user_email  = db.query(User).filter(User.email == user.email).first()
+    if existing_user_email:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Email is already registered",
