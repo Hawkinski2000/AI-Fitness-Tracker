@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 from collections import defaultdict
@@ -19,10 +20,20 @@ def get_meal_logs(user_id: int, db: Session):
 
 def get_meal_log(id: int, user_id: int, db: Session):
     meal_log = db.query(MealLog).filter(MealLog.id == id, MealLog.user_id == user_id).first()
+
+    if not meal_log:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="Meal log not found")
+
     return meal_log
 
 def update_meal_log(id: int, meal_log: meal_log.MealLogCreate, user_id: int, db: Session):
     meal_log_query = db.query(MealLog).filter(MealLog.id == id, MealLog.user_id == user_id)
+
+    if not meal_log_query.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="Meal log not found")
+
     meal_log_query.update(meal_log.model_dump(), synchronize_session=False)
     db.commit()
     updated_meal_log = meal_log_query.first()
@@ -30,6 +41,11 @@ def update_meal_log(id: int, meal_log: meal_log.MealLogCreate, user_id: int, db:
 
 def delete_meal_log(id: int, user_id: int, db: Session):
     meal_log_query = db.query(MealLog).filter(MealLog.id == id, MealLog.user_id == user_id)
+
+    if not meal_log_query.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="Meal log not found")
+
     meal_log_query.delete(synchronize_session=False)
     db.commit()
 
