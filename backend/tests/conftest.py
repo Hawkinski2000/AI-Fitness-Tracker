@@ -65,6 +65,19 @@ def user(client):
 
     new_user = res.json()
     new_user["password"] = user_data["password"]
+
+    return new_user
+
+@pytest.fixture
+def another_user(client):
+    user_data = {"username": "username2",
+                 "email": "email2@gmail.com",
+                 "password": "password2"}
+
+    res = client.post("/users/", json=user_data)
+
+    new_user = res.json()
+    new_user["password"] = user_data["password"]
     
     return new_user
 
