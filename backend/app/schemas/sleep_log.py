@@ -7,7 +7,7 @@ class SleepLogBase(BaseModel):
     log_date: datetime
     time_to_bed: datetime
     time_awake: datetime
-    duration: int
+    duration: Optional[int] = None
     sleep_score: Optional[int] = None
     notes: Optional[dict] = None
 

@@ -257,7 +257,7 @@ class SleepLog(Base):
     log_date: Mapped[date] = mapped_column(Date, nullable=False)
     time_to_bed: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False)
     time_awake: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False)
-    duration: Mapped[int] = mapped_column(Integer, nullable=False)
+    duration: Mapped[Optional[int]] = mapped_column(Integer)
     sleep_score: Mapped[Optional[int]] = mapped_column(Integer)
     notes: Mapped[Optional[dict]] = mapped_column(JSONB)
 

@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 import json
@@ -18,10 +19,20 @@ def get_sleep_logs(user_id: int, db: Session):
 
 def get_sleep_log(id: int, user_id: int, db: Session):
     sleep_log = db.query(SleepLog).filter(SleepLog.id == id, SleepLog.user_id == user_id).first()
+
+    if not sleep_log:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="Sleep log not found")
+
     return sleep_log
 
 def update_sleep_log(id: int, sleep_log: sleep_log.SleepLogCreate, user_id: int, db: Session):
     sleep_log_query = db.query(SleepLog).filter(SleepLog.id == id, SleepLog.user_id == user_id)
+
+    if not sleep_log_query.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="Sleep log not found")
+
     sleep_log_query.update(sleep_log.model_dump(), synchronize_session=False)
     db.commit()
     updated_sleep_log = sleep_log_query.first()
@@ -29,6 +40,11 @@ def update_sleep_log(id: int, sleep_log: sleep_log.SleepLogCreate, user_id: int,
 
 def delete_sleep_log(id: int, user_id: int, db: Session):
     sleep_log_query = db.query(SleepLog).filter(SleepLog.id == id, SleepLog.user_id == user_id)
+
+    if not sleep_log_query.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="Sleep log not found")
+
     sleep_log_query.delete(synchronize_session=False)
     db.commit()
 
