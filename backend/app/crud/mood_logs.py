@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 import json
@@ -18,10 +19,20 @@ def get_mood_logs(user_id: int, db: Session):
 
 def get_mood_log(id: int, user_id: int, db: Session):
     mood_log = db.query(MoodLog).filter(MoodLog.id == id, MoodLog.user_id == user_id).first()
+
+    if not mood_log:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="Mood log not found")
+
     return mood_log
 
 def update_mood_log(id: int, mood_log: mood_log.MoodLogCreate, user_id: int, db: Session):
     mood_log_query = db.query(MoodLog).filter(MoodLog.id == id, MoodLog.user_id == user_id)
+
+    if not mood_log_query.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="Mood log not found")
+
     mood_log_query.update(mood_log.model_dump(), synchronize_session=False)
     db.commit()
     updated_mood_log = mood_log_query.first()
@@ -29,6 +40,11 @@ def update_mood_log(id: int, mood_log: mood_log.MoodLogCreate, user_id: int, db:
 
 def delete_mood_log(id: int, user_id: int, db: Session):
     mood_log_query = db.query(MoodLog).filter(MoodLog.id == id, MoodLog.user_id == user_id)
+
+    if not mood_log_query.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="Mood log not found")
+
     mood_log_query.delete(synchronize_session=False)
     db.commit()
 

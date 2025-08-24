@@ -63,7 +63,7 @@ def test_create_user_invalid(client, data, status_code):
           409)
     ]
 )
-def test_create_user_duplicate(client, data, user, status_code):
+def test_create_user_duplicate(client, user, data, status_code):
     res = client.post("/users/", json=data)
     assert res.status_code == status_code
 
@@ -105,7 +105,7 @@ def test_get_user_not_found(authorized_client, session):
           200)
     ]
 )
-def test_update_user(authorized_client, data, user, status_code):
+def test_update_user(authorized_client, user, data, status_code):
     res = authorized_client.put(f"/users/{user["id"]}", json=data)
     assert res.status_code == status_code
     new_user = UserResponse(**res.json())
@@ -133,7 +133,7 @@ def test_update_user(authorized_client, data, user, status_code):
           422)
     ]
 )
-def test_update_user_invalid(authorized_client, data, user, status_code):
+def test_update_user_invalid(authorized_client, user, data, status_code):
     res = authorized_client.put(f"/users/{user["id"]}", json=data)
     assert res.status_code == status_code
 
@@ -150,7 +150,7 @@ def test_update_user_invalid(authorized_client, data, user, status_code):
           409)
     ]
 )
-def test_update_user_duplicate(authorized_client, data, another_user, status_code):
+def test_update_user_duplicate(authorized_client, another_user, data, status_code):
     res = authorized_client.put(f"/users/{another_user["id"]}", json=data)
     assert res.status_code == status_code
 
