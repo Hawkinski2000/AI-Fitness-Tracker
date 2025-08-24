@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 import json
@@ -18,10 +19,20 @@ def get_weight_logs(user_id: int, db: Session):
 
 def get_weight_log(id: int, user_id: int, db: Session):
     weight_log = db.query(WeightLog).filter(WeightLog.id == id, WeightLog.user_id == user_id).first()
+
+    if not weight_log:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="Weight log not found")
+
     return weight_log
 
 def update_weight_log(id: int, weight_log: weight_log.WeightLogCreate, user_id: int, db: Session):
     weight_log_query = db.query(WeightLog).filter(WeightLog.id == id, WeightLog.user_id == user_id)
+
+    if not weight_log_query.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="Weight log not found")
+
     weight_log_query.update(weight_log.model_dump(), synchronize_session=False)
     db.commit()
     updated_weight_log = weight_log_query.first()
@@ -29,6 +40,11 @@ def update_weight_log(id: int, weight_log: weight_log.WeightLogCreate, user_id: 
 
 def delete_weight_log(id: int, user_id: int, db: Session):
     weight_log_query = db.query(WeightLog).filter(WeightLog.id == id, WeightLog.user_id == user_id)
+
+    if not weight_log_query.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="Weight log not found")
+
     weight_log_query.delete(synchronize_session=False)
     db.commit()
 
