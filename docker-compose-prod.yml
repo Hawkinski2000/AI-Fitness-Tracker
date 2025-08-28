@@ -1,17 +1,21 @@
 services:
   api:
-    image: hawkinski/ai-fitness-tracker
+    image: hawkinski/ai-fitness-tracker:latest
+    container_name: ai_fitness_tracker_app
     depends_on:
       - postgres
     ports:
-      - "80:8000"
+      - "8000:8000"
     env_file:
       - ./.env
 
   postgres:
-    image: postgres:15
+    image: postgres:17.5
+    container_name: postgres_db
     env_file:
       - ./.env
+    ports:
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres-db:/var/lib/postgresql/data
 
