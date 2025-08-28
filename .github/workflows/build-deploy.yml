@@ -71,7 +71,7 @@ jobs:
           context: ./backend
           file: ./backend/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/fastapi:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/ai-fitness-tracker:latest
 
   deploy:
     runs-on: ubuntu-latest
