@@ -87,7 +87,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           instance-ids: ${{ secrets.INSTANCE_ID }}
-          working-directory: /home/ec2-user/ai-fitness-tracker
+          working-directory: /home/ec2-user/AI-Fitness-Tracker
           comment: Pull and deploy new container
           command: |
             sudo -u ec2-user git pull origin main
