@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings
+from typing import Optional
 
 
 class Settings(BaseSettings):
@@ -10,9 +11,9 @@ class Settings(BaseSettings):
     secret_key: str
     algorithm: str
     access_token_expire_minutes: int
-    openai_api_key: str
-    postgres_password: str
-    postgres_db: str
+    openai_api_key: Optional[str] = None
+    postgres_password: Optional[str] = None
+    postgres_db: Optional[str] = None
 
     class Config:
         env_file = "../.env"
