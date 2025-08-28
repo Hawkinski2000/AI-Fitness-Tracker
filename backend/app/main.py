@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import argparse
 from .models.models import Base
 from .core.db import engine
@@ -36,8 +37,6 @@ from .api.v1.endpoints import (
 """
 ==============================================================================
 Todo:
-    - Authentication.
-
     - When creating a food, a food_nutrient should be created for it.
 
     - Add exceptions to crud functions.
@@ -93,6 +92,16 @@ To load exercise data into the database, in AI-Fitness-Tracker/backend, run:
 """
 
 app = FastAPI()
+
+origins = []
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def root():
