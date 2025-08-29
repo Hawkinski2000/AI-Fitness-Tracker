@@ -14,7 +14,7 @@ from app.schemas.token import TokenResponse
     ]
 )
 def test_create_token(client, data, user, another_user, status_code):
-    res = client.post("/tokens/", data=data)
+    res = client.post("/api/tokens/", data=data)
     assert res.status_code == status_code
     new_token = TokenResponse(**res.json())
     assert new_token.access_token
@@ -34,17 +34,17 @@ def test_create_token(client, data, user, another_user, status_code):
     ]
 )
 def test_create_token_invalid(client, data, user, status_code):
-    res = client.post("/tokens/", data=data)
+    res = client.post("/api/tokens/", data=data)
     assert res.status_code == status_code
 
 def test_create_token_user_not_found(client):
-    res = client.post("/tokens/",
+    res = client.post("/api/tokens/",
                       data={"username": "email@gmail.com",
                              "password": "password"})
     assert res.status_code == 403
 
 def test_create_token_wrong_password(client, user):
-    res = client.post("/tokens/",
+    res = client.post("/api/tokens/",
                      data={"username": "email@gmail.com",
                             "password": "wrong_password"})
     assert res.status_code == 403

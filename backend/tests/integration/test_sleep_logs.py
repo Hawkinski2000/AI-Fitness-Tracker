@@ -55,7 +55,7 @@ def sleep_logs(user, another_user, session):
     ]
 )
 def test_create_sleep_log(authorized_client, user, data, status_code):
-    res = authorized_client.post("/sleep-logs/", json=data)
+    res = authorized_client.post("/api/sleep-logs/", json=data)
     assert res.status_code == status_code
     new_sleep_log = SleepLogResponse(**res.json())
     assert new_sleep_log.user_id == user["id"]
@@ -72,11 +72,11 @@ def test_create_sleep_log(authorized_client, user, data, status_code):
     ]
 )
 def test_create_sleep_log_invalid(authorized_client, data, status_code):
-    res = authorized_client.post("/sleep-logs/", json=data)
+    res = authorized_client.post("/api/sleep-logs/", json=data)
     assert res.status_code == status_code
 
 def test_create_sleep_log_unauthorized(client):
-    res = client.post("/sleep-logs/",
+    res = client.post("/api/sleep-logs/",
                       json={"log_date": datetime.now().isoformat(),
                             "time_to_bed": datetime.now().isoformat(),
                             "time_awake": datetime.now().isoformat()})
@@ -85,36 +85,36 @@ def test_create_sleep_log_unauthorized(client):
 # ----------------------------------------------------------------------------
 
 def test_get_sleep_logs(authorized_client, sleep_logs, user):
-    res = authorized_client.get("/sleep-logs/")
+    res = authorized_client.get("/api/sleep-logs/")
     assert res.status_code == 200
     sleep_logs_list = [SleepLog(**sleep_log) for sleep_log in res.json()]
     user_sleep_logs = [sleep_log for sleep_log in sleep_logs if sleep_log.user_id == user["id"]]
     assert len(sleep_logs_list) == len(user_sleep_logs)
 
 def test_get_sleep_logs_unauthorized(client, sleep_logs):
-    res = client.get("/sleep-logs/")
+    res = client.get("/api/sleep-logs/")
     assert res.status_code == 401
 
 # ----------------------------------------------------------------------------
 
 def test_get_sleep_log(authorized_client, sleep_logs, user):
-    res = authorized_client.get(f"/sleep-logs/{sleep_logs[0].id}")
+    res = authorized_client.get(f"/api/sleep-logs/{sleep_logs[0].id}")
     assert res.status_code == 200
     sleep_log = SleepLogResponse(**res.json())
     assert sleep_log.user_id == user["id"]
 
 def test_get_sleep_log_unauthorized(client, sleep_logs):
-    res = client.get(f"/sleep-logs/{sleep_logs[0].id}")
+    res = client.get(f"/api/sleep-logs/{sleep_logs[0].id}")
     assert res.status_code == 401
 
 def test_get_sleep_log_not_owner(authorized_client, sleep_logs):
-    res = authorized_client.get(f"/sleep-logs/{sleep_logs[2].id}")
+    res = authorized_client.get(f"/api/sleep-logs/{sleep_logs[2].id}")
     assert res.status_code == 404
 
 def test_sleep_log_not_found(authorized_client, sleep_logs, session):
     max_id = session.query(SleepLog.id).order_by(SleepLog.id.desc()).first()[0]
     non_existent_id = max_id + 1000
-    res = authorized_client.get(f"/sleep-logs/{non_existent_id}")
+    res = authorized_client.get(f"/api/sleep-logs/{non_existent_id}")
     assert res.status_code == 404
 
 # ----------------------------------------------------------------------------
@@ -134,7 +134,7 @@ def test_sleep_log_not_found(authorized_client, sleep_logs, session):
     ]
 )
 def test_update_sleep_log(authorized_client, sleep_logs, data, status_code):
-    res = authorized_client.put(f"/sleep-logs/{sleep_logs[0].id}", json=data)
+    res = authorized_client.put(f"/api/sleep-logs/{sleep_logs[0].id}", json=data)
     assert res.status_code == status_code
 
 @pytest.mark.parametrize(
@@ -149,18 +149,18 @@ def test_update_sleep_log(authorized_client, sleep_logs, data, status_code):
     ]
 )
 def test_update_sleep_log_invalid(authorized_client, sleep_logs, data, status_code):
-    res = authorized_client.put(f"/sleep-logs/{sleep_logs[0].id}", json=data)
+    res = authorized_client.put(f"/api/sleep-logs/{sleep_logs[0].id}", json=data)
     assert res.status_code == status_code
 
 def test_update_sleep_log_unauthorized(client, sleep_logs):
-    res = client.put(f"/sleep-logs/{sleep_logs[0].id}",
+    res = client.put(f"/api/sleep-logs/{sleep_logs[0].id}",
                      json={"log_date": datetime.now().isoformat(),
                            "time_to_bed": datetime.now().isoformat(),
                            "time_awake": datetime.now().isoformat()})
     assert res.status_code == 401
 
 def test_update_sleep_log_not_owner(authorized_client, sleep_logs):
-    res = authorized_client.put(f"/sleep-logs/{sleep_logs[2].id}",
+    res = authorized_client.put(f"/api/sleep-logs/{sleep_logs[2].id}",
                                 json={"log_date": datetime.now().isoformat(),
                                       "time_to_bed": datetime.now().isoformat(),
                                       "time_awake": datetime.now().isoformat()})
@@ -169,7 +169,7 @@ def test_update_sleep_log_not_owner(authorized_client, sleep_logs):
 def test_update_sleep_log_not_found(authorized_client, sleep_logs, session):
     max_id = session.query(SleepLog.id).order_by(SleepLog.id.desc()).first()[0]
     non_existent_id = max_id + 1000
-    res = authorized_client.put(f"/sleep-logs/{non_existent_id}",
+    res = authorized_client.put(f"/api/sleep-logs/{non_existent_id}",
                                 json={"log_date": datetime.now().isoformat(),
                                       "time_to_bed": datetime.now().isoformat(),
                                       "time_awake": datetime.now().isoformat()})
@@ -178,19 +178,19 @@ def test_update_sleep_log_not_found(authorized_client, sleep_logs, session):
 # ----------------------------------------------------------------------------
 
 def test_delete_sleep_log(authorized_client, sleep_logs):
-    res = authorized_client.delete(f"/sleep-logs/{sleep_logs[0].id}")
+    res = authorized_client.delete(f"/api/sleep-logs/{sleep_logs[0].id}")
     assert res.status_code == 204
 
 def test_delete_sleep_log_unauthorized(client, sleep_logs):
-    res = client.delete(f"/sleep-logs/{sleep_logs[0].id}")
+    res = client.delete(f"/api/sleep-logs/{sleep_logs[0].id}")
     assert res.status_code == 401
 
 def test_delete_sleep_log_not_owner(authorized_client, sleep_logs):
-    res = authorized_client.delete(f"/sleep-logs/{sleep_logs[2].id}")
+    res = authorized_client.delete(f"/api/sleep-logs/{sleep_logs[2].id}")
     assert res.status_code == 404
 
 def test_delete_sleep_log_not_found(authorized_client, sleep_logs, session):
     max_id = session.query(SleepLog.id).order_by(SleepLog.id.desc()).first()[0]
     non_existent_id = max_id + 1000
-    res = authorized_client.delete(f"/sleep-logs/{non_existent_id}")
+    res = authorized_client.delete(f"/api/sleep-logs/{non_existent_id}")
     assert res.status_code == 404

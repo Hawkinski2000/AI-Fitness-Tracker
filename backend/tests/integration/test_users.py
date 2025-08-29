@@ -19,7 +19,7 @@ from app.models.models import User
     ]
 )
 def test_create_user(client, data, status_code):
-    res = client.post("/users/", json=data)
+    res = client.post("/api/users/", json=data)
     assert res.status_code == status_code
     new_user = UserResponse(**res.json())
     assert new_user.username == data["username"]
@@ -47,7 +47,7 @@ def test_create_user(client, data, status_code):
     ]
 )
 def test_create_user_invalid(client, data, status_code):
-    res = client.post("/users/", json=data)
+    res = client.post("/api/users/", json=data)
     assert res.status_code == status_code
 
 @pytest.mark.parametrize(
@@ -64,28 +64,28 @@ def test_create_user_invalid(client, data, status_code):
     ]
 )
 def test_create_user_duplicate(client, user, data, status_code):
-    res = client.post("/users/", json=data)
+    res = client.post("/api/users/", json=data)
     assert res.status_code == status_code
 
 # ----------------------------------------------------------------------------
 
 def test_get_user(authorized_client, user):
-    res = authorized_client.get(f"/users/{user["id"]}")
+    res = authorized_client.get(f"/api/users/{user["id"]}")
     assert res.status_code == 200
     user = UserResponse(**res.json())
 
 def test_get_user_unauthorized(client, user):
-    res = client.get(f"/users/{user["id"]}")
+    res = client.get(f"/api/users/{user["id"]}")
     assert res.status_code == 401
 
 def test_get_user_not_owner(authorized_client, another_user):
-    res = authorized_client.get(f"/users/{another_user["id"]}")
+    res = authorized_client.get(f"/api/users/{another_user["id"]}")
     assert res.status_code == 404
 
 def test_get_user_not_found(authorized_client, session):
     max_id = session.query(User.id).order_by(User.id.desc()).first()[0]
     non_existent_id = max_id + 1000
-    res = authorized_client.get(f"/users/{non_existent_id}")
+    res = authorized_client.get(f"/api/users/{non_existent_id}")
     assert res.status_code == 404
 
 # ----------------------------------------------------------------------------
@@ -106,7 +106,7 @@ def test_get_user_not_found(authorized_client, session):
     ]
 )
 def test_update_user(authorized_client, user, data, status_code):
-    res = authorized_client.put(f"/users/{user["id"]}", json=data)
+    res = authorized_client.put(f"/api/users/{user["id"]}", json=data)
     assert res.status_code == status_code
     new_user = UserResponse(**res.json())
     assert new_user.username == data["username"]
@@ -134,7 +134,7 @@ def test_update_user(authorized_client, user, data, status_code):
     ]
 )
 def test_update_user_invalid(authorized_client, user, data, status_code):
-    res = authorized_client.put(f"/users/{user["id"]}", json=data)
+    res = authorized_client.put(f"/api/users/{user["id"]}", json=data)
     assert res.status_code == status_code
 
 @pytest.mark.parametrize(
@@ -151,18 +151,18 @@ def test_update_user_invalid(authorized_client, user, data, status_code):
     ]
 )
 def test_update_user_duplicate(authorized_client, another_user, data, status_code):
-    res = authorized_client.put(f"/users/{another_user["id"]}", json=data)
+    res = authorized_client.put(f"/api/users/{another_user["id"]}", json=data)
     assert res.status_code == status_code
 
 def test_update_user_unauthorized(client, user):
-    res = client.put(f"/users/{user["id"]}",
+    res = client.put(f"/api/users/{user["id"]}",
                      json={"username": "username",
                             "email": "email@gmail.com",
                             "password": "password"})
     assert res.status_code == 401
 
 def test_update_user_not_owner(authorized_client, another_user):
-    res = authorized_client.put(f"/users/{another_user["id"]}",
+    res = authorized_client.put(f"/api/users/{another_user["id"]}",
                                 json={"username": "username",
                                        "email": "email@gmail.com",
                                        "password": "password"})
@@ -171,7 +171,7 @@ def test_update_user_not_owner(authorized_client, another_user):
 def test_update_user_not_found(authorized_client, session):
     max_id = session.query(User.id).order_by(User.id.desc()).first()[0]
     non_existent_id = max_id + 1000
-    res = authorized_client.put(f"/users/{non_existent_id}",
+    res = authorized_client.put(f"/api/users/{non_existent_id}",
                                 json={"username": "username",
                                        "email": "email@gmail.com",
                                        "password": "password"})
@@ -180,19 +180,19 @@ def test_update_user_not_found(authorized_client, session):
 # ----------------------------------------------------------------------------
 
 def test_delete_user(authorized_client, user):
-    res = authorized_client.delete(f"/users/{user["id"]}")
+    res = authorized_client.delete(f"/api/users/{user["id"]}")
     assert res.status_code == 204
 
 def test_delete_user_unauthorized(client, user):
-    res = client.delete(f"/users/{user["id"]}")
+    res = client.delete(f"/api/users/{user["id"]}")
     assert res.status_code == 401
 
 def test_delete_user_not_owner(authorized_client, another_user):
-    res = authorized_client.delete(f"/users/{another_user["id"]}")
+    res = authorized_client.delete(f"/api/users/{another_user["id"]}")
     assert res.status_code == 404
 
 def test_delete_user_not_found(authorized_client, session):
     max_id = session.query(User.id).order_by(User.id.desc()).first()[0]
     non_existent_id = max_id + 1000
-    res = authorized_client.delete(f"/users/{non_existent_id}")
+    res = authorized_client.delete(f"/api/users/{non_existent_id}")
     assert res.status_code == 404
