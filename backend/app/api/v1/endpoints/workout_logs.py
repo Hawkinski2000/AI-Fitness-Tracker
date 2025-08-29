@@ -6,7 +6,7 @@ from app.crud import workout_logs as crud_workout_logs
 from app.core.oauth2 import get_current_user
 
 
-router = APIRouter(prefix="/workout-logs",
+router = APIRouter(prefix="/api/workout-logs",
                    tags=['Workout Logs'])
 
 # Create a workout log

@@ -7,7 +7,7 @@ from app.crud import branded_foods as crud_branded_foods
 from app.core.oauth2 import get_current_user
 
 
-router = APIRouter(prefix="/branded-foods",
+router = APIRouter(prefix="/api/branded-foods",
                    tags=['Branded Foods'])
 
 # Create a branded food

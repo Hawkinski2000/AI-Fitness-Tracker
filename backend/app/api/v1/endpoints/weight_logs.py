@@ -6,7 +6,7 @@ from app.crud import weight_logs as crud_weight_logs
 from app.core.oauth2 import get_current_user
 
 
-router = APIRouter(prefix="/weight-logs",
+router = APIRouter(prefix="/api/weight-logs",
                    tags=['Weight Logs'])
 
 # Create a weight log

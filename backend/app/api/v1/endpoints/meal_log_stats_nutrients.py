@@ -2,7 +2,7 @@ from fastapi import Response, status, APIRouter
 from app.schemas.meal_log_stats_nutrient import MealLogStatsNutrient
 
 
-router = APIRouter(prefix="/meal-log-stats-nutrients",
+router = APIRouter(prefix="/api/meal-log-stats-nutrients",
                    tags=['Meal Log Stats Nutrients'])
 
 # Create a meal log stats nutrient

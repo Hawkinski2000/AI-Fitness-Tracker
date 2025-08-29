@@ -6,7 +6,7 @@ from app.crud import chats as crud_chats
 from app.core.oauth2 import get_current_user
 
 
-router = APIRouter(prefix="/chats",
+router = APIRouter(prefix="/api/chats",
                    tags=['Chats'])
 
 # Create a chat

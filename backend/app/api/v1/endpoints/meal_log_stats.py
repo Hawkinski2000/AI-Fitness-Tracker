@@ -2,7 +2,7 @@ from fastapi import Response, status, APIRouter
 from app.schemas.meal_log_stats import MealLogStats
 
 
-router = APIRouter(prefix="/meal-log-stats",
+router = APIRouter(prefix="/api/meal-log-stats",
                    tags=['Meal Log Stats'])
 
 # Create a meal log stats entry

@@ -2,7 +2,7 @@ from fastapi import Response, status, APIRouter
 from app.schemas.sleep_log_stats import SleepLogStats
 
 
-router = APIRouter(prefix="/sleep-log-stats",
+router = APIRouter(prefix="/api/sleep-log-stats",
                    tags=['Sleep Log Stats'])
 
 # Create a sleep log stats entry

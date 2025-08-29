@@ -6,7 +6,7 @@ from app.crud import mood_logs as crud_mood_logs
 from app.core.oauth2 import get_current_user
 
 
-router = APIRouter(prefix="/mood-logs",
+router = APIRouter(prefix="/api/mood-logs",
                    tags=['Mood Logs'])
 
 # Create a mood log

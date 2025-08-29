@@ -2,7 +2,7 @@ from fastapi import Response, status, APIRouter
 from app.schemas.mood_log_stats import MoodLogStats
 
 
-router = APIRouter(prefix="/mood-log-stats",
+router = APIRouter(prefix="/api/mood-log-stats",
                    tags=['Mood Log Stats'])
 
 # Create a mood log stats entry

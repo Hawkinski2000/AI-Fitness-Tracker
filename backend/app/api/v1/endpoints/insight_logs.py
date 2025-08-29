@@ -5,7 +5,7 @@ from app.schemas import insight_log
 from app.crud import insight_logs as crud_insight_logs
 
 
-router = APIRouter(prefix="/insight-logs",
+router = APIRouter(prefix="/api/insight-logs",
                    tags=['Insight Logs'])
 
 # Create an insight log

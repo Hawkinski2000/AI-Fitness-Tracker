@@ -5,7 +5,7 @@ from app.schemas import nutrient
 from app.crud import nutrients as crud_nutrients
 
 
-router = APIRouter(prefix="/nutrients",
+router = APIRouter(prefix="/api/nutrients",
                    tags=['Nutrients'])
 
 # Create a nutrient

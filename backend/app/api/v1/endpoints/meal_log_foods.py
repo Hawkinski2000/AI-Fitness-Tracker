@@ -6,7 +6,7 @@ from app.crud import meal_log_foods as crud_meal_log_foods
 from app.core.oauth2 import get_current_user
 
 
-router = APIRouter(prefix="/meal-log-foods",
+router = APIRouter(prefix="/api/meal-log-foods",
                    tags=['Meal Log Foods'])
 
 # Create a meal log food

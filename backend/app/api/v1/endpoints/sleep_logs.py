@@ -6,7 +6,7 @@ from app.crud import sleep_logs as crud_sleep_logs
 from app.core.oauth2 import get_current_user
 
 
-router = APIRouter(prefix="/sleep-logs",
+router = APIRouter(prefix="/api/sleep-logs",
                    tags=['Sleep Logs'])
 
 # Create a sleep log

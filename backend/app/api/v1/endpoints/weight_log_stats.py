@@ -2,7 +2,7 @@ from fastapi import Response, status, APIRouter
 from app.schemas.weight_log_stats import WeightLogStats
 
 
-router = APIRouter(prefix="/weight-log-stats",
+router = APIRouter(prefix="/api/weight-log-stats",
                    tags=['Weight Log Stats'])
 
 # Create a weight log stats entry

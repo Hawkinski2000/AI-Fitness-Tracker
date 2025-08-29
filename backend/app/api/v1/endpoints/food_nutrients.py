@@ -6,7 +6,7 @@ from app.crud import food_nutrients as crud_food_nutrients
 from app.core.oauth2 import get_current_user
 
 
-router = APIRouter(prefix="/food-nutrients",
+router = APIRouter(prefix="/api/food-nutrients",
                    tags=['Food Nutrients'])
 
 # Create a food nutrient

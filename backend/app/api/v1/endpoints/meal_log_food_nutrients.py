@@ -5,7 +5,7 @@ from app.schemas import meal_log_food_nutrient
 from app.crud import meal_log_food_nutrients as crud_meal_log_food_nutrients
 
 
-router = APIRouter(prefix="/meal-log-food-nutrients",
+router = APIRouter(prefix="/api/meal-log-food-nutrients",
                    tags=['Meal Log Food Nutrients'])
 
 # Create a meal log food nutrient

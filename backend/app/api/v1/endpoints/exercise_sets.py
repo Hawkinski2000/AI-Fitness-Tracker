@@ -6,7 +6,7 @@ from app.crud import exercise_sets as crud_exercise_sets
 from app.core.oauth2 import get_current_user
 
 
-router = APIRouter(prefix="/exercise-sets",
+router = APIRouter(prefix="/api/exercise-sets",
                    tags=['Exercise Sets'])
 
 # Create an exercise set

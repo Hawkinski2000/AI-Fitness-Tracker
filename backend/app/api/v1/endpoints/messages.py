@@ -6,7 +6,7 @@ from app.crud import messages as crud_messages
 from app.core.oauth2 import get_current_user
 
 
-router = APIRouter(prefix="/messages",
+router = APIRouter(prefix="/api/messages",
                    tags=['Messages'])
 
 # Create a message

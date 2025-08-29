@@ -8,7 +8,7 @@ from app.schemas import token
 from app.models.models import User
 
 
-router = APIRouter(prefix="/tokens",
+router = APIRouter(prefix="/api/tokens",
                    tags=['Tokens'])
 
 # Create a token

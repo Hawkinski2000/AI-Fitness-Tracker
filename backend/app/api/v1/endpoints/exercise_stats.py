@@ -2,7 +2,7 @@ from fastapi import Response, status, APIRouter
 from app.schemas.exercise_stats import ExerciseStats
 
 
-router = APIRouter(prefix="/exercise-stats",
+router = APIRouter(prefix="/api/exercise-stats",
                    tags=['Exercise Stats'])
 
 # Create an exercise stats entry

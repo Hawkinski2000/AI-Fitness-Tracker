@@ -5,7 +5,7 @@ from app.schemas import insight
 from app.crud import insights as crud_insights
 
 
-router = APIRouter(prefix="/insights",
+router = APIRouter(prefix="/api/insights",
                    tags=['Insights'])
 
 # Create an insight

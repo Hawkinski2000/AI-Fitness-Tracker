@@ -7,7 +7,7 @@ from app.crud import foods as crud_foods
 from app.core.oauth2 import get_current_user
 
 
-router = APIRouter(prefix="/foods",
+router = APIRouter(prefix="/api/foods",
                    tags=['Foods'])
 
 # Create a food

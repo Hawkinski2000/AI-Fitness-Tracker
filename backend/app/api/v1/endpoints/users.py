@@ -6,7 +6,7 @@ from app.crud import users as crud_users
 from app.core.oauth2 import get_current_user
 
 
-router = APIRouter(prefix="/users",
+router = APIRouter(prefix="/api/users",
                    tags=['Users'])
 
 # Create a user
