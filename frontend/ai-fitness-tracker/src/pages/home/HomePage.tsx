@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import './HomePage.css';
 
 
@@ -17,15 +18,15 @@ export default function HomePage() {
 
             <div className="home-page-buttons">
               <div>
-                <button className="create-account-button">
+                <Link className="button-link create-account-button" to="/">
                   Create Account
-                </button>
+                </Link>
               </div>
 
               <div>
-                <button className="login-button">
+                <Link className="button-link" to="/login">
                   Login
-                </button>
+                </Link>
               </div>
             </div>
           </div>

@@ -42,23 +42,32 @@
   gap: 1rem;
 }
 
-.create-account-button,
-.login-button {
+.button-link {
+  display: block;
+  box-sizing: border-box;
   padding: 0.6em 1.2em;
   width: 100%;
-  border: 1px solid transparent;
   border-radius: 30px;
   font-size: 1.1rem;
   font-weight: 500;
+  font-family: inherit;
+  text-decoration: none;
+  text-align: center;
   color: #ffffff;
   background-color: #0c0c1d;
   cursor: pointer;
   transition: box-shadow 0.25s;
 }
-
-.create-account-button:hover,
-.login-button:hover {
+.button-link:hover {
   box-shadow: 0 0 10px 3px #00ffcc;
+}
+.button-link:focus,
+.button-link:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+.create-account-button:hover {
+  box-shadow: 0 0 10px 3px #d400ff;
 }
 
 .ai-fitness-tracker-image {
