@@ -1,0 +1,85 @@
+.home-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100vw;
+  color: #0c0c1d;
+  background-color: #ffffff;
+}
+
+.home-page-header {
+  height: 50px;
+  width: 100%;
+  background-color: #0c0c1d;
+}
+
+.home-page-section {
+  display: flex;
+  padding: 5rem 0 0 0;
+  justify-content: center;
+  align-items: stretch;
+  gap: 5rem;
+  flex-wrap: wrap;
+}
+
+.home-page-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 500px;
+  justify-content: space-between;
+}
+
+.home-page-heading {
+  margin: 0 0 2rem 0;
+  font-size: 3rem;
+}
+
+.home-page-buttons {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.create-account-button,
+.login-button {
+  padding: 0.6em 1.2em;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #ffffff;
+  background-color: #0c0c1d;
+  cursor: pointer;
+  transition: box-shadow 0.25s;
+}
+
+.create-account-button:hover,
+.login-button:hover {
+  box-shadow: 0 0 10px 3px #00ffcc;
+}
+
+.ai-fitness-tracker-image {
+  height: auto;
+  width: 100%;
+  max-width: 1000px;
+  border-radius: 15px;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+  object-fit: contain;
+}
+
+@media (max-width: 900px) {
+  .home-page-section {
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .home-page-content {
+    height: auto;
+    align-items: center;
+    text-align: center;
+  }
+}
