@@ -1,14 +1,14 @@
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import './HomePage.css';
 
 
 export default function HomePage() {
   return (
     <>
-      <div className="home-page">
-        <header className="home-page-header"></header>
+      <div className="page">
+        <header className="page-header"></header>
         
-        <section className="home-page-section">
+        <section className="page-section">
           <div className="home-page-content">
             <div>
               <h1 className="home-page-heading">
@@ -18,12 +18,12 @@ export default function HomePage() {
 
             <div className="home-page-buttons">
               <div>
-                <Link className="button-link create-account-button" to="/">
+                <Link className="button-link create-account-button" to="/signup">
                   Create Account
                 </Link>
               </div>
 
-              <div>
+              <div className='link-container'>
                 <Link className="button-link" to="/login">
                   Login
                 </Link>

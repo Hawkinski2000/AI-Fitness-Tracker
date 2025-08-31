@@ -1,36 +1,68 @@
-import { Link } from 'react-router';
+import { useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom';
+import { logIn } from '../../utils/auth';
 import './LoginPage.css';
 
 
 export default function LoginPage() {
+  const [emailString, setEmailString] = useState<string>('');
+  const [passwordString, setPasswordString] = useState<string>('');
+
+  const updateEmailString = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmailString(event.target.value);
+  };
+
+  const updatePasswordString = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPasswordString(event.target.value);
+  };
+
+  const navigate = useNavigate();
+
+  const continueToDashboard = async () => {
+    try {
+      const token = await logIn(emailString, passwordString);
+      console.log(`Access token: ${token}`)
+
+      navigate('/dashboard');
+
+    } catch (error) {
+      console.error('continueToDashboard failed', error);
+    }
+  };
+
   return (
     <>
-      <div className="login-page">
-        <header className="login-page-header"></header>
+      <div className='page'>
+        <header className='page-header'></header>
         
-        <section className="login-page-section">
-          <div className="login-page-content">
+        <section className='page-section'>
+          <div className='login-page-content'>
             <div>
-              <h1 className="login-page-heading">
+              <h1 className='page-heading'>
                 Login
               </h1>
             </div>
 
             <div>
-              <input type="text" placeholder='enter email' />
+              <input type='text' placeholder='enter email' value={emailString} onChange={updateEmailString} />
             </div>
 
             <div>
-              <input type="password" placeholder='enter password' />
+              <input type='password' placeholder='enter password' value={passwordString} onChange={updatePasswordString} />
             </div>
 
-            <Link className='button-link' to="/">
+            <button className='button-link' onClick={continueToDashboard}>
               Login
-            </Link>
+            </button>
 
-            <p>
-              Don't have an account? Sign up
-            </p>
+            <div>
+              <p>
+                Don't have an account?{" "}
+                <Link className='text-link' to='/signup'>
+                  Sign up
+                </Link>
+              </p>
+            </div>
           </div>
         </section>
       </div>
