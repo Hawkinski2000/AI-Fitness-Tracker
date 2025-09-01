@@ -73,24 +73,24 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/ai-fitness-tracker:latest
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs:
-      - build
-    environment: production
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - build
+  #   environment: production
 
-    steps:
-      - name: Deploy via AWS SSM
-        uses: peterkimzz/aws-ssm-send-command@master
-        with:
-          aws-region: ${{ secrets.AWS_REGION }}
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          instance-ids: ${{ secrets.INSTANCE_ID }}
-          working-directory: /home/ec2-user/AI-Fitness-Tracker
-          comment: Pull and deploy new container
-          command: |
-            sudo -u ec2-user git pull origin main
-            sudo -u ec2-user docker compose -f docker-compose-prod.yml pull
-            sudo -u ec2-user docker compose -f docker-compose-prod.yml up -d --force-recreate
-            sudo -u ec2-user docker image prune -f
+  #   steps:
+  #     - name: Deploy via AWS SSM
+  #       uses: peterkimzz/aws-ssm-send-command@master
+  #       with:
+  #         aws-region: ${{ secrets.AWS_REGION }}
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         instance-ids: ${{ secrets.INSTANCE_ID }}
+  #         working-directory: /home/ec2-user/AI-Fitness-Tracker
+  #         comment: Pull and deploy new container
+  #         command: |
+  #           sudo -u ec2-user git pull origin main
+  #           sudo -u ec2-user docker compose -f docker-compose-prod.yml pull
+  #           sudo -u ec2-user docker compose -f docker-compose-prod.yml up -d --force-recreate
+  #           sudo -u ec2-user docker image prune -f
