@@ -49,8 +49,8 @@ export default function AboutYouPage() {
         'first_name': firstNameString || undefined,
         'sex': sexString || undefined,
         'age': ageString ? parseInt(ageString) : undefined,
-        'height': heightString ? parseInt(ageString) : undefined,
-        'weight': weightString ? parseInt(ageString) : undefined,
+        'height': heightString ? parseInt(heightString) : undefined,
+        'weight': weightString ? parseInt(weightString) : undefined,
         'goal': goalString || undefined,
       }
 

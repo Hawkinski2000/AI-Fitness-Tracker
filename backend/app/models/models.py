@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, String, Float, Date, Text, TIMESTAMP, ForeignKey, func, text
+from sqlalchemy import Integer, String, Float, Date, Text, TIMESTAMP, Boolean, ForeignKey, func, text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import JSONB
 from datetime import datetime, date
@@ -46,6 +46,7 @@ class User(Base):
     output_tokens_remaining: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text(str(MAX_OUTPUT_TOKENS)))
     last_token_reset:  Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
 
+    refresh_tokens: Mapped[list["RefreshToken"]] = relationship("RefreshToken", back_populates="user", cascade="all, delete-orphan")
     meal_logs: Mapped[list["MealLog"]] = relationship("MealLog", back_populates="user", cascade="all, delete-orphan")
     foods: Mapped[list["Food"]] = relationship("Food", back_populates="user", cascade="all, delete-orphan")
     workout_logs: Mapped[list["WorkoutLog"]] = relationship("WorkoutLog", back_populates="user", cascade="all, delete-orphan")
@@ -60,6 +61,19 @@ class User(Base):
     # sleep_log_stats: Mapped[list["SleepLogStats"]] = relationship("SleepLogStats", back_populates="user", cascade="all, delete-orphan")
     # mood_log_stats: Mapped[list["MoodLogStats"]] = relationship("MoodLogStats", back_populates="user", cascade="all, delete-orphan")
     # weight_log_stats: Mapped[list["WeightLogStats"]] = relationship("WeightLogStats", back_populates="user", cascade="all, delete-orphan")
+
+# ----------------------------------------------------------------------------
+
+class RefreshToken(Base):
+    __tablename__ = "refresh_token"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
+    token_hash : Mapped[str] = mapped_column(String, nullable=False, unique=True)
+    expires_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False)
+    revoked: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("false"))
+
+    user: Mapped["User"] = relationship("User", back_populates="refresh_tokens")
 
 # ----------------------------------------------------------------------------
 
