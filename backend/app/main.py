@@ -94,7 +94,8 @@ To load exercise data into the database, in AI-Fitness-Tracker/backend, run:
 app = FastAPI()
 
 origins = [
-    "http://localhost:5173"
+    "http://localhost:5173",
+    "http://172.24.202.129:5173"
 ]
 
 app.add_middleware(

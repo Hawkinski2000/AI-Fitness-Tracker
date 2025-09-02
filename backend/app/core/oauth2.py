@@ -59,6 +59,7 @@ def set_refresh_cookie(response: Response, raw_token: str, max_age_seconds: int)
         httponly=True,
         # secure=True, # Use in production!
         secure=False,
-        samesite="lax",
-        path="/api/tokens"
+        samesite="Lax",
+        path="/",
+        domain="172.24.202.129"
     )

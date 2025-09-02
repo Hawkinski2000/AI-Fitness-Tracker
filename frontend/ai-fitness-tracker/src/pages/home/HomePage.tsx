@@ -11,7 +11,7 @@ export default function HomePage() {
         <section className="page-section">
           <div className="home-page-content">
             <div>
-              <h1 className="home-page-heading">
+              <h1 className="page-heading">
                 AI Fitness Tracker
               </h1>
             </div>

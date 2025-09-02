@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { API_BASE_URL } from "../config/api";
 
 
 export const logIn = async (emailString: string, passwordString: string) => {
@@ -8,12 +9,13 @@ export const logIn = async (emailString: string, passwordString: string) => {
       formData.append('password', passwordString);
 
       const response = await axios.post(
-        'http://172.24.192.1:8000/api/tokens',
+        `${API_BASE_URL}/tokens`,
         formData,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
-          }
+          },
+          withCredentials: true
         }
       );
 
