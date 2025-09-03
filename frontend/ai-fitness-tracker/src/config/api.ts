@@ -1,1 +1,1 @@
-export const API_BASE_URL = "http://172.24.202.129:8000/api"
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
