@@ -1,78 +1,54 @@
-import { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useSignUp } from "../../context/sign-up/useSignUp";
+import { useAuth } from "../../context/auth/useAuth";
+import { logIn } from '../../utils/auth';
+import { API_BASE_URL } from "../../config/api";
 import axios from 'axios';
 import './AboutYouPage.css';
 
 
 export default function AboutYouPage() {
-  const [firstNameString, setFirstNameString] = useState<string>('');
-  const [sexString, setSexString] = useState<string>('');
-  const [ageString, setAgeString] = useState<string>('');
-  const [heightString, setHeightString] = useState<string>('');
-  const [weightString, setWeightString] = useState<string>('');
-  const [goalString, setGoalString] = useState<string>('');
+  const { signUpData, setSignUpData, clearSignUpData } = useSignUp();
+  const { setAccessToken } = useAuth();
 
-  const updateFirstNameString = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFirstNameString(event.target.value);
-  };
-  const updateSexString = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSexString(event.target.value);
-  };
-  const updateAgeString = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAgeString(event.target.value);
-  };
-  const updateHeightString = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setHeightString(event.target.value);
-  };
-  const updateWeightString = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setWeightString(event.target.value);
-  };
-  const updateGoalString = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setGoalString(event.target.value);
-  };
-
-  const location = useLocation();
   const navigate = useNavigate();
 
+  const isSigningUp = useRef(false);
+
+  useEffect(() => {
+    if (!isSigningUp.current && (!signUpData?.username || !signUpData?.email || !signUpData?.password)) {
+      navigate('/signup');
+    }
+  }, [signUpData, navigate]);
+
+  if (!isSigningUp.current && (!signUpData?.username || !signUpData?.email || !signUpData?.password)) {
+    return null;
+  }
+
   const signUp = async () => {
+    isSigningUp.current = true;
+
     try {
-      const { token, id, usernameString, emailString, passwordString } = location.state || {};
-
-      if (!token) {
-        navigate('/signup');
-      }
-
-      const body = {
-        'username': usernameString,
-        'email': emailString,
-        'password': passwordString,
-        'first_name': firstNameString || undefined,
-        'sex': sexString || undefined,
-        'age': ageString ? parseInt(ageString) : undefined,
-        'height': heightString ? parseInt(heightString) : undefined,
-        'weight': weightString ? parseInt(weightString) : undefined,
-        'goal': goalString || undefined,
-      }
-
-      const response = await axios.put(
-        `http://172.24.192.1:8000/api/users/${id}`,
-        body,
+      const response = await axios.post(
+        `${API_BASE_URL}/users/`,
+        signUpData,
         {
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            'Content-Type': 'application/json'
           }
         }
       );
 
-      console.log('Updating user successful.');
-      console.log(response);
+      console.log('signUp successful.');
+      console.log(response.data)
 
-      navigate('/dashboard', { 
-        state: {
-          token: token
-        }
-      });
+      const token = await logIn(signUpData.email!, signUpData.password!);
+      setAccessToken(token);
+
+      clearSignUpData();
+
+      navigate('/dashboard');
 
     } catch (error) {
       console.error('signUp failed:', error);
@@ -93,27 +69,66 @@ export default function AboutYouPage() {
             </div>
 
             <div>
-              <input type='text' placeholder='first name (optional)' value={firstNameString} onChange={updateFirstNameString} />
+              <input type='text'
+                placeholder='first name (optional)'
+                value={signUpData.first_name || ''}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setSignUpData(prev => ({ ...prev, first_name: event.target.value }));
+                }}
+              />
             </div>
 
             <div>
-              <input type='text' placeholder='sex (optional)' value={sexString} onChange={updateSexString} />
+              <input type='text'
+                placeholder='sex (optional)'
+                value={signUpData.sex || ''}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setSignUpData(prev => ({ ...prev, sex: event.target.value }));
+                }}
+              />
             </div>
 
             <div>
-              <input type='text' placeholder='age (optional)' value={ageString} onChange={updateAgeString} />
+              <input type='text'
+                placeholder='age (optional)'
+                value={signUpData.age ?? ''}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = event.target.value;
+                  setSignUpData(prev => ({ ...prev, age: value ? Number(value) : undefined }));
+                }}
+              />
             </div>
 
             <div>
-              <input type='text' placeholder='height in inches (optional)' value={heightString} onChange={updateHeightString} />
+              <input type='text'
+                placeholder='height in inches (optional)'
+                value={signUpData.height ?? ''}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = event.target.value;
+                  setSignUpData(prev => ({ ...prev, height: value ? Number(value) : undefined }));
+                }}
+              />
             </div>
 
             <div>
-              <input type='text' placeholder='weight in lbs (optional)' value={weightString} onChange={updateWeightString} />
+              <input type='text'
+                placeholder='weight in lbs (optional)'
+                value={signUpData.weight ?? ''}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = event.target.value;
+                  setSignUpData(prev => ({ ...prev, weight: value ? Number(value) : undefined }));
+                }}
+              />
             </div>
 
             <div>
-              <input type='text' placeholder='Your health/fitness goal (optional)' value={goalString} onChange={updateGoalString} />
+              <input type='text'
+                placeholder='Your health/fitness goal (optional)'
+                value={signUpData.goal || ''}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setSignUpData(prev => ({ ...prev, goal: event.target.value }));
+                }}
+              />
             </div>
 
             <button className='button-link' onClick={signUp}>

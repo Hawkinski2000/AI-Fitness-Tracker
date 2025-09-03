@@ -1,73 +1,22 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { logIn } from '../../utils/auth';
+import { useSignUp } from "../../context/sign-up/useSignUp";
 import './SignupPage.css';
 
 
 export default function SignupPage() {
-  const [usernameString, setUsernameString] = useState<string>('');
-  const [emailString, setEmailString] = useState<string>('');
-  const [passwordString, setPasswordString] = useState<string>('');
-  const [repeatPasswordString, setRepeatPasswordString] = useState<string>('');
-
-  const updateUsernameString = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUsernameString(event.target.value);
-  };
-  const updateEmailString = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEmailString(event.target.value);
-  };
-  const updatePasswordString = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPasswordString(event.target.value);
-  };
-  const updateRepeatPasswordString = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRepeatPasswordString(event.target.value);
-  };
+  const { signUpData, setSignUpData } = useSignUp();
+  const [repeatPassword, setRepeatPassword] = useState('');
 
   const navigate = useNavigate();
 
   const continueToAboutYouPage = async () => {
-    if (passwordString !== repeatPasswordString) {
+    if (signUpData.password !== repeatPassword) {
       console.error("Passwords do not match!");
       return;
     }
-
-    try {
-      const body = {
-        'username': usernameString,
-        'email': emailString,
-        'password': passwordString
-      }
-
-      const response = await axios.post(
-        'http://172.24.192.1:8000/api/users',
-        body,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        }
-      );
-
-      console.log('Creating user successful.');
-      
-      const token = await logIn(emailString, passwordString);
-      console.log(`Access token: ${token}`)
-
-      const user = response.data;
-      navigate('/about-you', { 
-        state: {
-          token: token,
-          id: user.id,
-          usernameString: usernameString,
-          emailString: emailString,
-          passwordString: passwordString
-        } 
-      });
-
-    } catch (error) {
-      console.error('continueToAboutYouPage failed:', error);
-    }
+    
+    navigate('about-you');
   };
 
   return (
@@ -84,22 +33,52 @@ export default function SignupPage() {
             </div>
 
             <div>
-              <input type='text' placeholder='enter username*' value={usernameString} onChange={updateUsernameString} />
+              <input
+                type='text'
+                placeholder='enter username*'
+                value={signUpData.username || ''}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setSignUpData(prev => ({ ...prev, username: event.target.value }));
+                }}
+              />
             </div>
 
             <div>
-              <input type='text' placeholder='enter email*' value={emailString} onChange={updateEmailString} />
+              <input
+                type='text'
+                placeholder='enter email*'
+                value={signUpData.email || ''}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setSignUpData(prev => ({ ...prev, email: event.target.value }));
+                }}
+              />
             </div>
 
             <div>
-              <input type='password' placeholder='enter password*' value={passwordString} onChange={updatePasswordString} />
+              <input
+                type='password'
+                placeholder='enter password*'
+                value={signUpData.password || ''}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setSignUpData(prev => ({ ...prev, password: event.target.value }));
+                }}
+              />
             </div>
 
             <div>
-              <input type='password' placeholder='re-enter password*' value={repeatPasswordString} onChange={updateRepeatPasswordString} />
+              <input
+                type='password'
+                placeholder='re-enter password*'
+                value={repeatPassword}
+                onChange={event => setRepeatPassword(event.target.value)}
+              />
             </div>
 
-            <button className='button-link' onClick={continueToAboutYouPage}>
+            <button
+              className='button-link'
+              onClick={continueToAboutYouPage}
+              disabled={!signUpData.username || !signUpData.email || !signUpData.password || !repeatPassword}
+            >
               Continue
             </button>
 

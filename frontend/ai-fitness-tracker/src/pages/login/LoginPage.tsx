@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
 import { logIn } from '../../utils/auth';
-import { useAuth } from "../../context/useAuth";
+import { useAuth } from "../../context/auth/useAuth";
 import './LoginPage.css';
 
 
@@ -17,6 +17,7 @@ export default function LoginPage() {
   };
 
   const { setAccessToken } = useAuth();
+  
   const navigate = useNavigate();
 
   const continueToDashboard = async () => {

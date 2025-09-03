@@ -1,0 +1,8 @@
+.dashboard-page-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 500px;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
