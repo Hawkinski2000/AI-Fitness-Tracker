@@ -9,13 +9,13 @@ router = APIRouter(prefix="/api/nutrients",
                    tags=['Nutrients'])
 
 # Create a nutrient
-@router.post("/", response_model=nutrient.NutrientResponse)
+@router.post("", response_model=nutrient.NutrientResponse)
 def create_nutrient(nutrient: nutrient.NutrientCreate, db: Session = Depends(get_db)):
     new_nutrient = crud_nutrients.create_nutrient(nutrient, db)
     return new_nutrient
 
 # Get all nutrients
-@router.get("/", response_model=list[nutrient.NutrientResponse])
+@router.get("", response_model=list[nutrient.NutrientResponse])
 def get_nutrients(db: Session = Depends(get_db)):
     nutrients = crud_nutrients.get_nutrients(db)
     return nutrients

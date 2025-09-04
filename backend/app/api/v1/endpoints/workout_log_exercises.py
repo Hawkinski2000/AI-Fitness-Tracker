@@ -10,7 +10,7 @@ router = APIRouter(prefix="/api/workout-log-exercises",
                    tags=['Workout Log Exercises'])
 
 # Create a workout log exercise
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=workout_log_exercise.WorkoutLogExerciseResponse)
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=workout_log_exercise.WorkoutLogExerciseResponse)
 def create_workout_log_exercise(workout_log_exercise: workout_log_exercise.WorkoutLogExerciseCreate,
                                 current_user: token.TokenData = Depends(get_current_user),
                                 db: Session = Depends(get_db)):
@@ -18,7 +18,7 @@ def create_workout_log_exercise(workout_log_exercise: workout_log_exercise.Worko
     return new_workout_log_exercise
 
 # Get all workout log exercises
-@router.get("/", response_model=list[workout_log_exercise.WorkoutLogExerciseResponse])
+@router.get("", response_model=list[workout_log_exercise.WorkoutLogExerciseResponse])
 def get_workout_log_exercises(current_user: token.TokenData = Depends(get_current_user), db: Session = Depends(get_db)):
     workout_log_exercises = crud_workout_log_exercises.get_workout_log_exercises(current_user.user_id, db)
     return workout_log_exercises

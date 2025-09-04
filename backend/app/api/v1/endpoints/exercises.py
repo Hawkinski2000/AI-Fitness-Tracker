@@ -11,7 +11,7 @@ router = APIRouter(prefix="/api/exercises",
                    tags=['Exercises'])
 
 # Create an exercise
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=exercise.ExerciseResponse)
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=exercise.ExerciseResponse)
 def create_exercise(exercise: exercise.ExerciseCreate,
                     current_user: token.TokenData = Depends(get_current_user),
                     db: Session = Depends(get_db)):
@@ -19,7 +19,7 @@ def create_exercise(exercise: exercise.ExerciseCreate,
     return new_exercise
 
 # Get all exercises
-@router.get("/", response_model=list[exercise.ExerciseResponse])
+@router.get("", response_model=list[exercise.ExerciseResponse])
 def get_exercises(limit: int = 10,
                   skip: int = 0,
                   search: Optional[str] = "",

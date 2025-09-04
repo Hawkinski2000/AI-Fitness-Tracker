@@ -6,13 +6,13 @@ router = APIRouter(prefix="/api/sleep-log-stats",
                    tags=['Sleep Log Stats'])
 
 # Create a sleep log stats entry
-@router.post("/")
+@router.post("")
 def create_sleep_log_stats(sleep_log_stats: SleepLogStats):
     # TODO
     return {"data": "sleep log stats entry"}
 
 # Get all sleep log stats entries
-@router.get("/")
+@router.get("")
 def get_all_sleep_log_stats():
     # TODO
     return {"data": "sleep log stats entries"}

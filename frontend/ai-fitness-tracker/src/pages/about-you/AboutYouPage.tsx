@@ -31,7 +31,7 @@ export default function AboutYouPage() {
 
     try {
       const response = await axios.post(
-        `${API_BASE_URL}/users/`,
+        `${API_BASE_URL}/users`,
         signUpData,
         {
           headers: {

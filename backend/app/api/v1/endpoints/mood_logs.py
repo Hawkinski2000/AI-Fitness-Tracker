@@ -10,13 +10,13 @@ router = APIRouter(prefix="/api/mood-logs",
                    tags=['Mood Logs'])
 
 # Create a mood log
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=mood_log.MoodLogResponse)
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=mood_log.MoodLogResponse)
 def create_mood_log(mood_log: mood_log.MoodLogCreate, current_user: token.TokenData = Depends(get_current_user), db: Session = Depends(get_db)):
     new_mood_log = crud_mood_logs.create_mood_log(mood_log, current_user.user_id, db)
     return new_mood_log
 
 # Get all mood logs
-@router.get("/", response_model=list[mood_log.MoodLogResponse])
+@router.get("", response_model=list[mood_log.MoodLogResponse])
 def get_mood_logs(current_user: token.TokenData = Depends(get_current_user), db: Session = Depends(get_db)):
     mood_logs = crud_mood_logs.get_mood_logs(current_user.user_id, db)
     return mood_logs

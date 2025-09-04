@@ -10,7 +10,7 @@ router = APIRouter(prefix="/api/workout-logs",
                    tags=['Workout Logs'])
 
 # Create a workout log
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=workout_log.WorkoutLogResponse)
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=workout_log.WorkoutLogResponse)
 def create_workout_log(workout_log: workout_log.WorkoutLogCreate,
                        current_user: token.TokenData = Depends(get_current_user),
                        db: Session = Depends(get_db)):
@@ -18,7 +18,7 @@ def create_workout_log(workout_log: workout_log.WorkoutLogCreate,
     return new_workout_log
 
 # Get all workout logs
-@router.get("/", response_model=list[workout_log.WorkoutLogResponse])
+@router.get("", response_model=list[workout_log.WorkoutLogResponse])
 def get_workout_logs(current_user: token.TokenData = Depends(get_current_user), db: Session = Depends(get_db)):
     workout_logs = crud_workout_logs.get_workout_logs(current_user.user_id, db)
     return workout_logs

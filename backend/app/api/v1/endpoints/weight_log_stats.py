@@ -6,13 +6,13 @@ router = APIRouter(prefix="/api/weight-log-stats",
                    tags=['Weight Log Stats'])
 
 # Create a weight log stats entry
-@router.post("/")
+@router.post("")
 def create_weight_log_stats(weight_log_stats: WeightLogStats):
     # TODO
     return {"data": "weight log stats entry"}
 
 # Get all weight log stats entries
-@router.get("/")
+@router.get("")
 def get_all_weight_log_stats():
     # TODO
     return {"data": "weight log stats entries"}

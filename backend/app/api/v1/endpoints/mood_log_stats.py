@@ -6,13 +6,13 @@ router = APIRouter(prefix="/api/mood-log-stats",
                    tags=['Mood Log Stats'])
 
 # Create a mood log stats entry
-@router.post("/")
+@router.post("")
 def create_mood_log_stats(mood_log_stats: MoodLogStats):
     # TODO
     return {"data": "mood log stats entry"}
 
 # Get all mood log stats entries
-@router.get("/")
+@router.get("")
 def get_all_mood_log_stats():
     # TODO
     return {"data": "mood log stats entries"}

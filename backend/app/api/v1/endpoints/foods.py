@@ -11,7 +11,7 @@ router = APIRouter(prefix="/api/foods",
                    tags=['Foods'])
 
 # Create a food
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=food.FoodResponse)
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=food.FoodResponse)
 def create_food(food: food.FoodCreate,
                 current_user: token.TokenData = Depends(get_current_user),
                 db: Session = Depends(get_db)):
@@ -19,7 +19,7 @@ def create_food(food: food.FoodCreate,
     return new_food
 
 # Get all foods
-@router.get("/", response_model=list[food.FoodResponse])
+@router.get("", response_model=list[food.FoodResponse])
 def get_foods(limit: int = 10,
               skip: int = 0,
               search: Optional[str] = "",

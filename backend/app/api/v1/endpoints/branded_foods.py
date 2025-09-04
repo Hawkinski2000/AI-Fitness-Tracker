@@ -11,7 +11,7 @@ router = APIRouter(prefix="/api/branded-foods",
                    tags=['Branded Foods'])
 
 # Create a branded food
-@router.post("/", response_model=branded_food.BrandedFoodResponse)
+@router.post("", response_model=branded_food.BrandedFoodResponse)
 def create_branded_food(branded_food: branded_food.BrandedFoodCreate,
                         current_user: token.TokenData = Depends(get_current_user),
                         db: Session = Depends(get_db)):
@@ -19,7 +19,7 @@ def create_branded_food(branded_food: branded_food.BrandedFoodCreate,
     return new_branded_food
 
 # Get all branded foods
-@router.get("/", response_model=list[branded_food.BrandedFoodResponse])
+@router.get("", response_model=list[branded_food.BrandedFoodResponse])
 def get_branded_foods(limit: int = 10,
                       skip: int = 0,
                       search: Optional[str] = "",

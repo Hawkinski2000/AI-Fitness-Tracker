@@ -44,31 +44,31 @@ def mood_logs(user, another_user, session):
     ]
 )
 def test_create_mood_log(authorized_client, user, data, status_code):
-    res = authorized_client.post("/api/mood-logs/", json=data)
+    res = authorized_client.post("/api/mood-logs", json=data)
     assert res.status_code == status_code
     new_mood_log = MoodLogResponse(**res.json())
     assert new_mood_log.user_id == user["id"]
 
 def test_create_mood_log_invalid(authorized_client):
-    res = authorized_client.post("/api/mood-logs/", json={"log_date": ""})
+    res = authorized_client.post("/api/mood-logs", json={"log_date": ""})
     assert res.status_code == 422
 
 def test_create_mood_log_unauthorized(client):
-    res = client.post("/api/mood-logs/",
+    res = client.post("/api/mood-logs",
                       json={"log_date": datetime.now().isoformat()})
     assert res.status_code == 401
 
 # ----------------------------------------------------------------------------
 
 def test_get_mood_logs(authorized_client, mood_logs, user):
-    res = authorized_client.get("/api/mood-logs/")
+    res = authorized_client.get("/api/mood-logs")
     assert res.status_code == 200
     mood_logs_list = [MoodLog(**mood_log) for mood_log in res.json()]
     user_mood_logs = [mood_log for mood_log in mood_logs if mood_log.user_id == user["id"]]
     assert len(mood_logs_list) == len(user_mood_logs)
 
 def test_get_mood_logs_unauthorized(client, mood_logs):
-    res = client.get("/api/mood-logs/")
+    res = client.get("/api/mood-logs")
     assert res.status_code == 401
 
 # ----------------------------------------------------------------------------

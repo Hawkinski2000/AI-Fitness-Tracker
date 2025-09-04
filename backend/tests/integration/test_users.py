@@ -19,7 +19,7 @@ from app.models.models import User
     ]
 )
 def test_create_user(client, data, status_code):
-    res = client.post("/api/users/", json=data)
+    res = client.post("/api/users", json=data)
     assert res.status_code == status_code
     new_user = UserResponse(**res.json())
     assert new_user.username == data["username"]
@@ -47,7 +47,7 @@ def test_create_user(client, data, status_code):
     ]
 )
 def test_create_user_invalid(client, data, status_code):
-    res = client.post("/api/users/", json=data)
+    res = client.post("/api/users", json=data)
     assert res.status_code == status_code
 
 @pytest.mark.parametrize(
@@ -64,7 +64,7 @@ def test_create_user_invalid(client, data, status_code):
     ]
 )
 def test_create_user_duplicate(client, user, data, status_code):
-    res = client.post("/api/users/", json=data)
+    res = client.post("/api/users", json=data)
     assert res.status_code == status_code
 
 # ----------------------------------------------------------------------------

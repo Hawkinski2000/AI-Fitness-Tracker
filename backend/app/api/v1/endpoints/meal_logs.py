@@ -10,7 +10,7 @@ router = APIRouter(prefix="/api/meal-logs",
                    tags=['Meal Logs'])
 
 # Create a meal log
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=meal_log.MealLogResponse)
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=meal_log.MealLogResponse)
 def create_meal_log(meal_log: meal_log.MealLogCreate,
                     current_user: token.TokenData = Depends(get_current_user),
                     db: Session = Depends(get_db)):
@@ -18,7 +18,7 @@ def create_meal_log(meal_log: meal_log.MealLogCreate,
     return new_meal_log
 
 # Get all meal logs
-@router.get("/", response_model=list[meal_log.MealLogResponse])
+@router.get("", response_model=list[meal_log.MealLogResponse])
 def get_meal_logs(current_user: token.TokenData = Depends(get_current_user), db: Session = Depends(get_db)):
     meal_logs = crud_meal_logs.get_meal_logs(current_user.user_id, db)
     return meal_logs

@@ -10,7 +10,7 @@ router = APIRouter(prefix="/api/meal-log-foods",
                    tags=['Meal Log Foods'])
 
 # Create a meal log food
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=meal_log_food.MealLogFoodResponse)
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=meal_log_food.MealLogFoodResponse)
 def create_meal_log_food(meal_log_food: meal_log_food.MealLogFoodCreate,
                          current_user: token.TokenData = Depends(get_current_user),
                          db: Session = Depends(get_db)):
@@ -18,7 +18,7 @@ def create_meal_log_food(meal_log_food: meal_log_food.MealLogFoodCreate,
     return new_meal_log_food
 
 # Get all meal log foods
-@router.get("/", response_model=list[meal_log_food.MealLogFoodResponse])
+@router.get("", response_model=list[meal_log_food.MealLogFoodResponse])
 def get_meal_log_foods(current_user: token.TokenData = Depends(get_current_user), db: Session = Depends(get_db)):
     meal_logs_foods = crud_meal_log_foods.get_meal_log_foods(current_user.user_id, db)
     return meal_logs_foods

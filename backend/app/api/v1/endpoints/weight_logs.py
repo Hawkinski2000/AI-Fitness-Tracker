@@ -10,13 +10,13 @@ router = APIRouter(prefix="/api/weight-logs",
                    tags=['Weight Logs'])
 
 # Create a weight log
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=weight_log.WeightLogResponse)
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=weight_log.WeightLogResponse)
 def create_weight_log(weight_log: weight_log.WeightLogCreate, current_user: token.TokenData = Depends(get_current_user), db: Session = Depends(get_db)):
     new_weight_log = crud_weight_logs.create_weight_log(weight_log, current_user.user_id, db)
     return new_weight_log
 
 # Get all weight logs
-@router.get("/", response_model=list[weight_log.WeightLogResponse])
+@router.get("", response_model=list[weight_log.WeightLogResponse])
 def get_weight_logs(current_user: token.TokenData = Depends(get_current_user), db: Session = Depends(get_db)):
     weight_logs = crud_weight_logs.get_weight_logs(current_user.user_id, db)
     return weight_logs

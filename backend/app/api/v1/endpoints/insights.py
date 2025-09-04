@@ -9,13 +9,13 @@ router = APIRouter(prefix="/api/insights",
                    tags=['Insights'])
 
 # Create an insight
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=insight.InsightResponse)
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=insight.InsightResponse)
 def create_insight(insight: insight.InsightCreate, db: Session = Depends(get_db)):
     new_insight = crud_insights.create_insight(insight, db)
     return new_insight
 
 # Get all insights
-@router.get("/", response_model=list[insight.InsightResponse])
+@router.get("", response_model=list[insight.InsightResponse])
 def get_insights(db: Session = Depends(get_db)):
     insights = crud_insights.get_insights(db)
     return insights

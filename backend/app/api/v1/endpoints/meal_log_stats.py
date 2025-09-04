@@ -6,13 +6,13 @@ router = APIRouter(prefix="/api/meal-log-stats",
                    tags=['Meal Log Stats'])
 
 # Create a meal log stats entry
-@router.post("/")
+@router.post("")
 def create_meal_log_stats(meal_log_stats: MealLogStats):
     # TODO
     return {"data": "meal log stats entry"}
 
 # Get all meal log stats entries
-@router.get("/")
+@router.get("")
 def get_all_meal_log_stats():
     # TODO
     return {"data": "meal log stats entries"}

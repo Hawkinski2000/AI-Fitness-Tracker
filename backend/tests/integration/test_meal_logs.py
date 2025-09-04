@@ -33,31 +33,31 @@ def meal_logs(user, another_user, session):
 # ----------------------------------------------------------------------------
 
 def test_create_meal_log(authorized_client, user):
-    res = authorized_client.post("/api/meal-logs/", json={"log_date": datetime.now().isoformat()})
+    res = authorized_client.post("/api/meal-logs", json={"log_date": datetime.now().isoformat()})
     assert res.status_code == 201
     new_meal_log = MealLogResponse(**res.json())
     assert new_meal_log.user_id == user["id"]
     assert new_meal_log.total_calories is None
 
 def test_create_meal_log_invalid(authorized_client):
-    res = authorized_client.post("/api/meal-logs/", json={"log_date": ""})
+    res = authorized_client.post("/api/meal-logs", json={"log_date": ""})
     assert res.status_code == 422
 
 def test_create_meal_log_unauthorized(client):
-    res = client.post("/api/meal-logs/", json={"log_date": datetime.now().isoformat()})
+    res = client.post("/api/meal-logs", json={"log_date": datetime.now().isoformat()})
     assert res.status_code == 401
 
 # ----------------------------------------------------------------------------
 
 def test_get_meal_logs(authorized_client, meal_logs, user):
-    res = authorized_client.get("/api/meal-logs/")
+    res = authorized_client.get("/api/meal-logs")
     assert res.status_code == 200
     meal_logs_list = [MealLogResponse(**meal_log) for meal_log in res.json()]
     user_meal_logs = [meal_log for meal_log in meal_logs if meal_log.user_id == user["id"]]
     assert len(meal_logs_list) == len(user_meal_logs)
 
 def test_get_meal_logs_unauthorized(client, meal_logs):
-    res = client.get("/api/meal-logs/")
+    res = client.get("/api/meal-logs")
     assert res.status_code == 401
 
 # ----------------------------------------------------------------------------

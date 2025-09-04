@@ -9,13 +9,13 @@ router = APIRouter(prefix="/api/insight-logs",
                    tags=['Insight Logs'])
 
 # Create an insight log
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=insight_log.InsightLogResponse)
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=insight_log.InsightLogResponse)
 def create_insight_log(insight_log: insight_log.InsightLogCreate, db: Session = Depends(get_db)):
     new_insight_log = crud_insight_logs.create_insight_log(insight_log, db)
     return new_insight_log
 
 # Get all insight logs
-@router.get("/", response_model=list[insight_log.InsightLogResponse])
+@router.get("", response_model=list[insight_log.InsightLogResponse])
 def get_insight_logs(db: Session = Depends(get_db)):
     insight_logs = crud_insight_logs.get_insight_logs(db)
     return insight_logs

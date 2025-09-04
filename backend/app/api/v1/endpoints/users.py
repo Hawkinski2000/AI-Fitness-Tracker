@@ -10,13 +10,13 @@ router = APIRouter(prefix="/api/users",
                    tags=['Users'])
 
 # Create a user
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=user.UserResponse)
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=user.UserResponse)
 def create_user(user: user.UserCreate, db: Session = Depends(get_db)):
     new_user = crud_users.create_user(user, db)
     return new_user
 
 # Get all users
-# @router.get("/", response_model=list[user.UserResponse])
+# @router.get("", response_model=list[user.UserResponse])
 # def get_users(db: Session = Depends(get_db)):
 #     users = crud_users.get_users(db)
 #     return users

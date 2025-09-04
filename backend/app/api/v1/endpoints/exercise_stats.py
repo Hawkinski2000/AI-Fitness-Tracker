@@ -6,13 +6,13 @@ router = APIRouter(prefix="/api/exercise-stats",
                    tags=['Exercise Stats'])
 
 # Create an exercise stats entry
-@router.post("/")
+@router.post("")
 def create_exercise_stats(exercise_stats: ExerciseStats):
     # TODO
     return {"data": "exercise stats entry"}
 
 # Get all exercise stats entries
-@router.get("/")
+@router.get("")
 def get_all_exercise_stats():
     # TODO
     return {"data": "exercise stats entries"}

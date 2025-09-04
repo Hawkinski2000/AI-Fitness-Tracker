@@ -10,7 +10,7 @@ router = APIRouter(prefix="/api/messages",
                    tags=['Messages'])
 
 # Create a message
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=list[message.MessageResponse])
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=list[message.MessageResponse])
 async def create_message(message: message.MessageCreate,
                          current_user: token.TokenData = Depends(get_current_user),
                          db: Session = Depends(get_db)):
@@ -18,7 +18,7 @@ async def create_message(message: message.MessageCreate,
     return new_messages
 
 # Get all messages
-@router.get("/", response_model=list[message.MessageResponse])
+@router.get("", response_model=list[message.MessageResponse])
 def get_messages(current_user: token.TokenData = Depends(get_current_user), db: Session = Depends(get_db)):
     messages = crud_messages.get_messages(current_user.user_id, db)
     return messages

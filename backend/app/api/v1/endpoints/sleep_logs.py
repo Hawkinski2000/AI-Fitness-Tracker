@@ -10,7 +10,7 @@ router = APIRouter(prefix="/api/sleep-logs",
                    tags=['Sleep Logs'])
 
 # Create a sleep log
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=sleep_log.SleepLogResponse)
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=sleep_log.SleepLogResponse)
 def create_sleep_log(sleep_log: sleep_log.SleepLogCreate,
                      current_user: token.TokenData = Depends(get_current_user),
                      db: Session = Depends(get_db)):
@@ -18,7 +18,7 @@ def create_sleep_log(sleep_log: sleep_log.SleepLogCreate,
     return new_sleep_log
 
 # Get all sleep logs
-@router.get("/", response_model=list[sleep_log.SleepLogResponse])
+@router.get("", response_model=list[sleep_log.SleepLogResponse])
 def get_sleep_logs(current_user: token.TokenData = Depends(get_current_user), db: Session = Depends(get_db)):
     sleep_logs = crud_sleep_logs.get_sleep_logs(current_user.user_id, db)
     return sleep_logs

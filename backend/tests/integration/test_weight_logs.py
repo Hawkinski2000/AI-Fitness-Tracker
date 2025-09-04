@@ -39,7 +39,7 @@ def weight_logs(user, another_user, session):
 # ----------------------------------------------------------------------------
 
 def test_create_weight_log(authorized_client, user):
-    res = authorized_client.post("/api/weight-logs/",
+    res = authorized_client.post("/api/weight-logs",
                                  json={"log_date": datetime.now().isoformat(),
                                        "weight": 150,
                                        "unit": "lbs"})
@@ -68,11 +68,11 @@ def test_create_weight_log(authorized_client, user):
     ]
 )
 def test_create_weight_log_invalid(authorized_client, data, status_code):
-    res = authorized_client.post("/api/weight-logs/", json=data)
+    res = authorized_client.post("/api/weight-logs", json=data)
     assert res.status_code == status_code
 
 def test_create_weight_log_unauthorized(client):
-    res = client.post("/api/weight-logs/",
+    res = client.post("/api/weight-logs",
                       json={"log_date": datetime.now().isoformat(),
                             "weight": 150,
                             "unit": "lbs"})
@@ -81,14 +81,14 @@ def test_create_weight_log_unauthorized(client):
 # ----------------------------------------------------------------------------
 
 def test_get_weight_logs(authorized_client, weight_logs, user):
-    res = authorized_client.get("/api/weight-logs/")
+    res = authorized_client.get("/api/weight-logs")
     assert res.status_code == 200
     weight_logs_list = [WeightLog(**weight_log) for weight_log in res.json()]
     user_weight_logs = [weight_log for weight_log in weight_logs if weight_log.user_id == user["id"]]
     assert len(weight_logs_list) == len(user_weight_logs)
 
 def test_get_weight_logs_unauthorized(client, weight_logs):
-    res = client.get("/api/weight-logs/")
+    res = client.get("/api/weight-logs")
     assert res.status_code == 401
 
 # ----------------------------------------------------------------------------

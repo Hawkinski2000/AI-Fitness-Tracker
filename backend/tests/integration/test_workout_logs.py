@@ -33,7 +33,7 @@ def workout_logs(user, another_user, session):
 # ----------------------------------------------------------------------------
 
 def test_create_workout_log(authorized_client, user):
-    res = authorized_client.post("/api/workout-logs/", json={"log_date": datetime.now().isoformat()})
+    res = authorized_client.post("/api/workout-logs", json={"log_date": datetime.now().isoformat()})
     assert res.status_code == 201
     new_workout_log = WorkoutLogResponse(**res.json())
     assert new_workout_log.user_id == user["id"]
@@ -42,24 +42,24 @@ def test_create_workout_log(authorized_client, user):
     assert new_workout_log.total_calories_burned is None
 
 def test_create_workout_log_invalid(authorized_client):
-    res = authorized_client.post("/api/workout-logs/", json={"log_date": ""})
+    res = authorized_client.post("/api/workout-logs", json={"log_date": ""})
     assert res.status_code == 422
 
 def test_create_workout_log_unauthorized(client):
-    res = client.post("/api/workout-logs/", json={"log_date": datetime.now().isoformat()})
+    res = client.post("/api/workout-logs", json={"log_date": datetime.now().isoformat()})
     assert res.status_code == 401
 
 # ----------------------------------------------------------------------------
 
 def test_get_workout_logs(authorized_client, workout_logs, user):
-    res = authorized_client.get("/api/workout-logs/")
+    res = authorized_client.get("/api/workout-logs")
     assert res.status_code == 200
     workout_logs_list = [WorkoutLog(**workout_log) for workout_log in res.json()]
     user_workout_logs = [workout_log for workout_log in workout_logs if workout_log.user_id == user["id"]]
     assert len(workout_logs_list) == len(user_workout_logs)
 
 def test_get_workout_logs_unauthorized(client, workout_logs):
-    res = client.get("/api/workout-logs/")
+    res = client.get("/api/workout-logs")
     assert res.status_code == 401
 
 # ----------------------------------------------------------------------------

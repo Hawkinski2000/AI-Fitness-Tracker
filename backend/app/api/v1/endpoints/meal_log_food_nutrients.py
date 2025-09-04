@@ -9,13 +9,13 @@ router = APIRouter(prefix="/api/meal-log-food-nutrients",
                    tags=['Meal Log Food Nutrients'])
 
 # Create a meal log food nutrient
-@router.post("/", response_model=meal_log_food_nutrient.MealLogFoodNutrientResponse)
+@router.post("", response_model=meal_log_food_nutrient.MealLogFoodNutrientResponse)
 def create_meal_log_food_nutrient(meal_log_food_nutrient: meal_log_food_nutrient.MealLogFoodNutrientCreate, db: Session = Depends(get_db)):
     new_meal_log_food_nutrient = crud_meal_log_food_nutrients.create_meal_log_food_nutrient(meal_log_food_nutrient, db)
     return new_meal_log_food_nutrient
 
 # Get all meal log food nutrients
-@router.get("/", response_model=list[meal_log_food_nutrient.MealLogFoodNutrientResponse])
+@router.get("", response_model=list[meal_log_food_nutrient.MealLogFoodNutrientResponse])
 def get_meal_log_food_nutrients(db: Session = Depends(get_db)):
     meal_log_food_nutrients = crud_meal_log_food_nutrients.get_meal_log_food_nutrients(db)
     return meal_log_food_nutrients
