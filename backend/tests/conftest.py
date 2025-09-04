@@ -61,7 +61,7 @@ def user(client):
                  "email": "email@gmail.com",
                  "password": "password"}
 
-    res = client.post("/api/users/", json=user_data)
+    res = client.post("/api/users", json=user_data)
 
     new_user = res.json()
     new_user["password"] = user_data["password"]
@@ -74,7 +74,7 @@ def another_user(client):
                  "email": "email2@gmail.com",
                  "password": "password2"}
 
-    res = client.post("/api/users/", json=user_data)
+    res = client.post("/api/users", json=user_data)
 
     new_user = res.json()
     new_user["password"] = user_data["password"]
