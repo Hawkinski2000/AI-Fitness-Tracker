@@ -84,6 +84,8 @@ jobs:
           file: ./frontend/ai-fitness-tracker/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/ai-fitness-tracker-frontend:latest
+          build-args: |
+            VITE_API_BASE_URL=https://aitracker.fit/api
 
 # ----------------------------------------------------------------------------
 

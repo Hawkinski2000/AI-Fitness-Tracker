@@ -1,11 +1,11 @@
 services:
   frontend:
-    image: hawkinski/ai_fitness_tracker_frontend:latest
+    image: hawkinski/ai-fitness-tracker-frontend:latest
     container_name: ai_fitness_tracker_frontend
     depends_on:
       - api
     ports:
-      - "80:80"
+      - "8080:80"
     restart: unless-stopped
 
   api:
@@ -26,6 +26,8 @@ services:
       - ./.env
     volumes:
       - postgres-db:/var/lib/postgresql/data
+    ports:
+    - "5432:5432"
     restart: unless-stopped
 
 volumes:
