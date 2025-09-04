@@ -13,7 +13,7 @@ router = APIRouter(prefix="/api/tokens",
                    tags=['Tokens'])
 
 # Create a token
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=token.TokenResponse)
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=token.TokenResponse)
 def create_token(response: Response,
                  user_credentials: OAuth2PasswordRequestForm = Depends(),
                  db: Session = Depends(get_db)):
