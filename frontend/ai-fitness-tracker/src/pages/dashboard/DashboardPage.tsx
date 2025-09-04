@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import axios from "axios";
 import { PropagateLoader } from 'react-spinners';
@@ -24,6 +25,8 @@ export default function DashboardPage() {
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -36,8 +39,13 @@ export default function DashboardPage() {
             { withCredentials: true }
           );
 
-          token = refreshResponse.data.access_token;
-          setAccessToken(token);
+          const newToken = refreshResponse.data.access_token;
+          
+          if (newToken !== accessToken) {
+            setAccessToken(newToken);
+          }
+
+          token = newToken; 
         };
 
         if (!token) {
@@ -50,13 +58,20 @@ export default function DashboardPage() {
         const decoded_token = jwtDecode<JwtPayload>(token);
         const userId = decoded_token.user_id;
 
-        const response = await axios.get(`${API_BASE_URL}/users/${userId}`, {
+        const userResponse = await axios.get(`${API_BASE_URL}/users/${userId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        setUserData(response.data);
+
+        if (!userResponse.data) {
+          throw new Error("Could not load user data");
+        }
+
+        setUserData(userResponse.data);
 
       } catch (err) {
         console.error("Failed to fetch dashboard data", err);
+        setAccessToken(null);
+        navigate("/");
 
       } finally {
         setLoading(false);
@@ -64,7 +79,7 @@ export default function DashboardPage() {
     };
 
     fetchData();
-  }, [accessToken, setAccessToken]);
+  }, [accessToken, setAccessToken, navigate]);
 
   if (loading) {
     return (
@@ -72,10 +87,6 @@ export default function DashboardPage() {
          <PropagateLoader size={20} color="#00ffcc" />
       </div>
     );
-  }
-
-  if (!userData) {
-    console.error("Could not load user data");
   }
 
   return (

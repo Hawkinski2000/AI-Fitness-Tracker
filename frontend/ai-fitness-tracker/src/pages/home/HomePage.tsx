@@ -1,8 +1,42 @@
-import { Link } from 'react-router-dom';
+import { useEffect } from "react";
+import { useNavigate, Link } from 'react-router-dom';
+import axios from "axios";
+import { useAuth } from "../../context/auth/useAuth";
+import { API_BASE_URL } from "../../config/api";
 import './HomePage.css';
 
 
 export default function HomePage() {
+  const { accessToken, setAccessToken } = useAuth();
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      if (accessToken) {
+        navigate("/dashboard");
+        return;
+      }
+
+      try {
+        const refreshResponse = await axios.post(
+          `${API_BASE_URL}/tokens/refresh`,
+          {},
+          { withCredentials: true }
+        );
+
+        setAccessToken(refreshResponse.data.access_token);
+
+        navigate("/dashboard");
+
+      } catch {
+        setAccessToken(null);
+      }
+    };
+
+    checkAuth();
+  }, [accessToken, setAccessToken, navigate]);
+
   return (
     <>
       <div className="page">
