@@ -7,3 +7,9 @@
   justify-content: space-between;
   gap: 1.5rem;
 }
+
+.recaptcha-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

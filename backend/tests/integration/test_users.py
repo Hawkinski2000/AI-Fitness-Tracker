@@ -8,17 +8,19 @@ from app.models.models import User
     [
         ({"username": "username",
           "email": "email@gmail.com",
-          "password": "password"},
+          "password": "password",
+          "recaptcha_token": "recaptcha_token"},
           201),
         ({"username": "username",
           "email": "email@gmail.com",
           "password": "password",
+          "recaptcha_token": "recaptcha_token",
           "first_name": "first_name",
           "goal": "goal"},
           201)
     ]
 )
-def test_create_user(client, data, status_code):
+def test_create_user(client, data, mock_recaptcha, status_code):
     res = client.post("/api/users", json=data)
     assert res.status_code == status_code
     new_user = UserResponse(**res.json())
@@ -32,21 +34,25 @@ def test_create_user(client, data, status_code):
     "data, status_code",
     [
         ({"email": "email@gmail.com",
-          "password": "password"},
+          "password": "password",
+          "recaptcha_token": "recaptcha_token"},
           422),
         ({"username": "username",
-          "password": "password"},
+          "password": "password",
+          "recaptcha_token": "recaptcha_token"},
           422),
         ({"username": "username",
-          "email": "email@gmail.com"},
+          "email": "email@gmail.com",
+          "recaptcha_token": "recaptcha_token"},
           422),
         ({"username": "username",
           "email": "email",
-          "password": "password"},
+          "password": "password",
+          "recaptcha_token": "recaptcha_token"},
           422)
     ]
 )
-def test_create_user_invalid(client, data, status_code):
+def test_create_user_invalid(client, data, mock_recaptcha, status_code):
     res = client.post("/api/users", json=data)
     assert res.status_code == status_code
 
@@ -55,15 +61,17 @@ def test_create_user_invalid(client, data, status_code):
     [
         ({"username": "username",
           "email": "email2@gmail.com",
-          "password": "password"},
+          "password": "password",
+          "recaptcha_token": "recaptcha_token"},
           409),
         ({"username": "username2",
           "email": "email@gmail.com",
-          "password": "password"},
+          "password": "password",
+          "recaptcha_token": "recaptcha_token"},
           409)
     ]
 )
-def test_create_user_duplicate(client, user, data, status_code):
+def test_create_user_duplicate(client, user, data, mock_recaptcha, status_code):
     res = client.post("/api/users", json=data)
     assert res.status_code == status_code
 
@@ -95,11 +103,13 @@ def test_get_user_not_found(authorized_client, session):
     [
         ({"username": "new_username",
           "email": "email@gmail.com",
-          "password": "password"},
+          "password": "password",
+          "recaptcha_token": "recaptcha_token"},
           200),
         ({"username": "username",
           "email": "email@gmail.com",
           "password": "password",
+          "recaptcha_token": "recaptcha_token",
           "first_name": "first_name",
           "goal": "new_goal"},
           200)
@@ -119,17 +129,21 @@ def test_update_user(authorized_client, user, data, status_code):
     "data, status_code",
     [
         ({"email": "email@gmail.com",
-          "password": "password"},
+          "password": "password",
+          "recaptcha_token": "recaptcha_token"},
           422),
         ({"username": "username",
-          "password": "password"},
+          "password": "password",
+          "recaptcha_token": "recaptcha_token"},
           422),
         ({"username": "username",
-          "email": "email@gmail.com"},
+          "email": "email@gmail.com",
+          "recaptcha_token": "recaptcha_token"},
           422),
         ({"username": "username",
           "email": "email",
-          "password": "password"},
+          "password": "password",
+          "recaptcha_token": "recaptcha_token"},
           422)
     ]
 )
@@ -142,11 +156,13 @@ def test_update_user_invalid(authorized_client, user, data, status_code):
     [
         ({"username": "username",
           "email": "email2@gmail.com",
-          "password": "password"},
+          "password": "password",
+          "recaptcha_token": "recaptcha_token"},
           409),
         ({"username": "username2",
           "email": "email@gmail.com",
-          "password": "password"},
+          "password": "password",
+          "recaptcha_token": "recaptcha_token"},
           409)
     ]
 )
@@ -158,14 +174,16 @@ def test_update_user_unauthorized(client, user):
     res = client.put(f"/api/users/{user["id"]}",
                      json={"username": "username",
                             "email": "email@gmail.com",
-                            "password": "password"})
+                            "password": "password",
+                            "recaptcha_token": "recaptcha_token"})
     assert res.status_code == 401
 
 def test_update_user_not_owner(authorized_client, another_user):
     res = authorized_client.put(f"/api/users/{another_user["id"]}",
                                 json={"username": "username",
                                        "email": "email@gmail.com",
-                                       "password": "password"})
+                                       "password": "password",
+                                       "recaptcha_token": "recaptcha_token"})
     assert res.status_code == 404
 
 def test_update_user_not_found(authorized_client, session):
@@ -174,7 +192,8 @@ def test_update_user_not_found(authorized_client, session):
     res = authorized_client.put(f"/api/users/{non_existent_id}",
                                 json={"username": "username",
                                        "email": "email@gmail.com",
-                                       "password": "password"})
+                                       "password": "password",
+                                       "recaptcha_token": "recaptcha_token"})
     assert res.status_code == 404
 
 # ----------------------------------------------------------------------------

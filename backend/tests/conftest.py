@@ -1,4 +1,5 @@
 import pytest
+from unittest.mock import patch
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -56,10 +57,17 @@ def client(session):
     yield TestClient(app)
 
 @pytest.fixture
-def user(client):
+def mock_recaptcha():
+    with patch("app.crud.users.requests.post") as mock_post:
+        mock_post.return_value.json.return_value = {"success": True}
+        yield mock_post
+
+@pytest.fixture
+def user(client, mock_recaptcha):
     user_data = {"username": "username",
                  "email": "email@gmail.com",
-                 "password": "password"}
+                 "password": "password",
+                 "recaptcha_token": "recaptcha_token"}
 
     res = client.post("/api/users", json=user_data)
 
@@ -69,10 +77,11 @@ def user(client):
     return new_user
 
 @pytest.fixture
-def another_user(client):
+def another_user(client, mock_recaptcha):
     user_data = {"username": "username2",
                  "email": "email2@gmail.com",
-                 "password": "password2"}
+                 "password": "password2",
+                 "recaptcha_token": "recaptcha_token"}
 
     res = client.post("/api/users", json=user_data)
 

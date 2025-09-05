@@ -1,11 +1,24 @@
 from fastapi import HTTPException, status
+import requests
 from sqlalchemy.orm import Session
 import bcrypt
 from app.schemas import user
 from app.models.models import User
+from app.core.config import settings
 
 
 def create_user(user: user.UserCreate, db: Session):
+    if not user.recaptcha_token:
+        raise HTTPException(status_code=400, detail="Missing reCAPTCHA token")
+    
+    resp = requests.post(
+        "https://www.google.com/recaptcha/api/siteverify",
+        data={"secret": settings.recaptcha_secret_key, "response": user.recaptcha_token},
+    )
+    result = resp.json()
+    if not result.get("success"):
+        raise HTTPException(status_code=400, detail="Invalid reCAPTCHA token")
+
     existing_user_username = db.query(User).filter(User.username == user.username).first()
     if existing_user_username:
         raise HTTPException(
@@ -20,7 +33,7 @@ def create_user(user: user.UserCreate, db: Session):
             detail="Email is already registered",
         )
 
-    new_user = User(**user.model_dump(exclude_unset=True, exclude={"password"}))
+    new_user = User(**user.model_dump(exclude_unset=True, exclude={"password", "recaptcha_token"}))
 
     password = user.password.encode("utf-8")
     password_hash = bcrypt.hashpw(password, bcrypt.gensalt()).decode("utf-8")
@@ -64,7 +77,7 @@ def update_user(id: int, user: user.UserCreate, user_id: int, db: Session):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="User not found")
     
-    user_query.update(user.model_dump(exclude={"email", "password"}), synchronize_session=False)
+    user_query.update(user.model_dump(exclude={"email", "password", "recaptcha_token"}), synchronize_session=False)
     db.commit()
     updated_user = user_query.first()
     return updated_user

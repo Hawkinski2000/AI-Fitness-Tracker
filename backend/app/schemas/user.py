@@ -16,6 +16,7 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
+    recaptcha_token: str
 
 class UserResponse(UserBase):
     id: int
