@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
-import axios from "axios";
 import { PropagateLoader } from 'react-spinners';
 import { useAuth } from "../../context/auth/useAuth";
-import { API_BASE_URL } from "../../config/api";
+import { refreshAccessToken, getUserFromToken } from "../../utils/auth";
 import './DashboardPage.css';
 
 
@@ -30,46 +28,19 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let token: string | null = accessToken;
-
+        const token = accessToken || await refreshAccessToken(accessToken);
+        
         if (!token) {
-          const refreshResponse = await axios.post(
-            `${API_BASE_URL}/tokens/refresh`,
-            {},
-            { withCredentials: true }
-          );
-
-          const newToken = refreshResponse.data.access_token;
-          
-          if (newToken !== accessToken) {
-            setAccessToken(newToken);
-          }
-
-          token = newToken; 
-        };
-
-        if (!token) {
-          throw new Error("No access token available");
+          throw new Error("No access token");
         }
 
-        interface JwtPayload {
-          user_id: number;
-        }
-        const decoded_token = jwtDecode<JwtPayload>(token);
-        const userId = decoded_token.user_id;
+        setAccessToken(token);
 
-        const userResponse = await axios.get(`${API_BASE_URL}/users/${userId}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-
-        if (!userResponse.data) {
-          throw new Error("Could not load user data");
-        }
-
-        setUserData(userResponse.data);
+        const userData = await getUserFromToken(token);
+        setUserData(userData);
 
       } catch (err) {
-        console.error("Failed to fetch dashboard data", err);
+        console.error(err);
         setAccessToken(null);
         navigate("/");
 

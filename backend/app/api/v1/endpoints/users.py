@@ -30,12 +30,11 @@ def get_user(id: int,
     return user
 
 # Update a user
-@router.put("/{id}", response_model=user.UserResponse)
-def update_user(id: int,
-                user: user.UserCreate,
+@router.patch("", response_model=user.UserResponse)
+def update_user(user: user.UserUpdate,
                 current_user: token.TokenData = Depends(get_current_user),
                 db: Session = Depends(get_db)):
-    updated_user = crud_users.update_user(id, user, current_user.user_id, db)
+    updated_user = crud_users.update_user(user, current_user.user_id, db)
     return updated_user
 
 # Delete a user

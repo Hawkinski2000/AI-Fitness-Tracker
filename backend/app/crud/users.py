@@ -56,7 +56,7 @@ def get_user(id: int, user_id: int, db: Session):
 
     return user
 
-def update_user(id: int, user: user.UserCreate, user_id: int, db: Session):
+def update_user(user: user.UserCreate, user_id: int, db: Session):
     existing_user_username = db.query(User).filter(User.username == user.username, User.id != user_id).first()
     if existing_user_username:
         raise HTTPException(
@@ -71,13 +71,13 @@ def update_user(id: int, user: user.UserCreate, user_id: int, db: Session):
             detail="Email is already registered",
         )
     
-    user_query = db.query(User).filter(User.id == id, User.id == user_id)
+    user_query = db.query(User).filter(User.id == user_id)
 
     if not user_query.first():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="User not found")
     
-    user_query.update(user.model_dump(exclude={"email", "password", "recaptcha_token"}), synchronize_session=False)
+    user_query.update(user.model_dump(exclude_unset=True), synchronize_session=False)
     db.commit()
     updated_user = user_query.first()
     return updated_user

@@ -20,14 +20,18 @@ export default function LoginPage() {
   
   const navigate = useNavigate();
 
-  const continueToDashboard = async () => {
+  const logInUser = async () => {
     try {
       const token = await logIn(emailString, passwordString);
+
       setAccessToken(token)
+
+      console.log('logInUser successful.');
+
       navigate('/dashboard');
 
     } catch (error) {
-      console.error('continueToDashboard failed', error);
+      console.error('logInUser failed', error);
     }
   };
 
@@ -52,7 +56,7 @@ export default function LoginPage() {
               <input type='password' placeholder='enter password' value={passwordString} onChange={updatePasswordString} />
             </div>
 
-            <button className='button-link' onClick={continueToDashboard} disabled={!emailString || !passwordString}>
+            <button className='button-link' onClick={logInUser} disabled={!emailString || !passwordString}>
               Login
             </button>
 

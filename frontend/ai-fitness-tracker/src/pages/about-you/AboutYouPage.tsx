@@ -1,79 +1,97 @@
 import { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSignUp } from "../../context/sign-up/useSignUp";
 import { useAuth } from "../../context/auth/useAuth";
-import { logIn } from '../../utils/auth';
+import { refreshAccessToken } from "../../utils/auth";
 import { API_BASE_URL } from "../../config/api";
 import axios from 'axios';
-import ReCAPTCHA from "react-google-recaptcha";
 import './AboutYouPage.css';
 
 
-declare global {
-  interface Window {
-    grecaptcha?: {
-      getResponse: () => string;
-      render: (
-        element: HTMLElement,
-        params: { sitekey: string; callback?: (token: string) => void }
-      ) => number;
-      reset: (widgetId?: number) => void;
-    };
-  }
-}
-
 export default function AboutYouPage() {
-  const { signUpData, setSignUpData, clearSignUpData } = useSignUp();
-  const { setAccessToken } = useAuth();
+  const isSigningUp = useRef(false);
+
+  interface AboutYouData {
+      first_name?: string | null;
+      sex?: string | null;
+      age?: string | null;
+      height?: string | null;
+      weight?: string | null;
+      goal?: string | null;
+    }
+    const [aboutYouData, setAboutYouData] = useState<AboutYouData>({
+      first_name: '',
+      sex: '',
+      age: '',
+      height: '',
+      weight: '',
+      goal: ''
+    });
+
+  const { accessToken, setAccessToken } = useAuth();
 
   const navigate = useNavigate();
 
-  const isSigningUp = useRef(false);
-
-  const recaptchaRef = useRef<ReCAPTCHA>(null);
-  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
-
   useEffect(() => {
-    if (!isSigningUp.current && (!signUpData?.username || !signUpData?.email || !signUpData?.password)) {
-      navigate('/signup');
+    if (isSigningUp.current) {
+      return;
     }
-  }, [signUpData, navigate]);
 
-  if (!isSigningUp.current && (!signUpData?.username || !signUpData?.email || !signUpData?.password)) {
-    return null;
-  }
+    const checkToken = async () => {
+      try {
+        const token = accessToken || await refreshAccessToken(accessToken);
+        
+        if (!token) {
+          navigate('/signup');
+          return;
+        }
 
-  const signUp = async () => {
+        setAccessToken(token);
+
+      } catch (err) {
+        console.error("Failed to refresh token", err);
+        navigate('/signup');
+      }
+    };
+
+    checkToken();
+  }, [accessToken, setAccessToken, navigate]);
+
+  const updateUser = async () => {
     isSigningUp.current = true;
 
-    const recaptchaToken = recaptchaRef.current?.getValue();
-
     try {
-      const response = await axios.post(
+      const token = accessToken || await refreshAccessToken(accessToken);
+      
+      if (!token) {
+        navigate('/signup');
+        return;
+      }
+
+      setAccessToken(token);
+
+      await axios.patch(
         `${API_BASE_URL}/users`,
         {
-          ...signUpData,
-          recaptcha_token: recaptchaToken
+          ...aboutYouData,
+          age: aboutYouData.age ? parseInt(aboutYouData.age) : undefined,
+          height: aboutYouData.height ? parseInt(aboutYouData.height) : undefined,
+          weight: aboutYouData.weight ? parseInt(aboutYouData.weight) : undefined,
         },
         {
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
           }
         }
       );
 
-      console.log('signUp successful.');
-      console.log(response.data)
-
-      const token = await logIn(signUpData.email!, signUpData.password!);
-      setAccessToken(token);
-
-      clearSignUpData();
+      console.log('updateUser successful.');
 
       navigate('/dashboard');
 
     } catch (error) {
-      console.error('signUp failed:', error);
+      console.error('updateUser failed:', error);
+      isSigningUp.current = false;
     }
   };
 
@@ -93,9 +111,9 @@ export default function AboutYouPage() {
             <div>
               <input type='text'
                 placeholder='first name (optional)'
-                value={signUpData.first_name || ''}
+                value={aboutYouData.first_name || ''}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setSignUpData(prev => ({ ...prev, first_name: event.target.value }));
+                  setAboutYouData(prev => ({ ...prev, first_name: event.target.value }));
                 }}
               />
             </div>
@@ -103,9 +121,9 @@ export default function AboutYouPage() {
             <div>
               <input type='text'
                 placeholder='sex (optional)'
-                value={signUpData.sex || ''}
+                value={aboutYouData.sex || ''}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setSignUpData(prev => ({ ...prev, sex: event.target.value }));
+                  setAboutYouData(prev => ({ ...prev, sex: event.target.value }));
                 }}
               />
             </div>
@@ -113,10 +131,9 @@ export default function AboutYouPage() {
             <div>
               <input type='text'
                 placeholder='age (optional)'
-                value={signUpData.age ?? ''}
+                value={aboutYouData.age ?? ''}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  const value = event.target.value;
-                  setSignUpData(prev => ({ ...prev, age: value ? Number(value) : undefined }));
+                  setAboutYouData(prev => ({ ...prev, age: event.target.value }));
                 }}
               />
             </div>
@@ -124,10 +141,9 @@ export default function AboutYouPage() {
             <div>
               <input type='text'
                 placeholder='height in inches (optional)'
-                value={signUpData.height ?? ''}
+                value={aboutYouData.height ?? ''}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  const value = event.target.value;
-                  setSignUpData(prev => ({ ...prev, height: value ? Number(value) : undefined }));
+                  setAboutYouData(prev => ({ ...prev, height: event.target.value }));
                 }}
               />
             </div>
@@ -135,10 +151,9 @@ export default function AboutYouPage() {
             <div>
               <input type='text'
                 placeholder='weight in lbs (optional)'
-                value={signUpData.weight ?? ''}
+                value={aboutYouData.weight ?? ''}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  const value = event.target.value;
-                  setSignUpData(prev => ({ ...prev, weight: value ? Number(value) : undefined }));
+                  setAboutYouData(prev => ({ ...prev, weight: event.target.value }));
                 }}
               />
             </div>
@@ -146,22 +161,14 @@ export default function AboutYouPage() {
             <div>
               <input type='text'
                 placeholder='Your health/fitness goal (optional)'
-                value={signUpData.goal || ''}
+                value={aboutYouData.goal || ''}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setSignUpData(prev => ({ ...prev, goal: event.target.value }));
+                  setAboutYouData(prev => ({ ...prev, goal: event.target.value }));
                 }}
               />
             </div>
 
-            <div className="recaptcha-container">
-              <ReCAPTCHA
-                ref={recaptchaRef}
-                sitekey="6LeFgb4rAAAAAAglinYvi17ogFDuUhj1DC2A9sn0"
-                onChange={(token) => setRecaptchaToken(token)}
-              />
-            </div>
-
-            <button className='button-link' onClick={signUp} disabled={!recaptchaToken}>
+            <button className='button-link' onClick={updateUser}>
               Sign Up
             </button>
           </div>
