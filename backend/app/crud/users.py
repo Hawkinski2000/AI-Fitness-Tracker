@@ -56,19 +56,12 @@ def get_user(id: int, user_id: int, db: Session):
 
     return user
 
-def update_user(user: user.UserCreate, user_id: int, db: Session):
+def update_user(user: user.UserUpdate, user_id: int, db: Session):
     existing_user_username = db.query(User).filter(User.username == user.username, User.id != user_id).first()
     if existing_user_username:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Username is already taken",
-        )
-    
-    existing_user_email  = db.query(User).filter(User.email == user.email, User.id != user_id).first()
-    if existing_user_email:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="Email is already registered",
         )
     
     user_query = db.query(User).filter(User.id == user_id)

@@ -20,8 +20,6 @@ class UserCreate(UserBase):
 
 class UserUpdate(BaseModel):
     username: Optional[str] = None
-    email: Optional[EmailStr] = None
-    password: Optional[str] = None
     first_name: Optional[str] = None
     sex: Optional[str] = None
     age: Optional[int] = None
@@ -29,6 +27,8 @@ class UserUpdate(BaseModel):
     height: Optional[int] = None
     goal: Optional[str] = None
     settings: Optional[dict] = None
+
+    model_config = ConfigDict(extra="forbid")
 
 class UserResponse(UserBase):
     id: int
