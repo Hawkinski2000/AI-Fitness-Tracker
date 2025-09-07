@@ -1,4 +1,4 @@
-  import { useState, useRef } from 'react'
+  import { useState, useRef, useEffect } from 'react'
   import { useNavigate, Link } from 'react-router-dom';
   import ReCAPTCHA from "react-google-recaptcha";
   import axios from 'axios';
@@ -20,6 +20,9 @@
       password: ''
     });
     const [repeatPassword, setRepeatPassword] = useState('');
+
+    const [usernameTaken, setUsernameTaken] = useState(false);
+    const [emailTaken, setEmailTaken] = useState(false);
 
     const recaptchaRef = useRef<ReCAPTCHA>(null);
     const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
@@ -57,6 +60,46 @@
       }
     };
 
+    useEffect(() => {
+      if (!signUpData.username) {
+        return;
+      }
+
+      const handler = setTimeout(async () => {
+        try {
+          const response = await axios.get(`${API_BASE_URL}/users/check-username`, {
+            params: { username: signUpData.username },
+          });
+          setUsernameTaken(response.data.taken);
+
+        } catch (err) {
+          console.error(err);
+        }
+      }, 500);
+
+      return () => clearTimeout(handler);
+    }, [signUpData.username]);
+
+    useEffect(() => {
+      if (!signUpData.email) {
+        return;
+      }
+
+      const handler = setTimeout(async () => {
+        try {
+          const response = await axios.get(`${API_BASE_URL}/users/check-email`, {
+            params: { email: signUpData.email },
+          });
+          setEmailTaken(response.data.taken);
+          
+        } catch (err) {
+          console.error(err);
+        }
+      }, 500);
+
+      return () => clearTimeout(handler);
+    }, [signUpData.email]);
+
     return (
       <>
         <div className='page'>
@@ -69,47 +112,55 @@
                   Create Your Account
                 </h1>
               </div>
+              
+              <div className='inputs-container'>
+                <div>
+                  <input
+                    type='text'
+                    placeholder='enter username*'
+                    value={signUpData.username || ''}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      setSignUpData(prev => ({ ...prev, username: event.target.value }));
+                    }}
+                  />
+                  <span className='input-error-message'>
+                    {usernameTaken && "That username is taken. Try another."}
+                  </span>
+                </div>
 
-              <div>
-                <input
-                  type='text'
-                  placeholder='enter username*'
-                  value={signUpData.username || ''}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setSignUpData(prev => ({ ...prev, username: event.target.value }));
-                  }}
-                />
-              </div>
+                <div>
+                  <input
+                    type='text'
+                    placeholder='enter email*'
+                    value={signUpData.email || ''}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      setSignUpData(prev => ({ ...prev, email: event.target.value }));
+                    }}
+                  />
+                  <span className='input-error-message'>
+                    {emailTaken && "That email is already registered."}
+                  </span>
+                </div>
 
-              <div>
-                <input
-                  type='text'
-                  placeholder='enter email*'
-                  value={signUpData.email || ''}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setSignUpData(prev => ({ ...prev, email: event.target.value }));
-                  }}
-                />
-              </div>
+                <div className='input-container'>
+                  <input
+                    type='password'
+                    placeholder='enter password*'
+                    value={signUpData.password || ''}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      setSignUpData(prev => ({ ...prev, password: event.target.value }));
+                    }}
+                  />
+                </div>
 
-              <div>
-                <input
-                  type='password'
-                  placeholder='enter password*'
-                  value={signUpData.password || ''}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setSignUpData(prev => ({ ...prev, password: event.target.value }));
-                  }}
-                />
-              </div>
-
-              <div>
-                <input
-                  type='password'
-                  placeholder='re-enter password*'
-                  value={repeatPassword}
-                  onChange={event => setRepeatPassword(event.target.value)}
-                />
+                <div>
+                  <input
+                    type='password'
+                    placeholder='re-enter password*'
+                    value={repeatPassword}
+                    onChange={event => setRepeatPassword(event.target.value)}
+                  />
+                </div>
               </div>
 
               <div className="recaptcha-container">

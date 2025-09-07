@@ -39,3 +39,6 @@ class UserResponse(UserBase):
     last_token_reset: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+class CheckResponse(BaseModel):
+    taken: bool

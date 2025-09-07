@@ -44,6 +44,14 @@ def create_user(user: user.UserCreate, db: Session):
     db.refresh(new_user)
     return new_user
 
+def check_username(username: str, db: Session):
+    user = db.query(User).filter(User.username == username).first()
+    return {"taken": bool(user)}
+
+def check_email(email: str, db: Session):
+    user = db.query(User).filter(User.email == email).first()
+    return {"taken": bool(user)}
+
 # def get_users(db: Session):
 #     users = db.query(User).all()
 #     return users

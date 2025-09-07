@@ -65,6 +65,21 @@ input:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+.input-error-message {
+  display: block;
+  padding-left: 1.2em;
+  min-height: 1.5rem;
+  color: red;
+}
+
+.input-container {
+  margin-bottom: 1.5rem;
+}
+
+.inputs-container {
+  text-align: start;
+}
+
 .button-link {
   display: block;
   box-sizing: border-box;
