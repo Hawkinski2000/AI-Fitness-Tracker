@@ -20,6 +20,7 @@
       password: ''
     });
     const [repeatPassword, setRepeatPassword] = useState('');
+    const [passwordsMatch, setPasswordsMatch] = useState(false);
 
     const [usernameTaken, setUsernameTaken] = useState(false);
     const [emailTaken, setEmailTaken] = useState(false);
@@ -62,6 +63,7 @@
 
     useEffect(() => {
       if (!signUpData.username) {
+        setUsernameTaken(false);
         return;
       }
 
@@ -82,6 +84,7 @@
 
     useEffect(() => {
       if (!signUpData.email) {
+        setEmailTaken(false);
         return;
       }
 
@@ -99,6 +102,19 @@
 
       return () => clearTimeout(handler);
     }, [signUpData.email]);
+
+    useEffect(() => {
+      if (!signUpData.password || !repeatPassword) {
+        setPasswordsMatch(true);
+        return;
+      }
+
+      const handler = setTimeout(async () => {
+        setPasswordsMatch(signUpData.password === repeatPassword ? true : false);
+      }, 500);
+
+      return () => clearTimeout(handler);
+    }, [signUpData.password, repeatPassword]);
 
     return (
       <>
@@ -160,6 +176,9 @@
                     value={repeatPassword}
                     onChange={event => setRepeatPassword(event.target.value)}
                   />
+                  <span className='input-error-message'>
+                    {!passwordsMatch && "Those passwords didn't match. Try again."}
+                  </span>
                 </div>
               </div>
 
@@ -174,7 +193,16 @@
               <button
                 className='button-link'
                 onClick={signUp}
-                disabled={!signUpData.username || !signUpData.email || !signUpData.password || !repeatPassword || !recaptchaToken || signUpData.password !== repeatPassword}
+                disabled={
+                  !signUpData.username ||
+                  !signUpData.email ||
+                  usernameTaken ||
+                  emailTaken ||
+                  !signUpData.password ||
+                  !repeatPassword ||
+                  !passwordsMatch ||
+                  !recaptchaToken
+                }
               >
                 Continue
               </button>
