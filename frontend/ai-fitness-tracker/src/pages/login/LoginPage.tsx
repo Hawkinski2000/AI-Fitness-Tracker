@@ -6,23 +6,26 @@ import './LoginPage.css';
 
 
 export default function LoginPage() {
-  const [emailString, setEmailString] = useState<string>('');
-  const [passwordString, setPasswordString] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
 
-  const updateEmailString = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEmailString(event.target.value);
-  };
-  const updatePasswordString = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPasswordString(event.target.value);
-  };
+  const [emailFocused, setEmailFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
 
   const { setAccessToken } = useAuth();
   
   const navigate = useNavigate();
 
+  const updateEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
+  };
+  const updatePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value);
+  };
+
   const logInUser = async () => {
     try {
-      const token = await logIn(emailString, passwordString);
+      const token = await logIn(email, password);
 
       setAccessToken(token)
 
@@ -48,15 +51,33 @@ export default function LoginPage() {
               </h1>
             </div>
 
-            <div>
-              <input type='email' placeholder='enter email' value={emailString} onChange={updateEmailString} />
+            <div className="input-placeholder-container">
+              <input
+                type='email'
+                value={email}
+                onChange={updateEmail}
+                onFocus={() => setEmailFocused(true)}
+                onBlur={() => setEmailFocused(false)}
+              />
+              <span className={`placeholder ${email || emailFocused ? 'float' : ''}`}>
+                enter email
+              </span>
             </div>
 
-            <div>
-              <input type='password' placeholder='enter password' value={passwordString} onChange={updatePasswordString} />
+            <div className="input-placeholder-container">
+              <input
+                type='password'
+                value={password}
+                onChange={updatePassword}
+                onFocus={() => setPasswordFocused(true)}
+                onBlur={() => setPasswordFocused(false)}
+              />
+              <span className={`placeholder ${password || passwordFocused ? 'float' : ''}`}>
+                enter password
+              </span>
             </div>
 
-            <button className='button-link' onClick={logInUser} disabled={!emailString || !passwordString}>
+            <button className='button-link' onClick={logInUser} disabled={!email || !password}>
               Login
             </button>
 

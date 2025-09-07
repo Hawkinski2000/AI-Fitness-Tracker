@@ -27,6 +27,13 @@ export default function AboutYouPage() {
       goal: ''
     });
 
+  const [firstNameFocused, setFirstNameFocused] = useState(false);
+  const [sexFocused, setSexFocused] = useState(false);
+  const [ageFocused, setAgeFocused] = useState(false);
+  const [heightFocused, setHeightFocused] = useState(false);
+  const [weightFocused, setWeightFocused] = useState(false);
+  const [goalFocused, setGoalFocused] = useState(false);
+
   const { accessToken, setAccessToken } = useAuth();
 
   const navigate = useNavigate();
@@ -108,64 +115,94 @@ export default function AboutYouPage() {
               </h1>
             </div>
 
-            <div>
-              <input type='text'
-                placeholder='first name (optional)'
+            <div className="input-placeholder-container">
+              <input
+                type='text'
                 value={aboutYouData.first_name || ''}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setAboutYouData(prev => ({ ...prev, first_name: event.target.value }));
                 }}
+                onFocus={() => setFirstNameFocused(true)}
+                onBlur={() => setFirstNameFocused(false)}
               />
+              <span className={`placeholder ${aboutYouData.first_name || firstNameFocused ? 'float' : ''}`}>
+                first name (optional)
+              </span>
             </div>
 
-            <div>
-              <input type='text'
-                placeholder='sex (optional)'
+            <div className="input-placeholder-container">
+              <input
+                type='text'
                 value={aboutYouData.sex || ''}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setAboutYouData(prev => ({ ...prev, sex: event.target.value }));
                 }}
+                onFocus={() => setSexFocused(true)}
+                onBlur={() => setSexFocused(false)}
               />
+              <span className={`placeholder ${aboutYouData.sex || sexFocused ? 'float' : ''}`}>
+                sex (optional)
+              </span>
             </div>
 
-            <div>
-              <input type='text'
-                placeholder='age (optional)'
+            <div className="input-placeholder-container">
+              <input
+                type='text'
                 value={aboutYouData.age ?? ''}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setAboutYouData(prev => ({ ...prev, age: event.target.value }));
                 }}
+                onFocus={() => setAgeFocused(true)}
+                onBlur={() => setAgeFocused(false)}
               />
+              <span className={`placeholder ${aboutYouData.age || ageFocused ? 'float' : ''}`}>
+                age (optional)
+              </span>
             </div>
 
-            <div>
-              <input type='text'
-                placeholder='height in inches (optional)'
+            <div className="input-placeholder-container">
+              <input
+                type='text'
                 value={aboutYouData.height ?? ''}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setAboutYouData(prev => ({ ...prev, height: event.target.value }));
                 }}
+                onFocus={() => setHeightFocused(true)}
+                onBlur={() => setHeightFocused(false)}
               />
+              <span className={`placeholder ${aboutYouData.height || heightFocused ? 'float' : ''}`}>
+                height in inches (optional)
+              </span>
             </div>
 
-            <div>
-              <input type='text'
-                placeholder='weight in lbs (optional)'
+            <div className="input-placeholder-container">
+              <input
+                type='text'
                 value={aboutYouData.weight ?? ''}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setAboutYouData(prev => ({ ...prev, weight: event.target.value }));
                 }}
+                onFocus={() => setWeightFocused(true)}
+                onBlur={() => setWeightFocused(false)}
               />
+              <span className={`placeholder ${aboutYouData.weight || weightFocused ? 'float' : ''}`}>
+                weight in lbs (optional)
+              </span>
             </div>
 
-            <div>
-              <input type='text'
-                placeholder='Your health/fitness goal (optional)'
+            <div className="input-placeholder-container">
+              <input
+                type='text'
                 value={aboutYouData.goal || ''}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setAboutYouData(prev => ({ ...prev, goal: event.target.value }));
                 }}
+                onFocus={() => setGoalFocused(true)}
+                onBlur={() => setGoalFocused(false)}
               />
+              <span className={`placeholder ${aboutYouData.goal || goalFocused ? 'float' : ''}`}>
+                your health/fitness goal (optional)
+              </span>
             </div>
 
             <button className='button-link' onClick={updateUser}>

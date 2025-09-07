@@ -25,6 +25,11 @@
     const [usernameTaken, setUsernameTaken] = useState(false);
     const [emailTaken, setEmailTaken] = useState(false);
 
+    const [usernameFocused, setUsernameFocused] = useState(false);
+    const [emailFocused, setEmailFocused] = useState(false);
+    const [passwordFocused, setPasswordFocused] = useState(false);
+    const [repeatPasswordFocused, setRepeatPasswordFocused] = useState(false);
+
     const recaptchaRef = useRef<ReCAPTCHA>(null);
     const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
 
@@ -131,54 +136,90 @@
               
               <div className='inputs-container'>
                 <div>
-                  <input
-                    type='text'
-                    placeholder='enter username*'
-                    value={signUpData.username || ''}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      setSignUpData(prev => ({ ...prev, username: event.target.value }));
-                    }}
-                  />
-                  <span className='input-error-message'>
-                    {usernameTaken && "That username is taken. Try another."}
-                  </span>
+                  <div className="input-placeholder-container">
+                    <input
+                      type='text'
+                      value={signUpData.username || ''}
+                      onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                        setSignUpData(prev => ({ ...prev, username: event.target.value }));
+                      }}
+                      onFocus={() => setUsernameFocused(true)}
+                      onBlur={() => setUsernameFocused(false)}
+                    />
+                    <span className={`placeholder ${signUpData.username || usernameFocused ? 'float' : ''}`}>
+                      enter username*
+                    </span>
+                  </div>
+                  <div className='input-error-container'>
+                    {usernameTaken &&
+                      <span className='input-error-message'>
+                        That username is taken. Try another.
+                      </span>
+                    }
+                  </div>
                 </div>
 
                 <div>
-                  <input
-                    type='text'
-                    placeholder='enter email*'
-                    value={signUpData.email || ''}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      setSignUpData(prev => ({ ...prev, email: event.target.value }));
-                    }}
-                  />
-                  <span className='input-error-message'>
-                    {emailTaken && "That email is already registered."}
-                  </span>
+                  <div className="input-placeholder-container">
+                    <input
+                      type='text'
+                      value={signUpData.email || ''}
+                      onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                        setSignUpData(prev => ({ ...prev, email: event.target.value }));
+                      }}
+                      onFocus={() => setEmailFocused(true)}
+                      onBlur={() => setEmailFocused(false)}
+                    />
+                    <span className={`placeholder ${signUpData.email || emailFocused ? 'float' : ''}`}>
+                      enter email*
+                    </span>
+                  </div>
+                  <div className='input-error-container'>
+                    {emailTaken &&
+                      <span className='input-error-message'>
+                        That email is already registered.
+                      </span>
+                    }
+                  </div>
                 </div>
 
                 <div className='input-container'>
-                  <input
-                    type='password'
-                    placeholder='enter password*'
-                    value={signUpData.password || ''}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      setSignUpData(prev => ({ ...prev, password: event.target.value }));
-                    }}
-                  />
+                  <div className="input-placeholder-container">
+                    <input
+                      type='password'
+                      value={signUpData.password || ''}
+                      onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                        setSignUpData(prev => ({ ...prev, password: event.target.value }));
+                      }}
+                      onFocus={() => setPasswordFocused(true)}
+                      onBlur={() => setPasswordFocused(false)}
+                    />
+                    <span className={`placeholder ${signUpData.password || passwordFocused ? 'float' : ''}`}>
+                      enter password*
+                    </span>
+                  </div>
                 </div>
 
                 <div>
-                  <input
-                    type='password'
-                    placeholder='re-enter password*'
-                    value={repeatPassword}
-                    onChange={event => setRepeatPassword(event.target.value)}
-                  />
-                  <span className='input-error-message'>
-                    {!passwordsMatch && "Those passwords didn't match. Try again."}
-                  </span>
+                  <div className="input-placeholder-container">
+                    <input
+                      type='password'
+                      value={repeatPassword}
+                      onChange={event => setRepeatPassword(event.target.value)}
+                      onFocus={() => setRepeatPasswordFocused(true)}
+                      onBlur={() => setRepeatPasswordFocused(false)}
+                    />
+                    <span className={`placeholder ${repeatPassword || repeatPasswordFocused ? 'float' : ''}`}>
+                      re-enter password*
+                    </span>
+                  </div>
+                  <div className='input-error-container'>
+                    {!passwordsMatch &&
+                      <span className='input-error-message'>
+                        Those passwords didn't match. Try again.
+                      </span>
+                    }
+                  </div>
                 </div>
               </div>
 

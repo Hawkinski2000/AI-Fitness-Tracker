@@ -45,6 +45,14 @@
   }
 }
 
+.inputs-container {
+  text-align: start;
+}
+
+.input-container {
+  margin-bottom: 2.5rem;
+}
+
 input {
   display: block;
   box-sizing: border-box;
@@ -56,28 +64,46 @@ input {
   font-size: 1.1rem;
   font-weight: 500;
   font-family: inherit;
-  text-decoration: none;
   color: black;
   background-color: #ffffff;
 }
 input:focus,
 input:focus-visible {
+  border-color: #00ffcc;
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+.input-error-container{
+  min-height: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .input-error-message {
   display: block;
   padding-left: 1.2em;
-  min-height: 1.5rem;
   color: red;
 }
 
-.input-container {
-  margin-bottom: 1.5rem;
+.input-placeholder-container {
+  position: relative;
 }
 
-.inputs-container {
-  text-align: start;
+.placeholder {
+  position: absolute;
+  top: 0.6em;
+  left: 1.2em;
+  color: rgba(0, 0, 0, 0.54);
+  font-size: 1.1rem;
+  font-weight: 500;
+  background: #ffffff;
+  pointer-events: none;
+  transition: 0.25s all; 
+}
+
+.placeholder.float {
+  top: -0.9em;
+  left: 1em;
+  padding: 0 0.2em;
 }
 
 .button-link {
