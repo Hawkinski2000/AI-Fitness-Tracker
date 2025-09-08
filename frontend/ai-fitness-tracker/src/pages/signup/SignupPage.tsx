@@ -2,6 +2,7 @@
   import { useNavigate, Link } from 'react-router-dom';
   import ReCAPTCHA from "react-google-recaptcha";
   import axios from 'axios';
+  import validator from "validator";
   import { API_BASE_URL } from "../../config/api";
   import { logIn } from '../../utils/auth';
   import { useAuth } from "../../context/auth/useAuth";
@@ -20,10 +21,12 @@
       password: ''
     });
     const [repeatPassword, setRepeatPassword] = useState('');
-    const [passwordsMatch, setPasswordsMatch] = useState(false);
+    const [showPasswordError, setShowPasswordError] = useState(false);
 
     const [usernameTaken, setUsernameTaken] = useState(false);
     const [emailTaken, setEmailTaken] = useState(false);
+
+    const [invalidEmail, setInvalidEmail] = useState(true);
 
     const [usernameFocused, setUsernameFocused] = useState(false);
     const [emailFocused, setEmailFocused] = useState(false);
@@ -33,11 +36,17 @@
     const recaptchaRef = useRef<ReCAPTCHA>(null);
     const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
 
+    const [signUpFailed, setSignUpFailed] = useState(false);
+
     const { setAccessToken } = useAuth();
 
     const navigate = useNavigate();
 
     const signUp = async () => {
+      if (signUpFailed) {
+        setSignUpFailed(false);
+      }
+
       const recaptchaToken = recaptchaRef.current?.getValue();
 
       try {
@@ -54,7 +63,9 @@
           }
         );
 
-        const token = await logIn(signUpData.email!, signUpData.password!);
+        const response = await logIn(signUpData.email!, signUpData.password!);
+        
+        const token = response.data.access_token;
         setAccessToken(token);
 
         console.log('signUp successful.');
@@ -62,6 +73,7 @@
         navigate('about-you');
 
       } catch (error) {
+        setSignUpFailed(true);
         console.error('signUp failed:', error);
       }
     };
@@ -89,11 +101,19 @@
 
     useEffect(() => {
       if (!signUpData.email) {
+        setInvalidEmail(false);
         setEmailTaken(false);
         return;
       }
 
       const handler = setTimeout(async () => {
+        if (!validator.isEmail(signUpData.email)) {
+          setInvalidEmail(true);
+          return;
+        }
+
+        setInvalidEmail(false);
+
         try {
           const response = await axios.get(`${API_BASE_URL}/users/check-email`, {
             params: { email: signUpData.email },
@@ -110,16 +130,32 @@
 
     useEffect(() => {
       if (!signUpData.password || !repeatPassword) {
-        setPasswordsMatch(true);
+        setShowPasswordError(false);
         return;
       }
 
       const handler = setTimeout(async () => {
-        setPasswordsMatch(signUpData.password === repeatPassword ? true : false);
+        setShowPasswordError(signUpData.password !== repeatPassword);
       }, 500);
 
       return () => clearTimeout(handler);
     }, [signUpData.password, repeatPassword]);
+
+    const passwordsMatch =
+      signUpData.password &&
+      repeatPassword &&
+      signUpData.password === repeatPassword;
+
+    const buttonDisabled =
+      !signUpData.username ||
+      !signUpData.email ||
+      usernameTaken ||
+      emailTaken ||
+      invalidEmail ||
+      !signUpData.password ||
+      !repeatPassword ||
+      !passwordsMatch ||
+      !recaptchaToken;
 
     return (
       <>
@@ -138,6 +174,7 @@
                 <div>
                   <div className="input-placeholder-container">
                     <input
+                      className={usernameTaken ? 'error' : ''}
                       type='text'
                       value={signUpData.username || ''}
                       onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -146,7 +183,14 @@
                       onFocus={() => setUsernameFocused(true)}
                       onBlur={() => setUsernameFocused(false)}
                     />
-                    <span className={`placeholder ${signUpData.username || usernameFocused ? 'float' : ''}`}>
+                    <span
+                      className={
+                        `placeholder
+                        ${signUpData.username ? 'float' : ''}
+                        ${usernameFocused ? 'float focus' : ''}
+                        ${usernameTaken ? 'error' : ''}`
+                      }
+                    >
                       enter username*
                     </span>
                   </div>
@@ -162,6 +206,7 @@
                 <div>
                   <div className="input-placeholder-container">
                     <input
+                      className={(invalidEmail || emailTaken) ? 'error' : ''}
                       type='text'
                       value={signUpData.email || ''}
                       onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -170,14 +215,23 @@
                       onFocus={() => setEmailFocused(true)}
                       onBlur={() => setEmailFocused(false)}
                     />
-                    <span className={`placeholder ${signUpData.email || emailFocused ? 'float' : ''}`}>
+                    <span
+                      className={
+                        `placeholder
+                        ${signUpData.email ? 'float' : ''}
+                        ${emailFocused ? 'float focus' : ''}
+                        ${(invalidEmail || emailTaken) ? 'error' : ''}`
+                      }
+                    >
                       enter email*
                     </span>
                   </div>
                   <div className='input-error-container'>
-                    {emailTaken &&
+                    {(invalidEmail || emailTaken) &&
                       <span className='input-error-message'>
-                        That email is already registered.
+                        {invalidEmail
+                          ? 'Email is not valid.'
+                          : 'That email is already registered.'}
                       </span>
                     }
                   </div>
@@ -186,6 +240,7 @@
                 <div className='input-container'>
                   <div className="input-placeholder-container">
                     <input
+                      className={showPasswordError ? 'error' : ''}
                       type='password'
                       value={signUpData.password || ''}
                       onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -194,7 +249,14 @@
                       onFocus={() => setPasswordFocused(true)}
                       onBlur={() => setPasswordFocused(false)}
                     />
-                    <span className={`placeholder ${signUpData.password || passwordFocused ? 'float' : ''}`}>
+                    <span
+                      className={
+                        `placeholder
+                        ${signUpData.password ? 'float' : ''}
+                        ${passwordFocused ? 'float focus' : ''}
+                        ${showPasswordError ? 'error' : ''}`
+                      }
+                    >
                       enter password*
                     </span>
                   </div>
@@ -203,18 +265,26 @@
                 <div>
                   <div className="input-placeholder-container">
                     <input
+                      className={showPasswordError ? 'error' : ''}
                       type='password'
                       value={repeatPassword}
                       onChange={event => setRepeatPassword(event.target.value)}
                       onFocus={() => setRepeatPasswordFocused(true)}
                       onBlur={() => setRepeatPasswordFocused(false)}
                     />
-                    <span className={`placeholder ${repeatPassword || repeatPasswordFocused ? 'float' : ''}`}>
+                    <span
+                      className={
+                        `placeholder
+                        ${repeatPassword ? 'float' : ''}
+                        ${repeatPasswordFocused ? 'float focus' : ''}
+                        ${showPasswordError ? 'error' : ''}`
+                        }
+                      >
                       re-enter password*
                     </span>
                   </div>
                   <div className='input-error-container'>
-                    {!passwordsMatch &&
+                    {showPasswordError &&
                       <span className='input-error-message'>
                         Those passwords didn't match. Try again.
                       </span>
@@ -231,22 +301,22 @@
                 />
               </div>
 
-              <button
-                className='button-link'
-                onClick={signUp}
-                disabled={
-                  !signUpData.username ||
-                  !signUpData.email ||
-                  usernameTaken ||
-                  emailTaken ||
-                  !signUpData.password ||
-                  !repeatPassword ||
-                  !passwordsMatch ||
-                  !recaptchaToken
-                }
-              >
-                Continue
-              </button>
+              <div>
+                <button
+                  className={`button-link ${buttonDisabled ? 'disabled' : ''}`}
+                  onClick={signUp}
+                  disabled={buttonDisabled}
+                >
+                  Continue
+                </button>
+                <div className='input-error-container'>
+                  {signUpFailed &&
+                    <span className='input-error-message'>
+                      Something went wrong. Please try again.
+                    </span>
+                  }
+                </div>
+              </div>
 
               <div>
                 <p>

@@ -69,8 +69,15 @@ input {
 }
 input:focus,
 input:focus-visible {
-  border-color: #00ffcc;
-  outline: 4px auto -webkit-focus-ring-color;
+  outline: none;
+  border: 1px solid #00ffcc;
+  box-shadow: 0 0 0 2px #00ffcc;
+}
+
+input.error {
+  outline: none;
+  border: 1px solid red;
+  box-shadow: 0 0 0 2px red;
 }
 
 .input-error-container{
@@ -90,7 +97,7 @@ input:focus-visible {
 
 .placeholder {
   position: absolute;
-  top: 0.6em;
+  top: 0.5em;
   left: 1.2em;
   color: rgba(0, 0, 0, 0.54);
   font-size: 1.1rem;
@@ -104,6 +111,14 @@ input:focus-visible {
   top: -0.9em;
   left: 1em;
   padding: 0 0.2em;
+}
+
+.placeholder.focus {
+  color: #00ffcc;
+}
+
+.placeholder.error {
+  color: red;
 }
 
 .button-link {
@@ -121,7 +136,7 @@ input:focus-visible {
   color: #ffffff;
   background-color: #0c0c1d;
   cursor: pointer;
-  transition: box-shadow 0.25s;
+  transition: all 0.25s;
 }
 .button-link:hover {
   box-shadow: 0 0 10px 3px #00ffcc;
@@ -129,6 +144,13 @@ input:focus-visible {
 .button-link:focus,
 .button-link:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+.button-link.disabled {
+  cursor: default;
+  box-shadow: none;
+  background-color: gray;
+  color: lightgray;
 }
 
 .text-link {

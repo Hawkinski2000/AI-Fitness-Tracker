@@ -1,5 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
+import validator from "validator";
 import { logIn } from '../../utils/auth';
 import { useAuth } from "../../context/auth/useAuth";
 import './LoginPage.css';
@@ -12,6 +14,11 @@ export default function LoginPage() {
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
 
+  const [invalidEmail, setInvalidEmail] = useState(true);
+
+  const [invalidCredentials, setInvalidCredentials] = useState(false);
+  const [logInFailed, setLogInFailed] = useState(false);
+
   const { setAccessToken } = useAuth();
   
   const navigate = useNavigate();
@@ -23,20 +30,50 @@ export default function LoginPage() {
     setPassword(event.target.value);
   };
 
-  const logInUser = async () => {
-    try {
-      const token = await logIn(email, password);
+  useEffect(() => {
+    if (!email) {
+      setInvalidEmail(false);
+      return;
+    }
 
+    const handler = setTimeout(() => {
+      setInvalidEmail(!validator.isEmail(email));
+    }, 500);
+
+    return () => clearTimeout(handler);
+  }, [email]);
+
+  const logInUser = async () => {
+    if (invalidCredentials) {
+      setInvalidCredentials(false);
+    }
+    if (logInFailed) {
+      setLogInFailed(false);
+    }
+
+    try {
+      const response = await logIn(email, password);
+      
+      const token = response.data.access_token;
       setAccessToken(token)
 
       console.log('logInUser successful.');
 
       navigate('/dashboard');
 
-    } catch (error) {
-      console.error('logInUser failed', error);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error) && error.response?.status === 403) {
+        setInvalidCredentials(true);
+        console.error('Invalid credentials', error);
+      }
+      else {
+        setLogInFailed(true);
+        console.error('logInUser failed', error);
+      }
     }
   };
+
+  const buttonDisabled = !email || !password || invalidEmail;
 
   return (
     <>
@@ -51,35 +88,76 @@ export default function LoginPage() {
               </h1>
             </div>
 
-            <div className="input-placeholder-container">
-              <input
-                type='email'
-                value={email}
-                onChange={updateEmail}
-                onFocus={() => setEmailFocused(true)}
-                onBlur={() => setEmailFocused(false)}
-              />
-              <span className={`placeholder ${email || emailFocused ? 'float' : ''}`}>
-                enter email
-              </span>
+            <div className='inputs-container'>
+              <div>
+                <div className="input-placeholder-container">
+                  <input
+                    className={invalidEmail ? 'error' : ''}
+                    type='email'
+                    value={email}
+                    onChange={updateEmail}
+                    onFocus={() => setEmailFocused(true)}
+                    onBlur={() => setEmailFocused(false)}
+                  />
+                  <span
+                    className={
+                      `placeholder
+                      ${email ? 'float' : ''}
+                      ${emailFocused ? 'float focus' : ''}
+                      ${(invalidEmail) ? 'error' : ''}`
+                    }
+                  >
+                    enter email
+                  </span>
+                </div>
+                <div className='input-error-container'>
+                  {invalidEmail &&
+                    <span className='input-error-message'>
+                      Email is not valid.
+                    </span>
+                  }
+                </div>
+              </div>
+
+              <div className="input-placeholder-container">
+                <input
+                  className='input-container'
+                  type='password'
+                  value={password}
+                  onChange={updatePassword}
+                  onFocus={() => setPasswordFocused(true)}
+                  onBlur={() => setPasswordFocused(false)}
+                />
+                <span
+                  className={
+                    `placeholder
+                    ${password ? 'float' : ''}
+                    ${passwordFocused ? 'float focus' : ''}`
+                  }
+                >
+                  enter password
+                </span>
+              </div>
             </div>
 
-            <div className="input-placeholder-container">
-              <input
-                type='password'
-                value={password}
-                onChange={updatePassword}
-                onFocus={() => setPasswordFocused(true)}
-                onBlur={() => setPasswordFocused(false)}
-              />
-              <span className={`placeholder ${password || passwordFocused ? 'float' : ''}`}>
-                enter password
-              </span>
+            <div>
+              <button
+                className={`button-link ${buttonDisabled ? 'disabled' : ''}`}
+                onClick={logInUser}
+                disabled={buttonDisabled}
+              >
+                Login
+              </button>
+              <div className='input-error-container'>
+                {(invalidCredentials || logInFailed) &&
+                  <span className='input-error-message'>
+                    {invalidCredentials
+                      ? 'Invalid email or password. Please try again.'
+                      : 'Something went wrong. Please try again.'}
+                  </span>
+                }
+              </div>
             </div>
-
-            <button className='button-link' onClick={logInUser} disabled={!email || !password}>
-              Login
-            </button>
 
             <div>
               <p>

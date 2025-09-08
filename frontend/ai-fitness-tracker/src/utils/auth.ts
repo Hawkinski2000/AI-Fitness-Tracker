@@ -19,8 +19,8 @@ export const logIn = async (emailString: string, passwordString: string) => {
       );
 
       console.log('logIn successful.');
-      const token = response.data.access_token;
-      return token;
+      
+      return response;
 
     } catch (error) {
       console.error('logIn failed:', error);

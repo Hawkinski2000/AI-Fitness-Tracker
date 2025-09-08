@@ -125,7 +125,13 @@ export default function AboutYouPage() {
                 onFocus={() => setFirstNameFocused(true)}
                 onBlur={() => setFirstNameFocused(false)}
               />
-              <span className={`placeholder ${aboutYouData.first_name || firstNameFocused ? 'float' : ''}`}>
+              <span
+                className={
+                  `placeholder
+                  ${aboutYouData.first_name ? 'float' : ''}
+                  ${firstNameFocused ? 'float focus' : ''}`
+                }
+              >
                 first name (optional)
               </span>
             </div>
@@ -140,14 +146,20 @@ export default function AboutYouPage() {
                 onFocus={() => setSexFocused(true)}
                 onBlur={() => setSexFocused(false)}
               />
-              <span className={`placeholder ${aboutYouData.sex || sexFocused ? 'float' : ''}`}>
+              <span
+                className={
+                  `placeholder
+                  ${aboutYouData.sex ? 'float' : ''}
+                  ${sexFocused ? 'float focus' : ''}`
+                }
+              >
                 sex (optional)
               </span>
             </div>
 
             <div className="input-placeholder-container">
               <input
-                type='text'
+                type='number'
                 value={aboutYouData.age ?? ''}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setAboutYouData(prev => ({ ...prev, age: event.target.value }));
@@ -155,14 +167,20 @@ export default function AboutYouPage() {
                 onFocus={() => setAgeFocused(true)}
                 onBlur={() => setAgeFocused(false)}
               />
-              <span className={`placeholder ${aboutYouData.age || ageFocused ? 'float' : ''}`}>
+              <span
+                className={
+                  `placeholder
+                  ${aboutYouData.age ? 'float' : ''}
+                  ${ageFocused ? 'float focus' : ''}`
+                }
+              >
                 age (optional)
               </span>
             </div>
 
             <div className="input-placeholder-container">
               <input
-                type='text'
+                type='number'
                 value={aboutYouData.height ?? ''}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setAboutYouData(prev => ({ ...prev, height: event.target.value }));
@@ -170,14 +188,20 @@ export default function AboutYouPage() {
                 onFocus={() => setHeightFocused(true)}
                 onBlur={() => setHeightFocused(false)}
               />
-              <span className={`placeholder ${aboutYouData.height || heightFocused ? 'float' : ''}`}>
+              <span
+                className={
+                  `placeholder
+                  ${aboutYouData.height ? 'float' : ''}
+                  ${heightFocused ? 'float focus' : ''}`
+                }
+              >
                 height in inches (optional)
               </span>
             </div>
 
             <div className="input-placeholder-container">
               <input
-                type='text'
+                type='number'
                 value={aboutYouData.weight ?? ''}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setAboutYouData(prev => ({ ...prev, weight: event.target.value }));
@@ -185,7 +209,13 @@ export default function AboutYouPage() {
                 onFocus={() => setWeightFocused(true)}
                 onBlur={() => setWeightFocused(false)}
               />
-              <span className={`placeholder ${aboutYouData.weight || weightFocused ? 'float' : ''}`}>
+              <span
+                className={
+                  `placeholder
+                  ${aboutYouData.weight ? 'float' : ''}
+                  ${weightFocused ? 'float focus' : ''}`
+                }
+              >
                 weight in lbs (optional)
               </span>
             </div>
@@ -200,7 +230,13 @@ export default function AboutYouPage() {
                 onFocus={() => setGoalFocused(true)}
                 onBlur={() => setGoalFocused(false)}
               />
-              <span className={`placeholder ${aboutYouData.goal || goalFocused ? 'float' : ''}`}>
+              <span
+                className={
+                  `placeholder
+                  ${aboutYouData.goal ? 'float' : ''}
+                  ${goalFocused ? 'float focus' : ''}`
+                }
+              >
                 your health/fitness goal (optional)
               </span>
             </div>
