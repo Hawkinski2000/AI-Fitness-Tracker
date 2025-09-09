@@ -2,6 +2,10 @@
 
 An AI-powered fitness tracker that generates insights based on diet, exercise, sleep, and mood data.
 
+- A full-stack, agentic AI fitness tracker using FastAPI, Pydantic, PostgreSQL, SQLAlchemy, Alembic, Docker, and EC2, featuring a GPT-5-powered autonomous agent that can analyze users' health data, interact with the app, call specialized tools, and generate actionable recommendations.
+- Implements CI/CD with GitHub Actions, running 121+ Python tests, building Docker containers, and deploying to EC2.
+- Features a responsive React + TypeScript frontend with HTML/CSS. Uses secure authentication (JWTs, HTTP-only refresh tokens), reCAPTCHA, and Nginx proxy with rate limiting for production readiness.
+
 ![Dashboard](images/Dashboard.png)
 
 ![User Flow Diagram](images/User%20Flow%20Diagram%20-%20AI%20Fitness%20Tracker.png)
