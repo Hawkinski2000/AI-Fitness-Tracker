@@ -65,7 +65,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <img className="ai-fitness-tracker-image" src="/images/ai-fitness-tracker-image.png" alt="ai-fitness-tracker-image" />
+          <img className="ai-fitness-tracker-image" src="/images/Dashboard.png" alt="ai-fitness-tracker-image" />
         </section>
       </div>
     </>
