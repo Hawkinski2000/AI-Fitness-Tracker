@@ -16,9 +16,31 @@
 }
 
 .page-header {
-  height: 50px;
+  position: fixed;
   width: 100%;
+  height: 50px;
   background-color: #0c0c1d;
+  border-bottom: 1px solid #2e2e5e;
+  z-index: 1;
+}
+
+.page-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.page-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 260px;
+  margin-top: 50px;
+  height: calc(100vh - 50px);
+  width: calc(100vw - 260px);
+  padding: 2rem 1rem 1rem 1rem;
+  overflow-y: auto;
+  background-color: #1e1e3f;
 }
 
 .page-section {
@@ -51,6 +73,7 @@
 
 .input-container {
   margin-bottom: 2.5rem;
+  width: 100%;
 }
 
 input {
@@ -58,7 +81,6 @@ input {
   box-sizing: border-box;
   padding: 0.6em 1.2em;
   width: 100%;
-  max-width: 500px;
   border: 1px solid black;
   border-radius: 30px;
   font-size: 1.1rem;
@@ -66,6 +88,7 @@ input {
   font-family: inherit;
   color: black;
   background-color: #ffffff;
+  transition: all 0.25s;
 }
 input:focus,
 input:focus-visible {
@@ -104,7 +127,7 @@ input.error {
   font-weight: 500;
   background: #ffffff;
   pointer-events: none;
-  transition: 0.25s all; 
+  transition: all 0.25s; 
 }
 
 .placeholder.float {
@@ -133,7 +156,7 @@ input.error {
   font-family: inherit;
   text-decoration: none;
   text-align: center;
-  color: #ffffff;
+  color: #eceff4;
   background-color: #0c0c1d;
   cursor: pointer;
   transition: all 0.25s;
@@ -171,4 +194,28 @@ input.error {
   width: 100vw;
   justify-content: center;
   align-items: center;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: fixed;
+  top: 50px;
+  padding-top: 1rem;
+  height: calc(100vh - 50px);
+  width: 260px;
+  background-color: #0c0c1d;
+  border-right: 1px solid #2e2e5e;
+  gap: 1rem;
+}
+
+.sidebar-button-link {
+  border-radius: 10px;
+  width: 90%;
+}
+
+.sidebar-button-link:hover {
+  box-shadow: none;
+  background-color: #00ffcc;
 }

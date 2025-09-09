@@ -47,6 +47,7 @@ async def generate_insight(user: User, user_message: str, newest_response_id: st
         stream = client.responses.create(
             input=prompt,
             instructions=instructions,
+            max_output_tokens=5000,
             model="gpt-5-mini",
             previous_response_id=previous_response_id,
             stream=True,
