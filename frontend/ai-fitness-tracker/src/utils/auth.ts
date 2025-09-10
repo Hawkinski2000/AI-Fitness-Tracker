@@ -28,11 +28,7 @@ export const logIn = async (emailString: string, passwordString: string) => {
     }
   };
 
-export const refreshAccessToken = async (accessToken: string | null) => {
-  if (accessToken) {
-    return accessToken;
-  }
-
+export const refreshAccessToken = async () => {
   try {
     const refreshResponse = await axios.post(`${API_BASE_URL}/tokens/refresh`, {}, { withCredentials: true });
     const newToken = refreshResponse.data.access_token;
@@ -45,11 +41,12 @@ export const refreshAccessToken = async (accessToken: string | null) => {
   }
 };
 
-export const getUserFromToken = async (token: string) => {
-  interface JwtPayload {
-    user_id: number;
-  }
+interface JwtPayload {
+  user_id: number;
+  exp: number;
+}
 
+export const getUserFromToken = async (token: string) => {
   const decoded = jwtDecode<JwtPayload>(token);
   const userId = decoded.user_id;
 
@@ -65,5 +62,18 @@ export const getUserFromToken = async (token: string) => {
 
   } catch (err) {
     console.error("Could not load user data", err);
+  }
+};
+
+export const isTokenExpired = (token: string) => {
+  try {
+    const decoded = jwtDecode<JwtPayload>(token);
+
+    const now = Date.now() / 1000;
+    return decoded.exp < now;
+
+  } catch (err) {
+    console.error("Failed to decode token", err);
+    return true;
   }
 };

@@ -5,6 +5,10 @@
   width: 100vw;
 }
 
+.dashboard-heading {
+  margin: 2rem;
+}
+
 .dashboard-page-content {
   display: flex;
   flex: 1;

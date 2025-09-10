@@ -1,10 +1,10 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
-import { PropagateLoader, PulseLoader } from 'react-spinners';
+import { PropagateLoader } from 'react-spinners';
 import ReactMarkdown from 'react-markdown';
 import { API_BASE_URL } from "../../config/api";
 import { useAuth } from "../../context/auth/useAuth";
-import { refreshAccessToken, getUserFromToken } from "../../utils/auth";
+import { refreshAccessToken, getUserFromToken, isTokenExpired } from "../../utils/auth";
 import './DashboardPage.css';
 
 
@@ -33,18 +33,19 @@ export default function DashboardPage() {
   }
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
   const [message, setMessage] = useState('');
-
   const assistantRef = useRef<string>("");
+  const bottomRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = accessToken || await refreshAccessToken(accessToken);
-        
+        let token: string | null = accessToken;
+        if (!accessToken || isTokenExpired(accessToken)) {
+          token = await refreshAccessToken();  
+        }
         if (!token) {
           throw new Error("No access token");
         }
-
         setAccessToken(token);
 
         const userData = await getUserFromToken(token);
@@ -63,15 +64,24 @@ export default function DashboardPage() {
     fetchData();
   }, [accessToken, setAccessToken, navigate]);
 
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [conversation]);
+
   const createMessageStream = async (userMessage: string) => {
     try {
-      const token = accessToken || await refreshAccessToken(accessToken);
-          
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();  
+      }
       if (!token) {
         throw new Error("No access token");
       }
-
       setAccessToken(token);
+
+      assistantRef.current = "";
+
+      setConversation(prev => [...prev, { type: "user", content: message }]);
 
       const response = await fetch(`${API_BASE_URL}/messages`, {
         method: "POST",
@@ -135,9 +145,6 @@ export default function DashboardPage() {
   
   const handleSendMessage = () => {
     if (!accessToken || !message) return;
-
-    setConversation(prev => [...prev, { type: "user", content: message }]);
-
     createMessageStream(message);
     setMessage("");
   };
@@ -166,14 +173,16 @@ export default function DashboardPage() {
           
           <main className='page-main'>
             <div className='dashboard-page-content'>
-              <div>
-                <h1 className='page-heading'>
-                  Welcome
-                  {userData?.first_name || userData?.username
-                    ? `, ${userData.first_name || userData.username}!`
-                    : " back!"}
-                </h1>
-              </div>
+              {conversation.length === 0 && (
+                <div>
+                  <h1 className='page-heading dashboard-heading'>
+                    Welcome
+                    {userData?.first_name || userData?.username
+                      ? `, ${userData.first_name || userData.username}!`
+                      : " back!"}
+                  </h1>
+                </div>
+              )}
 
               <div className="conversation-container">
                 {conversation.map((item, index) => {
@@ -207,6 +216,7 @@ export default function DashboardPage() {
                   }
                   return null;
                 })}
+                <div ref={bottomRef} />
               </div>
             
               <div className="message-input-container">
