@@ -1,5 +1,11 @@
 from openai import OpenAI
-from openai.types.responses import ResponseOutputItemDoneEvent, ResponseTextDeltaEvent, ResponseCompletedEvent
+from openai.types.responses import (
+    ResponseOutputItemDoneEvent,
+    ResponseTextDeltaEvent,
+    ResponseCompletedEvent,
+    ResponseOutputItemAddedEvent,
+    ResponseReasoningItem
+)
 import json
 from app.models.models import User
 from app.core.config import settings
@@ -60,21 +66,49 @@ async def generate_insight(user: User, user_message: str, newest_response_id: st
             if type(event) == ResponseOutputItemDoneEvent:
                 if event.item.type == "function_call":
                     name = event.item.name
-                    args = json.loads(event.item.arguments)
+                    call_id = event.item.call_id
 
+                    payload = {
+                        "type": "function_call",
+                        "name": name,
+                        "call_id": call_id,
+                    }
+                    yield payload
+
+                    args = json.loads(event.item.arguments)
                     result = tools.call_function(name, args, user_id)
-                    function_call_outputs.append({
+                    function_call_output = {
                         "type": "function_call_output",
-                        "call_id": event.item.call_id,
+                        "call_id": call_id,
                         "output": json.dumps(result)
-                    })
+                    }
+                    function_call_outputs.append(function_call_output)
+                    payload = {
+                        "type": "function_call_output",
+                        "name": name,
+                        "call_id": call_id,
+                        "output": json.dumps(result)
+                    }
+                    yield payload
 
             elif type(event) == ResponseTextDeltaEvent:
                 print(event.delta, end="", flush=True)
+                payload = {
+                    "type": "text_delta",
+                    "delta": event.delta
+                }
+                yield payload
 
             elif type(event) == ResponseCompletedEvent:
                 previous_response_id = event.response.id
                 responses.append(event.response)
+                payload = {"type": "completed",
+                           "response": event.response}
+                yield payload
+            elif type(event) == ResponseOutputItemAddedEvent:
+                if event.item.type == "reasoning":
+                    payload = {"type": "reasoning"}
+                    yield payload
 
         if function_call_outputs:
             instructions = "Here are the outputs of the tools that you called."
@@ -82,5 +116,3 @@ async def generate_insight(user: User, user_message: str, newest_response_id: st
         else:
             print()
             break
-
-    return responses

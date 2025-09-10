@@ -1,5 +1,7 @@
 from fastapi import Response, status, APIRouter, Depends
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
+import json
 from app.core.db import get_db
 from app.schemas import message, token
 from app.crud import messages as crud_messages
@@ -14,8 +16,11 @@ router = APIRouter(prefix="/api/messages",
 async def create_message(message: message.MessageCreate,
                          current_user: token.TokenData = Depends(get_current_user),
                          db: Session = Depends(get_db)):
-    new_messages = await crud_messages.create_message(message, current_user.user_id, db)
-    return new_messages
+    async def message_generator():
+        async for event in crud_messages.create_message(message, current_user.user_id, db):
+            yield (json.dumps(event) + "\n").encode("utf-8")
+            
+    return StreamingResponse(message_generator(), media_type="text/event-stream")
 
 # Get all messages
 @router.get("", response_model=list[message.MessageResponse])

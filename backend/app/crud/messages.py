@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import func, delete
+import asyncio
 import tiktoken
 from datetime import datetime, timezone, timedelta
 from fastapi import HTTPException
@@ -55,9 +56,14 @@ async def create_message(message: message.MessageCreate, user_id: int, db: Sessi
         )
     
     newest_response_id = chat.newest_response_id
-    # print(f"newest_response_id: {newest_response_id}\n")
-
-    responses = await agent.generate_insight(user, user_message, newest_response_id)
+    
+    responses = []
+    async for event in agent.generate_insight(user, message.content, newest_response_id):
+        if event["type"] == "completed":
+            responses.append(event["response"])
+        else:
+            yield event
+        await asyncio.sleep(0)
 
     outputs = []
     input_tokens_count = 0
@@ -114,8 +120,6 @@ async def create_message(message: message.MessageCreate, user_id: int, db: Sessi
 
     for message in new_messages:
         db.refresh(message)
-
-    return new_messages
 
 def get_messages(user_id: int, db: Session):
     messages = (

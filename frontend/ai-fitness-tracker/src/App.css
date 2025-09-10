@@ -219,3 +219,23 @@ input.error {
   box-shadow: none;
   background-color: #00ffcc;
 }
+
+@media (max-width: 900px) {
+  .sidebar {
+    width: 70px;
+  }
+
+  .page-main {
+    margin-left: 70px;
+    width: calc(100vw - 70px);
+  }
+
+  .sidebar-button-link {
+    font-size: 10px;
+    overflow-wrap: break-word;
+  }
+
+  .page-heading {
+    font-size: 20px;
+  }
+}
