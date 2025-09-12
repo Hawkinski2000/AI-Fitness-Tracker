@@ -18,7 +18,7 @@ async def create_message(message: message.MessageCreate,
                          db: Session = Depends(get_db)):
     async def message_generator():
         async for event in crud_messages.create_message(message, current_user.user_id, db):
-            yield (json.dumps(event) + "\n").encode("utf-8")
+            yield f"{json.dumps(event)}\n\n".encode("utf-8")
             
     return StreamingResponse(message_generator(), media_type="text/event-stream")
 

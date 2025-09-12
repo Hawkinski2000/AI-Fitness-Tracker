@@ -35,6 +35,7 @@ export default function DashboardPage() {
   const [message, setMessage] = useState('');
   const [inputExpanded, setInputExpanded] = useState(false);
   const inputRef = useRef<HTMLDivElement>(null);
+  const inputTimeout = useRef<number | null>(null);
   const assistantRef = useRef<string>("");
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const conversationRef = useRef<HTMLDivElement | null>(null);
@@ -136,7 +137,6 @@ export default function DashboardPage() {
           buffer = lines.pop() || "";
 
           for (const line of lines) {
-
             const event = JSON.parse(line);
 
             if (event.type === "text_delta") {
@@ -181,7 +181,14 @@ export default function DashboardPage() {
   const handleInput = (event: React.FormEvent<HTMLDivElement>) => {
     const element = event.currentTarget;
     const text = element.textContent || "";
-    setMessage(text);
+
+    if (inputTimeout.current) {
+      clearTimeout(inputTimeout.current);
+    }
+    
+    inputTimeout.current = setTimeout(() => {
+      setMessage(text);
+    }, 100);
 
     const MIN_HEIGHT = 56;
 
