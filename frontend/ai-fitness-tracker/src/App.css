@@ -36,10 +36,11 @@
   align-items: center;
   margin-left: 260px;
   margin-top: 50px;
-  /* padding: 3rem 0 0 0; */
   height: calc(100vh - 50px);
   width: calc(100vw - 260px);
+  overflow-x: hidden;
   overflow-y: auto;
+  box-sizing: border-box;
   background-color: #1e1e3f;
 }
 
@@ -220,14 +221,25 @@ input.error {
   background-color: #00ffcc;
 }
 
-@media (max-width: 900px) {
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #2e2e5e;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #8085a6;
+}
+
+@media (max-width: 500px) {
   .sidebar {
-    width: 70px;
+    width: 50px;
   }
 
   .page-main {
-    margin-left: 70px;
-    width: calc(100vw - 70px);
+    margin-left: 50px;
+    width: calc(100vw - 50px);
   }
 
   .sidebar-button-link {

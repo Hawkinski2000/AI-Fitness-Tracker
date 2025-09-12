@@ -23,9 +23,11 @@ async def create_message(message: message.MessageCreate,
     return StreamingResponse(message_generator(), media_type="text/event-stream")
 
 # Get all messages
-@router.get("", response_model=list[message.MessageResponse])
-def get_messages(current_user: token.TokenData = Depends(get_current_user), db: Session = Depends(get_db)):
-    messages = crud_messages.get_messages(current_user.user_id, db)
+@router.get("/{chat_id}", response_model=list[message.MessageResponse])
+def get_messages(chat_id: int,
+                 current_user: token.TokenData = Depends(get_current_user),
+                 db: Session = Depends(get_db)):
+    messages = crud_messages.get_messages(chat_id, current_user.user_id, db)
     return messages
 
 # Get a message

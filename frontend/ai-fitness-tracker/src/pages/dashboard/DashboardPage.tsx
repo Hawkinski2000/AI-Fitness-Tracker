@@ -5,51 +5,56 @@ import ReactMarkdown from 'react-markdown';
 import { API_BASE_URL } from "../../config/api";
 import { useAuth } from "../../context/auth/useAuth";
 import { refreshAccessToken, getUserFromToken, isTokenExpired } from "../../utils/auth";
+import { loadChatHistory } from "../../utils/chats";
 import './DashboardPage.css';
 
 
-export default function DashboardPage() {
-  interface User {
-    id: number;
-    username: string;
-    email: string;
-    first_name?: string | null;
-    sex?: string | null;
-    age?: string | null;
-    height?: string | null;
-    weight?: string | null;
-    goal?: string | null;
-  }
-  
+interface User {
+  id: number;
+  username: string;
+  email: string;
+  first_name?: string | null;
+  sex?: string | null;
+  age?: string | null;
+  height?: string | null;
+  weight?: string | null;
+  goal?: string | null;
+}
+export interface ConversationItem {
+  type: "user" | "assistant" | "reasoning" | "function_call";
+  content: string;
+}
+export default function DashboardPage() {  
   const { accessToken, setAccessToken } = useAuth();
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 
-  interface ConversationItem {
-    type: "user" | "assistant" | "reasoning" | "function_call";
-    content: string;
-  }
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
   const [message, setMessage] = useState('');
+  const [inputExpanded, setInputExpanded] = useState(false);
+  const inputRef = useRef<HTMLDivElement>(null);
   const assistantRef = useRef<string>("");
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const conversationRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let token: string | null = accessToken;
-        if (!accessToken || isTokenExpired(accessToken)) {
-          token = await refreshAccessToken();  
-        }
+        const token = await refreshAccessToken();  
+
         if (!token) {
           throw new Error("No access token");
         }
+
         setAccessToken(token);
 
         const userData = await getUserFromToken(token);
         setUserData(userData);
+
+        // loadChatHistory(currentChatId, setConversation, token);
+        loadChatHistory(1, setConversation, token);
 
       } catch (err) {
         console.error(err);
@@ -62,11 +67,25 @@ export default function DashboardPage() {
     };
 
     fetchData();
-  }, [accessToken, setAccessToken, navigate]);
+  }, [setAccessToken, navigate]);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    bottomRef.current?.scrollIntoView({ behavior: "auto" });
   }, [conversation]);
+
+  const scrollToBottom = () => {
+    const container = conversationRef.current;
+
+    if (!container) {
+      return;
+    }
+
+    const viewportHeight = window.innerHeight;
+    const extraSpace = viewportHeight / 2 - 100;
+    container.style.minHeight = `${container.scrollHeight + extraSpace}px`;
+
+    container.scrollTop = container.scrollHeight;
+  }
 
   const createMessageStream = async (userMessage: string) => {
     try {
@@ -79,9 +98,11 @@ export default function DashboardPage() {
       }
       setAccessToken(token);
 
-      assistantRef.current = "";
+      assistantRef.current = '';
 
       setConversation(prev => [...prev, { type: "user", content: message }]);
+
+      scrollToBottom();
 
       const response = await fetch(`${API_BASE_URL}/messages`, {
         method: "POST",
@@ -142,11 +163,33 @@ export default function DashboardPage() {
       setAccessToken(null);
     }
   };
-  
+
   const handleSendMessage = () => {
     if (!accessToken || !message) return;
+
     createMessageStream(message);
+
     setMessage("");
+
+    if (inputRef.current) {
+      inputRef.current.textContent = "";
+    }
+
+    setInputExpanded(false);
+  };
+
+  const handleInput = (event: React.FormEvent<HTMLDivElement>) => {
+    const element = event.currentTarget;
+    const text = element.textContent || "";
+    setMessage(text);
+
+    const MIN_HEIGHT = 56;
+
+    if (!inputExpanded && text.length > 0 && element.scrollHeight > MIN_HEIGHT) {
+      setInputExpanded(true);
+    } else if (inputExpanded && text.length === 0) {
+      setInputExpanded(false);
+    }
   };
 
   if (loading) {
@@ -184,7 +227,10 @@ export default function DashboardPage() {
                 </div>
               )}
 
-              <div className="conversation-container">
+              <div
+                className="conversation-container"
+                ref={conversationRef}
+              >
                 {conversation.map((item, index) => {
                   if (item.type === "user") {
                     return (
@@ -219,16 +265,20 @@ export default function DashboardPage() {
                 <div ref={bottomRef} />
               </div>
             
-              <div className="message-input-container">
-                <input
-                  type="text"
-                  placeholder="How can I help you today?"
+              <div
+                className={`message-input-container ${inputExpanded ? "expanded" : ""}`}
+                onClick={() => inputRef.current?.focus()}
+              >
+                <div
+                  ref={inputRef}
+                  contentEditable
+                  data-placeholder="How can I help you today?"
                   className="message-input"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
+                  onInput={handleInput}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       handleSendMessage();
+                      e.preventDefault();
                     }
                   }}
                 />

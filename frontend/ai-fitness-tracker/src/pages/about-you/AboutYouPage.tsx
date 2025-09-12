@@ -45,7 +45,7 @@ export default function AboutYouPage() {
 
     const checkToken = async () => {
       try {
-        const token = accessToken || await refreshAccessToken(accessToken);
+        const token = accessToken || await refreshAccessToken();
         
         if (!token) {
           navigate('/signup');
@@ -67,7 +67,7 @@ export default function AboutYouPage() {
     isSigningUp.current = true;
 
     try {
-      const token = accessToken || await refreshAccessToken(accessToken);
+      const token = accessToken || await refreshAccessToken();
       
       if (!token) {
         navigate('/signup');

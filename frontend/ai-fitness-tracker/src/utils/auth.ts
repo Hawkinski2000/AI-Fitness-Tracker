@@ -4,29 +4,29 @@ import { API_BASE_URL } from "../config/api";
 
 
 export const logIn = async (emailString: string, passwordString: string) => {
-    try {
-      const formData = new FormData();
-      formData.append('username', emailString);
-      formData.append('password', passwordString);
+  try {
+    const formData = new FormData();
+    formData.append('username', emailString);
+    formData.append('password', passwordString);
 
-      const response = await axios.post(`${API_BASE_URL}/tokens`, formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-          withCredentials: true
-        }
-      );
+    const response = await axios.post(`${API_BASE_URL}/tokens`, formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        withCredentials: true
+      }
+    );
 
-      console.log('logIn successful.');
-      
-      return response;
+    console.log('logIn successful.');
+    
+    return response;
 
-    } catch (error) {
-      console.error('logIn failed:', error);
-      throw error;
-    }
-  };
+  } catch (error) {
+    console.error('logIn failed:', error);
+    throw error;
+  }
+};
 
 export const refreshAccessToken = async () => {
   try {

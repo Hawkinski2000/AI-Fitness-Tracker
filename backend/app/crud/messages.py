@@ -106,12 +106,14 @@ async def create_message(message: message.MessageCreate, user_id: int, db: Sessi
     new_messages.append(new_user_message)
 
     for output in outputs:
+        created_at = datetime.now(timezone.utc)
         new_message = Message(
             chat_id=message.chat_id,
             interaction_id=new_interaction_id,
             message=output,
             role="assistant",
-            type=output.get("type")
+            type=output.get("type"),
+            created_at=created_at
         )
         db.add(new_message)
         new_messages.append(new_message)
@@ -121,11 +123,13 @@ async def create_message(message: message.MessageCreate, user_id: int, db: Sessi
     for message in new_messages:
         db.refresh(message)
 
-def get_messages(user_id: int, db: Session):
+def get_messages(chat_id: int, user_id: int, db: Session):
     messages = (
         db.query(Message)
         .join(Chat, Message.chat_id == Chat.id)
-        .filter(Chat.user_id == user_id)
+        .filter(Chat.user_id == user_id,
+                Message.chat_id == chat_id)
+        .order_by(Message.created_at.asc())
         .all()
     )
     return messages
