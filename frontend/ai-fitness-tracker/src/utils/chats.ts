@@ -1,7 +1,23 @@
 import axios from 'axios';
-import { type ConversationItem } from '../pages/dashboard/DashboardPage';
+import { type Chat, type ConversationItem } from '../pages/dashboard/DashboardPage';
 import { API_BASE_URL } from '../config/api';
 
+
+export const loadChats = async (setChats: React.Dispatch<React.SetStateAction<Chat[]>>,
+                                token: string) => {
+  const chatsResponse = await axios.get(`${API_BASE_URL}/chats`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  const chats: Chat[] = chatsResponse.data.map((chat: Chat) => ({id: chat.id, title: chat.title}));
+  setChats(chats);
+
+  return chats;
+};
 
 interface Message {
   type: 'message' | 'reasoning' | 'function_call'

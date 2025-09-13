@@ -235,6 +235,10 @@
   background-color: #2e2e5e;
 }
 
+.chat-history-button-link-selected {
+  background-color: #2e2e5e;
+}
+
 @media (max-width: 500px) {
   .dashboard-page-content {
     width: 70vw;

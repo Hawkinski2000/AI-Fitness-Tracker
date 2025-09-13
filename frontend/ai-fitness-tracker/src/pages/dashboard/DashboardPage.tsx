@@ -5,7 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import { API_BASE_URL } from "../../config/api";
 import { useAuth } from "../../context/auth/useAuth";
 import { refreshAccessToken, getUserFromToken, isTokenExpired } from "../../utils/auth";
-import { loadChatHistory } from "../../utils/chats";
+import { loadChats, loadChatHistory } from "../../utils/chats";
 import './DashboardPage.css';
 
 
@@ -20,6 +20,10 @@ interface User {
   weight?: string | null;
   goal?: string | null;
 }
+export interface Chat {
+  id: number;
+  title: string;
+}
 export interface ConversationItem {
   type: "user" | "assistant" | "reasoning" | "function_call";
   content: string;
@@ -30,6 +34,9 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
+
+  const [chats, setChats] = useState<Chat[]>([]);
+  const [currentChatId, setCurrentChatId] = useState<number | null>(null);
 
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
   const [message, setMessage] = useState('');
@@ -56,8 +63,13 @@ export default function DashboardPage() {
         const userData = await getUserFromToken(token);
         setUserData(userData);
 
-        // loadChatHistory(currentChatId, setConversation, token);
-        loadChatHistory(1, setConversation, token);
+        const loadedChats = await loadChats(setChats, token);
+
+        if (loadChats.length > 0) {
+          const mostRecentChat = loadedChats[0];
+          setCurrentChatId(mostRecentChat.id);
+          loadChatHistory(mostRecentChat.id, setConversation, token);
+        }
 
       } catch (err) {
         console.error(err);
@@ -90,6 +102,26 @@ export default function DashboardPage() {
     container.scrollTop = container.scrollHeight;
   }
 
+  const handleSelectChat = async (chatId: number) => {
+    try {
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();  
+      }
+      if (!token) {
+        throw new Error("No access token");
+      }
+      setAccessToken(token);
+
+      setCurrentChatId(chatId);
+      await loadChatHistory(chatId, setConversation, token);
+
+    } catch (err) {
+      console.error(err);
+      setAccessToken(null);
+    }
+  };
+
   const createMessageStream = async (userMessage: string) => {
     try {
       let token: string | null = accessToken;
@@ -114,7 +146,7 @@ export default function DashboardPage() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          chat_id: 1,
+          chat_id: currentChatId,
           content: userMessage,
         }),
       });
@@ -139,6 +171,10 @@ export default function DashboardPage() {
           buffer = lines.pop() || "";
 
           for (const line of lines) {
+            if (!line.trim()) {
+              continue;
+            }
+
             const event = JSON.parse(line);
 
             if (event.type === "text_delta") {
@@ -238,12 +274,23 @@ export default function DashboardPage() {
                 <button className="button-link chat-history-button-link">Search chats</button>
                 <div className="chat-history-text-container">Chats</div>
               </div>
-              <button className="button-link chat-history-button-link">Advice on meal logs</button>
-              <button className="button-link chat-history-button-link">Longer title about meal logs</button>
-              <button className="button-link chat-history-button-link">Advice on workout logs</button>
-              <button className="button-link chat-history-button-link">Advice on sleep logs</button>
-              <button className="button-link chat-history-button-link">Advice on mood logs</button>
-              <button className="button-link chat-history-button-link">Advice on weight logs</button>
+
+              {chats.map((chat) => {
+                return (
+                  <button
+                    key={chat.id}
+                    className={`
+                      button-link
+                      chat-history-button-link
+                      ${chat.id === currentChatId ? 'chat-history-button-link-selected' : ''}
+                    `}
+                    onClick={() => handleSelectChat(chat.id)}
+                    disabled={chat.id === currentChatId}
+                  >
+                    {chat.title}
+                  </button>
+                )
+              })}
             </nav>
           ) : (
             <nav className="chat-history chat-history-collapsed">
@@ -312,6 +359,7 @@ export default function DashboardPage() {
                   }
                   return null;
                 })}
+                
                 <div ref={bottomRef} />
               </div>
             

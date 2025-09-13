@@ -5,13 +5,14 @@ from app.models.models import Chat
 
 def create_chat(chat: chat.ChatCreate, user_id: int, db: Session):
     new_chat = Chat(**chat.model_dump(exclude_unset=True), user_id=user_id)
+    new_chat.title = f"New chat"
     db.add(new_chat)
     db.commit()
     db.refresh(new_chat)
     return new_chat
 
 def get_chats(user_id: int, db: Session):
-    chats = db.query(Chat).filter(Chat.user_id == user_id).all()
+    chats = db.query(Chat).filter(Chat.user_id == user_id).order_by(Chat.created_at.desc()).all()
     return chats
 
 def get_chat(id: int, user_id: int, db: Session):

@@ -151,6 +151,7 @@ input.error {
   padding: 0.6em 1.2em;
   width: 100%;
   border: none;
+  outline: none;
   border-radius: 30px;
   font-size: 1.1rem;
   font-weight: 500;
@@ -167,7 +168,7 @@ input.error {
 }
 .button-link:focus,
 .button-link:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  outline: none;
 }
 
 .button-link.disabled {
@@ -214,8 +215,10 @@ input.error {
   border-radius: 10px;
   width: 90%;
   font-size: 10px;
+  outline: none;
 }
 .sidebar-button-link:hover {
+  outline: none;
   box-shadow: none;
   background-color: #00ffcc;
 }
