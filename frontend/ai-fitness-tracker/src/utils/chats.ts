@@ -3,6 +3,24 @@ import { type Chat, type ConversationItem } from '../pages/dashboard/DashboardPa
 import { API_BASE_URL } from '../config/api';
 
 
+export const createChat = async (setChats: React.Dispatch<React.SetStateAction<Chat[]>>,
+                                 token: string) => {
+  const newChatResponse = await axios.post(`${API_BASE_URL}/chats`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+  
+  const newChat = newChatResponse.data;
+
+  setChats(prevChats => [newChat, ...prevChats]);
+
+  return newChat;
+};
+
 export const loadChats = async (setChats: React.Dispatch<React.SetStateAction<Chat[]>>,
                                 token: string) => {
   const chatsResponse = await axios.get(`${API_BASE_URL}/chats`,

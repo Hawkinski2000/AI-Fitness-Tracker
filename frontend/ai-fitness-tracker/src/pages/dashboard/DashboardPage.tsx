@@ -5,7 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import { API_BASE_URL } from "../../config/api";
 import { useAuth } from "../../context/auth/useAuth";
 import { refreshAccessToken, getUserFromToken, isTokenExpired } from "../../utils/auth";
-import { loadChats, loadChatHistory } from "../../utils/chats";
+import { createChat, loadChats, loadChatHistory } from "../../utils/chats";
 import './DashboardPage.css';
 
 
@@ -101,6 +101,28 @@ export default function DashboardPage() {
 
     container.scrollTop = container.scrollHeight;
   }
+
+  const handleCreateChat = async () => {
+    try {
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();  
+      }
+      if (!token) {
+        throw new Error("No access token");
+      }
+      setAccessToken(token);
+
+      const newChat = await createChat(setChats, token);
+
+      const chatId = newChat.id;
+      setCurrentChatId(chatId);
+
+    } catch (err) {
+      console.error(err);
+      setAccessToken(null);
+    }
+  };
 
   const handleSelectChat = async (chatId: number) => {
     try {
@@ -270,7 +292,12 @@ export default function DashboardPage() {
                   {'<'}
                 </button>
                 </div>
-                <button className="button-link chat-history-button-link">New chat</button>
+                <button
+                  className="button-link chat-history-button-link"
+                  onClick={handleCreateChat}
+                >
+                  New chat
+                </button>
                 <button className="button-link chat-history-button-link">Search chats</button>
                 <div className="chat-history-text-container">Chats</div>
               </div>
