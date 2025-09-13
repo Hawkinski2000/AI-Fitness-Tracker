@@ -299,25 +299,28 @@ export default function DashboardPage() {
                   New chat
                 </button>
                 <button className="button-link chat-history-button-link">Search chats</button>
-                <div className="chat-history-text-container">Chats</div>
               </div>
 
-              {chats.map((chat) => {
-                return (
-                  <button
-                    key={chat.id}
-                    className={`
-                      button-link
-                      chat-history-button-link
-                      ${chat.id === currentChatId ? 'chat-history-button-link-selected' : ''}
-                    `}
-                    onClick={() => handleSelectChat(chat.id)}
-                    disabled={chat.id === currentChatId}
-                  >
-                    {chat.title}
-                  </button>
-                )
-              })}
+              <div className="chats-container">
+                <div className="chat-history-text-container">Chats</div>
+
+                {chats.map((chat) => {
+                  return (
+                    <button
+                      key={chat.id}
+                      className={`
+                        button-link
+                        chat-history-button-link
+                        ${chat.id === currentChatId ? 'chat-history-button-link-selected' : ''}
+                      `}
+                      onClick={() => handleSelectChat(chat.id)}
+                      disabled={chat.id === currentChatId}
+                    >
+                      {chat.title}
+                    </button>
+                  )
+                })}
+              </div>
             </nav>
           ) : (
             <nav className="chat-history chat-history-collapsed">
