@@ -40,6 +40,8 @@ export default function DashboardPage() {
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const conversationRef = useRef<HTMLDivElement | null>(null);
 
+  const [chatHistoryCollapsed, setChatHistoryCollapsed] = useState(false);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -220,8 +222,49 @@ export default function DashboardPage() {
             <button className="button-link sidebar-button-link">Sleep Logs</button>
             <button className="button-link sidebar-button-link">Mood Logs</button>
           </nav>
+
+          {!chatHistoryCollapsed ? (
+            <nav className="chat-history">
+              <div className="chat-history-button-container">
+                <div className="chat-history-collapse-button-container">
+                  <button
+                  className="chat-history-collapse-button"
+                  onClick={() => setChatHistoryCollapsed(true)}
+                >
+                  {'<'}
+                </button>
+                </div>
+                <button className="button-link chat-history-button-link">New chat</button>
+                <button className="button-link chat-history-button-link">Search chats</button>
+                <div className="chat-history-text-container">Chats</div>
+              </div>
+              <button className="button-link chat-history-button-link">Advice on meal logs</button>
+              <button className="button-link chat-history-button-link">Longer title about meal logs</button>
+              <button className="button-link chat-history-button-link">Advice on workout logs</button>
+              <button className="button-link chat-history-button-link">Advice on sleep logs</button>
+              <button className="button-link chat-history-button-link">Advice on mood logs</button>
+              <button className="button-link chat-history-button-link">Advice on weight logs</button>
+            </nav>
+          ) : (
+            <nav className="chat-history chat-history-collapsed">
+              <div
+                className="chat-history-collapse-button-container"
+                style={{ textAlign: 'center' }}
+              >
+                <button
+                  className="chat-history-collapse-button"
+                  onClick={() => setChatHistoryCollapsed(false)}
+                >
+                  {'>'}
+                </button>
+              </div>
+            </nav>
+          )}
           
-          <main className='page-main'>
+          <main
+            className={`page-main ${chatHistoryCollapsed ? 'dashboard-main-collapsed' : ''}`}
+            style={{ transition: 'all 0.25s' }}
+          >
             <div className='dashboard-page-content'>
               {conversation.length === 0 && (
                 <div>

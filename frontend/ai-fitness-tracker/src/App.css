@@ -205,17 +205,16 @@ input.error {
   top: 50px;
   padding-top: 1rem;
   height: calc(100vh - 50px);
-  width: 260px;
+  width: 99px;
   background-color: #0c0c1d;
   border-right: 1px solid #2e2e5e;
-  gap: 1rem;
 }
 
 .sidebar-button-link {
   border-radius: 10px;
   width: 90%;
+  font-size: 10px;
 }
-
 .sidebar-button-link:hover {
   box-shadow: none;
   background-color: #00ffcc;
