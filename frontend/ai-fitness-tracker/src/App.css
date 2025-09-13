@@ -233,16 +233,17 @@ input.error {
 
 @media (max-width: 500px) {
   .sidebar {
-    width: 50px;
+    width: 49px;
   }
 
   .page-main {
-    margin-left: 50px;
-    width: calc(100vw - 50px);
+    margin-left: 75px;
+    width: calc(100vw - 75px);
   }
 
   .sidebar-button-link {
-    font-size: 10px;
+    font-size: 8px;
+    padding: 1rem 0;
     overflow-wrap: break-word;
   }
 

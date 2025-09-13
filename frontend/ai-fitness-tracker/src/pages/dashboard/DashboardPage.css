@@ -167,7 +167,7 @@
 }
 
 .chat-history-collapsed {
-  width: 50px;
+  width: 49px;
   transition: all 0.25s;
 }
 
@@ -237,7 +237,7 @@
 
 @media (max-width: 500px) {
   .dashboard-page-content {
-    width: 75vw;
+    width: 70vw;
     font-size: 12px;
   }
 
@@ -247,5 +247,30 @@
 
   .message-input {
     font-size: 12px;
+  }
+
+  .chat-history {
+    background-color: #0c0c1d;
+    width: 149px;
+    left: 50px;
+    z-index: 1;
+  }
+
+  .dashboard-main-collapsed {
+    margin-left: 75px;
+    width: calc(100vw - 75px);
+  }
+
+  .chat-history-button-link {
+    font-size: 10px;
+  }
+
+  .chat-history-text-container {
+    font-size: 12px;
+  }
+
+  .chat-history-collapsed {
+    width: 24px;
+    transition: all 0.25s;
   }
 }
