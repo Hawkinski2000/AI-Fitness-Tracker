@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from 'react-router-dom';
 import { PropagateLoader } from 'react-spinners';
 import ReactMarkdown from 'react-markdown';
@@ -43,11 +43,53 @@ export default function DashboardPage() {
   const [inputExpanded, setInputExpanded] = useState(false);
   const inputRef = useRef<HTMLDivElement>(null);
   const inputTimeout = useRef<number | null>(null);
-  const assistantRef = useRef<string>("");
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const conversationRef = useRef<HTMLDivElement | null>(null);
 
   const [chatHistoryCollapsed, setChatHistoryCollapsed] = useState(false);
+
+  const handleSelectChat = useCallback(async (chatId: number) => {
+    try {
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();  
+      }
+      if (!token) {
+        throw new Error("No access token");
+      }
+      setAccessToken(token);
+
+      setCurrentChatId(chatId);
+      await loadChatHistory(chatId, setConversation, token);
+
+    } catch (err) {
+      console.error(err);
+      setAccessToken(null);
+    }
+  }, [accessToken, setAccessToken]);
+
+  const handleCreateChat = useCallback(async () => {
+    try {
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();  
+      }
+      if (!token) {
+        throw new Error("No access token");
+      }
+      setAccessToken(token);
+
+      const newChat = await createChat(setChats, token);
+
+      const chatId = newChat.id;
+      setCurrentChatId(chatId);
+      handleSelectChat(chatId);
+
+    } catch (err) {
+      console.error(err);
+      setAccessToken(null);
+    }
+  }, [accessToken, setAccessToken, setChats, handleSelectChat]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -85,7 +127,7 @@ export default function DashboardPage() {
     };
 
     fetchData();
-  }, [setAccessToken, navigate]);
+  }, [setAccessToken, handleCreateChat, navigate]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "auto" });
@@ -105,49 +147,6 @@ export default function DashboardPage() {
     container.scrollTop = container.scrollHeight;
   }
 
-  const handleCreateChat = async () => {
-    try {
-      let token: string | null = accessToken;
-      if (!accessToken || isTokenExpired(accessToken)) {
-        token = await refreshAccessToken();  
-      }
-      if (!token) {
-        throw new Error("No access token");
-      }
-      setAccessToken(token);
-
-      const newChat = await createChat(setChats, token);
-
-      const chatId = newChat.id;
-      setCurrentChatId(chatId);
-      handleSelectChat(chatId);
-
-    } catch (err) {
-      console.error(err);
-      setAccessToken(null);
-    }
-  };
-
-  const handleSelectChat = async (chatId: number) => {
-    try {
-      let token: string | null = accessToken;
-      if (!accessToken || isTokenExpired(accessToken)) {
-        token = await refreshAccessToken();  
-      }
-      if (!token) {
-        throw new Error("No access token");
-      }
-      setAccessToken(token);
-
-      setCurrentChatId(chatId);
-      await loadChatHistory(chatId, setConversation, token);
-
-    } catch (err) {
-      console.error(err);
-      setAccessToken(null);
-    }
-  };
-
   const createMessageStream = async (userMessage: string) => {
     try {
       let token: string | null = accessToken;
@@ -158,8 +157,6 @@ export default function DashboardPage() {
         throw new Error("No access token");
       }
       setAccessToken(token);
-
-      assistantRef.current = '';
 
       setConversation(prev => [...prev, { type: "user", content: message }]);
 
@@ -204,14 +201,21 @@ export default function DashboardPage() {
             const event = JSON.parse(line);
 
             if (event.type === "text_delta") {
-              assistantRef.current += event.delta;
               setConversation(prev => {
                 if (prev.length > 0 && prev[prev.length - 1].type === "assistant") {
                   const updated = [...prev];
-                  updated[updated.length - 1] = { type: "assistant", content: assistantRef.current };
+                  const last = updated[updated.length - 1];
+                  const newContent = last.content + event.delta;
+
+                  updated[updated.length - 1] = {
+                    ...last,
+                    content: newContent,
+                  };
+
                   return updated;
                 }
-                return [...prev, { type: "assistant", content: assistantRef.current }];
+
+                return [...prev, { type: "assistant", content: event.delta }];
               });
             } else if (event.type === "reasoning") {
               setConversation(prev => [...prev, { type: "reasoning", content: "Reasoning..." }]);
@@ -365,7 +369,10 @@ export default function DashboardPage() {
                 {conversation.map((item, index) => {
                   if (item.type === "user") {
                     return (
-                      <div key={index} className="user-message-container">
+                      <div
+                        key={index}
+                        className="user-message-container"
+                      >
                         {item.content}
                       </div>
                     );
