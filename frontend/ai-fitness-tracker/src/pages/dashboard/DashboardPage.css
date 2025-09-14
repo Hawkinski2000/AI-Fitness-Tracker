@@ -206,6 +206,7 @@
   flex-shrink: 0;
   align-items: center;
   width: 100%;
+  padding-bottom: 1rem;
   transition: width 0.25s;
 }
 
@@ -259,6 +260,7 @@
   .dashboard-page-content {
     width: 70vw;
     font-size: 12px;
+    padding-right: 1rem;
   }
 
   .message-input-container {
@@ -266,7 +268,7 @@
   }
 
   .message-input {
-    font-size: 12px;
+    font-size: 16px;
   }
 
   .chat-history {

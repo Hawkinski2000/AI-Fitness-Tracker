@@ -44,7 +44,7 @@ export default function DashboardPage() {
   const inputRef = useRef<HTMLDivElement>(null);
   const inputTimeout = useRef<number | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
-  const conversationRef = useRef<HTMLDivElement | null>(null);
+  const conversationRef = useRef<HTMLDivElement | null>(null)
 
   const [chatHistoryCollapsed, setChatHistoryCollapsed] = useState(false);
 
@@ -61,6 +61,12 @@ export default function DashboardPage() {
 
       setCurrentChatId(chatId);
       await loadChatHistory(chatId, setConversation, token);
+
+      const container = conversationRef.current;
+      if (!container) {
+        return;
+      }
+      container.style.minHeight = '';
 
     } catch (err) {
       console.error(err);
@@ -130,7 +136,7 @@ export default function DashboardPage() {
   }, [setAccessToken, handleCreateChat, navigate]);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "auto" });
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [conversation]);
 
   const scrollToBottom = () => {
@@ -160,6 +166,11 @@ export default function DashboardPage() {
 
       setConversation(prev => [...prev, { type: "user", content: message }]);
 
+      const container = conversationRef.current;
+      if (!container) {
+        return;
+      }
+      container.style.minHeight = '';
       scrollToBottom();
 
       const response = await fetch(`${API_BASE_URL}/messages`, {
