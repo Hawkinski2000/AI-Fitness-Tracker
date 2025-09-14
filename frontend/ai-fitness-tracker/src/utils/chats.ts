@@ -31,7 +31,11 @@ export const loadChats = async (setChats: React.Dispatch<React.SetStateAction<Ch
     }
   );
 
-  const chats: Chat[] = chatsResponse.data.map((chat: Chat) => ({id: chat.id, title: chat.title}));
+  if (chatsResponse.data.length === 0) {
+    return []
+  }
+  
+  const chats: Chat[] = chatsResponse.data.map((chat: Chat) => ({id: chat.id, title: chat.title || 'New chat'}));
   setChats(chats);
 
   return chats;

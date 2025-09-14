@@ -7,6 +7,7 @@
 
 .dashboard-heading {
   margin: 2rem;
+  user-select: none;
 }
 
 .dashboard-page-content {
@@ -218,6 +219,7 @@
   font-size: 12px;
   text-align: left;
   padding: 1.7rem 0.5rem 0.4rem 0.5rem;
+  user-select: none;
   transition: width 0.25s;
 }
 
@@ -231,6 +233,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  user-select: none;
   transition: all 0.25s; 
 }
 .chat-history-button-link:hover {

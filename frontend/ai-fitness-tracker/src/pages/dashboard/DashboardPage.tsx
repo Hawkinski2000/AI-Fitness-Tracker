@@ -65,10 +65,13 @@ export default function DashboardPage() {
 
         const loadedChats = await loadChats(setChats, token);
 
-        if (loadChats.length > 0) {
+        if (loadedChats.length > 0) {
           const mostRecentChat = loadedChats[0];
           setCurrentChatId(mostRecentChat.id);
           loadChatHistory(mostRecentChat.id, setConversation, token);
+        }
+        else {
+          handleCreateChat();
         }
 
       } catch (err) {
@@ -117,6 +120,7 @@ export default function DashboardPage() {
 
       const chatId = newChat.id;
       setCurrentChatId(chatId);
+      handleSelectChat(chatId);
 
     } catch (err) {
       console.error(err);
@@ -189,7 +193,7 @@ export default function DashboardPage() {
         if (value) {
           buffer += decoder.decode(value, { stream: true });
 
-          const lines = buffer.split("\n");
+          const lines = buffer.split("\n\n");
           buffer = lines.pop() || "";
 
           for (const line of lines) {
@@ -373,7 +377,7 @@ export default function DashboardPage() {
                     );
                   } else if (item.type === "function_call") {
                     return (
-                      <div className="function-call-container">
+                      <div key={index} className="function-call-container">
                         <div key={index} className="function-call">
                           {item.content}
                         </div>

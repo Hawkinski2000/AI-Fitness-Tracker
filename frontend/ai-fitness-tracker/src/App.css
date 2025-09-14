@@ -216,6 +216,7 @@ input.error {
   width: 90%;
   font-size: 10px;
   outline: none;
+  user-select: none;
 }
 .sidebar-button-link:hover {
   outline: none;
