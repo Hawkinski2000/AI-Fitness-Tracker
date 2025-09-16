@@ -49,10 +49,10 @@ interface Message {
     name?: string;
   };
 }
-export const loadChatHistory = async (chat_id: number,
-                                      setConversation: React.Dispatch<React.SetStateAction<ConversationItem[]>>,
+export const loadChatHistory = async (chatId: number,
+                                      setConversations: React.Dispatch<React.SetStateAction<Record<number, ConversationItem[]>>>,
                                       token: string) => {
-  const messagesResponse = await axios.get(`${API_BASE_URL}/messages/${chat_id}`,
+  const messagesResponse = await axios.get(`${API_BASE_URL}/messages/${chatId}`,
     {
       headers: {
         Authorization: `Bearer ${token}`
@@ -86,5 +86,11 @@ export const loadChatHistory = async (chat_id: number,
     }
   });
   
-  setConversation(formattedMessages);
+  setConversations(prev => ({
+    ...prev,
+    [chatId]: [
+      ...(prev[chatId] || []),
+      ...formattedMessages
+    ]
+  }));
 };

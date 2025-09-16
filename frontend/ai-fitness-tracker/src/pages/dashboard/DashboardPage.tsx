@@ -38,13 +38,13 @@ export default function DashboardPage() {
   const [chats, setChats] = useState<Chat[]>([]);
   const [currentChatId, setCurrentChatId] = useState<number | null>(null);
 
-  const [conversation, setConversation] = useState<ConversationItem[]>([]);
-  const [message, setMessage] = useState('');
-  const [inputExpanded, setInputExpanded] = useState(false);
-  const inputRef = useRef<HTMLDivElement>(null);
-  const inputTimeout = useRef<number | null>(null);
-  const bottomRef = useRef<HTMLDivElement | null>(null);
-  const conversationRef = useRef<HTMLDivElement | null>(null)
+  const [conversations, setConversations] = useState<Record<number, ConversationItem[]>>({});
+  const [messages, setMessages] = useState<Record<number, string>>({});
+  const [expandedInputs, setExpandedInputs] = useState<Record<number, boolean>>({});
+  const inputRefs = useRef<Record<number, HTMLDivElement | null>>({});
+  const inputTimeouts = useRef<Record<number, number | null>>({});
+  const bottomRefs = useRef<Record<number, HTMLDivElement | null>>({});
+  const conversationRefs = useRef<Record<number, HTMLDivElement | null>>({})
 
   const [chatHistoryCollapsed, setChatHistoryCollapsed] = useState(false);
 
@@ -58,11 +58,10 @@ export default function DashboardPage() {
         throw new Error("No access token");
       }
       setAccessToken(token);
-
       setCurrentChatId(chatId);
-      await loadChatHistory(chatId, setConversation, token);
+      await loadChatHistory(chatId, setConversations, token);
 
-      const container = conversationRef.current;
+      const container = conversationRefs.current[chatId];
       if (!container) {
         return;
       }
@@ -116,7 +115,7 @@ export default function DashboardPage() {
         if (loadedChats.length > 0) {
           const mostRecentChat = loadedChats[0];
           setCurrentChatId(mostRecentChat.id);
-          loadChatHistory(mostRecentChat.id, setConversation, token);
+          await loadChatHistory(mostRecentChat.id, setConversations, token);
         }
         else {
           handleCreateChat();
@@ -135,12 +134,14 @@ export default function DashboardPage() {
     fetchData();
   }, [setAccessToken, handleCreateChat, navigate]);
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [conversation]);
+   useEffect(() => {
+    if (currentChatId !== null) {
+      bottomRefs.current[currentChatId]?.scrollIntoView({ behavior: "smooth" });
+    }
+    }, [currentChatId, conversations]);
 
-  const scrollToBottom = () => {
-    const container = conversationRef.current;
+  const scrollUserMessage = (chatId: number) => {
+    const container = conversationRefs.current[chatId];
 
     if (!container) {
       return;
@@ -150,10 +151,10 @@ export default function DashboardPage() {
     const extraSpace = viewportHeight / 2 - 100;
     container.style.minHeight = `${container.scrollHeight + extraSpace}px`;
 
-    container.scrollTop = container.scrollHeight;
+    bottomRefs.current[chatId]?.scrollIntoView({ behavior: "smooth" });
   }
 
-  const createMessageStream = async (userMessage: string) => {
+  const createMessageStream = async (userMessage: string, chatId: number) => {
     try {
       let token: string | null = accessToken;
       if (!accessToken || isTokenExpired(accessToken)) {
@@ -164,14 +165,20 @@ export default function DashboardPage() {
       }
       setAccessToken(token);
 
-      setConversation(prev => [...prev, { type: "user", content: message }]);
+      setConversations(prev => {
+        const chatMessages = prev[chatId] || [];
+        return {
+          ...prev,
+          [chatId]: [...chatMessages, { type: "user", content: userMessage }]
+        };
+      });
 
-      const container = conversationRef.current;
+      const container = conversationRefs.current[chatId];
       if (!container) {
         return;
       }
       container.style.minHeight = '';
-      scrollToBottom();
+      scrollUserMessage(chatId);
 
       const response = await fetch(`${API_BASE_URL}/messages`, {
         method: "POST",
@@ -180,7 +187,7 @@ export default function DashboardPage() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          chat_id: currentChatId,
+          chat_id: chatId,
           content: userMessage,
         }),
       });
@@ -212,9 +219,10 @@ export default function DashboardPage() {
             const event = JSON.parse(line);
 
             if (event.type === "text_delta") {
-              setConversation(prev => {
-                if (prev.length > 0 && prev[prev.length - 1].type === "assistant") {
-                  const updated = [...prev];
+              setConversations(prev => {
+                const chatMessages = prev[chatId] || [];
+                if (chatMessages.length > 0 && chatMessages[chatMessages.length - 1].type === "assistant") {
+                  const updated = [...chatMessages];
                   const last = updated[updated.length - 1];
                   const newContent = last.content + event.delta;
 
@@ -223,15 +231,33 @@ export default function DashboardPage() {
                     content: newContent,
                   };
 
-                  return updated;
+                  return {
+                    ...prev,
+                    [chatId]: updated,
+                  };
                 }
 
-                return [...prev, { type: "assistant", content: event.delta }];
+                return {
+                  ...prev,
+                  [chatId]: [...chatMessages, { type: "assistant", content: event.delta }]
+                };
               });
             } else if (event.type === "reasoning") {
-              setConversation(prev => [...prev, { type: "reasoning", content: "Reasoning..." }]);
+              setConversations(prev => {
+                const chatMessages = prev[chatId] || [];
+                return {
+                  ...prev,
+                  [chatId]: [...chatMessages, { type: "reasoning", content: "Reasoning..." }]
+                };
+              });
             } else if (event.type === "function_call") {
-              setConversation(prev => [...prev, { type: "function_call", content: `Calling ${event.name}...` }]);
+              setConversations(prev => {
+                const chatMessages = prev[chatId] || [];
+                return {
+                  ...prev,
+                  [chatId]: [...chatMessages, { type: "function_call", content: `Calling ${event.name}...` }]
+                };
+              });
             }
           }
         }
@@ -244,37 +270,68 @@ export default function DashboardPage() {
   };
 
   const handleSendMessage = () => {
-    if (!accessToken || !message) return;
-
-    createMessageStream(message);
-
-    setMessage("");
-
-    if (inputRef.current) {
-      inputRef.current.textContent = "";
+    if (!currentChatId || !accessToken || !messages[currentChatId]) {
+      return;
     }
 
-    setInputExpanded(false);
+    createMessageStream(messages[currentChatId], currentChatId);
+
+    setMessages(prev => {
+      return {
+        ...prev,
+        [currentChatId]: "",
+      };
+    });
+
+    if (inputRefs.current[currentChatId]) {
+      inputRefs.current[currentChatId].textContent = "";
+    }
+
+    setExpandedInputs(prev => {
+      return {
+        ...prev,
+        [currentChatId]: false,
+      };
+    });
   };
 
   const handleInput = (event: React.FormEvent<HTMLDivElement>) => {
+    if (!currentChatId) {
+      return;
+    }
+
     const element = event.currentTarget;
     const text = element.textContent || "";
 
-    if (inputTimeout.current) {
-      clearTimeout(inputTimeout.current);
+    if (inputTimeouts.current[currentChatId]) {
+      clearTimeout(inputTimeouts.current[currentChatId]);
     }
     
-    inputTimeout.current = setTimeout(() => {
-      setMessage(text);
+    inputTimeouts.current[currentChatId] = setTimeout(() => {
+      setMessages(prev => {
+        return {
+          ...prev,
+          [currentChatId]: text,
+        };
+      });
     }, 100);
 
     const MIN_HEIGHT = 56;
 
-    if (!inputExpanded && text.length > 0 && element.scrollHeight > MIN_HEIGHT) {
-      setInputExpanded(true);
-    } else if (inputExpanded && text.length === 0) {
-      setInputExpanded(false);
+    if (!expandedInputs[currentChatId] && text.length > 0 && element.scrollHeight > MIN_HEIGHT) {
+      setExpandedInputs(prev => {
+      return {
+        ...prev,
+        [currentChatId]: true,
+      };
+    });
+    } else if (expandedInputs[currentChatId] && text.length === 0) {
+      setExpandedInputs(prev => {
+        return {
+          ...prev,
+          [currentChatId]: false,
+        };
+      });
     }
   };
 
@@ -362,7 +419,7 @@ export default function DashboardPage() {
             style={{ transition: 'all 0.25s' }}
           >
             <div className='dashboard-page-content'>
-              {conversation.length === 0 && (
+              {currentChatId !== null && (conversations[currentChatId]?.length || 0) === 0 && (
                 <div>
                   <h1 className='page-heading dashboard-heading'>
                     Welcome
@@ -375,52 +432,75 @@ export default function DashboardPage() {
 
               <div
                 className="conversation-container"
-                ref={conversationRef}
+                ref={el => { 
+                  if (currentChatId !== null) {
+                    conversationRefs.current[currentChatId] = el;
+                  }
+                }}
               >
-                {conversation.map((item, index) => {
-                  if (item.type === "user") {
-                    return (
-                      <div
-                        key={index}
-                        className="user-message-container"
-                      >
-                        {item.content}
-                      </div>
-                    );
-                  } else if (item.type === "reasoning") {
-                    return (
-                      <div key={index} className="reasoning">
-                        {item.content}
-                      </div>
-                    );
-                  } else if (item.type === "function_call") {
-                    return (
-                      <div key={index} className="function-call-container">
-                        <div key={index} className="function-call">
+                {currentChatId !== null &&
+                  (conversations[currentChatId] || []).map((item, index) => {
+                    if (item.type === "user") {
+                      return (
+                        <div
+                          key={index}
+                          className="user-message-container"
+                        >
                           {item.content}
                         </div>
-                        {/* <PulseLoader size={5} color="#00ffcc" /> */}
-                      </div>
-                    );
-                  } else if (item.type === "assistant") {
-                    return (
-                      <div key={index} className="markdown-content">
-                        <ReactMarkdown>{item.content}</ReactMarkdown>
-                      </div>
-                    );
-                  }
-                  return null;
-                })}
+                      );
+                    } else if (item.type === "reasoning") {
+                      return (
+                        <div key={index} className="reasoning">
+                          {item.content}
+                        </div>
+                      );
+                    } else if (item.type === "function_call") {
+                      return (
+                        <div key={index} className="function-call-container">
+                          <div key={index} className="function-call">
+                            {item.content}
+                          </div>
+                          {/* <PulseLoader size={5} color="#00ffcc" /> */}
+                        </div>
+                      );
+                    } else if (item.type === "assistant") {
+                      return (
+                        <div key={index} className="markdown-content">
+                          <ReactMarkdown>{item.content}</ReactMarkdown>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })
+                }
                 
-                <div ref={bottomRef} />
+                <div
+                  ref={el => { 
+                    if (currentChatId !== null) {
+                      bottomRefs.current[currentChatId] = el;
+                    }
+                  }}
+                />
               </div>
             
               <div
-                className={`message-input-container ${inputExpanded ? "expanded" : ""}`}
-                onClick={() => inputRef.current?.focus()}
+                className={
+                  `message-input-container
+                  ${currentChatId !== null && expandedInputs[currentChatId] ? "expanded" : ""}`
+                }
+                onClick={() => {
+                  if (currentChatId !== null) {
+                    inputRefs.current[currentChatId]?.focus()
+                  }
+                }}
               >
                 <div
-                  ref={inputRef}
+                  ref={el => { 
+                    if (currentChatId !== null) {
+                      inputRefs.current[currentChatId] = el;
+                    }
+                  }}
                   contentEditable
                   data-placeholder="How can I help you today?"
                   className="message-input"
