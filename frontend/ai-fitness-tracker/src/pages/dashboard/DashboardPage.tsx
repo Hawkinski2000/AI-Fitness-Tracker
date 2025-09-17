@@ -28,6 +28,7 @@ export interface ConversationItem {
   type: "user" | "assistant" | "reasoning" | "function_call";
   content: string;
 }
+
 export default function DashboardPage() {  
   const { accessToken, setAccessToken } = useAuth();
   const [userData, setUserData] = useState<User | null>(null);
@@ -41,13 +42,17 @@ export default function DashboardPage() {
 
   const [conversations, setConversations] = useState<Record<number, ConversationItem[]>>({});
   const [messages, setMessages] = useState<Record<number, string>>({});
+
   const [expandedInputs, setExpandedInputs] = useState<Record<number, boolean>>({});
   const inputRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const inputTimeouts = useRef<Record<number, number | null>>({});
-  const bottomRefs = useRef<Record<number, HTMLDivElement | null>>({});
+
   const conversationRefs = useRef<Record<number, HTMLDivElement | null>>({})
+  const bottomRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
   const [chatHistoryCollapsed, setChatHistoryCollapsed] = useState(false);
+
+// ---------------------------------------------------------------------------
 
   const handleSelectChat = useCallback(async (chatId: number) => {
     try {
@@ -61,10 +66,13 @@ export default function DashboardPage() {
       }
 
       setCurrentChatId(chatId);
+
       if (!chatsLoadedRef.current[chatId]) {
         await loadChatHistory(chatId, setConversations, token);
         chatsLoadedRef.current[chatId] = true;
       }
+
+      scrollToBottom(chatId);
 
       const container = conversationRefs.current[chatId];
       if (!container) {
@@ -77,6 +85,8 @@ export default function DashboardPage() {
       setAccessToken(null);
     }
   }, [accessToken, setAccessToken]);
+
+// ---------------------------------------------------------------------------  
 
   const handleCreateChat = useCallback(async () => {
     try {
@@ -101,6 +111,8 @@ export default function DashboardPage() {
     }
   }, [accessToken, setAccessToken, setChats, handleSelectChat]);
 
+// ---------------------------------------------------------------------------
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -124,6 +136,8 @@ export default function DashboardPage() {
 
           await loadChatHistory(chatId, setConversations, token);
           chatsLoadedRef.current[chatId] = true;
+
+          scrollToBottom(chatId);
         }
         else {
           handleCreateChat();
@@ -142,11 +156,17 @@ export default function DashboardPage() {
     fetchData();
   }, [setAccessToken, handleCreateChat, navigate]);
 
-   useEffect(() => {
-    if (currentChatId !== null) {
-      bottomRefs.current[currentChatId]?.scrollIntoView({ behavior: "smooth" });
-    }
-    }, [currentChatId, conversations]);
+// ---------------------------------------------------------------------------
+
+  const scrollToBottom = (chatId: number) => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        bottomRefs.current[chatId]?.scrollIntoView({ behavior: "auto" });
+      });
+    });
+  };
+
+// ---------------------------------------------------------------------------
 
   const scrollUserMessage = (chatId: number) => {
     const container = conversationRefs.current[chatId];
@@ -161,6 +181,20 @@ export default function DashboardPage() {
 
     bottomRefs.current[chatId]?.scrollIntoView({ behavior: "smooth" });
   }
+
+// ---------------------------------------------------------------------------
+
+  useEffect(() => {
+    if (currentChatId !== null) {
+      // Force ref assignment if needed (though the callback should handle it)
+      const container = conversationRefs.current[currentChatId];
+      if (container) {
+        container.style.minHeight = '';
+      }
+    }
+  }, [currentChatId]);
+
+// ---------------------------------------------------------------------------
 
   const createMessageStream = async (userMessage: string, chatId: number) => {
     try {
@@ -277,6 +311,8 @@ export default function DashboardPage() {
     }
   };
 
+// ---------------------------------------------------------------------------
+
   const handleSendMessage = () => {
     if (!currentChatId || !messages[currentChatId]) {
       return;
@@ -302,6 +338,8 @@ export default function DashboardPage() {
       };
     });
   };
+
+// ---------------------------------------------------------------------------
 
   const handleInput = (event: React.FormEvent<HTMLDivElement>) => {
     if (!currentChatId) {
@@ -342,6 +380,8 @@ export default function DashboardPage() {
       });
     }
   };
+
+// ---------------------------------------------------------------------------
 
   if (loading) {
     return (
