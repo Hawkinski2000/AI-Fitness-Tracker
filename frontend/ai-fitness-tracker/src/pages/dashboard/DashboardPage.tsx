@@ -37,6 +37,7 @@ export default function DashboardPage() {
 
   const [chats, setChats] = useState<Chat[]>([]);
   const [currentChatId, setCurrentChatId] = useState<number | null>(null);
+  const chatsLoadedRef = useRef<Record<number, boolean>>({});
 
   const [conversations, setConversations] = useState<Record<number, ConversationItem[]>>({});
   const [messages, setMessages] = useState<Record<number, string>>({});
@@ -53,13 +54,17 @@ export default function DashboardPage() {
       let token: string | null = accessToken;
       if (!accessToken || isTokenExpired(accessToken)) {
         token = await refreshAccessToken();  
+        setAccessToken(token);
       }
       if (!token) {
         throw new Error("No access token");
       }
-      setAccessToken(token);
+
       setCurrentChatId(chatId);
-      await loadChatHistory(chatId, setConversations, token);
+      if (!chatsLoadedRef.current[chatId]) {
+        await loadChatHistory(chatId, setConversations, token);
+        chatsLoadedRef.current[chatId] = true;
+      }
 
       const container = conversationRefs.current[chatId];
       if (!container) {
@@ -77,12 +82,12 @@ export default function DashboardPage() {
     try {
       let token: string | null = accessToken;
       if (!accessToken || isTokenExpired(accessToken)) {
-        token = await refreshAccessToken();  
+        token = await refreshAccessToken();
+        setAccessToken(token);
       }
       if (!token) {
         throw new Error("No access token");
       }
-      setAccessToken(token);
 
       const newChat = await createChat(setChats, token);
 
@@ -114,8 +119,11 @@ export default function DashboardPage() {
 
         if (loadedChats.length > 0) {
           const mostRecentChat = loadedChats[0];
-          setCurrentChatId(mostRecentChat.id);
-          await loadChatHistory(mostRecentChat.id, setConversations, token);
+          const chatId = mostRecentChat.id;
+          setCurrentChatId(chatId);
+
+          await loadChatHistory(chatId, setConversations, token);
+          chatsLoadedRef.current[chatId] = true;
         }
         else {
           handleCreateChat();
@@ -159,11 +167,11 @@ export default function DashboardPage() {
       let token: string | null = accessToken;
       if (!accessToken || isTokenExpired(accessToken)) {
         token = await refreshAccessToken();  
+        setAccessToken(token);
       }
       if (!token) {
         throw new Error("No access token");
       }
-      setAccessToken(token);
 
       setConversations(prev => {
         const chatMessages = prev[chatId] || [];
@@ -270,7 +278,7 @@ export default function DashboardPage() {
   };
 
   const handleSendMessage = () => {
-    if (!currentChatId || !accessToken || !messages[currentChatId]) {
+    if (!currentChatId || !messages[currentChatId]) {
       return;
     }
 
