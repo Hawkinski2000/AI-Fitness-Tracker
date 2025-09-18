@@ -49,6 +49,8 @@ export default function DashboardPage() {
 
   const conversationRefs = useRef<Record<number, HTMLDivElement | null>>({})
   const bottomRefs = useRef<Record<number, HTMLDivElement | null>>({});
+  const mainRef = useRef<HTMLDivElement | null>(null);
+  const userScrolledUpRef = useRef(false);
 
   const [chatHistoryCollapsed, setChatHistoryCollapsed] = useState(false);
 
@@ -184,14 +186,37 @@ export default function DashboardPage() {
 
 // ---------------------------------------------------------------------------
 
-  useEffect(() => {
-    if (currentChatId !== null) {
-      // Force ref assignment if needed (though the callback should handle it)
-      const container = conversationRefs.current[currentChatId];
-      if (container) {
-        container.style.minHeight = '';
-      }
+  const attachScrollListener = (element: HTMLDivElement | null) => {
+    if (!element) {
+      return;
     }
+
+    mainRef.current = element;
+
+    const handleWheel = (event: WheelEvent) => {
+      if (event.deltaY < 0) {
+        console.log("USER SCROLLED UP");
+        userScrolledUpRef.current = true;
+      }
+    };
+
+    element.addEventListener("wheel", handleWheel, { passive: true });
+    return () => element.removeEventListener("wheel", handleWheel);
+  };
+
+// ---------------------------------------------------------------------------
+
+  useEffect(() => {
+    if (currentChatId === null) {
+      return;
+    }
+    
+    const container = conversationRefs.current[currentChatId];
+    if (!container) {
+      return;
+    }
+
+    container.style.minHeight = '';
   }, [currentChatId]);
 
 // ---------------------------------------------------------------------------
@@ -220,7 +245,9 @@ export default function DashboardPage() {
         return;
       }
       container.style.minHeight = '';
+
       scrollUserMessage(chatId);
+      userScrolledUpRef.current = false;
 
       const response = await fetch(`${API_BASE_URL}/messages`, {
         method: "POST",
@@ -300,6 +327,10 @@ export default function DashboardPage() {
                   [chatId]: [...chatMessages, { type: "function_call", content: `Calling ${event.name}...` }]
                 };
               });
+            }
+
+            if (!userScrolledUpRef.current) {
+              scrollToBottom(chatId);
             }
           }
         }
@@ -465,6 +496,7 @@ export default function DashboardPage() {
           <main
             className={`page-main ${chatHistoryCollapsed ? 'dashboard-main-collapsed' : ''}`}
             style={{ transition: 'all 0.25s' }}
+            ref={attachScrollListener}
           >
             <div className='dashboard-page-content'>
               {currentChatId !== null && (conversations[currentChatId]?.length || 0) === 0 && (
