@@ -50,13 +50,16 @@ export default function DashboardPage() {
   const conversationRefs = useRef<Record<number, HTMLDivElement | null>>({})
   const bottomRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const mainRef = useRef<HTMLDivElement | null>(null);
-  const userScrolledUpRef = useRef(false);
+  const [userScrolledUp, setUserScrolledUp] = useState<boolean>(false);
+  const [distanceFromBottom, setDistanceFromBottom] = useState<number>(0);
 
   const [chatHistoryCollapsed, setChatHistoryCollapsed] = useState(false);
 
 // ---------------------------------------------------------------------------
 
   const handleSelectChat = useCallback(async (chatId: number) => {
+    setUserScrolledUp(false);
+
     try {
       let token: string | null = accessToken;
       if (!accessToken || isTokenExpired(accessToken)) {
@@ -160,10 +163,10 @@ export default function DashboardPage() {
 
 // ---------------------------------------------------------------------------
 
-  const scrollToBottom = (chatId: number) => {
+  const scrollToBottom = (chatId: number, behavior: ScrollBehavior = "auto") => {
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        bottomRefs.current[chatId]?.scrollIntoView({ behavior: "auto" });
+        bottomRefs.current[chatId]?.scrollIntoView({ behavior: behavior });
       });
     });
   };
@@ -193,11 +196,17 @@ export default function DashboardPage() {
 
     mainRef.current = element;
 
+    const scrollable = element.scrollHeight > element.clientHeight;
+    
     const handleWheel = (event: WheelEvent) => {
-      if (event.deltaY < 0) {
-        console.log("USER SCROLLED UP");
-        userScrolledUpRef.current = true;
+      if (event.deltaY < 0 && scrollable) {
+        setUserScrolledUp(true);
       }
+      else {
+        setUserScrolledUp(false);
+      }
+
+      setDistanceFromBottom(element.scrollHeight - (element.scrollTop + element.clientHeight));
     };
 
     element.addEventListener("wheel", handleWheel, { passive: true });
@@ -247,7 +256,7 @@ export default function DashboardPage() {
       container.style.minHeight = '';
 
       scrollUserMessage(chatId);
-      userScrolledUpRef.current = false;
+      setUserScrolledUp(false);
 
       const response = await fetch(`${API_BASE_URL}/messages`, {
         method: "POST",
@@ -329,8 +338,8 @@ export default function DashboardPage() {
               });
             }
 
-            if (!userScrolledUpRef.current) {
-              scrollToBottom(chatId);
+            if (!userScrolledUp) {
+              scrollToBottom(chatId, 'smooth');
             }
           }
         }
@@ -593,6 +602,21 @@ export default function DashboardPage() {
                   }}
                 />
                 <button className="send-message-button" onClick={handleSendMessage}>^</button>
+              </div>
+              <div className="scroll-button-container">
+                <button
+                  className="scroll-button"
+                  onClick={() => {
+                    setUserScrolledUp(false);
+                    setDistanceFromBottom(0);
+                    if (currentChatId) {
+                      scrollToBottom(currentChatId, 'smooth');
+                    }
+                  }}
+                  style={(userScrolledUp || distanceFromBottom > 20) ? undefined : { opacity: '0' }}
+                >
+                  🡣
+                </button>
               </div>
             </div>
           </main>
