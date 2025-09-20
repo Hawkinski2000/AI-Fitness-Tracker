@@ -50,15 +50,16 @@ export default function DashboardPage() {
   const conversationRefs = useRef<Record<number, HTMLDivElement | null>>({})
   const bottomRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const mainRef = useRef<HTMLDivElement | null>(null);
-  const [userScrolledUp, setUserScrolledUp] = useState<boolean>(false);
+  const userScrolledUpRef = useRef(false);
   const [distanceFromBottom, setDistanceFromBottom] = useState<number>(0);
+  const generatingMessageRef = useRef(false);
 
   const [chatHistoryCollapsed, setChatHistoryCollapsed] = useState(false);
 
 // ---------------------------------------------------------------------------
 
   const handleSelectChat = useCallback(async (chatId: number) => {
-    setUserScrolledUp(false);
+    userScrolledUpRef.current = false;
 
     try {
       let token: string | null = accessToken;
@@ -190,28 +191,32 @@ export default function DashboardPage() {
 // ---------------------------------------------------------------------------
 
   const attachScrollListener = (element: HTMLDivElement | null) => {
-    if (!element) {
-      return;
+  if (!element) {
+    return;
+  }
+
+  mainRef.current = element;
+
+  let lastScrollTop = element.scrollTop;
+
+  const handleScroll = () => {
+    const currentScrollTop = element.scrollTop;
+    const distance = element.scrollHeight - element.clientHeight - currentScrollTop;
+
+    if (currentScrollTop < lastScrollTop && generatingMessageRef.current) {
+      userScrolledUpRef.current = true;
+    } else if (currentScrollTop > lastScrollTop) {
+      userScrolledUpRef.current = false;
     }
 
-    mainRef.current = element;
+    lastScrollTop = currentScrollTop;
 
-    const scrollable = element.scrollHeight > element.clientHeight;
-    
-    const handleWheel = (event: WheelEvent) => {
-      if (event.deltaY < 0 && scrollable) {
-        setUserScrolledUp(true);
-      }
-      else {
-        setUserScrolledUp(false);
-      }
-
-      setDistanceFromBottom(element.scrollHeight - (element.scrollTop + element.clientHeight));
-    };
-
-    element.addEventListener("wheel", handleWheel, { passive: true });
-    return () => element.removeEventListener("wheel", handleWheel);
+    setDistanceFromBottom(distance);
   };
+
+  element.addEventListener("scroll", handleScroll);
+  return () => element.removeEventListener("scroll", handleScroll);
+};
 
 // ---------------------------------------------------------------------------
 
@@ -241,6 +246,8 @@ export default function DashboardPage() {
         throw new Error("No access token");
       }
 
+      generatingMessageRef.current = true;
+
       setConversations(prev => {
         const chatMessages = prev[chatId] || [];
         return {
@@ -256,7 +263,7 @@ export default function DashboardPage() {
       container.style.minHeight = '';
 
       scrollUserMessage(chatId);
-      setUserScrolledUp(false);
+      userScrolledUpRef.current = false;
 
       const response = await fetch(`${API_BASE_URL}/messages`, {
         method: "POST",
@@ -338,7 +345,7 @@ export default function DashboardPage() {
               });
             }
 
-            if (!userScrolledUp) {
+            if (!userScrolledUpRef.current) {
               scrollToBottom(chatId, 'smooth');
             }
           }
@@ -348,6 +355,9 @@ export default function DashboardPage() {
     } catch (err) {
       console.error(err);
       setAccessToken(null);
+
+    } finally {
+      generatingMessageRef.current = false;
     }
   };
 
@@ -607,13 +617,13 @@ export default function DashboardPage() {
                 <button
                   className="scroll-button"
                   onClick={() => {
-                    setUserScrolledUp(false);
+                    userScrolledUpRef.current = false;
                     setDistanceFromBottom(0);
                     if (currentChatId) {
                       scrollToBottom(currentChatId, 'smooth');
                     }
                   }}
-                  style={(userScrolledUp || distanceFromBottom > 20) ? undefined : { opacity: '0' }}
+                  style={(userScrolledUpRef.current || distanceFromBottom > 100) ? undefined : { opacity: '0', pointerEvents: 'none' }}
                 >
                   🡣
                 </button>
