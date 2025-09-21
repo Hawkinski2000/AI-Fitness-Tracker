@@ -332,15 +332,33 @@ export default function DashboardPage() {
                 const chatMessages = prev[chatId] || [];
                 return {
                   ...prev,
-                  [chatId]: [...chatMessages, { type: "reasoning", content: "Reasoning..." }]
+                  [chatId]: [...chatMessages, { type: "reasoning", content: "Thinking..." }]
                 };
               });
             } else if (event.type === "function_call") {
               setConversations(prev => {
+                let action = '';
+
+                if (event.name === 'get_meal_log_summaries') {
+                  action = 'Checking meal logs...';
+                } else if (event.name === 'get_meal_log_food_summaries') {
+                  action = 'Checking meal log foods...';
+                } else if (event.name === 'get_workout_log_summaries') {
+                  action = 'Checking workout logs...';
+                } else if (event.name === 'get_workout_log_exercise_summaries') {
+                  action = 'Checking workout log exercises...';
+                } else if (event.name === 'get_sleep_log_summaries') {
+                  action = 'Checking sleep logs...';
+                } else if (event.name === 'get_mood_log_summaries') {
+                  action = 'Checking mood logs...';
+                } else if (event.name === 'get_weight_log_summaries') {
+                  action = 'Checking weight logs...';
+                }
+
                 const chatMessages = prev[chatId] || [];
                 return {
                   ...prev,
-                  [chatId]: [...chatMessages, { type: "function_call", content: `Calling ${event.name}...` }]
+                  [chatId]: [...chatMessages, { type: "function_call", content: action }]
                 };
               });
             }

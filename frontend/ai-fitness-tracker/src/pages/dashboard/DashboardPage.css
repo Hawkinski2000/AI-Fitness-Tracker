@@ -121,6 +121,7 @@
   width: fit-content;
   background-color: #0c0c1d;
   box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
+  color: #8085a6;
   border: 1px solid #2e2e5e;
   border-radius: 18px;
   padding: 0 0.5rem;
@@ -301,6 +302,10 @@
 
   .message-input {
     font-size: 16px;
+  }
+
+  .scroll-button-container {
+    width: 75vw;
   }
 
   .chat-history {
