@@ -60,7 +60,17 @@ async def create_message(message: message.MessageCreate, user_id: int, db: Sessi
     responses = []
     async for event in agent.generate_insight(user, message.content, newest_response_id):
         if event["type"] == "completed":
-            responses.append(event["response"])
+            response = event["response"]
+            responses.append(response)
+
+            usage = response.usage
+            payload = {"type": "usage",
+                       "usage": {
+                           "input_tokens": usage.input_tokens,
+                           "output_tokens": usage.output_tokens
+                       }
+            }
+            yield payload
         else:
             yield event
         await asyncio.sleep(0)

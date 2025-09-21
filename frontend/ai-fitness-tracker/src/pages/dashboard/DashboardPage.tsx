@@ -54,6 +54,9 @@ export default function DashboardPage() {
   const [distanceFromBottom, setDistanceFromBottom] = useState<number>(0);
   const generatingMessageRef = useRef(false);
 
+  const [tokensRemaining, setTokensRemaining] = useState<number>(0);
+  const [isRemovingTokens, setIsRemovingTokens] = useState(false);
+
   const [chatHistoryCollapsed, setChatHistoryCollapsed] = useState(false);
 
 // ---------------------------------------------------------------------------
@@ -132,6 +135,7 @@ export default function DashboardPage() {
 
         const userData = await getUserFromToken(token);
         setUserData(userData);
+        setTokensRemaining(Math.min(userData.input_tokens_remaining, userData.output_tokens_remaining))
 
         const loadedChats = await loadChats(setChats, token);
 
@@ -232,6 +236,25 @@ export default function DashboardPage() {
 
     container.style.minHeight = '';
   }, [currentChatId]);
+
+// ---------------------------------------------------------------------------
+
+  const updateTokensRemaining = (newTokensRemaining: number) => {
+    const updateStepDurationMs = 1;
+    const tokensRemovedPerStep = 10;
+
+    setIsRemovingTokens(true);
+    const intervalId = setInterval(() => {
+      setTokensRemaining(prev => {
+        const next = Math.max(prev - tokensRemovedPerStep, newTokensRemaining);
+        if (next === newTokensRemaining) {
+          clearInterval(intervalId);
+          setIsRemovingTokens(false);
+        }
+        return next;
+    });
+    }, updateStepDurationMs);
+  };
 
 // ---------------------------------------------------------------------------
 
@@ -361,6 +384,12 @@ export default function DashboardPage() {
                   [chatId]: [...chatMessages, { type: "function_call", content: action }]
                 };
               });
+
+            } else if (event.type === "usage") {
+              const inputTokens = event.usage.input_tokens;
+              const outputTokens = event.usage.output_tokens;
+              const newTokensRemaining = tokensRemaining - inputTokens - outputTokens;
+              updateTokensRemaining(newTokensRemaining);
             }
 
             if (!userScrolledUpRef.current) {
@@ -462,7 +491,14 @@ export default function DashboardPage() {
   return (
     <>
       <div className='dashboard-page'>
-        <header className='page-header'></header>
+        <header className='page-header'>
+          <p
+            className="token-count"
+            style={(isRemovingTokens || tokensRemaining <= 0) ? { color: 'red' } : undefined}
+          >
+            {tokensRemaining.toLocaleString()} tokens
+          </p>
+        </header>
         
         <div className="page-body">
           <nav className="sidebar">
