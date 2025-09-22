@@ -79,8 +79,10 @@ export const loadChatHistory = async (chatId: number,
         type: message.role === 'user' ? 'user' : 'assistant',
         content: text,
       };
+
     } else if (message.type === 'reasoning') {
       return { type: 'reasoning', content: 'Reasoning...' };
+      
     } else {
       return { type: 'function_call', content: `Calling ${message.message.name}...` };
     }

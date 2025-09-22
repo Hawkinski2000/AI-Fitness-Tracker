@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from 'react-router-dom';
-import { PropagateLoader } from 'react-spinners';
+import { PropagateLoader, PulseLoader } from 'react-spinners';
 import ReactMarkdown from 'react-markdown';
 import { API_BASE_URL } from "../../config/api";
 import { useAuth } from "../../context/auth/useAuth";
@@ -24,9 +24,15 @@ export interface Chat {
   id: number;
   title: string;
 }
+export interface FunctionCallContent {
+  action: string;
+  doneAction: string;
+}
 export interface ConversationItem {
   type: "user" | "assistant" | "reasoning" | "function_call";
-  content: string;
+  content: string | FunctionCallContent;
+  call_id?: string;
+  id?: string;
 }
 
 export default function DashboardPage() {  
@@ -56,6 +62,14 @@ export default function DashboardPage() {
 
   const [tokensRemaining, setTokensRemaining] = useState<number>(0);
   const [isRemovingTokens, setIsRemovingTokens] = useState(false);
+
+  interface ReasoningEvent {
+    active: boolean;
+    startTime: number;
+    duration: number;
+  }
+  const [reasoningEvents, setReasoningEvents] = useState<Record<string, ReasoningEvent>>({});
+  const [callingFunctions, setCallingFunctions] = useState<Record<string, boolean>>({});
 
   const [chatHistoryCollapsed, setChatHistoryCollapsed] = useState(false);
 
@@ -355,35 +369,97 @@ export default function DashboardPage() {
                 const chatMessages = prev[chatId] || [];
                 return {
                   ...prev,
-                  [chatId]: [...chatMessages, { type: "reasoning", content: "Thinking..." }]
+                  [chatId]: [
+                    ...chatMessages,
+                    {
+                      type: "reasoning",
+                      content: "Thinking",
+                      id: event.id
+                    }
+                  ]
+                };
+              });
+
+              setReasoningEvents(prev => {
+                return {
+                  ...prev,
+                  [event.id]: { active: true, startTime: Date.now(), duration: 0 }
+                };
+              });
+            } else if (event.type === "reasoning_done") {
+              setReasoningEvents(prev => {
+                const prevEvent = prev[event.id];
+                const startTime = prevEvent.startTime;
+                return {
+                  ...prev,
+                  [event.id]: {
+                    ...prev[event.id],
+                    active: false,
+                    duration: Date.now() - startTime
+                  }
                 };
               });
             } else if (event.type === "function_call") {
               setConversations(prev => {
                 let action = '';
+                let doneAction = '';
 
                 if (event.name === 'get_meal_log_summaries') {
-                  action = 'Checking meal logs...';
+                  action = 'Checking meal logs';
+                  doneAction = 'Found meal logs';
                 } else if (event.name === 'get_meal_log_food_summaries') {
-                  action = 'Checking meal log foods...';
+                  action = 'Checking meal log foods';
+                  doneAction = 'Found meal log foods';
                 } else if (event.name === 'get_workout_log_summaries') {
-                  action = 'Checking workout logs...';
+                  action = 'Checking workout logs';
+                  doneAction = 'Found workout logs';
                 } else if (event.name === 'get_workout_log_exercise_summaries') {
-                  action = 'Checking workout log exercises...';
+                  action = 'Checking workout log exercises';
+                  doneAction = 'Found workout log exercises';
                 } else if (event.name === 'get_sleep_log_summaries') {
-                  action = 'Checking sleep logs...';
+                  action = 'Checking sleep logs';
+                  doneAction = 'Found sleep logs';
                 } else if (event.name === 'get_mood_log_summaries') {
-                  action = 'Checking mood logs...';
+                  action = 'Checking mood logs';
+                  doneAction = 'Found mood logs';
                 } else if (event.name === 'get_weight_log_summaries') {
-                  action = 'Checking weight logs...';
+                  action = 'Checking weight logs';
+                  doneAction = 'Found weight logs';
                 }
 
                 const chatMessages = prev[chatId] || [];
                 return {
                   ...prev,
-                  [chatId]: [...chatMessages, { type: "function_call", content: action }]
+                  [chatId]: [
+                    ...chatMessages,
+                    {
+                      type: "function_call",
+                      content: {
+                        action,
+                        doneAction
+                      },
+                      call_id: event.call_id
+                    }
+                  ]
                 };
               });
+
+              setCallingFunctions(prev => {
+                return {
+                  ...prev,
+                  [event.call_id]: true
+                };
+              });
+
+            } else if (event.type === "function_call_output") {
+              setTimeout(() => {
+                setCallingFunctions(prev => {
+                  return {
+                    ...prev,
+                    [event.call_id]: false
+                  };
+                });
+              }, 1000);
 
             } else if (event.type === "usage") {
               const inputTokens = event.usage.input_tokens;
@@ -599,28 +675,72 @@ export default function DashboardPage() {
                           key={index}
                           className="user-message-container"
                         >
-                          {item.content}
+                          {item.content as string}
                         </div>
                       );
                     } else if (item.type === "reasoning") {
+                      const id = item.id;
+                      if (typeof id !== "string") {
+                        return null;
+                      }
+
+                      const isReasoning = reasoningEvents[id].active === true;
+                      const duration = reasoningEvents[id].duration;
+                      const seconds = Math.floor(duration / 1000);
+                      const minutes = Math.floor(seconds / 60);
+                      const remaining = seconds % 60;
+                      const formatted = (
+                        seconds < 60
+                          ? `Thought for ${seconds}s`
+                          : `Thought for ${minutes}m ${remaining}s`
+                      );
+
                       return (
-                        <div key={index} className="reasoning">
-                          {item.content}
+                        <div key={id} className="reasoning">
+                          {isReasoning ? (
+                            <>
+                              {item.content as string}
+                              <PulseLoader size={5} color="#00ffcc" />
+                            </>
+                          ) : (
+                            formatted
+                          )}
                         </div>
                       );
                     } else if (item.type === "function_call") {
+                      const callId = item.call_id;
+                      if (typeof callId !== "string") {
+                        return null;
+                      }
+
+                      let actionText = '';
+                      let doneText = '';
+                      if (typeof item.content !== "string") {
+                        actionText = item.content.action;
+                        doneText = item.content.doneAction;
+                      }
+
+                      const isCalling = callingFunctions[callId] === true;
+
                       return (
-                        <div key={index} className="function-call-container">
-                          <div key={index} className="function-call">
-                            {item.content}
+                          <div key={callId} className="function-call-container">
+                            <div key={callId} className="function-call">
+                              {isCalling ? (
+                                <>
+                                  {actionText} <PulseLoader size={5} color="#00ffcc" />
+                                </>
+                              ) : (
+                                <>
+                                  {doneText} <span style={{ color: "#00ffcc" }}>✓</span>
+                                </>
+                              )}
+                            </div>
                           </div>
-                          {/* <PulseLoader size={5} color="#00ffcc" /> */}
-                        </div>
                       );
                     } else if (item.type === "assistant") {
                       return (
                         <div key={index} className="markdown-content">
-                          <ReactMarkdown>{item.content}</ReactMarkdown>
+                          <ReactMarkdown>{item.content as string}</ReactMarkdown>
                         </div>
                       );
                     }

@@ -90,6 +90,11 @@ async def generate_insight(user: User, user_message: str, newest_response_id: st
                         "output": json.dumps(result)
                     }
                     yield payload
+                
+                elif event.item.type == "reasoning":
+                    payload = {"type": "reasoning_done",
+                               "id": event.item.id}
+                    yield payload
 
             elif type(event) == ResponseTextDeltaEvent:
                 print(event.delta, end="", flush=True)
@@ -107,7 +112,8 @@ async def generate_insight(user: User, user_message: str, newest_response_id: st
                 yield payload
             elif type(event) == ResponseOutputItemAddedEvent:
                 if event.item.type == "reasoning":
-                    payload = {"type": "reasoning"}
+                    payload = {"type": "reasoning",
+                               "id": event.item.id}
                     yield payload
 
         if function_call_outputs:
