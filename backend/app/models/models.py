@@ -316,6 +316,7 @@ class Message(Base):
     role: Mapped[str] = mapped_column(String, nullable=False)
     type: Mapped[Optional[str]] = mapped_column(String)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
+    duration_secs: Mapped[Optional[int]] = mapped_column(Integer)
 
     chat: Mapped["Chat"] = relationship("Chat", back_populates="messages")
 

@@ -58,6 +58,7 @@ async def create_message(message: message.MessageCreate, user_id: int, db: Sessi
     newest_response_id = chat.newest_response_id
     
     responses = []
+    reasoning_times: dict[str, dict[str, datetime]] = {}
     async for event in agent.generate_insight(user, message.content, newest_response_id):
         if event["type"] == "completed":
             response = event["response"]
@@ -71,8 +72,24 @@ async def create_message(message: message.MessageCreate, user_id: int, db: Sessi
                        }
             }
             yield payload
+
+        elif event["type"] == "reasoning" or event["type"] == "reasoning_done":
+            timestamp = datetime.now(timezone.utc).timestamp()
+
+            event["timestamp"] = timestamp
+
+            if event["type"] == "reasoning":
+                reasoning_times[event["id"]] = {"start": timestamp}
+            else:
+                if event["id"] not in reasoning_times:
+                    reasoning_times[event["id"]] = {}
+                reasoning_times[event["id"]]["end"] = timestamp
+
+            yield event
+
         else:
             yield event
+
         await asyncio.sleep(0)
 
     outputs = []
@@ -117,13 +134,22 @@ async def create_message(message: message.MessageCreate, user_id: int, db: Sessi
 
     for output in outputs:
         created_at = datetime.now(timezone.utc)
+
+        duration_secs = None
+        if output.get("type") == "reasoning":
+            event_timestamps = reasoning_times.get(output.get("id"))
+            start = event_timestamps.get("start")
+            end = event_timestamps.get("end")
+            duration_secs = end - start
+
         new_message = Message(
             chat_id=message.chat_id,
             interaction_id=new_interaction_id,
             message=output,
             role="assistant",
             type=output.get("type"),
-            created_at=created_at
+            created_at=created_at,
+            duration_secs=duration_secs
         )
         db.add(new_message)
         new_messages.append(new_message)

@@ -25,12 +25,17 @@ export interface Chat {
   title: string;
 }
 export interface FunctionCallContent {
-  action: string;
+  action?: string;
   doneAction: string;
+}
+export interface ReasoningEvent {
+  active: boolean;
+  startTime: number;
+  durationSecs: number;
 }
 export interface ConversationItem {
   type: "user" | "assistant" | "reasoning" | "function_call";
-  content: string | FunctionCallContent;
+  content: string | FunctionCallContent | ReasoningEvent;
   call_id?: string;
   id?: string;
 }
@@ -63,11 +68,6 @@ export default function DashboardPage() {
   const [tokensRemaining, setTokensRemaining] = useState<number>(0);
   const [isRemovingTokens, setIsRemovingTokens] = useState(false);
 
-  interface ReasoningEvent {
-    active: boolean;
-    startTime: number;
-    duration: number;
-  }
   const [reasoningEvents, setReasoningEvents] = useState<Record<string, ReasoningEvent>>({});
   const [callingFunctions, setCallingFunctions] = useState<Record<string, boolean>>({});
 
@@ -77,6 +77,7 @@ export default function DashboardPage() {
 
   const handleSelectChat = useCallback(async (chatId: number) => {
     userScrolledUpRef.current = false;
+    setDistanceFromBottom(0);
 
     try {
       let token: string | null = accessToken;
@@ -383,7 +384,7 @@ export default function DashboardPage() {
               setReasoningEvents(prev => {
                 return {
                   ...prev,
-                  [event.id]: { active: true, startTime: Date.now(), duration: 0 }
+                  [event.id]: { active: true, startTime: event.timestamp, durationSecs: 0 }
                 };
               });
             } else if (event.type === "reasoning_done") {
@@ -395,7 +396,7 @@ export default function DashboardPage() {
                   [event.id]: {
                     ...prev[event.id],
                     active: false,
-                    duration: Date.now() - startTime
+                    durationSecs: event.timestamp - startTime
                   }
                 };
               });
@@ -683,10 +684,18 @@ export default function DashboardPage() {
                       if (typeof id !== "string") {
                         return null;
                       }
+                      let durationSecs = 0;
+                      let isReasoning = false;
 
-                      const isReasoning = reasoningEvents[id].active === true;
-                      const duration = reasoningEvents[id].duration;
-                      const seconds = Math.floor(duration / 1000);
+                      if (typeof item.content !== "string" && "active" in item.content) {
+                        durationSecs = item.content.durationSecs;
+                      }
+                      else {
+                        isReasoning = reasoningEvents[id].active === true;
+                        durationSecs = reasoningEvents[id].durationSecs;
+                      }
+
+                      const seconds = Math.floor(durationSecs);
                       const minutes = Math.floor(seconds / 60);
                       const remaining = seconds % 60;
                       const formatted = (
@@ -715,8 +724,10 @@ export default function DashboardPage() {
 
                       let actionText = '';
                       let doneText = '';
-                      if (typeof item.content !== "string") {
-                        actionText = item.content.action;
+                      if (typeof item.content !== 'string' && 'doneAction' in item.content) {
+                        if (typeof item.content.action === 'string') {
+                          actionText = item.content.action;
+                        }
                         doneText = item.content.doneAction;
                       }
 

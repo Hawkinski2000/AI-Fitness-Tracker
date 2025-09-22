@@ -16,5 +16,6 @@ class MessageResponse(MessageBase):
     role: str
     type: Optional[str] = None
     created_at: datetime
+    duration_secs: Optional[int] = None
 
     model_config = ConfigDict(from_attributes=True)

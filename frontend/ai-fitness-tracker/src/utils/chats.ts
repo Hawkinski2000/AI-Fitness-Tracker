@@ -45,9 +45,12 @@ interface Message {
   type: 'message' | 'reasoning' | 'function_call'
   role?: 'user' | 'assistant'
   message: {
+    id?: string
+    call_id?: string
     content?: string | { text: string }[];
     name?: string;
   };
+  duration_secs?: number;
 }
 export const loadChatHistory = async (chatId: number,
                                       setConversations: React.Dispatch<React.SetStateAction<Record<number, ConversationItem[]>>>,
@@ -62,7 +65,6 @@ export const loadChatHistory = async (chatId: number,
 
   const formattedMessages: ConversationItem[] = messagesResponse.data.map((message: Message) => {
     let text = '';
-
     if (message.type === 'message' && message.message.content) {
       if (message.role === 'user') {
         if (typeof message.message.content === 'string') {
@@ -80,19 +82,49 @@ export const loadChatHistory = async (chatId: number,
         content: text,
       };
 
-    } else if (message.type === 'reasoning') {
-      return { type: 'reasoning', content: 'Reasoning...' };
+    } else if (message.type === 'reasoning' && message.duration_secs) {
+      return {
+        type: 'reasoning',
+        content: {
+          active: false,
+          startTime: 0,
+          durationSecs: message.duration_secs
+        },
+        id: message.message.id
+      };
       
     } else {
-      return { type: 'function_call', content: `Calling ${message.message.name}...` };
+      let doneAction = '';
+      const name = message.message.name;
+
+      if (name === 'get_meal_log_summaries') {
+        doneAction = 'Found meal logs';
+      } else if (name === 'get_meal_log_food_summaries') {
+        doneAction = 'Found meal log foods';
+      } else if (name === 'get_workout_log_summaries') {
+        doneAction = 'Found workout logs';
+      } else if (name === 'get_workout_log_exercise_summaries') {
+        doneAction = 'Found workout log exercises';
+      } else if (name === 'get_sleep_log_summaries') {
+        doneAction = 'Found sleep logs';
+      } else if (name === 'get_mood_log_summaries') {
+        doneAction = 'Found mood logs';
+      } else if (name === 'get_weight_log_summaries') {
+        doneAction = 'Found weight logs';
+      }
+
+      return {
+        type: 'function_call',
+        content: {
+          doneAction
+        },
+        call_id: message.message.call_id
+      }
     }
   });
   
   setConversations(prev => ({
     ...prev,
-    [chatId]: [
-      ...(prev[chatId] || []),
-      ...formattedMessages
-    ]
+    [chatId]: formattedMessages
   }));
 };
