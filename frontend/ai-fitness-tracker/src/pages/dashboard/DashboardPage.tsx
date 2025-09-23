@@ -5,7 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import { API_BASE_URL } from "../../config/api";
 import { useAuth } from "../../context/auth/useAuth";
 import { refreshAccessToken, getUserFromToken, isTokenExpired } from "../../utils/auth";
-import { createChat, loadChats, loadChatHistory } from "../../utils/chats";
+import { createChat, deleteChat, loadChats, loadChatHistory } from "../../utils/chats";
 import './DashboardPage.css';
 
 
@@ -137,6 +137,44 @@ export default function DashboardPage() {
       setAccessToken(null);
     }
   }, [accessToken, setAccessToken, setChats, handleSelectChat]);
+
+// ---------------------------------------------------------------------------
+
+  const handleDeleteChat = async (chatId: number) => {
+    try {
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();
+        setAccessToken(token);
+      }
+      if (!token) {
+        throw new Error("No access token");
+      }
+
+      const newChats = chats.filter(chat => chat.id !== chatId);
+
+      await deleteChat(chatId, setChats, token);
+
+      setConversations(prevConversations => {
+        const updated = { ...prevConversations };
+        delete updated[chatId];
+        return updated;
+      });
+
+      if (newChats.length === 0) {
+        handleCreateChat();
+        return;
+      }
+
+      const newCurrentChatId = newChats[0].id;
+      setCurrentChatId(newCurrentChatId);
+      handleSelectChat(newCurrentChatId);
+
+    } catch (err) {
+      console.error(err);
+      setAccessToken(null);
+    }
+  };
 
 // ---------------------------------------------------------------------------
 
@@ -619,13 +657,22 @@ export default function DashboardPage() {
                   {'<'}
                 </button>
                 </div>
-                <button
-                  className="button-link chat-history-button-link"
-                  onClick={handleCreateChat}
-                >
-                  New chat
-                </button>
-                <button className="button-link chat-history-button-link">Search chats</button>
+                <div className="chat-history-item">
+                  <button
+                    className="button-link chat-history-button-link"
+                    onClick={handleCreateChat}
+                  >
+                    New chat
+                  </button>
+                </div>
+
+                <div className="chat-history-item">
+                  <button
+                    className="button-link chat-history-button-link"
+                  >
+                    Search chats
+                  </button>
+                </div>
               </div>
 
               <div className="chats-container">
@@ -633,7 +680,7 @@ export default function DashboardPage() {
 
                 {chats.map((chat) => {
                   return (
-                    <div className="chat-history-item">
+                    <div key={chat.id} className="chat-history-item">
                       <div
                         key={chat.id}
                         className={`
@@ -658,9 +705,25 @@ export default function DashboardPage() {
 
                       {chatOptionsMenuOpenId === chat.id && (
                         <div ref={chatOptionsMenuRef} className="chat-options-menu" onClick={(e) => e.stopPropagation()}>
-                          <button className="chat-options-menu-button">Rename</button>
-                          <button className="chat-options-menu-button">Pin</button>
-                          <button className="chat-options-menu-button chat-options-delete-button">Delete</button>
+                          <button
+                            className="chat-options-menu-button"
+                          >
+                            Rename
+                          </button>
+                          <button
+                            className="chat-options-menu-button"
+                          >
+                            Pin
+                          </button>
+                          <button
+                            className="chat-options-menu-button chat-options-delete-button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteChat(chat.id);
+                            }}
+                          >
+                            Delete
+                          </button>
                         </div>
                       )}
                     </div>

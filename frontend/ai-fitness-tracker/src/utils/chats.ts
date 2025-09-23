@@ -21,6 +21,20 @@ export const createChat = async (setChats: React.Dispatch<React.SetStateAction<C
   return newChat;
 };
 
+export const deleteChat = async (chatId: number,
+                                 setChats: React.Dispatch<React.SetStateAction<Chat[]>>,
+                                 token: string) => {
+  await axios.delete(`${API_BASE_URL}/chats/${chatId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+  
+  setChats(prevChats => prevChats.filter(chat => chat.id !== chatId));
+};
+
 export const loadChats = async (setChats: React.Dispatch<React.SetStateAction<Chat[]>>,
                                 token: string) => {
   const chatsResponse = await axios.get(`${API_BASE_URL}/chats`,

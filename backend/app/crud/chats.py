@@ -27,6 +27,7 @@ def update_chat(id: int, chat: chat.ChatCreate, user_id: int, db: Session):
     return updated_chat
 
 def delete_chat(id: int, user_id: int, db: Session):
-    chat_query = db.query(Chat).filter(Chat.id == id, Chat.user_id == user_id)
-    chat_query.delete(synchronize_session=False)
-    db.commit()
+    chat = db.query(Chat).filter(Chat.id == id, Chat.user_id == user_id).first()
+    if chat:
+        db.delete(chat)
+        db.commit()
