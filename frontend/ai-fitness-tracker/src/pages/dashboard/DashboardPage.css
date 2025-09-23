@@ -227,15 +227,23 @@
   transition: width 0.25s;
 }
 
+.chat-history-item {
+  position: relative;
+  width: 90%;
+}
+
 .chat-history-button-link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   border-radius: 10px;
   min-height: fit-content;
-  width: 90%;
   font-size: 12px;
   text-align: left;
   padding: 0.4rem 0.5rem;
   white-space: nowrap;
   overflow: hidden;
+  z-index: 0;
   text-overflow: ellipsis;
   user-select: none;
   transition: all 0.25s; 
@@ -245,8 +253,68 @@
   background-color: #2e2e5e;
 }
 
+.chat-history-button-link:hover .chat-options-button {
+  opacity: 1;
+}
+
 .chat-history-button-link-selected {
   background-color: #2e2e5e;
+}
+
+.chat-options-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  opacity: 0;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.chat-options-button:hover {
+  background-color: #8085a6;
+}
+
+.chat-options-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  height: fit-content;
+  width: fit-content;
+  padding: 0.5rem;
+  right: 0;
+  background-color: #2e2e5e;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
+  border: none;
+  border-radius: 10px;
+  cursor: default;
+  z-index: 2;
+}
+
+.chat-options-menu-button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.chat-options-menu-button:hover {
+  background-color: #8085a6;
+}
+
+.chat-options-delete-button {
+ color: red;
+}
+.chat-options-delete-button:hover {
+  background-color: rgba(255, 0, 0, 0.25);
 }
 
 .chats-container {

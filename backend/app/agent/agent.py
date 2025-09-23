@@ -57,7 +57,7 @@ async def generate_insight(user: User, user_message: str, newest_response_id: st
             model="gpt-5-mini",
             previous_response_id=previous_response_id,
             stream=True,
-            tools=tools.tools_list,
+            tools=tools.tools_list
         )
             
         function_call_outputs = []

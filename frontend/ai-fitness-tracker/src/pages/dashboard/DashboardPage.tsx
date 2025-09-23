@@ -54,6 +54,9 @@ export default function DashboardPage() {
   const [conversations, setConversations] = useState<Record<number, ConversationItem[]>>({});
   const [messages, setMessages] = useState<Record<number, string>>({});
 
+  const [chatOptionsMenuOpenId, setChatOptionsMenuOpenId] = useState<number | null>(null);
+  const chatOptionsMenuRef = useRef<HTMLDivElement | null>(null);
+
   const [expandedInputs, setExpandedInputs] = useState<Record<number, boolean>>({});
   const inputRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const inputTimeouts = useRef<Record<number, number | null>>({});
@@ -251,6 +254,25 @@ export default function DashboardPage() {
 
     container.style.minHeight = '';
   }, [currentChatId]);
+
+// ---------------------------------------------------------------------------
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target;
+      if (
+        chatOptionsMenuRef.current &&
+        target instanceof Node &&
+        !chatOptionsMenuRef.current.contains(target) &&
+        !(target instanceof HTMLElement && target.classList.contains('chat-options-button'))
+      ) {
+        setChatOptionsMenuOpenId(null);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
 // ---------------------------------------------------------------------------
 
@@ -611,19 +633,38 @@ export default function DashboardPage() {
 
                 {chats.map((chat) => {
                   return (
-                    <button
-                      key={chat.id}
-                      className={`
-                        button-link
-                        chat-history-button-link
-                        ${chat.id === currentChatId ? 'chat-history-button-link-selected' : ''}
-                      `}
-                      onClick={() => handleSelectChat(chat.id)}
-                      disabled={chat.id === currentChatId}
-                    >
-                      {chat.title}
-                    </button>
-                  )
+                    <div className="chat-history-item">
+                      <div
+                        key={chat.id}
+                        className={`
+                          button-link
+                          chat-history-button-link
+                          ${(chat.id === currentChatId || chat.id === chatOptionsMenuOpenId) ? 'chat-history-button-link-selected' : ''}
+                        `}
+                        onClick={() => chat.id !== currentChatId && handleSelectChat(chat.id)}
+                      >
+                        {chat.title}
+                        <button
+                          className="chat-options-button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setChatOptionsMenuOpenId((prev) => (prev === chat.id ? null : chat.id));
+                          }}
+                          style={(chat.id === chatOptionsMenuOpenId) ? { opacity: 1 } : undefined}
+                        >
+                          •••
+                        </button>
+                      </div>
+
+                      {chatOptionsMenuOpenId === chat.id && (
+                        <div ref={chatOptionsMenuRef} className="chat-options-menu" onClick={(e) => e.stopPropagation()}>
+                          <button className="chat-options-menu-button">Rename</button>
+                          <button className="chat-options-menu-button">Pin</button>
+                          <button className="chat-options-menu-button chat-options-delete-button">Delete</button>
+                        </div>
+                      )}
+                    </div>
+                  );
                 })}
               </div>
             </nav>
