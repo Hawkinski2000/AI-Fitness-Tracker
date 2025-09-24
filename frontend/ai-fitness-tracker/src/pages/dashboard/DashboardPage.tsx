@@ -5,7 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import { API_BASE_URL } from "../../config/api";
 import { useAuth } from "../../context/auth/useAuth";
 import { refreshAccessToken, getUserFromToken, isTokenExpired } from "../../utils/auth";
-import { createChat, deleteChat, loadChats, loadChatHistory } from "../../utils/chats";
+import { createChat, deleteChat, updateChatTitle, loadChats, loadChatHistory } from "../../utils/chats";
 import './DashboardPage.css';
 
 
@@ -56,6 +56,10 @@ export default function DashboardPage() {
 
   const [chatOptionsMenuOpenId, setChatOptionsMenuOpenId] = useState<number | null>(null);
   const chatOptionsMenuRef = useRef<HTMLDivElement | null>(null);
+
+  const [editingChatTitleId, setEditingChatTitleId] = useState<number | null>(null);
+  const editingChatTitleRef = useRef<HTMLDivElement | null>(null);
+  const [newChatTitle, setNewChatTitle] = useState<string | null>(null);
 
   const [expandedInputs, setExpandedInputs] = useState<Record<number, boolean>>({});
   const inputRefs = useRef<Record<number, HTMLDivElement | null>>({});
@@ -295,9 +299,48 @@ export default function DashboardPage() {
 
 // ---------------------------------------------------------------------------
 
+  const handleUpdateChatTitle = useCallback(async (chatId: number) => {
+      try {
+        let token: string | null = accessToken;
+        if (!accessToken || isTokenExpired(accessToken)) {
+          token = await refreshAccessToken();
+          setAccessToken(token);
+        }
+        if (!token) {
+          throw new Error("No access token");
+        }
+
+        const element = editingChatTitleRef.current;
+        if (!element) {
+          return;
+        }
+        const title = element.querySelector<HTMLElement>('.chat-title');
+        if (title) {
+          const range = document.createRange();
+          range.setStart(title, 0);
+          range.collapse(true);
+          const selection = window.getSelection();
+          selection?.removeAllRanges();
+          selection?.addRange(range);
+
+          title.scrollLeft = 0;
+        }
+        setEditingChatTitleId(null);
+
+        await updateChatTitle(chatId, newChatTitle, token);
+
+        setNewChatTitle(null);
+
+      } catch (err) {
+        console.error(err);
+        setAccessToken(null);
+      }
+    }, [accessToken, setAccessToken, newChatTitle, setNewChatTitle])
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target;
+
       if (
         chatOptionsMenuRef.current &&
         target instanceof Node &&
@@ -306,11 +349,21 @@ export default function DashboardPage() {
       ) {
         setChatOptionsMenuOpenId(null);
       }
+
+      if (
+        editingChatTitleRef.current &&
+        target instanceof Node &&
+        !editingChatTitleRef.current.contains(target)
+      ) {
+        if (editingChatTitleId) {
+          handleUpdateChatTitle(editingChatTitleId);
+        }
+      }
     }
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [editingChatTitleId, handleUpdateChatTitle]);
 
 // ---------------------------------------------------------------------------
 
@@ -682,6 +735,9 @@ export default function DashboardPage() {
                   return (
                     <div key={chat.id} className="chat-history-item">
                       <div
+                        contentEditable={chat.id === editingChatTitleId}
+                        suppressContentEditableWarning
+                        ref={chat.id === editingChatTitleId ? editingChatTitleRef : null}
                         key={chat.id}
                         className={`
                           button-link
@@ -689,24 +745,62 @@ export default function DashboardPage() {
                           ${(chat.id === currentChatId || chat.id === chatOptionsMenuOpenId) ? 'chat-history-button-link-selected' : ''}
                         `}
                         onClick={() => chat.id !== currentChatId && handleSelectChat(chat.id)}
+                        onInput={(event: React.FormEvent<HTMLDivElement>) => {
+                          const element = event.currentTarget;
+                          const chatTitleElement = element.querySelector<HTMLParagraphElement>(".chat-title");
+                          const text = chatTitleElement?.textContent ?? "";
+                          setNewChatTitle(text);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            handleUpdateChatTitle(chat.id);
+                          }
+                        }}
                       >
-                        {chat.title}
+                        <p
+                          className="chat-title"
+                          style={chat.id === editingChatTitleId ? { width: '100%', textOverflow: 'clip' } : undefined}
+                        >
+                          {chat.title}
+                        </p>
                         <button
                           className="chat-options-button"
                           onClick={(e) => {
                             e.stopPropagation();
                             setChatOptionsMenuOpenId((prev) => (prev === chat.id ? null : chat.id));
                           }}
-                          style={(chat.id === chatOptionsMenuOpenId) ? { opacity: 1 } : undefined}
+                          style={{
+                            ...((chat.id === chatOptionsMenuOpenId) ? { opacity: 1 } : undefined),
+                            ...(chat.id === editingChatTitleId ? { display: 'none' } : undefined)
+                          }}
                         >
                           •••
                         </button>
                       </div>
-
                       {chatOptionsMenuOpenId === chat.id && (
                         <div ref={chatOptionsMenuRef} className="chat-options-menu" onClick={(e) => e.stopPropagation()}>
                           <button
                             className="chat-options-menu-button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingChatTitleId((prev) => (prev === chat.id ? null : chat.id));
+                              setChatOptionsMenuOpenId(null);
+                              requestAnimationFrame(() => {
+                                const chatTitle = editingChatTitleRef.current;
+                                if (!chatTitle) {
+                                  return;
+                                }
+
+                                chatTitle.focus();
+
+                                const range = document.createRange();
+                                range.selectNodeContents(chatTitle);
+                                const selection = window.getSelection();
+                                selection?.removeAllRanges();
+                                selection?.addRange(range);
+                              });
+                            }}
                           >
                             Rename
                           </button>

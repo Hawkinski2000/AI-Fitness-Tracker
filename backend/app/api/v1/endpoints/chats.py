@@ -28,8 +28,8 @@ def get_chat(id: int, current_user: token.TokenData = Depends(get_current_user),
     return chat
 
 # Update a chat
-@router.put("/{id}", response_model=chat.ChatResponse)
-def update_chat(id: int, chat: chat.ChatCreate, current_user: token.TokenData = Depends(get_current_user), db: Session = Depends(get_db)):
+@router.patch("/{id}", response_model=chat.ChatResponse)
+def update_chat(id: int, chat: chat.ChatUpdate, current_user: token.TokenData = Depends(get_current_user), db: Session = Depends(get_db)):
     updated_chat = crud_chats.update_chat(id, chat, current_user.user_id, db)
     return updated_chat
 

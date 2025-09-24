@@ -9,6 +9,9 @@ class ChatBase(BaseModel):
 class ChatCreate(ChatBase):
     pass
 
+class ChatUpdate(ChatBase):
+    title: str
+
 class ChatResponse(ChatBase):
     id: int
     user_id: int

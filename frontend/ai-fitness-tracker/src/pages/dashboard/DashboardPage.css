@@ -238,13 +238,12 @@
   align-items: center;
   border-radius: 10px;
   min-height: fit-content;
+  height: 2.3rem;
   font-size: 12px;
   text-align: left;
   padding: 0.4rem 0.5rem;
   white-space: nowrap;
-  overflow: hidden;
   z-index: 0;
-  text-overflow: ellipsis;
   user-select: none;
   transition: all 0.25s; 
 }
@@ -261,14 +260,24 @@
   background-color: #2e2e5e;
 }
 
+.chat-title {
+  margin: 0;
+  width: 80%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .chat-options-button {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 1.5rem;
+  padding: 0.25rem;
   opacity: 0;
   background: none;
   border: none;
   border-radius: 6px;
+  user-select: none;
   cursor: pointer;
   transition: all 0.25s;
 }
@@ -303,6 +312,7 @@
   border: none;
   border-radius: 6px;
   font-family: inherit;
+  user-select: none;
   cursor: pointer;
   transition: all 0.25s;
 }

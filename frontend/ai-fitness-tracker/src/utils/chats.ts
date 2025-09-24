@@ -35,6 +35,23 @@ export const deleteChat = async (chatId: number,
   setChats(prevChats => prevChats.filter(chat => chat.id !== chatId));
 };
 
+export const updateChatTitle = async (chatId: number,
+                                      newChatTitle: string | null,
+                                      token: string) => {
+  if (!newChatTitle) {
+    return;
+  }
+                                  
+  await axios.patch(`${API_BASE_URL}/chats/${chatId}`,
+    {title: newChatTitle},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );  
+};
+
 export const loadChats = async (setChats: React.Dispatch<React.SetStateAction<Chat[]>>,
                                 token: string) => {
   const chatsResponse = await axios.get(`${API_BASE_URL}/chats`,
