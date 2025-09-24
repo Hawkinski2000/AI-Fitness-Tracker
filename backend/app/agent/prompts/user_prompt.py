@@ -16,3 +16,10 @@ def get_user_prompt(user: User, user_message: str):
 
         User Message: {user_message}
     """
+
+def get_generate_title_user_prompt(user_message: str):
+    return f"""
+        Generate a short title for this chat based on this first message from the user:
+
+        "{user_message}"
+    """

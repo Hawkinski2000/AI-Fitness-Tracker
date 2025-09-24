@@ -52,6 +52,30 @@ export const updateChatTitle = async (chatId: number,
   );  
 };
 
+export const generateChatTitle = async (chatId: number,
+                                        userMessage: string | null,
+                                        token: string) => {
+  if (!userMessage) {
+    return;
+  }
+  
+  const response = await axios.post(`${API_BASE_URL}/chats/generate-title`,
+    {
+      chat_id: chatId,
+      user_message: userMessage
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  const newChatTitle = response.data.new_chat_title;
+
+  return newChatTitle;
+};
+
 export const loadChats = async (setChats: React.Dispatch<React.SetStateAction<Chat[]>>,
                                 token: string) => {
   const chatsResponse = await axios.get(`${API_BASE_URL}/chats`,

@@ -19,3 +19,12 @@ class ChatResponse(ChatBase):
     newest_response_id: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
+
+class ChatTitleCreate(BaseModel):
+    chat_id: int
+    user_message: str
+
+class ChatTitleResponse(BaseModel):
+    new_chat_title: str
+
+    model_config = ConfigDict(from_attributes=True)

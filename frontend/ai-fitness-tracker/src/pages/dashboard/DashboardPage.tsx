@@ -5,7 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import { API_BASE_URL } from "../../config/api";
 import { useAuth } from "../../context/auth/useAuth";
 import { refreshAccessToken, getUserFromToken, isTokenExpired } from "../../utils/auth";
-import { createChat, deleteChat, updateChatTitle, loadChats, loadChatHistory } from "../../utils/chats";
+import { createChat, deleteChat, generateChatTitle, updateChatTitle, loadChats, loadChatHistory } from "../../utils/chats";
 import './DashboardPage.css';
 
 
@@ -299,6 +299,28 @@ export default function DashboardPage() {
 
 // ---------------------------------------------------------------------------
 
+  const handleGenerateChatTitle = async (chatId: number, userMessage: string) => {
+    try {
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();
+        setAccessToken(token);
+      }
+      if (!token) {
+        throw new Error("No access token");
+      }
+
+      const newChatTitle = await generateChatTitle(chatId, userMessage, token);
+      return newChatTitle;
+
+    } catch (err) {
+      console.error(err);
+      setAccessToken(null);
+    }
+  };
+
+// ---------------------------------------------------------------------------
+
   const handleUpdateChatTitle = useCallback(async (chatId: number) => {
       try {
         let token: string | null = accessToken;
@@ -399,6 +421,8 @@ export default function DashboardPage() {
 
       generatingMessageRef.current = true;
 
+      const firstMessage = conversations[chatId].length === 0;
+
       setConversations(prev => {
         const chatMessages = prev[chatId] || [];
         return {
@@ -406,6 +430,32 @@ export default function DashboardPage() {
           [chatId]: [...chatMessages, { type: "user", content: userMessage }]
         };
       });
+
+      if (firstMessage) {
+        const chatIndex = chats.findIndex(chat => chat.id === chatId);
+        if (chatIndex === -1) {
+          return;
+        }
+
+        const newChatTitle = await handleGenerateChatTitle(chatId, userMessage);
+
+        const updatedChats = [...chats];
+
+        let currentTitle = "";
+        let charIndex = 0;
+
+        const intervalId = setInterval(() => {
+          currentTitle += newChatTitle[charIndex];
+          updatedChats[chatIndex].title = currentTitle;
+          setChats([...updatedChats]);
+
+          charIndex++;
+
+          if (charIndex >= newChatTitle.length) {
+            clearInterval(intervalId);
+          }
+        }, 100);
+      }
 
       const container = conversationRefs.current[chatId];
       if (!container) {

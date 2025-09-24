@@ -15,6 +15,12 @@ def create_chat(chat: chat.ChatCreate, current_user: token.TokenData = Depends(g
     new_chat = crud_chats.create_chat(chat, current_user.user_id, db)
     return new_chat
 
+# Generate a chat title
+@router.post("/generate-title", status_code=status.HTTP_201_CREATED, response_model=chat.ChatTitleResponse)
+def generate_chat_title(chat_title_create: chat.ChatTitleCreate, current_user: token.TokenData = Depends(get_current_user), db: Session = Depends(get_db)):
+    new_chat_title = crud_chats.generate_chat_title(chat_title_create, current_user.user_id, db)
+    return new_chat_title
+
 # Get all chats
 @router.get("", response_model=list[chat.ChatResponse])
 def get_chats(current_user: token.TokenData = Depends(get_current_user), db: Session = Depends(get_db)):

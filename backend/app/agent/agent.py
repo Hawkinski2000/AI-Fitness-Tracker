@@ -4,7 +4,8 @@ from openai.types.responses import (
     ResponseTextDeltaEvent,
     ResponseCompletedEvent,
     ResponseOutputItemAddedEvent,
-    ResponseReasoningItem
+    ResponseReasoningItem,
+    ResponseOutputMessage
 )
 import json
 from app.models.models import User
@@ -122,3 +123,20 @@ async def generate_insight(user: User, user_message: str, newest_response_id: st
         else:
             print()
             break
+
+def generate_title(user_message: str):
+    instructions = system_prompt.get_generate_title_system_prompt(user_message)
+    prompt = user_prompt.get_generate_title_user_prompt(user_message)
+
+    response = client.responses.create(
+        input=prompt,
+        instructions=instructions,
+        model="gpt-5-mini"
+    )
+
+    new_chat_title = "New chat"
+    for output in response.output:
+        if type(output) == ResponseOutputMessage:
+            new_chat_title = output.content[0].text
+    
+    return new_chat_title

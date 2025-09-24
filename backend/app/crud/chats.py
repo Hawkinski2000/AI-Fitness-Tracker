@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from app.schemas import chat
 from app.models.models import Chat
+from app.agent.agent import generate_title
 
 
 def create_chat(chat: chat.ChatCreate, user_id: int, db: Session):
@@ -10,6 +11,13 @@ def create_chat(chat: chat.ChatCreate, user_id: int, db: Session):
     db.commit()
     db.refresh(new_chat)
     return new_chat
+
+def generate_chat_title(chat_title_create: chat.ChatTitleCreate, user_id: int, db: Session):
+    new_chat_title = generate_title(chat_title_create.user_message)
+    chat = db.query(Chat).filter(Chat.id == chat_title_create.chat_id, Chat.user_id == user_id).first()
+    chat.title = new_chat_title
+    db.commit()
+    return {"new_chat_title": new_chat_title}
 
 def get_chats(user_id: int, db: Session):
     chats = db.query(Chat).filter(Chat.user_id == user_id).order_by(Chat.created_at.desc()).all()
