@@ -54,6 +54,8 @@ export default function DashboardPage() {
   const [conversations, setConversations] = useState<Record<number, ConversationItem[]>>({});
   const [messages, setMessages] = useState<Record<number, string>>({});
 
+  const [accountMenuOpen, setAccountMenuOpen] = useState<boolean>(false);
+
   const [chatOptionsMenuOpenId, setChatOptionsMenuOpenId] = useState<number | null>(null);
   const chatOptionsMenuRef = useRef<HTMLDivElement | null>(null);
 
@@ -731,13 +733,51 @@ export default function DashboardPage() {
   return (
     <>
       <div className='dashboard-page'>
-        <header className='page-header'>
+        <header className='page-header dashboard-header'>
           <p
             className="token-count"
             style={(isRemovingTokens || tokensRemaining <= 0) ? { color: 'red' } : undefined}
           >
             {tokensRemaining.toLocaleString()} tokens
           </p>
+
+          <div
+            className={`
+              account-image
+              ${accountMenuOpen ? 'account-image-open' : ''}
+            `}
+            onClick={() => {
+              setAccountMenuOpen((prev) => !prev);
+            }}
+          >
+            <p>
+              {userData?.first_name?.[0] ?? userData?.username[0] ?? ''}
+            </p>
+          </div>
+
+          {accountMenuOpen && (
+            <div
+              className="account-menu"
+            >
+              <button
+                className="account-menu-button"
+              >
+                Account
+              </button>
+              
+              <button
+                className="account-menu-button"
+              >
+                Settings
+              </button>
+
+              <button
+                className="account-menu-button"
+              >
+                Log out
+              </button>
+            </div>
+          )}
         </header>
         
         <div className="page-body">
@@ -829,7 +869,11 @@ export default function DashboardPage() {
                         </button>
                       </div>
                       {chatOptionsMenuOpenId === chat.id && (
-                        <div ref={chatOptionsMenuRef} className="chat-options-menu" onClick={(e) => e.stopPropagation()}>
+                        <div
+                          ref={chatOptionsMenuRef}
+                          className="chat-options-menu"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <button
                             className="chat-options-menu-button"
                             onClick={(e) => {

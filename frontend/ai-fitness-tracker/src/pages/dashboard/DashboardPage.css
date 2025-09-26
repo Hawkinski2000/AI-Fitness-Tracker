@@ -369,10 +369,73 @@
   background-color: #2e2e5e;
 }
 
+.dashboard-header {
+  display: flex;
+  justify-content: right;
+  align-items: center;
+}
+
 .token-count {
   text-align: right;
   padding-right: 1rem;
   transition: all 0.25s;
+}
+
+.account-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  width: 30px;
+  border-radius: 20px;
+  background-color: #8085a6;
+  margin-right: 1rem;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.25s;
+}
+.account-image:hover {
+  box-shadow: 0 0 0 2px #00ffcc;
+}
+
+.account-image-open {
+  box-shadow: 0 0 0 2px #00ffcc;
+}
+
+.account-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  height: fit-content;
+  width: fit-content;
+  padding: 0.5rem;
+  right: 1rem;
+  top: calc(1rem + 30px);
+  background-color: #2e2e5e;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
+  border: none;
+  border-radius: 10px;
+  cursor: default;
+  z-index: 2;
+}
+
+.account-menu-button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  user-select: none;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.account-menu-button:hover {
+  background-color: #8085a6;
 }
 
 @media (max-width: 500px) {
