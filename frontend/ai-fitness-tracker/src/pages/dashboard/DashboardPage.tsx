@@ -55,6 +55,7 @@ export default function DashboardPage() {
   const [messages, setMessages] = useState<Record<number, string>>({});
 
   const [accountMenuOpen, setAccountMenuOpen] = useState<boolean>(false);
+  const accountMenuRef = useRef<HTMLDivElement | null>(null);
 
   const [chatOptionsMenuOpenId, setChatOptionsMenuOpenId] = useState<number | null>(null);
   const chatOptionsMenuRef = useRef<HTMLDivElement | null>(null);
@@ -361,6 +362,8 @@ export default function DashboardPage() {
       }
     }, [accessToken, setAccessToken, newChatTitle, setNewChatTitle])
 
+// ---------------------------------------------------------------------------
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target;
@@ -382,6 +385,15 @@ export default function DashboardPage() {
         if (editingChatTitleId) {
           handleUpdateChatTitle(editingChatTitleId);
         }
+      }
+
+      if (
+        accountMenuRef.current &&
+        target instanceof Node &&
+        !accountMenuRef.current.contains(target) &&
+        !(target instanceof HTMLElement && target.classList.contains('account-image'))
+      ) {
+        setAccountMenuOpen(false);
       }
     }
 
@@ -750,7 +762,7 @@ export default function DashboardPage() {
               setAccountMenuOpen((prev) => !prev);
             }}
           >
-            <p>
+            <p className="account-image-initial">
               {userData?.first_name?.[0] ?? userData?.username[0] ?? ''}
             </p>
           </div>
@@ -758,6 +770,7 @@ export default function DashboardPage() {
           {accountMenuOpen && (
             <div
               className="account-menu"
+              ref={accountMenuRef}
             >
               <button
                 className="account-menu-button"
