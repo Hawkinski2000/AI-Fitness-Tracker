@@ -224,6 +224,12 @@ input.error {
   background-color: #00ffcc;
 }
 
+.sidebar-button-link-activated {
+  outline: none;
+  box-shadow: none;
+  background-color: #00ffcc;
+}
+
 ::-webkit-scrollbar {
   width: 8px;
 }

@@ -775,36 +775,34 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          {accountMenuOpen && (
-            <div
-              className="account-menu"
-              ref={accountMenuRef}
+          <div
+            className={`account-menu ${accountMenuOpen && 'account-menu-open'}`}
+            ref={accountMenuRef}
+          >
+            <button
+              className="account-menu-button"
             >
-              <button
-                className="account-menu-button"
-              >
-                Account
-              </button>
-              
-              <button
-                className="account-menu-button"
-              >
-                Settings
-              </button>
+              Account
+            </button>
+            
+            <button
+              className="account-menu-button"
+            >
+              Settings
+            </button>
 
-              <button
-                className="account-menu-button"
-                onClick={handleLogOut}
-              >
-                Log out
-              </button>
-            </div>
-          )}
+            <button
+              className="account-menu-button"
+              onClick={handleLogOut}
+            >
+              Log out
+            </button>
+          </div>
         </header>
         
         <div className="page-body">
           <nav className="sidebar">
-            <button className="button-link sidebar-button-link">Dashboard</button>
+            <button className="button-link sidebar-button-link sidebar-button-link-activated">Dashboard</button>
             <button className="button-link sidebar-button-link">Meal Logs</button>
             <button className="button-link sidebar-button-link">Workout Logs</button>
             <button className="button-link sidebar-button-link">Sleep Logs</button>
@@ -890,52 +888,50 @@ export default function DashboardPage() {
                           •••
                         </button>
                       </div>
-                      {chatOptionsMenuOpenId === chat.id && (
-                        <div
-                          ref={chatOptionsMenuRef}
-                          className="chat-options-menu"
-                          onClick={(e) => e.stopPropagation()}
+                      <div
+                        ref={chatOptionsMenuRef}
+                        className={`chat-options-menu ${chatOptionsMenuOpenId === chat.id && 'chat-options-menu-open'}`}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <button
+                          className="chat-options-menu-button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setEditingChatTitleId((prev) => (prev === chat.id ? null : chat.id));
+                            setChatOptionsMenuOpenId(null);
+                            requestAnimationFrame(() => {
+                              const chatTitle = editingChatTitleRef.current;
+                              if (!chatTitle) {
+                                return;
+                              }
+
+                              chatTitle.focus();
+
+                              const range = document.createRange();
+                              range.selectNodeContents(chatTitle);
+                              const selection = window.getSelection();
+                              selection?.removeAllRanges();
+                              selection?.addRange(range);
+                            });
+                          }}
                         >
-                          <button
-                            className="chat-options-menu-button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setEditingChatTitleId((prev) => (prev === chat.id ? null : chat.id));
-                              setChatOptionsMenuOpenId(null);
-                              requestAnimationFrame(() => {
-                                const chatTitle = editingChatTitleRef.current;
-                                if (!chatTitle) {
-                                  return;
-                                }
-
-                                chatTitle.focus();
-
-                                const range = document.createRange();
-                                range.selectNodeContents(chatTitle);
-                                const selection = window.getSelection();
-                                selection?.removeAllRanges();
-                                selection?.addRange(range);
-                              });
-                            }}
-                          >
-                            Rename
-                          </button>
-                          <button
-                            className="chat-options-menu-button"
-                          >
-                            Pin
-                          </button>
-                          <button
-                            className="chat-options-menu-button chat-options-delete-button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteChat(chat.id);
-                            }}
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      )}
+                          Rename
+                        </button>
+                        <button
+                          className="chat-options-menu-button"
+                        >
+                          Pin
+                        </button>
+                        <button
+                          className="chat-options-menu-button chat-options-delete-button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteChat(chat.id);
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </div>
                   );
                 })}

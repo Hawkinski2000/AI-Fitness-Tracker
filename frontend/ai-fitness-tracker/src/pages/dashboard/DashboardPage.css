@@ -291,16 +291,23 @@
   justify-content: space-between;
   align-items: center;
   position: absolute;
-  height: fit-content;
+  height: 0;
   width: fit-content;
-  padding: 0.5rem;
   right: 0;
+  padding: 0 0.5rem 0 0.5rem;
+  overflow: hidden;
   background-color: #2e2e5e;
   box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
   border: none;
   border-radius: 10px;
   cursor: default;
   z-index: 2;
+  transition: all 0.1s;
+}
+
+.chat-options-menu-open {
+  height: fit-content;
+  padding: 0.5rem;
 }
 
 .chat-options-menu-button {
@@ -412,9 +419,10 @@
   justify-content: space-between;
   align-items: center;
   position: absolute;
-  height: fit-content;
+  height: 0;
   width: fit-content;
-  padding: 0.5rem;
+  overflow: hidden;
+  padding: 0 0.5rem 0 0.5rem;
   right: 1rem;
   top: calc(1rem + 30px);
   background-color: #2e2e5e;
@@ -423,6 +431,12 @@
   border-radius: 10px;
   cursor: default;
   z-index: 2;
+  transition: all 0.1s;
+}
+
+.account-menu-open {
+  height: fit-content;
+  padding: 0.5rem;
 }
 
 .account-menu-button {
