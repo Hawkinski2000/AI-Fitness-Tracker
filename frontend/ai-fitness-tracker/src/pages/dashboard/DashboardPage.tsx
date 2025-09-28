@@ -7,6 +7,26 @@ import { useAuth } from "../../context/auth/useAuth";
 import { refreshAccessToken, logOut, getUserFromToken, isTokenExpired } from "../../utils/auth";
 import { createChat, deleteChat, generateChatTitle, updateChatTitle, loadChats, loadChatHistory } from "../../utils/chats";
 import './DashboardPage.css';
+import chatIcon from '../../assets/chat-icon.svg';
+import mealIcon from '../../assets/meal-icon.svg';
+import exerciseIcon from '../../assets/exercise-icon.svg';
+import sleepIcon from '../../assets/sleep-icon.svg';
+import moodIcon from '../../assets/mood-icon.svg';
+import weightIcon from '../../assets/weight-icon.svg';
+import accountIcon from '../../assets/account-icon.svg';
+import settingsIcon from '../../assets/settings-icon.svg';
+import logoutIcon from '../../assets/logout-icon.svg';
+import tokenIcon from '../../assets/token-icon.svg';
+import closePanelIcon from '../../assets/close-panel-icon.svg';
+import openPanelIcon from '../../assets/open-panel-icon.svg';
+import newChatIcon from '../../assets/new-chat-icon.svg';
+import searchIcon from '../../assets/search-icon.svg';
+import dotsIcon from '../../assets/dots-icon.svg';
+import editIcon from '../../assets/edit-icon.svg';
+import pinIcon from '../../assets/pin-icon.svg';
+import deleteIcon from '../../assets/delete-icon.svg';
+import arrowIcon from '../../assets/arrow-icon.svg';
+import doneIcon from '../../assets/done-icon.svg';
 
 
 interface User {
@@ -761,7 +781,7 @@ export default function DashboardPage() {
             {tokensRemaining.toLocaleString()}
             <img
               className="button-link-image"
-              src="/src/assets/token-icon.svg"
+              src={tokenIcon}
               style={{ width: '1.5rem' }}
             />
           </p>
@@ -787,14 +807,14 @@ export default function DashboardPage() {
             <button
               className="account-menu-button"
             >
-              <img className="button-link-image" src="/src/assets/account-icon.svg" />
+              <img className="button-link-image" src={accountIcon} />
               Account
             </button>
             
             <button
               className="account-menu-button"
             >
-              <img className="button-link-image" src="/src/assets/settings-icon.svg" />
+              <img className="button-link-image" src={settingsIcon} />
               Settings
             </button>
 
@@ -802,7 +822,7 @@ export default function DashboardPage() {
               className="account-menu-button"
               onClick={handleLogOut}
             >
-              <img className="button-link-image" src="/src/assets/logout-icon.svg" />
+              <img className="button-link-image" src={logoutIcon} />
               Log out
             </button>
           </div>
@@ -813,37 +833,37 @@ export default function DashboardPage() {
             <button
               className="button-link sidebar-button-link sidebar-button-link-activated"
             >
-              <img className="sidebar-button-link-image" src="/src/assets/chat-icon.svg" />
+              <img className="sidebar-button-link-image" src={chatIcon} />
               Dashboard
             </button>
             <button
               className="button-link sidebar-button-link"
             >
-              <img className="sidebar-button-link-image" src="/src/assets/meal-icon.svg" />
+              <img className="sidebar-button-link-image" src={mealIcon} />
               Meal Logs
             </button>
             <button
               className="button-link sidebar-button-link"
             >
-              <img className="sidebar-button-link-image" src="/src/assets/exercise-icon.svg" />
+              <img className="sidebar-button-link-image" src={exerciseIcon} />
               Workout Logs
             </button>
             <button
               className="button-link sidebar-button-link"
             >
-              <img className="sidebar-button-link-image" src="/src/assets/sleep-icon.svg" />
+              <img className="sidebar-button-link-image" src={sleepIcon} />
               Sleep Logs
             </button>
             <button
               className="button-link sidebar-button-link"
             >
-              <img className="sidebar-button-link-image" src="/src/assets/mood-icon.svg" />
+              <img className="sidebar-button-link-image" src={moodIcon} />
               Mood Logs
             </button>
             <button
               className="button-link sidebar-button-link"
             >
-              <img className="sidebar-button-link-image" src="/src/assets/weight-icon.svg" />
+              <img className="sidebar-button-link-image" src={weightIcon} />
               Weight Logs
             </button>
           </nav>
@@ -856,7 +876,7 @@ export default function DashboardPage() {
                   className="chat-history-collapse-button"
                   onClick={() => setChatHistoryCollapsed(true)}
                 >
-                  <img className="button-link-image" src="/src/assets/close-panel-icon.svg" />
+                  <img className="button-link-image" src={closePanelIcon} />
                 </button>
                 </div>
                 <div className="chat-history-item">
@@ -864,7 +884,7 @@ export default function DashboardPage() {
                     className="button-link chat-history-button-link"
                     onClick={handleCreateChat}
                   >
-                    <img className="button-link-image" src="/src/assets/new-chat-icon.svg" />
+                    <img className="button-link-image" src={newChatIcon} />
                     New chat
                   </button>
                 </div>
@@ -873,7 +893,7 @@ export default function DashboardPage() {
                   <button
                     className="button-link chat-history-button-link"
                   >
-                    <img className="button-link-image" src="/src/assets/search-icon.svg" />
+                    <img className="button-link-image" src={searchIcon} />
                     Search chats
                   </button>
                 </div>
@@ -926,7 +946,7 @@ export default function DashboardPage() {
                             ...(chat.id === editingChatTitleId ? { display: 'none' } : undefined)
                           }}
                         >
-                          <img className="button-link-image" src="/src/assets/dots-icon.svg" />
+                          <img className="button-link-image" src={dotsIcon} />
                         </button>
                       </div>
                       <div
@@ -956,13 +976,13 @@ export default function DashboardPage() {
                             });
                           }}
                         >
-                          <img className="button-link-image" src="/src/assets/edit-icon.svg" />
+                          <img className="button-link-image" src={editIcon} />
                           Rename
                         </button>
                         <button
                           className="chat-options-menu-button"
                         >
-                          <img className="button-link-image" src="/src/assets/pin-icon.svg" />
+                          <img className="button-link-image" src={pinIcon} />
                           Pin
                         </button>
                         <button
@@ -972,7 +992,7 @@ export default function DashboardPage() {
                             handleDeleteChat(chat.id);
                           }}
                         >
-                          <img className="button-link-image" src="/src/assets/delete-icon.svg" />
+                          <img className="button-link-image" src={deleteIcon} />
                           Delete
                         </button>
                       </div>
@@ -991,7 +1011,7 @@ export default function DashboardPage() {
                   className="chat-history-collapse-button"
                   onClick={() => setChatHistoryCollapsed(false)}
                 >
-                  <img className="button-link-image" src="/src/assets/open-panel-icon.svg" />
+                  <img className="button-link-image" src={openPanelIcon} />
                 </button>
               </div>
             </nav>
@@ -1097,7 +1117,7 @@ export default function DashboardPage() {
                               ) : (
                                 <>
                                   {doneText}
-                                  <img className="button-link-image" src="/src/assets/done-icon.svg" />
+                                  <img className="button-link-image" src={doneIcon} />
                                 </>
                               )}
                             </div>
@@ -1152,7 +1172,7 @@ export default function DashboardPage() {
                   }}
                 />
                 <button className="send-message-button" onClick={handleSendMessage}>
-                  <img className="button-link-image" src="/src/assets/arrow-icon.svg" />
+                  <img className="button-link-image" src={arrowIcon} />
                 </button>
               </div>
               <div className="scroll-button-container">
