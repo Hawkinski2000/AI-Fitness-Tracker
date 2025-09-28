@@ -28,6 +28,15 @@ export const logIn = async (emailString: string, passwordString: string) => {
   }
 };
 
+export const logOut = async () => {
+  try {
+    await axios.post(`${API_BASE_URL}/tokens/revoke`, {}, { withCredentials: true });
+
+  } catch (err) {
+    console.error("Failed to revoke access token", err);
+  }
+};
+
 export const refreshAccessToken = async () => {
   try {
     const refreshResponse = await axios.post(`${API_BASE_URL}/tokens/refresh`, {}, { withCredentials: true });

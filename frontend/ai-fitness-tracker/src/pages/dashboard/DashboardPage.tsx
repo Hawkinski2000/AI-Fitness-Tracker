@@ -4,7 +4,7 @@ import { PropagateLoader, PulseLoader } from 'react-spinners';
 import ReactMarkdown from 'react-markdown';
 import { API_BASE_URL } from "../../config/api";
 import { useAuth } from "../../context/auth/useAuth";
-import { refreshAccessToken, getUserFromToken, isTokenExpired } from "../../utils/auth";
+import { refreshAccessToken, logOut, getUserFromToken, isTokenExpired } from "../../utils/auth";
 import { createChat, deleteChat, generateChatTitle, updateChatTitle, loadChats, loadChatHistory } from "../../utils/chats";
 import './DashboardPage.css';
 
@@ -422,6 +422,14 @@ export default function DashboardPage() {
 
 // ---------------------------------------------------------------------------
 
+  const handleLogOut = async () => {
+    logOut();
+    setAccessToken(null);
+    navigate("/");
+  };
+
+// ---------------------------------------------------------------------------
+
   const createMessageStream = async (userMessage: string, chatId: number) => {
     try {
       let token: string | null = accessToken;
@@ -786,6 +794,7 @@ export default function DashboardPage() {
 
               <button
                 className="account-menu-button"
+                onClick={handleLogOut}
               >
                 Log out
               </button>
