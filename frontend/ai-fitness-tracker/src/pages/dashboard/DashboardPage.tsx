@@ -50,7 +50,7 @@ export default function DashboardPage() {
   const [chats, setChats] = useState<Chat[]>([]);
   const [currentChatId, setCurrentChatId] = useState<number | null>(null);
   const chatsLoadedRef = useRef<Record<number, boolean>>({});
-
+  
   const [conversations, setConversations] = useState<Record<number, ConversationItem[]>>({});
   const [messages, setMessages] = useState<Record<number, string>>({});
 
@@ -758,7 +758,12 @@ export default function DashboardPage() {
             className="token-count"
             style={(isRemovingTokens || tokensRemaining <= 0) ? { color: 'red' } : undefined}
           >
-            {tokensRemaining.toLocaleString()} tokens
+            {tokensRemaining.toLocaleString()}
+            <img
+              className="button-link-image"
+              src="/src/assets/token-icon.svg"
+              style={{ width: '1.5rem' }}
+            />
           </p>
 
           <div
@@ -782,12 +787,14 @@ export default function DashboardPage() {
             <button
               className="account-menu-button"
             >
+              <img className="button-link-image" src="/src/assets/account-icon.svg" />
               Account
             </button>
             
             <button
               className="account-menu-button"
             >
+              <img className="button-link-image" src="/src/assets/settings-icon.svg" />
               Settings
             </button>
 
@@ -795,6 +802,7 @@ export default function DashboardPage() {
               className="account-menu-button"
               onClick={handleLogOut}
             >
+              <img className="button-link-image" src="/src/assets/logout-icon.svg" />
               Log out
             </button>
           </div>
@@ -802,11 +810,42 @@ export default function DashboardPage() {
         
         <div className="page-body">
           <nav className="sidebar">
-            <button className="button-link sidebar-button-link sidebar-button-link-activated">Dashboard</button>
-            <button className="button-link sidebar-button-link">Meal Logs</button>
-            <button className="button-link sidebar-button-link">Workout Logs</button>
-            <button className="button-link sidebar-button-link">Sleep Logs</button>
-            <button className="button-link sidebar-button-link">Mood Logs</button>
+            <button
+              className="button-link sidebar-button-link sidebar-button-link-activated"
+            >
+              <img className="sidebar-button-link-image" src="/src/assets/chat-icon.svg" />
+              Dashboard
+            </button>
+            <button
+              className="button-link sidebar-button-link"
+            >
+              <img className="sidebar-button-link-image" src="/src/assets/meal-icon.svg" />
+              Meal Logs
+            </button>
+            <button
+              className="button-link sidebar-button-link"
+            >
+              <img className="sidebar-button-link-image" src="/src/assets/exercise-icon.svg" />
+              Workout Logs
+            </button>
+            <button
+              className="button-link sidebar-button-link"
+            >
+              <img className="sidebar-button-link-image" src="/src/assets/sleep-icon.svg" />
+              Sleep Logs
+            </button>
+            <button
+              className="button-link sidebar-button-link"
+            >
+              <img className="sidebar-button-link-image" src="/src/assets/mood-icon.svg" />
+              Mood Logs
+            </button>
+            <button
+              className="button-link sidebar-button-link"
+            >
+              <img className="sidebar-button-link-image" src="/src/assets/weight-icon.svg" />
+              Weight Logs
+            </button>
           </nav>
 
           {!chatHistoryCollapsed ? (
@@ -817,7 +856,7 @@ export default function DashboardPage() {
                   className="chat-history-collapse-button"
                   onClick={() => setChatHistoryCollapsed(true)}
                 >
-                  {'<'}
+                  <img className="button-link-image" src="/src/assets/close-panel-icon.svg" />
                 </button>
                 </div>
                 <div className="chat-history-item">
@@ -825,6 +864,7 @@ export default function DashboardPage() {
                     className="button-link chat-history-button-link"
                     onClick={handleCreateChat}
                   >
+                    <img className="button-link-image" src="/src/assets/new-chat-icon.svg" />
                     New chat
                   </button>
                 </div>
@@ -833,6 +873,7 @@ export default function DashboardPage() {
                   <button
                     className="button-link chat-history-button-link"
                   >
+                    <img className="button-link-image" src="/src/assets/search-icon.svg" />
                     Search chats
                   </button>
                 </div>
@@ -885,7 +926,7 @@ export default function DashboardPage() {
                             ...(chat.id === editingChatTitleId ? { display: 'none' } : undefined)
                           }}
                         >
-                          •••
+                          <img className="button-link-image" src="/src/assets/dots-icon.svg" />
                         </button>
                       </div>
                       <div
@@ -915,11 +956,13 @@ export default function DashboardPage() {
                             });
                           }}
                         >
+                          <img className="button-link-image" src="/src/assets/edit-icon.svg" />
                           Rename
                         </button>
                         <button
                           className="chat-options-menu-button"
                         >
+                          <img className="button-link-image" src="/src/assets/pin-icon.svg" />
                           Pin
                         </button>
                         <button
@@ -929,6 +972,7 @@ export default function DashboardPage() {
                             handleDeleteChat(chat.id);
                           }}
                         >
+                          <img className="button-link-image" src="/src/assets/delete-icon.svg" />
                           Delete
                         </button>
                       </div>
@@ -947,7 +991,7 @@ export default function DashboardPage() {
                   className="chat-history-collapse-button"
                   onClick={() => setChatHistoryCollapsed(false)}
                 >
-                  {'>'}
+                  <img className="button-link-image" src="/src/assets/open-panel-icon.svg" />
                 </button>
               </div>
             </nav>
@@ -1052,7 +1096,8 @@ export default function DashboardPage() {
                                 </>
                               ) : (
                                 <>
-                                  {doneText} <span style={{ color: "#00ffcc" }}>✓</span>
+                                  {doneText}
+                                  <img className="button-link-image" src="/src/assets/done-icon.svg" />
                                 </>
                               )}
                             </div>
@@ -1106,7 +1151,9 @@ export default function DashboardPage() {
                     }
                   }}
                 />
-                <button className="send-message-button" onClick={handleSendMessage}>^</button>
+                <button className="send-message-button" onClick={handleSendMessage}>
+                  <img className="button-link-image" src="/src/assets/arrow-icon.svg" />
+                </button>
               </div>
               <div className="scroll-button-container">
                 <button
