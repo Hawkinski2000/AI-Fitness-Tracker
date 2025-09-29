@@ -389,12 +389,6 @@
   background-color: #2e2e5e;
 }
 
-.chat-header {
-  display: flex;
-  justify-content: right;
-  align-items: center;
-}
-
 .token-count {
   display: flex;
   align-items: center;

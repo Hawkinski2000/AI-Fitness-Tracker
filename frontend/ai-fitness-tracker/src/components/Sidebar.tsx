@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import chatIcon from '../assets/chat-icon.svg';
 import mealIcon from '../assets/meal-icon.svg';
 import exerciseIcon from '../assets/exercise-icon.svg';
@@ -11,6 +12,8 @@ type SidebarProps = {
 };
 
 export default function Sidebar({ currentPage }: SidebarProps) {
+  const navigate = useNavigate();
+
   return (
     <nav className="sidebar">
       <button
@@ -21,6 +24,7 @@ export default function Sidebar({ currentPage }: SidebarProps) {
             ${currentPage === 'chat' ? 'sidebar-button-link-activated' : ''}
           `
         }
+        onClick={() => { if (currentPage !== 'chat') navigate('/chat') }}
       >
         <img className="sidebar-button-link-image" src={chatIcon} />
         Chat
@@ -31,9 +35,10 @@ export default function Sidebar({ currentPage }: SidebarProps) {
           `
             button-link
             sidebar-button-link
-            ${currentPage === 'mealLogs' ? 'sidebar-button-link-activated' : ''}
+            ${currentPage === 'meal-logs' ? 'sidebar-button-link-activated' : ''}
           `
         }
+        onClick={() => { if (currentPage !== 'meal-logs') navigate('/meal-logs') }}
       >
         <img className="sidebar-button-link-image" src={mealIcon} />
         Meal Logs
@@ -44,9 +49,10 @@ export default function Sidebar({ currentPage }: SidebarProps) {
           `
             button-link
             sidebar-button-link
-            ${currentPage === 'workoutLogs' ? 'sidebar-button-link-activated' : ''}
+            ${currentPage === 'workout-logs' ? 'sidebar-button-link-activated' : ''}
           `
         }
+        onClick={() => { if (currentPage !== 'workout-logs') navigate('/workout-logs') }}
       >
         <img className="sidebar-button-link-image" src={exerciseIcon} />
         Workout Logs
@@ -57,9 +63,10 @@ export default function Sidebar({ currentPage }: SidebarProps) {
           `
             button-link
             sidebar-button-link
-            ${currentPage === 'sleepLogs' ? 'sidebar-button-link-activated' : ''}
+            ${currentPage === 'sleep-logs' ? 'sidebar-button-link-activated' : ''}
           `
         }
+        onClick={() => { if (currentPage !== 'sleep-logs') navigate('/sleep-logs') }}
       >
         <img className="sidebar-button-link-image" src={sleepIcon} />
         Sleep Logs
@@ -70,9 +77,10 @@ export default function Sidebar({ currentPage }: SidebarProps) {
           `
             button-link
             sidebar-button-link
-            ${currentPage === 'moodLogs' ? 'sidebar-button-link-activated' : ''}
+            ${currentPage === 'mood-logs' ? 'sidebar-button-link-activated' : ''}
           `
         }
+        onClick={() => { if (currentPage !== 'mood-logs') navigate('/mood-logs') }}
       >
         <img className="sidebar-button-link-image" src={moodIcon} />
         Mood Logs
@@ -83,9 +91,10 @@ export default function Sidebar({ currentPage }: SidebarProps) {
           `
             button-link
             sidebar-button-link
-            ${currentPage === 'weightLogs' ? 'sidebar-button-link-activated' : ''}
+            ${currentPage === 'weight-logs' ? 'sidebar-button-link-activated' : ''}
           `
         }
+        onClick={() => { if (currentPage !== 'weight-logs') navigate('/weight-logs') }}
       >
         <img className="sidebar-button-link-image" src={weightIcon} />
         Weight Logs

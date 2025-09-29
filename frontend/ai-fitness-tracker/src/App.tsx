@@ -6,6 +6,7 @@ import LoginPage from './pages/login/LoginPage';
 import SignupPage from './pages/signup/SignupPage';
 import AboutYouPage from './pages/about-you/AboutYouPage';
 import ChatPage from './pages/chat/ChatPage';
+import MealLogsPage from './pages/meal-logs/MealLogsPage';
 
 
 export default function App() {
@@ -17,6 +18,7 @@ export default function App() {
         <Route path="signup" element={<SignupPage />} />
         <Route path="signup/about-you" element={<AboutYouPage />} />
         <Route path="chat" element={<ChatPage />} />
+        <Route path="meal-logs" element={<MealLogsPage />} />
       </Routes>
     </AuthProvider>
   )

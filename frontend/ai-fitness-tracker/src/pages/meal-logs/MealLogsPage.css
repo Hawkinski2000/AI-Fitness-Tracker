@@ -1,0 +1,127 @@
+.meal-logs-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100vw;
+}
+
+.meal-logs-page-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 100px;
+  margin-top: 50px;
+  height: calc(100vh - 50px);
+  width: calc(100vw - 100px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  box-sizing: border-box;
+  background-color: #1e1e3f;
+}
+
+.meal-logs-page-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: 100%;
+  padding-bottom: 5rem;
+  position: relative;
+}
+
+.date-nav {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 50px;
+  width: 100%;
+  background-color: #0c0c1d;
+  border-bottom: 1px solid #2e2e5e;
+}
+
+.date-nav-button {
+  background: none;
+  border: none;
+  border-radius: 10px;
+  padding: 0.5rem;
+  user-select: none;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.date-nav-button:hover {
+  background-color: #2e2e5e;
+}
+
+.calories-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  background-color: #0c0c1d;
+  border-bottom: 1px solid #2e2e5e;
+  user-select: none;
+}
+
+.calories-remaining-text {
+  width: 100%;
+  text-align: center;
+  margin: 0;
+}
+
+.meal-section {
+  height: fit-content;
+  margin: 1rem 0 0 0;
+  background-color: #0c0c1d;
+  text-align: left;
+}
+
+.meal-type-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+  border-bottom: 1px solid #2e2e5e;
+  user-select: none;
+}
+
+.meal-options-button {
+  display: flex;
+  height: fit-content;
+  border-radius: 10px;
+  padding: 0.5rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.meal-options-button:hover {
+  background-color: #2e2e5e;
+}
+
+.meal-log-food {
+  padding: 1rem;
+  border-bottom: 1px solid #2e2e5e;
+  user-select: none;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.meal-log-food:hover {
+  background-color: #2e2e5e;
+}
+
+.add-food-button {
+  width: 100%;
+  text-align: start;
+  font-weight: 700;
+  color: #00ffcc;
+  background-color: #0c0c1d;
+  border: none;
+  border-bottom: 1px solid #2e2e5e;
+  padding: 1rem;
+  user-select: none;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.add-food-button:hover {
+  background-color: #2e2e5e;
+}

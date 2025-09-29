@@ -5,11 +5,10 @@ import { API_BASE_URL } from "../../config/api";
 import { useAuth } from "../../context/auth/useAuth";
 import { refreshAccessToken, logOut, getUserFromToken, isTokenExpired } from "../../utils/auth";
 import { createChat, deleteChat, generateChatTitle, updateChatTitle, loadChats, loadChatHistory } from "../../utils/chats";
-import AccountImage from "../../components/AccountImage";
 import ChatHistoryItem from "../../components/ChatHistoryItem";
 import ConversationItem from "../../components/ConversationItem";
+import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
-import tokenIcon from '../../assets/token-icon.svg';
 import closePanelIcon from '../../assets/close-panel-icon.svg';
 import openPanelIcon from '../../assets/open-panel-icon.svg';
 import newChatIcon from '../../assets/new-chat-icon.svg';
@@ -50,7 +49,7 @@ export interface ConversationItem {
   id?: string;
 }
 
-export default function ChatPage() {  
+export default function ChatPage() {
   const { accessToken, setAccessToken } = useAuth();
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -769,27 +768,15 @@ export default function ChatPage() {
 {/* ---------------------------------------------------------------------- */}
 {/* ---- Header ---- */}
 
-        <header className='page-header chat-header'>
-          <p
-            className="token-count"
-            style={(isRemovingTokens || tokensRemaining <= 0) ? { color: 'red' } : undefined}
-          >
-            {tokensRemaining.toLocaleString()}
-            <img
-              className="button-link-image"
-              src={tokenIcon}
-              style={{ width: '1.5rem' }}
-            />
-          </p>
-
-          <AccountImage
-            accountMenuOpen={accountMenuOpen}
-            setAccountMenuOpen={setAccountMenuOpen}
-            userData={userData}
-            accountMenuRef={accountMenuRef}
-            handleLogOut={handleLogOut}
-          />
-        </header>
+        <Header
+          isRemovingTokens={isRemovingTokens}
+          tokensRemaining={tokensRemaining}
+          accountMenuOpen={accountMenuOpen}
+          setAccountMenuOpen={setAccountMenuOpen}
+          userData={userData}
+          accountMenuRef={accountMenuRef}
+          handleLogOut={handleLogOut}
+        />
 
 {/* ---------------------------------------------------------------------- */}
 
