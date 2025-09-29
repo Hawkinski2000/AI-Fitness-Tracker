@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/auth/useAuth";
 import { type User } from "../chat/ChatPage";
-import { refreshAccessToken, logOut, getUserFromToken, isTokenExpired } from "../../utils/auth";
+import { refreshAccessToken, logOut, getUserFromToken } from "../../utils/auth";
 import { PropagateLoader } from 'react-spinners';
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
@@ -11,7 +11,7 @@ import './MealLogsPage.css';
 
 
 export default function MealLogsPage() {
-  const { accessToken, setAccessToken } = useAuth();
+  const { setAccessToken } = useAuth();
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
