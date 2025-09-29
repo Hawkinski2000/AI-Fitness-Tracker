@@ -1,36 +1,25 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from 'react-router-dom';
-import { PropagateLoader, PulseLoader } from 'react-spinners';
-import ReactMarkdown from 'react-markdown';
+import { PropagateLoader } from 'react-spinners';
 import { API_BASE_URL } from "../../config/api";
 import { useAuth } from "../../context/auth/useAuth";
 import { refreshAccessToken, logOut, getUserFromToken, isTokenExpired } from "../../utils/auth";
 import { createChat, deleteChat, generateChatTitle, updateChatTitle, loadChats, loadChatHistory } from "../../utils/chats";
-import './ChatPage.css';
-import chatIcon from '../../assets/chat-icon.svg';
-import mealIcon from '../../assets/meal-icon.svg';
-import exerciseIcon from '../../assets/exercise-icon.svg';
-import sleepIcon from '../../assets/sleep-icon.svg';
-import moodIcon from '../../assets/mood-icon.svg';
-import weightIcon from '../../assets/weight-icon.svg';
-import accountIcon from '../../assets/account-icon.svg';
-import settingsIcon from '../../assets/settings-icon.svg';
-import logoutIcon from '../../assets/logout-icon.svg';
+import AccountImage from "../../components/AccountImage";
+import ChatHistoryItem from "../../components/ChatHistoryItem";
+import ConversationItem from "../../components/ConversationItem";
+import Sidebar from "../../components/Sidebar";
 import tokenIcon from '../../assets/token-icon.svg';
 import closePanelIcon from '../../assets/close-panel-icon.svg';
 import openPanelIcon from '../../assets/open-panel-icon.svg';
 import newChatIcon from '../../assets/new-chat-icon.svg';
 import searchIcon from '../../assets/search-icon.svg';
-import dotsIcon from '../../assets/dots-icon.svg';
-import editIcon from '../../assets/edit-icon.svg';
-import pinIcon from '../../assets/pin-icon.svg';
-import deleteIcon from '../../assets/delete-icon.svg';
 import arrowUpIcon from '../../assets/arrow-up-icon.svg';
 import arrowDownIcon from '../../assets/arrow-down-icon.svg';
-import doneIcon from '../../assets/done-icon.svg';
+import './ChatPage.css';
 
 
-interface User {
+export interface User {
   id: number;
   username: string;
   email: string;
@@ -766,14 +755,20 @@ export default function ChatPage() {
   if (loading) {
     return (
       <div className='loading-screen'>
-         <PropagateLoader size={20} color="#00ffcc" />
+        <PropagateLoader size={20} color="#00ffcc" />
       </div>
     );
   }
 
+// ---------------------------------------------------------------------------
+
   return (
     <>
       <div className='chat-page'>
+
+{/* ---------------------------------------------------------------------- */}
+{/* ---- Header ---- */}
+
         <header className='page-header chat-header'>
           <p
             className="token-count"
@@ -787,87 +782,22 @@ export default function ChatPage() {
             />
           </p>
 
-          <div
-            className={`
-              account-image
-              ${accountMenuOpen ? 'account-image-open' : ''}
-            `}
-            onClick={() => {
-              setAccountMenuOpen((prev) => !prev);
-            }}
-          >
-            <p className="account-image-initial">
-              {userData?.first_name?.[0] ?? userData?.username[0] ?? ''}
-            </p>
-          </div>
-
-          <div
-            className={`account-menu ${accountMenuOpen && 'account-menu-open'}`}
-            ref={accountMenuRef}
-          >
-            <button
-              className="account-menu-button"
-            >
-              <img className="button-link-image" src={accountIcon} />
-              Account
-            </button>
-            
-            <button
-              className="account-menu-button"
-            >
-              <img className="button-link-image" src={settingsIcon} />
-              Settings
-            </button>
-
-            <button
-              className="account-menu-button"
-              onClick={handleLogOut}
-            >
-              <img className="button-link-image" src={logoutIcon} />
-              Log out
-            </button>
-          </div>
+          <AccountImage
+            accountMenuOpen={accountMenuOpen}
+            setAccountMenuOpen={setAccountMenuOpen}
+            userData={userData}
+            accountMenuRef={accountMenuRef}
+            handleLogOut={handleLogOut}
+          />
         </header>
-        
+
+{/* ---------------------------------------------------------------------- */}
+
         <div className="page-body">
-          <nav className="sidebar">
-            <button
-              className="button-link sidebar-button-link sidebar-button-link-activated"
-            >
-              <img className="sidebar-button-link-image" src={chatIcon} />
-              Chat
-            </button>
-            <button
-              className="button-link sidebar-button-link"
-            >
-              <img className="sidebar-button-link-image" src={mealIcon} />
-              Meal Logs
-            </button>
-            <button
-              className="button-link sidebar-button-link"
-            >
-              <img className="sidebar-button-link-image" src={exerciseIcon} />
-              Workout Logs
-            </button>
-            <button
-              className="button-link sidebar-button-link"
-            >
-              <img className="sidebar-button-link-image" src={sleepIcon} />
-              Sleep Logs
-            </button>
-            <button
-              className="button-link sidebar-button-link"
-            >
-              <img className="sidebar-button-link-image" src={moodIcon} />
-              Mood Logs
-            </button>
-            <button
-              className="button-link sidebar-button-link"
-            >
-              <img className="sidebar-button-link-image" src={weightIcon} />
-              Weight Logs
-            </button>
-          </nav>
+          <Sidebar currentPage={'chat'} />
+
+{/* ---------------------------------------------------------------------- */}
+{/* ---- Chat History ---- */}
 
           {!chatHistoryCollapsed ? (
             <nav className="chat-history">
@@ -905,106 +835,20 @@ export default function ChatPage() {
 
                 {chats.map((chat) => {
                   return (
-                    <div key={chat.id} className="chat-history-item">
-                      <div
-                        contentEditable={chat.id === editingChatTitleId}
-                        suppressContentEditableWarning
-                        ref={el => { editingChatTitleRefs.current[chat.id] = el }}
-                        key={chat.id}
-                        className={`
-                          button-link
-                          chat-history-button-link
-                          ${
-                            (
-                              chat.id === currentChatId ||
-                              chat.id === chatOptionsMenuOpenId ||
-                              chat.id === editingChatTitleId
-                            ) ? 'chat-history-button-link-selected' : ''
-                          }
-                        `}
-                        onClick={() => chat.id !== currentChatId && handleSelectChat(chat.id)}
-                        onInput={(event: React.FormEvent<HTMLDivElement>) => {
-                          const element = event.currentTarget;
-                          const chatTitleElement = element.querySelector<HTMLParagraphElement>(".chat-title");
-                          const text = chatTitleElement?.textContent ?? "";
-                          setNewChatTitle(text);
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
-                            handleUpdateChatTitle(chat.id);
-                          }
-                        }}
-                      >
-                        <p
-                          className="chat-title"
-                          style={chat.id === editingChatTitleId ? { width: '100%', textOverflow: 'clip' } : undefined}
-                        >
-                          {chat.title}
-                        </p>
-                        <button
-                          className="chat-options-button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setChatOptionsMenuOpenId((prev) => (prev === chat.id ? null : chat.id));
-                          }}
-                          style={{
-                            ...((chat.id === chatOptionsMenuOpenId) ? { opacity: 1 } : undefined),
-                            ...(chat.id === editingChatTitleId ? { display: 'none' } : undefined)
-                          }}
-                        >
-                          <img className="button-link-image" src={dotsIcon} />
-                        </button>
-                      </div>
-                      <div
-                        ref={el => { chatOptionsMenuRefs.current[chat.id] = el }}
-                        className={`chat-options-menu ${chatOptionsMenuOpenId === chat.id && 'chat-options-menu-open'}`}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <button
-                          className="chat-options-menu-button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            
-                            setEditingChatTitleId((prev) => (prev === chat.id ? null : chat.id));
-                            setChatOptionsMenuOpenId(null);
-                            requestAnimationFrame(() => {
-                              const chatTitle = editingChatTitleRefs.current[chat.id];
-                              if (!chatTitle) {
-                                return;
-                              }
-
-                              chatTitle.focus();
-
-                              const range = document.createRange();
-                              range.selectNodeContents(chatTitle);
-                              const selection = window.getSelection();
-                              selection?.removeAllRanges();
-                              selection?.addRange(range);
-                            });
-                          }}
-                        >
-                          <img className="button-link-image" src={editIcon} />
-                          Rename
-                        </button>
-                        <button
-                          className="chat-options-menu-button"
-                        >
-                          <img className="button-link-image" src={pinIcon} />
-                          Pin
-                        </button>
-                        <button
-                          className="chat-options-menu-button chat-options-delete-button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteChat(chat.id);
-                          }}
-                        >
-                          <img className="button-link-image" src={deleteIcon} />
-                          Delete
-                        </button>
-                      </div>
-                    </div>
+                    <ChatHistoryItem
+                      chat={chat}
+                      editingChatTitleId={editingChatTitleId}
+                      editingChatTitleRefs={editingChatTitleRefs}
+                      currentChatId={currentChatId}
+                      chatOptionsMenuOpenId={chatOptionsMenuOpenId}
+                      setNewChatTitle={setNewChatTitle}
+                      setChatOptionsMenuOpenId={setChatOptionsMenuOpenId}
+                      chatOptionsMenuRefs={chatOptionsMenuRefs}
+                      setEditingChatTitleId={setEditingChatTitleId}
+                      handleSelectChat={handleSelectChat}
+                      handleUpdateChatTitle={handleUpdateChatTitle}
+                      handleDeleteChat={handleDeleteChat}
+                    />
                   );
                 })}
               </div>
@@ -1025,6 +869,9 @@ export default function ChatPage() {
             </nav>
           )}
           
+{/* ---------------------------------------------------------------------- */}
+{/* ---- Chat ---- */}
+
           <main
             className={`page-main ${chatHistoryCollapsed ? 'chat-main-collapsed' : ''}`}
             style={{ transition: 'all 0.25s' }}
@@ -1042,6 +889,9 @@ export default function ChatPage() {
                 </div>
               )}
 
+{/* ---------------------------------------------------------------------- */}
+{/* ---- Conversation ---- */}
+
               <div
                 className="conversation-container"
                 ref={el => { 
@@ -1052,93 +902,14 @@ export default function ChatPage() {
               >
                 {currentChatId !== null &&
                   (conversations[currentChatId] || []).map((item, index) => {
-                    if (item.type === "user") {
-                      return (
-                        <div
-                          key={index}
-                          className="user-message-container"
-                        >
-                          {item.content as string}
-                        </div>
-                      );
-                    } else if (item.type === "reasoning") {
-                      const id = item.id;
-                      if (typeof id !== "string") {
-                        return null;
-                      }
-                      let durationSecs = 0;
-                      let isReasoning = false;
-
-                      if (typeof item.content !== "string" && "active" in item.content) {
-                        durationSecs = item.content.durationSecs;
-                      }
-                      else {
-                        isReasoning = reasoningEvents[id].active === true;
-                        durationSecs = reasoningEvents[id].durationSecs;
-                      }
-
-                      const seconds = Math.floor(durationSecs);
-                      const minutes = Math.floor(seconds / 60);
-                      const remaining = seconds % 60;
-                      const formatted = (
-                        seconds < 60
-                          ? `Thought for ${seconds}s`
-                          : `Thought for ${minutes}m ${remaining}s`
-                      );
-
-                      return (
-                        <div key={id} className="reasoning">
-                          {isReasoning ? (
-                            <>
-                              {item.content as string}
-                              <PulseLoader size={5} color="#00ffcc" />
-                            </>
-                          ) : (
-                            formatted
-                          )}
-                        </div>
-                      );
-                    } else if (item.type === "function_call") {
-                      const callId = item.call_id;
-                      if (typeof callId !== "string") {
-                        return null;
-                      }
-
-                      let actionText = '';
-                      let doneText = '';
-                      if (typeof item.content !== 'string' && 'doneAction' in item.content) {
-                        if (typeof item.content.action === 'string') {
-                          actionText = item.content.action;
-                        }
-                        doneText = item.content.doneAction;
-                      }
-
-                      const isCalling = callingFunctions[callId] === true;
-
-                      return (
-                          <div key={callId} className="function-call-container">
-                            <div key={callId} className="function-call">
-                              {isCalling ? (
-                                <>
-                                  {actionText} <PulseLoader size={5} color="#00ffcc" />
-                                </>
-                              ) : (
-                                <>
-                                  {doneText}
-                                  <img className="button-link-image" src={doneIcon} />
-                                </>
-                              )}
-                            </div>
-                          </div>
-                      );
-                    } else if (item.type === "assistant") {
-                      return (
-                        <div key={index} className="markdown-content">
-                          <ReactMarkdown>{item.content as string}</ReactMarkdown>
-                        </div>
-                      );
-                    }
-                    return null;
+                    return (
+                      <ConversationItem
+                        item={item}
+                        index={index}
+                        reasoningEvents={reasoningEvents}
+                        callingFunctions={callingFunctions}
+                      />
+                    )
                   })
                 }
                 
@@ -1151,6 +922,9 @@ export default function ChatPage() {
                 />
               </div>
             
+{/* ---------------------------------------------------------------------- */}
+{/* ---- Message Input ---- */}
+
               <div
                 className={
                   `message-input-container
@@ -1183,6 +957,10 @@ export default function ChatPage() {
                   <img className="button-link-image" src={arrowUpIcon} />
                 </button>
               </div>
+
+{/* ---------------------------------------------------------------------- */}
+{/* ---- Scroll Button ---- */}
+
               <div className="scroll-button-container">
                 <button
                   className="scroll-button"
