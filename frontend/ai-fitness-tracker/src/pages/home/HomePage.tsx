@@ -14,7 +14,7 @@ export default function HomePage() {
   useEffect(() => {
     const checkAuth = async () => {
       if (accessToken) {
-        navigate("/dashboard");
+        navigate("/chat");
         return;
       }
 
@@ -27,7 +27,7 @@ export default function HomePage() {
 
         setAccessToken(refreshResponse.data.access_token);
 
-        navigate("/dashboard");
+        navigate("/chat");
 
       } catch {
         setAccessToken(null);
@@ -65,7 +65,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <img className="ai-fitness-tracker-image" src="/images/Dashboard.png" alt="ai-fitness-tracker-image" />
+          <img className="ai-fitness-tracker-image" src="/images/Chat.png" alt="ai-fitness-tracker-image" />
         </section>
       </div>
     </>

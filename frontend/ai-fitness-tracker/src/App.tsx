@@ -5,7 +5,7 @@ import HomePage from './pages/home/HomePage';
 import LoginPage from './pages/login/LoginPage';
 import SignupPage from './pages/signup/SignupPage';
 import AboutYouPage from './pages/about-you/AboutYouPage';
-import DashboardPage from './pages/dashboard/DashboardPage';
+import ChatPage from './pages/chat/ChatPage';
 
 
 export default function App() {
@@ -16,7 +16,7 @@ export default function App() {
         <Route path="login" element={<LoginPage />} />
         <Route path="signup" element={<SignupPage />} />
         <Route path="signup/about-you" element={<AboutYouPage />} />
-        <Route path="dashboard" element={<DashboardPage />} />
+        <Route path="chat" element={<ChatPage />} />
       </Routes>
     </AuthProvider>
   )

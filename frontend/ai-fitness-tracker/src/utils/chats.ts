@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { type Chat, type ConversationItem } from '../pages/dashboard/DashboardPage';
+import { type Chat, type ConversationItem } from '../pages/chat/ChatPage';
 import { API_BASE_URL } from '../config/api';
 
 

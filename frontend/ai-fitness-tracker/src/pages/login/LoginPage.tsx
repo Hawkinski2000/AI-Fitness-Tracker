@@ -59,7 +59,7 @@ export default function LoginPage() {
 
       console.log('logInUser successful.');
 
-      navigate('/dashboard');
+      navigate('/chat');
 
     } catch (error: unknown) {
       if (axios.isAxiosError(error) && error.response?.status === 403) {

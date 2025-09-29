@@ -6,7 +6,7 @@ import { API_BASE_URL } from "../../config/api";
 import { useAuth } from "../../context/auth/useAuth";
 import { refreshAccessToken, logOut, getUserFromToken, isTokenExpired } from "../../utils/auth";
 import { createChat, deleteChat, generateChatTitle, updateChatTitle, loadChats, loadChatHistory } from "../../utils/chats";
-import './DashboardPage.css';
+import './ChatPage.css';
 import chatIcon from '../../assets/chat-icon.svg';
 import mealIcon from '../../assets/meal-icon.svg';
 import exerciseIcon from '../../assets/exercise-icon.svg';
@@ -25,7 +25,8 @@ import dotsIcon from '../../assets/dots-icon.svg';
 import editIcon from '../../assets/edit-icon.svg';
 import pinIcon from '../../assets/pin-icon.svg';
 import deleteIcon from '../../assets/delete-icon.svg';
-import arrowIcon from '../../assets/arrow-icon.svg';
+import arrowUpIcon from '../../assets/arrow-up-icon.svg';
+import arrowDownIcon from '../../assets/arrow-down-icon.svg';
 import doneIcon from '../../assets/done-icon.svg';
 
 
@@ -60,7 +61,7 @@ export interface ConversationItem {
   id?: string;
 }
 
-export default function DashboardPage() {  
+export default function ChatPage() {  
   const { accessToken, setAccessToken } = useAuth();
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -78,10 +79,10 @@ export default function DashboardPage() {
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
 
   const [chatOptionsMenuOpenId, setChatOptionsMenuOpenId] = useState<number | null>(null);
-  const chatOptionsMenuRef = useRef<HTMLDivElement | null>(null);
+  const chatOptionsMenuRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
   const [editingChatTitleId, setEditingChatTitleId] = useState<number | null>(null);
-  const editingChatTitleRef = useRef<HTMLDivElement | null>(null);
+  const editingChatTitleRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const [newChatTitle, setNewChatTitle] = useState<string | null>(null);
 
   const [expandedInputs, setExpandedInputs] = useState<Record<number, boolean>>({});
@@ -355,7 +356,7 @@ export default function DashboardPage() {
           throw new Error("No access token");
         }
 
-        const element = editingChatTitleRef.current;
+        const element = editingChatTitleRefs.current[chatId];
         if (!element) {
           return;
         }
@@ -389,22 +390,22 @@ export default function DashboardPage() {
       const target = event.target;
 
       if (
-        chatOptionsMenuRef.current &&
+        chatOptionsMenuOpenId &&
+        chatOptionsMenuRefs.current[chatOptionsMenuOpenId] &&
         target instanceof Node &&
-        !chatOptionsMenuRef.current.contains(target) &&
+        !chatOptionsMenuRefs.current[chatOptionsMenuOpenId].contains(target) &&
         !(target instanceof HTMLElement && target.classList.contains('chat-options-button'))
       ) {
         setChatOptionsMenuOpenId(null);
       }
 
       if (
-        editingChatTitleRef.current &&
+        editingChatTitleId &&
+        editingChatTitleRefs.current[editingChatTitleId] &&
         target instanceof Node &&
-        !editingChatTitleRef.current.contains(target)
+        !editingChatTitleRefs.current[editingChatTitleId].contains(target)
       ) {
-        if (editingChatTitleId) {
-          handleUpdateChatTitle(editingChatTitleId);
-        }
+        handleUpdateChatTitle(editingChatTitleId);
       }
 
       if (
@@ -419,7 +420,7 @@ export default function DashboardPage() {
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [editingChatTitleId, handleUpdateChatTitle]);
+  }, [chatOptionsMenuOpenId, editingChatTitleId, handleUpdateChatTitle]);
 
 // ---------------------------------------------------------------------------
 
@@ -772,8 +773,8 @@ export default function DashboardPage() {
 
   return (
     <>
-      <div className='dashboard-page'>
-        <header className='page-header dashboard-header'>
+      <div className='chat-page'>
+        <header className='page-header chat-header'>
           <p
             className="token-count"
             style={(isRemovingTokens || tokensRemaining <= 0) ? { color: 'red' } : undefined}
@@ -834,7 +835,7 @@ export default function DashboardPage() {
               className="button-link sidebar-button-link sidebar-button-link-activated"
             >
               <img className="sidebar-button-link-image" src={chatIcon} />
-              Dashboard
+              Chat
             </button>
             <button
               className="button-link sidebar-button-link"
@@ -908,12 +909,18 @@ export default function DashboardPage() {
                       <div
                         contentEditable={chat.id === editingChatTitleId}
                         suppressContentEditableWarning
-                        ref={chat.id === editingChatTitleId ? editingChatTitleRef : null}
+                        ref={el => { editingChatTitleRefs.current[chat.id] = el }}
                         key={chat.id}
                         className={`
                           button-link
                           chat-history-button-link
-                          ${(chat.id === currentChatId || chat.id === chatOptionsMenuOpenId) ? 'chat-history-button-link-selected' : ''}
+                          ${
+                            (
+                              chat.id === currentChatId ||
+                              chat.id === chatOptionsMenuOpenId ||
+                              chat.id === editingChatTitleId
+                            ) ? 'chat-history-button-link-selected' : ''
+                          }
                         `}
                         onClick={() => chat.id !== currentChatId && handleSelectChat(chat.id)}
                         onInput={(event: React.FormEvent<HTMLDivElement>) => {
@@ -950,7 +957,7 @@ export default function DashboardPage() {
                         </button>
                       </div>
                       <div
-                        ref={chatOptionsMenuRef}
+                        ref={el => { chatOptionsMenuRefs.current[chat.id] = el }}
                         className={`chat-options-menu ${chatOptionsMenuOpenId === chat.id && 'chat-options-menu-open'}`}
                         onClick={(e) => e.stopPropagation()}
                       >
@@ -958,10 +965,11 @@ export default function DashboardPage() {
                           className="chat-options-menu-button"
                           onClick={(e) => {
                             e.stopPropagation();
+                            
                             setEditingChatTitleId((prev) => (prev === chat.id ? null : chat.id));
                             setChatOptionsMenuOpenId(null);
                             requestAnimationFrame(() => {
-                              const chatTitle = editingChatTitleRef.current;
+                              const chatTitle = editingChatTitleRefs.current[chat.id];
                               if (!chatTitle) {
                                 return;
                               }
@@ -1018,14 +1026,14 @@ export default function DashboardPage() {
           )}
           
           <main
-            className={`page-main ${chatHistoryCollapsed ? 'dashboard-main-collapsed' : ''}`}
+            className={`page-main ${chatHistoryCollapsed ? 'chat-main-collapsed' : ''}`}
             style={{ transition: 'all 0.25s' }}
             ref={attachScrollListener}
           >
-            <div className='dashboard-page-content'>
+            <div className='chat-page-content'>
               {currentChatId !== null && (conversations[currentChatId]?.length || 0) === 0 && (
                 <div>
-                  <h1 className='page-heading dashboard-heading'>
+                  <h1 className='page-heading chat-heading'>
                     Welcome
                     {userData?.first_name || userData?.username
                       ? `, ${userData.first_name || userData.username}!`
@@ -1172,7 +1180,7 @@ export default function DashboardPage() {
                   }}
                 />
                 <button className="send-message-button" onClick={handleSendMessage}>
-                  <img className="button-link-image" src={arrowIcon} />
+                  <img className="button-link-image" src={arrowUpIcon} />
                 </button>
               </div>
               <div className="scroll-button-container">
@@ -1187,7 +1195,7 @@ export default function DashboardPage() {
                   }}
                   style={(userScrolledUpRef.current || distanceFromBottom > 100) ? undefined : { opacity: '0', pointerEvents: 'none' }}
                 >
-                  🡣
+                  <img className="button-link-image" src={arrowDownIcon} />
                 </button>
               </div>
             </div>

@@ -94,7 +94,7 @@ export default function AboutYouPage() {
 
       console.log('updateUser successful.');
 
-      navigate('/dashboard');
+      navigate('/chat');
 
     } catch (error) {
       console.error('updateUser failed:', error);
