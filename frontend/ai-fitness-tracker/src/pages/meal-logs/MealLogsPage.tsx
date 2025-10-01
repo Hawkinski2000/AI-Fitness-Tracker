@@ -90,14 +90,50 @@ export default function MealLogsPage() {
 
           <main className="meal-logs-page-main">
             <div className='meal-logs-page-content'>
-              <nav className="date-nav">
-                <button className="date-nav-button">{'<'}</button>
-                <button className="date-nav-button">Today</button>
-                <button className="date-nav-button">{'>'}</button>
-              </nav>
+              <div className="date-nav-container">
+                <nav className="date-nav">
+                  <button className="date-nav-button">{'<'}</button>
+                  <button className="date-nav-button">Today</button>
+                  <button className="date-nav-button">{'>'}</button>
+                </nav>
+              </div>
 
               <header className="calories-header">
                 <p className="calories-remaining-text">Calories Remaining</p>
+
+                <div className="calories-remaining-calculation">
+                  <div className="calories-remaining-section">
+                    <p>3,500</p>
+                    <p className="calories-remaining-section-label">Goal</p>
+                  </div>
+
+                  <div className="calories-remaining-section">
+                    <p>-</p>
+                  </div>
+
+                  <div className="calories-remaining-section">
+                    <p>0</p>
+                    <p className="calories-remaining-section-label">Food</p>
+                  </div>
+
+                  <div className="calories-remaining-section">
+                    <p>+</p>
+                  </div>
+
+                  <div className="calories-remaining-section">
+                    <p>0</p>
+                    <p className="calories-remaining-section-label">Exercise</p>
+                  </div>
+
+                  <div className="calories-remaining-section">
+                    <p>=</p>
+                  </div>
+
+                  <div className="calories-remaining-section">
+                    <p>3,500</p>
+                    <p className="calories-remaining-section-label">Remaining</p>
+                  </div>
+                </div>
               </header>
 
               <section className="meal-section">

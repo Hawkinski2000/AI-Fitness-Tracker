@@ -24,18 +24,24 @@
   flex: 1;
   flex-direction: column;
   width: 100%;
-  padding-bottom: 5rem;
+  margin-bottom: 1rem;
   position: relative;
 }
 
-.date-nav {
+.date-nav-container {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: center;
   align-items: center;
   height: 50px;
   width: 100%;
   background-color: #0c0c1d;
   border-bottom: 1px solid #2e2e5e;
+}
+
+.date-nav {
+  display: flex;
+  justify-content: space-between;
+  width: 50%;
 }
 
 .date-nav-button {
@@ -56,16 +62,32 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 1rem;
+  padding: 1rem 0;
   background-color: #0c0c1d;
   border-bottom: 1px solid #2e2e5e;
   user-select: none;
 }
 
 .calories-remaining-text {
-  width: 100%;
-  text-align: center;
+  width: 50%;
+  text-align: left;
+  margin: 0 0 0.5rem 0;
+  font-weight: 700;
+}
+
+.calories-remaining-calculation {
+  display: flex;
+  justify-content: space-between;
+  width: 50%;
+}
+
+.calories-remaining-section p {
   margin: 0;
+}
+
+.calories-remaining-section-label {
+  font-size: 12px;
+  color: #8085a6;
 }
 
 .meal-section {
@@ -124,4 +146,30 @@
 }
 .add-food-button:hover {
   background-color: #2e2e5e;
+}
+
+
+@media (max-width: 500px) {
+  .meal-logs-page-main {
+    margin-left: 50px;
+    width: calc(100vw - 50px);
+  }
+
+  .date-nav {
+    width: 100%;
+    padding: 0 1rem;
+  }
+
+  .calories-header {
+    padding: 1rem;
+  }
+
+  .calories-remaining-text {
+    width: 100%;
+    padding: 0 1rem;
+  }
+
+  .calories-remaining-calculation {
+    width: 100%;
+  }
 }
