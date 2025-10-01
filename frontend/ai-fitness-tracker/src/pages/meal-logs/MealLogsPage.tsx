@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/auth/useAuth";
 import { type User } from "../chat/ChatPage";
 import { refreshAccessToken, logOut, getUserFromToken } from "../../utils/auth";
+import { loadMealLogs } from "../../utils/meal-logs";
 import { PropagateLoader } from 'react-spinners';
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
@@ -10,12 +11,22 @@ import dotsIcon from '../../assets/dots-icon.svg';
 import './MealLogsPage.css';
 
 
+export interface MealLog {
+  id: number;
+  log_date: string;
+  total_calories: number | null;
+}
+
 export default function MealLogsPage() {
   const { setAccessToken } = useAuth();
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
+
+  const [mealLogs, setMealLogs] = useState<Record<string, MealLog>>({});
+  const [currentMealLogDate, setCurrentMealLogDate] = useState<string | null>(null);
+  const [today, setToday] = useState<string | null>(null);
 
   const [accountMenuOpen, setAccountMenuOpen] = useState<boolean>(false);
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
@@ -39,6 +50,17 @@ export default function MealLogsPage() {
           setUserData(userData);
           setTokensRemaining(Math.min(userData.input_tokens_remaining, userData.output_tokens_remaining))
 
+          const loadedMealLogs = await loadMealLogs(setMealLogs, token);
+          console.log(loadedMealLogs);
+
+          const today = new Date().toISOString().split('T')[0];
+          setToday(today);
+          setCurrentMealLogDate(today);
+          console.log(today);
+          // Load foods for each meal log
+          // await loadChatHistory(chatId, setConversations, token);
+          // chatsLoadedRef.current[chatId] = true;
+
         } catch (err) {
           console.error(err);
           setAccessToken(null);
@@ -61,6 +83,49 @@ export default function MealLogsPage() {
   };
 
 // ---------------------------------------------------------------------------
+
+  const getDateLabel = (currentMealLogDate: string | null, today: string | null) => {
+    if (!currentMealLogDate || !today) {
+      return "";
+    }
+
+    const mealLogDate = new Date(currentMealLogDate);
+    const todayDate = new Date(today);
+    mealLogDate.setHours(0, 0, 0, 0);
+    todayDate.setHours(0, 0, 0, 0);
+    const differenceTime = mealLogDate.getTime() - todayDate.getTime();
+    const differenceInDays = Math.round(differenceTime / (1000 * 60 * 60 * 24));
+
+    if (differenceInDays === 0) {
+      return 'Today';
+    } else if (differenceInDays === 1) {
+      return 'Tomorrow';
+    } else if (differenceInDays === -1) {
+      return 'Yesterday';
+    }
+    return currentMealLogDate.split("T")[0];
+  };
+
+  const handleChangeDate = (direction: string) => {
+    if (!currentMealLogDate) {
+      return;
+    }
+
+    let dayDifference = 0;
+    if (direction === 'previous') {
+      dayDifference -= 1;
+    }
+    else if (direction === 'next') {
+      dayDifference += 1;
+    }
+
+    const prevDate = new Date(currentMealLogDate);
+    prevDate.setDate(prevDate.getDate() + dayDifference);
+    const prevDateString = prevDate.toISOString().split('T')[0];
+    setCurrentMealLogDate(prevDateString);
+  }
+
+// ---------------------------------------------------------------------------  
 
   if (loading) {
     return (
@@ -92,9 +157,24 @@ export default function MealLogsPage() {
             <div className='meal-logs-page-content'>
               <div className="date-nav-container">
                 <nav className="date-nav">
-                  <button className="date-nav-button">{'<'}</button>
-                  <button className="date-nav-button">Today</button>
-                  <button className="date-nav-button">{'>'}</button>
+                  <button
+                    className="date-nav-button"
+                    onClick={() => handleChangeDate('previous')}
+                  >
+                    {'<'}
+                  </button>
+                  <button
+                    className="date-nav-button"
+                  >
+                    {(currentMealLogDate && today) ? getDateLabel(currentMealLogDate, today) : ""}
+                    ({(currentMealLogDate && mealLogs[currentMealLogDate]) ? mealLogs[currentMealLogDate].id : ''})
+                  </button>
+                  <button
+                    className="date-nav-button"
+                    onClick={() => handleChangeDate('next')}
+                  >
+                    {'>'}
+                  </button>
                 </nav>
               </div>
 
