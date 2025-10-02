@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { type MealLog } from "../pages/meal-logs/MealLogsPage";
+import { type MealLog, type MealLogFood } from "../pages/meal-logs/MealLogsPage";
 import { API_BASE_URL } from '../config/api';
 
 
@@ -14,21 +14,57 @@ export const loadMealLogs = async (setMealLogs: React.Dispatch<React.SetStateAct
   );
 
   if (mealLogsResponse.data.length === 0) {
-    return []
+    setMealLogs({});
+    return {};
   }
   
-  const mealLogs: MealLog[] = [];
+  const mealLogs: Record<string, MealLog> = {};
   mealLogsResponse.data.forEach((mealLog: MealLog) => {
     const logDate = mealLog.log_date.split('T')[0];
     const mealLogObject = {id: mealLog.id, log_date: logDate, total_calories: mealLog.total_calories || null};
 
-    mealLogs.push(mealLogObject);
-
-    setMealLogs(prev => ({
-      ...prev,
-      [logDate]: mealLogObject
-    }));
+    mealLogs[logDate] = mealLogObject;
   });
 
+  setMealLogs(mealLogs);
+
   return mealLogs;
+};
+
+export const loadMealLogFoods = async (mealLogId: number,
+                                       setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
+                                       token: string) => {
+  const mealLogFoodsResponse = await axios.get(`${API_BASE_URL}/meal-log-foods/${mealLogId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  if (mealLogFoodsResponse.data.length === 0) {
+    return {};
+  }
+  
+  const mealLogFoods: Record<number, MealLogFood[]> = {};
+  mealLogFoodsResponse.data.forEach((mealLogFood: MealLogFood) => {
+    const mealLogFoodObject = {
+      id: mealLogFood.id,
+      meal_log_id: mealLogFood.meal_log_id,
+      food_id: mealLogFood.food_id,
+      meal_type: mealLogFood.meal_type,
+      num_servings: mealLogFood.num_servings,
+      serving_size: mealLogFood.serving_size,
+      serving_unit: mealLogFood.serving_unit,
+      created_at: mealLogFood.created_at,
+      calories: mealLogFood.calories || null
+    };
+
+    mealLogFoods[mealLogId] = mealLogFoods[mealLogId] || [];
+    mealLogFoods[mealLogId].push(mealLogFoodObject);
+  });
+
+  setMealLogFoods(mealLogFoods);
+
+  return mealLogFoods;
 };

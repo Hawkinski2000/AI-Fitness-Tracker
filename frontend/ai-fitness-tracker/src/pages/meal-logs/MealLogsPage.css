@@ -121,6 +121,8 @@
 }
 
 .meal-log-food {
+  display: flex;
+  justify-content: space-between;
   padding: 1rem;
   border-bottom: 1px solid #2e2e5e;
   user-select: none;
@@ -129,6 +131,20 @@
 }
 .meal-log-food:hover {
   background-color: #2e2e5e;
+}
+
+.meal-log-food-section {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+
+.meal-log-food-text {
+  margin: 0;
+}
+
+.meal-log-food-serving-text {
+  margin: 0;
 }
 
 .add-food-button {

@@ -78,11 +78,13 @@ def create_meal_log_food(meal_log_food: meal_log_food.MealLogFoodCreate, user_id
     
     return new_meal_log_food
 
-def get_meal_log_foods(user_id: int, db: Session):
+def get_meal_log_foods(meal_log_id: int, user_id: int, db: Session):
     meal_log_foods = (
         db.query(MealLogFood)
         .join(MealLog, MealLogFood.meal_log_id == MealLog.id)
-        .filter(MealLog.user_id == user_id)
+        .filter(MealLog.user_id == user_id,
+                MealLogFood.meal_log_id == meal_log_id)
+        .order_by(MealLogFood.created_at.asc())
         .all()
     )
     return meal_log_foods

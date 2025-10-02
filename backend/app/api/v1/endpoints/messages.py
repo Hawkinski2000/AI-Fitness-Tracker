@@ -31,12 +31,12 @@ def get_messages(chat_id: int,
     return messages
 
 # Get a message
-@router.get("/{id}", response_model=message.MessageResponse)
-def get_message(id: int,
-                current_user: token.TokenData = Depends(get_current_user),
-                db: Session = Depends(get_db)):
-    message = crud_messages.get_message(id, current_user.user_id, db)
-    return message
+# @router.get("/{id}", response_model=message.MessageResponse)
+# def get_message(id: int,
+#                 current_user: token.TokenData = Depends(get_current_user),
+#                 db: Session = Depends(get_db)):
+#     message = crud_messages.get_message(id, current_user.user_id, db)
+#     return message
 
 # Update a message
 # @router.put("/{id}", response_model=message.MessageResponse)

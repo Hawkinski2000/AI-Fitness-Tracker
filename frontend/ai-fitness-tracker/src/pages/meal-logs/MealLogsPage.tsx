@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/auth/useAuth";
 import { type User } from "../chat/ChatPage";
 import { refreshAccessToken, logOut, getUserFromToken } from "../../utils/auth";
-import { loadMealLogs } from "../../utils/meal-logs";
+import { loadMealLogs, loadMealLogFoods } from "../../utils/meal-logs";
 import { PropagateLoader } from 'react-spinners';
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
@@ -16,6 +16,17 @@ export interface MealLog {
   log_date: string;
   total_calories: number | null;
 }
+export interface MealLogFood {
+  id: number;
+  meal_log_id: number;
+  food_id: number;
+  meal_type: string;
+  num_servings: number;
+  serving_size: number;
+  serving_unit: string;
+  created_at: string;
+  calories: number | null;
+}
 
 export default function MealLogsPage() {
   const { setAccessToken } = useAuth();
@@ -27,6 +38,8 @@ export default function MealLogsPage() {
   const [mealLogs, setMealLogs] = useState<Record<string, MealLog>>({});
   const [currentMealLogDate, setCurrentMealLogDate] = useState<string | null>(null);
   const [today, setToday] = useState<string | null>(null);
+
+  const [mealLogFoods, setMealLogFoods] = useState<Record<number, MealLogFood[]>>({});
 
   const [accountMenuOpen, setAccountMenuOpen] = useState<boolean>(false);
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
@@ -51,15 +64,22 @@ export default function MealLogsPage() {
           setTokensRemaining(Math.min(userData.input_tokens_remaining, userData.output_tokens_remaining))
 
           const loadedMealLogs = await loadMealLogs(setMealLogs, token);
+          console.log('Meal logs:');
           console.log(loadedMealLogs);
 
           const today = new Date().toISOString().split('T')[0];
           setToday(today);
           setCurrentMealLogDate(today);
-          console.log(today);
-          // Load foods for each meal log
-          // await loadChatHistory(chatId, setConversations, token);
-          // chatsLoadedRef.current[chatId] = true;
+
+          const currentMealLog = loadedMealLogs[today];
+
+          if (currentMealLog) {
+            const currentMealLogId = currentMealLog.id;
+
+            const loadedMealLogFoods = await loadMealLogFoods(currentMealLogId, setMealLogFoods, token);
+            console.log('Meal log foods:');
+            console.log(loadedMealLogFoods);
+          }
 
         } catch (err) {
           console.error(err);
@@ -105,6 +125,8 @@ export default function MealLogsPage() {
     }
     return currentMealLogDate.split("T")[0];
   };
+
+// ---------------------------------------------------------------------------  
 
   const handleChangeDate = (direction: string) => {
     if (!currentMealLogDate) {
@@ -227,12 +249,27 @@ export default function MealLogsPage() {
                   </button>
                 </div>
 
-                <div className="meal-log-food">Food 1</div>
-                <div className="meal-log-food">Food 2</div>
-                <div className="meal-log-food">Food 3</div>
-                <div className="meal-log-food">Food 4</div>
-                <div className="meal-log-food">Food 5</div>
+                {
+                  currentMealLogDate &&
+                  mealLogs[currentMealLogDate] &&
+                  mealLogFoods[mealLogs[currentMealLogDate].id]
+                    ?.filter(mealLogFoodItem => mealLogFoodItem.meal_type === "breakfast")
+                    .map((mealLogFood: MealLogFood) => {
+                      return (
+                        <div key={mealLogFood.id} className="meal-log-food">
+                          <div className="meal-log-food-section">
+                            <p className="meal-log-food-text">{mealLogFood.food_id}</p>
+                            <p className="meal-log-food-serving-text">{mealLogFood.num_servings * mealLogFood.serving_size} {mealLogFood.serving_unit}</p>
+                          </div>
 
+                          <div className="meal-log-food-section">
+                            <p className="meal-log-food-text">{mealLogFood.calories ? `${mealLogFood.calories} calories` : ''}</p>
+                          </div>
+                        </div>
+                      )
+                    })
+                }
+                
                 <button className="add-food-button">
                   Add Food
                 </button>
@@ -249,11 +286,26 @@ export default function MealLogsPage() {
                   </button>
                 </div>
 
-                <div className="meal-log-food">Food 1</div>
-                <div className="meal-log-food">Food 2</div>
-                <div className="meal-log-food">Food 3</div>
-                <div className="meal-log-food">Food 4</div>
-                <div className="meal-log-food">Food 5</div>
+                {
+                  currentMealLogDate &&
+                  mealLogs[currentMealLogDate] &&
+                  mealLogFoods[mealLogs[currentMealLogDate].id]
+                    ?.filter(mealLogFoodItem => mealLogFoodItem.meal_type === "lunch")
+                    .map((mealLogFood: MealLogFood) => {
+                      return (
+                        <div key={mealLogFood.id} className="meal-log-food">
+                          <div className="meal-log-food-section">
+                            <p className="meal-log-food-text">{mealLogFood.food_id}</p>
+                            <p className="meal-log-food-serving-text">{mealLogFood.num_servings * mealLogFood.serving_size} {mealLogFood.serving_unit}</p>
+                          </div>
+
+                          <div className="meal-log-food-section">
+                            <p className="meal-log-food-text">{mealLogFood.calories ? `${mealLogFood.calories} calories` : ''}</p>
+                          </div>
+                        </div>
+                      )
+                    })
+                }
 
                 <button className="add-food-button">
                   Add Food
@@ -271,11 +323,26 @@ export default function MealLogsPage() {
                   </button>
                 </div>
 
-                <div className="meal-log-food">Food 1</div>
-                <div className="meal-log-food">Food 2</div>
-                <div className="meal-log-food">Food 3</div>
-                <div className="meal-log-food">Food 4</div>
-                <div className="meal-log-food">Food 5</div>
+                {
+                  currentMealLogDate &&
+                  mealLogs[currentMealLogDate] &&
+                  mealLogFoods[mealLogs[currentMealLogDate].id]
+                    ?.filter(mealLogFoodItem => mealLogFoodItem.meal_type === "dinner")
+                    .map((mealLogFood: MealLogFood) => {
+                      return (
+                        <div key={mealLogFood.id} className="meal-log-food">
+                          <div className="meal-log-food-section">
+                            <p className="meal-log-food-text">{mealLogFood.food_id}</p>
+                            <p className="meal-log-food-serving-text">{mealLogFood.num_servings * mealLogFood.serving_size} {mealLogFood.serving_unit}</p>
+                          </div>
+
+                          <div className="meal-log-food-section">
+                            <p className="meal-log-food-text">{mealLogFood.calories ? `${mealLogFood.calories} calories` : ''}</p>
+                          </div>
+                        </div>
+                      )
+                    })
+                }
 
                 <button className="add-food-button">
                   Add Food
@@ -293,11 +360,26 @@ export default function MealLogsPage() {
                   </button>
                 </div>
 
-                <div className="meal-log-food">Food 1</div>
-                <div className="meal-log-food">Food 2</div>
-                <div className="meal-log-food">Food 3</div>
-                <div className="meal-log-food">Food 4</div>
-                <div className="meal-log-food">Food 5</div>
+                {
+                  currentMealLogDate &&
+                  mealLogs[currentMealLogDate] &&
+                  mealLogFoods[mealLogs[currentMealLogDate].id]
+                    ?.filter(mealLogFoodItem => mealLogFoodItem.meal_type === "snacks")
+                    .map((mealLogFood: MealLogFood) => {
+                      return (
+                        <div key={mealLogFood.id} className="meal-log-food">
+                          <div className="meal-log-food-section">
+                            <p className="meal-log-food-text">{mealLogFood.food_id}</p>
+                            <p className="meal-log-food-serving-text">{mealLogFood.num_servings * mealLogFood.serving_size} {mealLogFood.serving_unit}</p>
+                          </div>
+
+                          <div className="meal-log-food-section">
+                            <p className="meal-log-food-text">{mealLogFood.calories ? `${mealLogFood.calories} calories` : ''}</p>
+                          </div>
+                        </div>
+                      )
+                    })
+                }
 
                 <button className="add-food-button">
                   Add Food
