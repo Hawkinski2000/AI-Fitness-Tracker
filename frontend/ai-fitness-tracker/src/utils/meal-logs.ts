@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { type MealLog, type MealLogFood } from "../pages/meal-logs/MealLogsPage";
+import { type MealLog, type MealLogFood, type Food } from "../pages/meal-logs/MealLogsPage";
 import { API_BASE_URL } from '../config/api';
 
 
@@ -67,4 +67,29 @@ export const loadMealLogFoods = async (mealLogId: number,
   setMealLogFoods(mealLogFoods);
 
   return mealLogFoods;
+};
+
+export const loadFood = async (foodId: number,
+                              setFoods: React.Dispatch<React.SetStateAction<Record<number, Food>>>,
+                              token: string) => {
+  const foodResponse = await axios.get(`${API_BASE_URL}/foods/${foodId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  if (foodResponse.data.length === 0) {
+    return {};
+  }
+
+  const food = foodResponse.data;
+
+  setFoods(prev => ({
+    ...prev,
+    [foodId]: food
+  }));
+
+  return food;
 };

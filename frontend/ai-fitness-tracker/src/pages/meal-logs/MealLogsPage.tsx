@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/auth/useAuth";
 import { type User } from "../chat/ChatPage";
 import { refreshAccessToken, logOut, getUserFromToken } from "../../utils/auth";
-import { loadMealLogs, loadMealLogFoods } from "../../utils/meal-logs";
+import { loadMealLogs, loadMealLogFoods, loadFood } from "../../utils/meal-logs";
 import { PropagateLoader } from 'react-spinners';
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
@@ -27,6 +27,13 @@ export interface MealLogFood {
   created_at: string;
   calories: number | null;
 }
+export interface Food {
+  id: number;
+  description: string;
+  calories: number | null;
+  user_id: number | null;
+  user_created_at: string | null;
+}
 
 export default function MealLogsPage() {
   const { setAccessToken } = useAuth();
@@ -40,6 +47,10 @@ export default function MealLogsPage() {
   const [today, setToday] = useState<string | null>(null);
 
   const [mealLogFoods, setMealLogFoods] = useState<Record<number, MealLogFood[]>>({});
+
+  const [foods, setFoods] = useState<Record<number, Food>>({});
+
+  const [foodCalories, setFoodCalories] = useState<number>(0);
 
   const [accountMenuOpen, setAccountMenuOpen] = useState<boolean>(false);
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
@@ -64,8 +75,6 @@ export default function MealLogsPage() {
           setTokensRemaining(Math.min(userData.input_tokens_remaining, userData.output_tokens_remaining))
 
           const loadedMealLogs = await loadMealLogs(setMealLogs, token);
-          console.log('Meal logs:');
-          console.log(loadedMealLogs);
 
           const today = new Date().toISOString().split('T')[0];
           setToday(today);
@@ -73,13 +82,21 @@ export default function MealLogsPage() {
 
           const currentMealLog = loadedMealLogs[today];
 
-          if (currentMealLog) {
-            const currentMealLogId = currentMealLog.id;
-
-            const loadedMealLogFoods = await loadMealLogFoods(currentMealLogId, setMealLogFoods, token);
-            console.log('Meal log foods:');
-            console.log(loadedMealLogFoods);
+          if (!currentMealLog) {
+            return;
           }
+          
+          const currentMealLogId = currentMealLog.id;
+
+          const loadedMealLogFoods = await loadMealLogFoods(currentMealLogId, setMealLogFoods, token);
+
+          await Promise.all(
+            Object.values(loadedMealLogFoods).map(mealLogFood =>
+              mealLogFood.forEach((mealLogFoodObject: MealLogFood) => {
+                loadFood(mealLogFoodObject.food_id, setFoods, token)
+              })
+            )
+          );
 
         } catch (err) {
           console.error(err);
@@ -93,6 +110,30 @@ export default function MealLogsPage() {
   
       fetchData();
     }, [setAccessToken, navigate]);
+
+// ---------------------------------------------------------------------------
+
+    useEffect(() => {
+      if (!currentMealLogDate) {
+        return;
+      }
+
+      const currentMealLog = mealLogs[currentMealLogDate];
+      if (!currentMealLog) {
+        setFoodCalories(0);
+        return;
+      }
+
+      const currentMealLogFoods = mealLogFoods[currentMealLog.id] || [];
+
+      let totalCalories = 0;
+
+      currentMealLogFoods.forEach((mealLogFood: MealLogFood) => {
+        totalCalories += mealLogFood.calories || 0;
+      });
+
+      setFoodCalories(totalCalories);
+    }, [currentMealLogDate, mealLogs, mealLogFoods]);
 
   // ---------------------------------------------------------------------------
 
@@ -147,7 +188,7 @@ export default function MealLogsPage() {
     setCurrentMealLogDate(prevDateString);
   }
 
-// ---------------------------------------------------------------------------  
+// ---------------------------------------------------------------------------
 
   if (loading) {
     return (
@@ -214,7 +255,7 @@ export default function MealLogsPage() {
                   </div>
 
                   <div className="calories-remaining-section">
-                    <p>0</p>
+                    <p>{foodCalories}</p>
                     <p className="calories-remaining-section-label">Food</p>
                   </div>
 
@@ -258,7 +299,7 @@ export default function MealLogsPage() {
                       return (
                         <div key={mealLogFood.id} className="meal-log-food">
                           <div className="meal-log-food-section">
-                            <p className="meal-log-food-text">{mealLogFood.food_id}</p>
+                            <p className="meal-log-food-text">{foods[mealLogFood.food_id]?.description ?? ''}</p>
                             <p className="meal-log-food-serving-text">{mealLogFood.num_servings * mealLogFood.serving_size} {mealLogFood.serving_unit}</p>
                           </div>
 
@@ -295,7 +336,7 @@ export default function MealLogsPage() {
                       return (
                         <div key={mealLogFood.id} className="meal-log-food">
                           <div className="meal-log-food-section">
-                            <p className="meal-log-food-text">{mealLogFood.food_id}</p>
+                            <p className="meal-log-food-text">{foods[mealLogFood.food_id]?.description ?? ''}</p>
                             <p className="meal-log-food-serving-text">{mealLogFood.num_servings * mealLogFood.serving_size} {mealLogFood.serving_unit}</p>
                           </div>
 
@@ -332,7 +373,7 @@ export default function MealLogsPage() {
                       return (
                         <div key={mealLogFood.id} className="meal-log-food">
                           <div className="meal-log-food-section">
-                            <p className="meal-log-food-text">{mealLogFood.food_id}</p>
+                            <p className="meal-log-food-text">{foods[mealLogFood.food_id]?.description ?? ''}</p>
                             <p className="meal-log-food-serving-text">{mealLogFood.num_servings * mealLogFood.serving_size} {mealLogFood.serving_unit}</p>
                           </div>
 
@@ -369,7 +410,7 @@ export default function MealLogsPage() {
                       return (
                         <div key={mealLogFood.id} className="meal-log-food">
                           <div className="meal-log-food-section">
-                            <p className="meal-log-food-text">{mealLogFood.food_id}</p>
+                            <p className="meal-log-food-text">{foods[mealLogFood.food_id]?.description ?? ''}</p>
                             <p className="meal-log-food-serving-text">{mealLogFood.num_servings * mealLogFood.serving_size} {mealLogFood.serving_unit}</p>
                           </div>
 
