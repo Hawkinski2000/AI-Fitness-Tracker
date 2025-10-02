@@ -766,7 +766,6 @@ export default function ChatPage() {
       <div className='chat-page'>
 
 {/* ---------------------------------------------------------------------- */}
-{/* ---- Header ---- */}
 
         <Header
           isRemovingTokens={isRemovingTokens}

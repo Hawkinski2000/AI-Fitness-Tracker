@@ -24,7 +24,7 @@
   flex: 1;
   flex-direction: column;
   width: 100%;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
   position: relative;
 }
 
@@ -45,6 +45,9 @@
 }
 
 .date-nav-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background: none;
   border: none;
   border-radius: 10px;
@@ -101,14 +104,21 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
   padding: 0 1rem;
   border-bottom: 1px solid #2e2e5e;
   user-select: none;
 }
 
+.meal-options-button-container {
+  display: flex;
+  justify-content: end;
+  width: 100%;
+}
+
 .meal-options-button {
   display: flex;
-  height: fit-content;
+  height: 2rem;
   border-radius: 10px;
   padding: 0.5rem;
   border: none;
@@ -117,12 +127,64 @@
   transition: all 0.25s;
 }
 .meal-options-button:hover {
+  background-color: #8085a6;
+}
+
+.meal-options-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  height: 0;
+  width: fit-content;
+  top: 3.5rem;
+  right: 1rem;
+  padding: 0 0.5rem 0 0.5rem;
+  overflow: hidden;
   background-color: #2e2e5e;
+  border: none;
+  border-radius: 10px;
+  cursor: default;
+  z-index: 2;
+  transition: all 0.1s;
+}
+
+.meal-options-menu-open {
+  height: fit-content;
+  padding: 0.5rem;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
+}
+
+.meal-options-menu-button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.5rem;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  user-select: none;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.meal-options-menu-button:hover {
+  background-color: #8085a6;
+}
+
+.meal-options-delete-button {
+ color: red;
+}
+.meal-options-delete-button:hover {
+  background-color: rgba(255, 0, 0, 0.25);
 }
 
 .meal-log-food {
   display: flex;
   justify-content: space-between;
+  position: relative;
   padding: 1rem;
   border-bottom: 1px solid #2e2e5e;
   user-select: none;
@@ -145,6 +207,10 @@
 
 .meal-log-food-serving-text {
   margin: 0;
+}
+
+.meal-log-food-options-menu {
+  top: 5rem;
 }
 
 .add-food-button {
