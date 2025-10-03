@@ -6,7 +6,7 @@ An AI-powered fitness tracker that generates insights based on diet, exercise, s
 - Implements CI/CD with GitHub Actions, running 121+ Python tests, building Docker containers, and deploying to EC2.
 - Features a responsive React + TypeScript frontend with HTML/CSS. Uses secure authentication (JWTs, HTTP-only refresh tokens), reCAPTCHA, and Nginx proxy with rate limiting for production readiness.
 
-![Dashboard](images/Dashboard.png)
+![Chat Page](images/chat_page.png)
 
 ![User Flow Diagram](images/User%20Flow%20Diagram%20-%20AI%20Fitness%20Tracker.png)
 
