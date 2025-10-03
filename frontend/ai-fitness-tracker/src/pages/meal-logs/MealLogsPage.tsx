@@ -58,7 +58,6 @@ export default function MealLogsPage() {
   const [foodCalories, setFoodCalories] = useState<number>(0);
 
   const [mealOptionsMenuOpenType, setMealOptionsMenuOpenType] = useState<string>('');
-
   const mealOptionsMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const [mealFoodOptionsMenuOpenId, setMealFoodOptionsMenuOpenId] = useState<number | null>(null);
@@ -149,6 +148,37 @@ export default function MealLogsPage() {
 
 // ---------------------------------------------------------------------------
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target;
+
+      if (
+        mealOptionsMenuOpenType &&
+        mealOptionsMenuRefs.current[mealOptionsMenuOpenType] &&
+        target instanceof Node &&
+        !mealOptionsMenuRefs.current[mealOptionsMenuOpenType].contains(target) &&
+        !(target instanceof HTMLElement && target.classList.contains('meal-options-button'))
+      ) {
+        setMealOptionsMenuOpenType('');
+      }
+
+      if (
+        mealFoodOptionsMenuOpenId &&
+        mealFoodOptionsMenuRefs.current[mealFoodOptionsMenuOpenId] &&
+        target instanceof Node &&
+        !mealFoodOptionsMenuRefs.current[mealFoodOptionsMenuOpenId].contains(target) &&
+        !(target instanceof HTMLElement && target.classList.contains('meal-options-button'))
+      ) {
+        setMealFoodOptionsMenuOpenId(null);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [mealOptionsMenuOpenType, mealFoodOptionsMenuOpenId]);
+
+// ---------------------------------------------------------------------------
+
   const handleLogOut = async () => {
     logOut();
     setAccessToken(null);
@@ -209,8 +239,6 @@ export default function MealLogsPage() {
       const newDate = prevDate.toISOString().split('T')[0];
       setCurrentMealLogDate(newDate);
 
-      setMealOptionsMenuOpenType('');
-
       const currentMealLog = mealLogs[newDate];
 
       if (!currentMealLog) {
@@ -267,9 +295,14 @@ export default function MealLogsPage() {
           deleteMealLogFood(mealLogFoodId, setMealLogFoods, token))
       );
 
+      setMealOptionsMenuOpenType('');
+
     } catch (err) {
       console.error(err);
       setAccessToken(null);
+
+    } finally {
+      setMealOptionsMenuOpenType('');
     }
   };
 
@@ -287,6 +320,8 @@ export default function MealLogsPage() {
       }
 
       await deleteMealLogFood(mealLogFoodId, setMealLogFoods, token);
+
+      setMealFoodOptionsMenuOpenId(null);
 
     } catch (err) {
       console.error(err);
