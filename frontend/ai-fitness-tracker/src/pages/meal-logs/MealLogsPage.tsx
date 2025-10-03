@@ -2,8 +2,8 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/auth/useAuth";
 import { type User } from "../chat/ChatPage";
-import { refreshAccessToken, logOut, getUserFromToken } from "../../utils/auth";
-import { loadMealLogs, loadMealLogFoods, loadFood } from "../../utils/meal-logs";
+import { refreshAccessToken, logOut, getUserFromToken, isTokenExpired } from "../../utils/auth";
+import { loadMealLogs, loadMealLogFoods, deleteMealLogFood, loadFood } from "../../utils/meal-logs";
 import { PropagateLoader } from 'react-spinners';
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
@@ -41,7 +41,7 @@ export interface Food {
 }
 
 export default function MealLogsPage() {
-  const { setAccessToken } = useAuth();
+  const { accessToken, setAccessToken } = useAuth();
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -69,7 +69,7 @@ export default function MealLogsPage() {
 
   const [tokensRemaining, setTokensRemaining] = useState<number>(0);
 
-  // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
   
     useEffect(() => {
       const fetchData = async () => {
@@ -147,7 +147,7 @@ export default function MealLogsPage() {
       setFoodCalories(totalCalories);
     }, [currentMealLogDate, mealLogs, mealLogFoods]);
 
-  // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
   const handleLogOut = async () => {
     logOut();
@@ -179,28 +179,120 @@ export default function MealLogsPage() {
     return currentMealLogDate.split("T")[0];
   };
 
-// ---------------------------------------------------------------------------  
+// ---------------------------------------------------------------------------
 
-  const handleChangeDate = (direction: string) => {
-    if (!currentMealLogDate) {
-      return;
+  const handleChangeDate = async (direction: string) => {
+    try {
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();  
+        setAccessToken(token);
+      }
+      if (!token) {
+        throw new Error("No access token");
+      }
+
+      if (!currentMealLogDate) {
+        return;
+      }
+
+      let dayDifference = 0;
+      if (direction === 'previous') {
+        dayDifference -= 1;
+      }
+      else if (direction === 'next') {
+        dayDifference += 1;
+      }
+
+      const prevDate = new Date(currentMealLogDate);
+      prevDate.setDate(prevDate.getDate() + dayDifference);
+      const newDate = prevDate.toISOString().split('T')[0];
+      setCurrentMealLogDate(newDate);
+
+      setMealOptionsMenuOpenType('');
+
+      const currentMealLog = mealLogs[newDate];
+
+      if (!currentMealLog) {
+        return;
+      }
+      
+      const currentMealLogId = currentMealLog.id;
+
+      const loadedMealLogFoods = await loadMealLogFoods(currentMealLogId, setMealLogFoods, token);
+
+      await Promise.all(
+        Object.values(loadedMealLogFoods).map((mealLogFoodArray: MealLogFood[]) =>
+          mealLogFoodArray.forEach((mealLogFoodItem: MealLogFood) => {
+            loadFood(mealLogFoodItem.food_id, setFoods, token)
+          })
+        )
+      );
+    
+    } catch (err) {
+      console.error(err);
+      setAccessToken(null);
     }
-
-    let dayDifference = 0;
-    if (direction === 'previous') {
-      dayDifference -= 1;
-    }
-    else if (direction === 'next') {
-      dayDifference += 1;
-    }
-
-    const prevDate = new Date(currentMealLogDate);
-    prevDate.setDate(prevDate.getDate() + dayDifference);
-    const prevDateString = prevDate.toISOString().split('T')[0];
-    setCurrentMealLogDate(prevDateString);
-
-    setMealOptionsMenuOpenType('');
   }
+
+// ---------------------------------------------------------------------------
+
+  const handleDeleteMeal = async (mealType: string) => {
+    try {
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();  
+        setAccessToken(token);
+      }
+      if (!token) {
+        throw new Error("No access token");
+      }
+
+      if (!currentMealLogDate) {
+        return;
+      }
+
+      const currentMealLog = mealLogs[currentMealLogDate];
+
+      const currentMealLogId = currentMealLog.id;
+
+      const currentMealLogFoods = mealLogFoods[currentMealLogId];
+
+      const mealLogFoodsInMealType = currentMealLogFoods.filter((mealLogFood: MealLogFood) => mealLogFood.meal_type === mealType);
+
+      const mealLogFoodIdsInMealType = mealLogFoodsInMealType.map((mealLogFood: MealLogFood) => mealLogFood.id);
+
+      await Promise.all(
+        mealLogFoodIdsInMealType.map((mealLogFoodId: number) =>
+          deleteMealLogFood(mealLogFoodId, setMealLogFoods, token))
+      );
+
+    } catch (err) {
+      console.error(err);
+      setAccessToken(null);
+    }
+  };
+
+// ---------------------------------------------------------------------------
+
+  const handleDeleteMealLogFood = async (mealLogFoodId: number) => {
+    try {
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();  
+        setAccessToken(token);
+      }
+      if (!token) {
+        throw new Error("No access token");
+      }
+
+      await deleteMealLogFood(mealLogFoodId, setMealLogFoods, token);
+
+    } catch (err) {
+      console.error(err);
+      setAccessToken(null);
+    }
+  };
 
 // ---------------------------------------------------------------------------
 
@@ -357,7 +449,7 @@ export default function MealLogsPage() {
                       className="meal-options-menu-button meal-options-delete-button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        // handleDeleteMeal('breakfast');
+                        handleDeleteMeal('breakfast');
                       }}
                     >
                       <img className="button-link-image" src={deleteIcon} />
@@ -430,7 +522,7 @@ export default function MealLogsPage() {
                                 className="meal-options-menu-button meal-options-delete-button"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  // handleDeleteMealFood('breakfast');
+                                  handleDeleteMealLogFood(mealLogFood.id);
                                 }}
                               >
                                 <img className="button-link-image" src={deleteIcon} />
@@ -503,7 +595,7 @@ export default function MealLogsPage() {
                       className="meal-options-menu-button meal-options-delete-button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        // handleDeleteMeal('lunch');
+                        handleDeleteMeal('lunch');
                       }}
                     >
                       <img className="button-link-image" src={deleteIcon} />
@@ -576,7 +668,7 @@ export default function MealLogsPage() {
                                 className="meal-options-menu-button meal-options-delete-button"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  // handleDeleteMealFood('lunch');
+                                  handleDeleteMealLogFood(mealLogFood.id);
                                 }}
                               >
                                 <img className="button-link-image" src={deleteIcon} />
@@ -649,7 +741,7 @@ export default function MealLogsPage() {
                       className="meal-options-menu-button meal-options-delete-button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        // handleDeleteMeal('dinner');
+                        handleDeleteMeal('dinner');
                       }}
                     >
                       <img className="button-link-image" src={deleteIcon} />
@@ -722,7 +814,7 @@ export default function MealLogsPage() {
                                 className="meal-options-menu-button meal-options-delete-button"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  // handleDeleteMealFood('dinner');
+                                  handleDeleteMealLogFood(mealLogFood.id);
                                 }}
                               >
                                 <img className="button-link-image" src={deleteIcon} />
@@ -795,7 +887,7 @@ export default function MealLogsPage() {
                       className="meal-options-menu-button meal-options-delete-button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        // handleDeleteMeal('snacks');
+                        handleDeleteMeal('snacks');
                       }}
                     >
                       <img className="button-link-image" src={deleteIcon} />
@@ -868,7 +960,7 @@ export default function MealLogsPage() {
                                 className="meal-options-menu-button meal-options-delete-button"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  // handleDeleteMealFood('snacks');
+                                  handleDeleteMealLogFood(mealLogFood.id);
                                 }}
                               >
                                 <img className="button-link-image" src={deleteIcon} />

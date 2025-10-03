@@ -31,6 +31,8 @@ export const loadMealLogs = async (setMealLogs: React.Dispatch<React.SetStateAct
   return mealLogs;
 };
 
+// ---------------------------------------------------------------------------
+
 export const loadMealLogFoods = async (mealLogId: number,
                                        setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
                                        token: string) => {
@@ -68,6 +70,29 @@ export const loadMealLogFoods = async (mealLogId: number,
 
   return mealLogFoods;
 };
+
+export const deleteMealLogFood = async (mealLogFoodId: number,
+                                        setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
+                                        token: string) => {
+  await axios.delete(`${API_BASE_URL}/meal-log-foods/${mealLogFoodId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  setMealLogFoods(prevMealLogFoods =>
+    Object.fromEntries(
+      Object.entries(prevMealLogFoods).map(([logId, mealLogFoodsArray]) => [
+        logId,
+        mealLogFoodsArray.filter(mealLogFood => mealLogFood.id !== mealLogFoodId)
+      ])
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
 
 export const loadFood = async (foodId: number,
                               setFoods: React.Dispatch<React.SetStateAction<Record<number, Food>>>,
