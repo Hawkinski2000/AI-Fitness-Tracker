@@ -9,6 +9,8 @@ import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import arrowLeftIcon from '../../assets/arrow-left-icon.svg';
 import arrowRightIcon from '../../assets/arrow-right-icon.svg';
+import closeIcon from '../../assets/close-icon.svg';
+import addIcon from '../../assets/add-icon.svg';
 import dotsIcon from '../../assets/dots-icon.svg';
 import copyIcon from '../../assets/copy-icon.svg';
 import moveIcon from '../../assets/move-icon.svg';
@@ -62,6 +64,12 @@ export default function MealLogsPage() {
 
   const [mealFoodOptionsMenuOpenId, setMealFoodOptionsMenuOpenId] = useState<number | null>(null);
   const mealFoodOptionsMenuRefs = useRef<Record<number, HTMLDivElement | null>>({});
+
+  const [foodsMenuOpenMealType, setFoodsMenuOpenMealType] = useState<string>('');
+  const foodsMenuRef = useRef<HTMLDivElement | null>(null);
+
+  const [foodSearch, setFoodSearch] = useState<string>('');
+  const [foodMenuInputFocused, setFoodMenuInputFocused] = useState<boolean>(false);
 
   const [accountMenuOpen, setAccountMenuOpen] = useState<boolean>(false);
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
@@ -171,11 +179,23 @@ export default function MealLogsPage() {
       ) {
         setMealFoodOptionsMenuOpenId(null);
       }
+
+      if (
+        foodsMenuOpenMealType &&
+        foodsMenuRef.current &&
+        target instanceof Node &&
+        !foodsMenuRef.current.contains(target) &&
+        !(target instanceof HTMLElement && target.classList.contains('add-food-button'))
+      ) {
+        setFoodsMenuOpenMealType('');
+        setFoodSearch('');
+        setFoodMenuInputFocused(false);
+      }
     }
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [mealOptionsMenuOpenType, mealFoodOptionsMenuOpenId]);
+  }, [mealOptionsMenuOpenType, mealFoodOptionsMenuOpenId, foodsMenuOpenMealType]);
 
 // ---------------------------------------------------------------------------
 
@@ -331,6 +351,12 @@ export default function MealLogsPage() {
 
 // ---------------------------------------------------------------------------
 
+  const updateFoodSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFoodSearch(event.target.value);
+  };
+
+// ---------------------------------------------------------------------------
+
   if (loading) {
     return (
       <div className='loading-screen'>
@@ -430,6 +456,81 @@ export default function MealLogsPage() {
                   </div>
                 </div>
               </header>
+
+{/* ---------------------------------------------------------------------- */}
+{/* ---- Foods Menu ---- */}
+
+              <div
+                className={`foods-menu ${foodsMenuOpenMealType && 'foods-menu-open'}`}
+                ref={foodsMenuRef}
+              >
+
+                <button
+                  className="foods-menu-close-button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setFoodsMenuOpenMealType('');
+                  }}
+                >
+                  <img className="button-link-image" src={closeIcon} />
+                </button>
+
+                <div className="foods-menu-input-container">
+                  <div className="foods-menu-input-placeholder-container">
+                    <input
+                      className='foods-menu-input'
+                      type='text'
+                      value={foodSearch}
+                      onChange={updateFoodSearch}
+                      onFocus={() => setFoodMenuInputFocused(true)}
+                      onBlur={() => setFoodMenuInputFocused(false)}
+                    />
+                    <span
+                      className={
+                        `placeholder foods-menu-placeholder
+                        ${foodSearch ? 'float' : ''}
+                        ${foodMenuInputFocused ? 'float focus' : ''}`
+                      }
+                    >
+                      Search foods
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="foods-menu-results-section">
+                  <h3 className="foods-menu-results-header">Search Results</h3>
+
+                  <div className="food-menu-results">
+
+                    <div key={'food.id'} className="foods-menu-results-food">
+                      <div className="meal-log-food-section">
+                        <p className="meal-log-food-text">{'Test food'}</p>
+                        <p className="meal-log-food-serving-text">100 cal, 28.0 g</p>
+                        {/* <p className="meal-log-food-text">{food.description}</p> */}
+                        {/* <p className="meal-log-food-serving-text">
+                          {food.calories ? `${food.calories} cal, ` : ''}
+                          {food.brandedFood.serving_size || 1.0}
+                          {food.brandedFood.serving_size_unit || ''}
+                        </p> */}
+                      </div>
+
+                      <div className="meal-log-food-section">
+                        <div className="meal-options-button-container">
+                          <button
+                            className="foods-menu-add-button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // handleAddFood('breakfast', food.id);
+                            }}
+                          >
+                            <img className="button-link-image" src={addIcon} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
 {/* ---------------------------------------------------------------------- */}
 {/* ---- Breakfast Section Header ---- */}
@@ -572,7 +673,15 @@ export default function MealLogsPage() {
                 
 {/* ---------------------------------------------------------------------- */}
 
-                <button className="add-food-button">
+                <button
+                  className="add-food-button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setFoodSearch('');
+                    setFoodMenuInputFocused(false);
+                    setFoodsMenuOpenMealType((prev) => (prev === 'breakfast' ? '' : 'breakfast'));
+                  }}
+                >
                   Add Food
                 </button>
               </section>
@@ -718,7 +827,15 @@ export default function MealLogsPage() {
 
 {/* ---------------------------------------------------------------------- */}
 
-                <button className="add-food-button">
+                <button
+                  className="add-food-button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setFoodSearch('');
+                    setFoodMenuInputFocused(false);
+                    setFoodsMenuOpenMealType((prev) => (prev === 'lunch' ? '' : 'lunch'));
+                  }}
+                  >
                   Add Food
                 </button>
               </section>
@@ -864,7 +981,15 @@ export default function MealLogsPage() {
 
 {/* ---------------------------------------------------------------------- */}
 
-                <button className="add-food-button">
+                <button
+                  className="add-food-button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setFoodSearch('');
+                    setFoodMenuInputFocused(false);
+                    setFoodsMenuOpenMealType((prev) => (prev === 'dinner' ? '' : 'dinner'));
+                  }}
+                >
                   Add Food
                 </button>
               </section>
@@ -1010,7 +1135,15 @@ export default function MealLogsPage() {
 
 {/* ---------------------------------------------------------------------- */}
 
-                <button className="add-food-button">
+                <button
+                  className="add-food-button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setFoodSearch('');
+                    setFoodMenuInputFocused(false);
+                    setFoodsMenuOpenMealType((prev) => (prev === 'snacks' ? '' : 'snacks'));
+                  }}
+                >
                   Add Food
                 </button>
               </section>

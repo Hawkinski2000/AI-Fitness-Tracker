@@ -131,6 +131,7 @@ input.error {
   font-weight: 500;
   background: #ffffff;
   pointer-events: none;
+  user-select: none;
   transition: all 0.25s; 
 }
 
