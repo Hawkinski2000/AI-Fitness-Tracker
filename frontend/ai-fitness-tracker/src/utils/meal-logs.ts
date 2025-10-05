@@ -118,3 +118,32 @@ export const loadFood = async (foodId: number,
 
   return food;
 };
+
+export const getFoods = async (limit: number,
+                               skip: number,
+                               search: string,
+                               setFoodSearchResults: React.Dispatch<React.SetStateAction<Food[]>>,
+                               token: string) => {
+  const foodsResponse = await axios.get(`${API_BASE_URL}/foods`,
+    {
+      params: {
+        limit,
+        skip,
+        search
+      },
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  if (foodsResponse.data.length === 0) {
+    return [];
+  }
+
+  const foods = foodsResponse.data;
+
+  setFoodSearchResults(foods);
+
+  return foods;
+};

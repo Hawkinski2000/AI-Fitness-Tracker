@@ -25,6 +25,9 @@ def get_foods(limit: int = 10,
               search: Optional[str] = "",
               current_user: token.TokenData = Depends(get_current_user),
               db: Session = Depends(get_db)):
+    if search:
+        search = "%".join(search.split())
+
     foods = crud_foods.get_foods(limit, skip, search, current_user.user_id, db)
     return foods
 

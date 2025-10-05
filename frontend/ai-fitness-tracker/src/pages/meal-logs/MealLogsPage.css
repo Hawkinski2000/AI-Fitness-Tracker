@@ -34,8 +34,11 @@
   align-items: center;
   height: 50px;
   width: 100%;
+  position: fixed;
+  top: 50px;
   background-color: #0c0c1d;
   border-bottom: 1px solid #2e2e5e;
+  z-index: 3;
 }
 
 .date-nav {
@@ -65,10 +68,16 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  height: 75px;
+  width: calc(100vw - 100px);
   padding: 1rem 0;
+  position: fixed;
+  top: 100px;
   background-color: #0c0c1d;
   border-bottom: 1px solid #2e2e5e;
+  box-shadow: 0 5px 10px 5px rgba(0, 0, 0, 0.25);
   user-select: none;
+  z-index: 2;
 }
 
 .calories-remaining-text {
@@ -104,15 +113,16 @@
   height: 0;
   width: calc(100vw - 200px);
   border-radius: 20px;
-  box-shadow: 0 5px 10px 5px rgba(0, 0, 0, 0.25);
   overflow-y: auto;
   pointer-events: none;
-  z-index: 1;
+  user-select: none;
+  z-index: 3;
   transition: height 0.1s;
 }
 
 .foods-menu-open {
   height: calc(100vh - 150px);
+  box-shadow: 0 5px 10px 5px rgba(0, 0, 0, 0.25);
   pointer-events: all;
 }
 
@@ -169,12 +179,20 @@
 }
 
 .foods-menu-placeholder.float {
+  color: #eceff4;
   top: -1.75rem;
   left: 1em;
   padding: 0 0.2em;
 }
 
+.foods-menu-placeholder.focus {
+  color: #00ffcc;
+}
+
 .foods-menu-results-section {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   width: 80%;
 }
 
@@ -185,6 +203,17 @@
 
 .food-menu-results {
   padding-bottom: 2.3rem;
+}
+
+.food-menu-results-loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 150px);
+  width: calc(100vw - 200px);
+  position: fixed;
+  top: 100px;
+  left: 150px;
 }
 
 .foods-menu-results-food {
@@ -222,10 +251,19 @@
   transform: rotate(90deg);
 }
 
+.meals-container {
+  width: calc(100vw - 100px);;
+  position: relative;
+  top: calc(125px + 2rem);
+  padding-bottom: 50px;
+  z-index: 1;
+}
+
 .meal-section {
   height: fit-content;
   margin: 1rem 0 0 0;
   background-color: #0c0c1d;
+  box-shadow: 0 5px 10px 5px rgba(0, 0, 0, 0.25);
   text-align: left;
 }
 
@@ -332,11 +370,26 @@
 }
 
 .meal-log-food-text {
+  text-align: left;
   margin: 0;
 }
 
 .meal-log-food-serving-text {
   margin: 0;
+}
+
+.meal-log-food-options-button {
+  display: flex;
+  height: 2rem;
+  border-radius: 10px;
+  padding: 0.5rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.meal-log-food-options-button:hover {
+  background-color: #8085a6;
 }
 
 .meal-log-food-options-menu {
