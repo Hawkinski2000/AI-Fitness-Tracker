@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/auth/useAuth";
 import { type User } from "../chat/ChatPage";
 import { refreshAccessToken, logOut, getUserFromToken, isTokenExpired } from "../../utils/auth";
-import { loadMealLogs, loadMealLogFoods, deleteMealLogFood, loadFood, getFoods } from "../../utils/meal-logs";
+import { loadMealLogs, createMealLog, loadMealLogFoods, addMealLogFood, deleteMealLogFood, loadFood, getFoods } from "../../utils/meal-logs";
 import { PropagateLoader } from 'react-spinners';
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
@@ -335,7 +335,7 @@ export default function MealLogsPage() {
     try {
       let token: string | null = accessToken;
       if (!accessToken || isTokenExpired(accessToken)) {
-        token = await refreshAccessToken();  
+        token = await refreshAccessToken();
         setAccessToken(token);
       }
       if (!token) {
@@ -402,6 +402,39 @@ export default function MealLogsPage() {
         setIsSearching(false);
       }
     }, 1000);
+  };
+
+  const handleAddFood = async (foodId: number) => {
+    try {
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();  
+        setAccessToken(token);
+      }
+      if (!token) {
+        throw new Error("No access token");
+      }
+
+      if (!currentMealLogDate) {
+        return;
+      }
+
+      let mealLog;
+      if (!mealLogs[currentMealLogDate]) {
+        mealLog = await createMealLog(currentMealLogDate, setMealLogs, token);
+      }
+      else {
+        mealLog = mealLogs[currentMealLogDate];
+      }
+
+      const mealLogId = mealLog.id;
+
+      await addMealLogFood(mealLogId, foodId, foodsMenuOpenMealType, setMealLogFoods, setFoods, token);
+
+    } catch (err) {
+      console.error(err);
+      setAccessToken(null);
+    }
   };
 
 // ---------------------------------------------------------------------------
@@ -581,7 +614,7 @@ export default function MealLogsPage() {
                                     className="foods-menu-add-button"
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      // handleAddFood('breakfast', food.id);
+                                      handleAddFood(food.id);
                                     }}
                                   >
                                     <img className="button-link-image" src={addIcon} />
