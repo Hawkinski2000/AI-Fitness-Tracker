@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/auth/useAuth";
 import { type User } from "../chat/ChatPage";
 import { refreshAccessToken, logOut, getUserFromToken, isTokenExpired } from "../../utils/auth";
-import { loadMealLogs, createMealLog, loadMealLogFoods, addMealLogFood, deleteMealLogFood, loadFood, getFoods } from "../../utils/meal-logs";
+import { loadMealLogs, createMealLog, loadMealLogFoods, addMealLogFood, deleteMealLogFood, loadFood, getFoods, loadBrandedFood } from "../../utils/meal-logs";
 import { PropagateLoader } from 'react-spinners';
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
@@ -41,6 +41,16 @@ export interface Food {
   user_id: number | null;
   user_created_at: string | null;
 }
+export interface BrandedFood {
+  food_id: number;
+  brand_owner: string | null;
+  brand_name: string | null;
+  subbrand_name: string | null;
+  ingredients: string | null;
+  serving_size: number | null;
+  serving_size_unit: string | null;
+  food_category: string | null;
+}
 
 export default function MealLogsPage() {
   const { accessToken, setAccessToken } = useAuth();
@@ -56,6 +66,8 @@ export default function MealLogsPage() {
   const [mealLogFoods, setMealLogFoods] = useState<Record<number, MealLogFood[]>>({});
 
   const [foods, setFoods] = useState<Record<number, Food>>({});
+
+  const [brandedFoods, setBrandedFoods] = useState<Record<number, BrandedFood>>({});
 
   const [foodCalories, setFoodCalories] = useState<number>(0);
 
@@ -115,7 +127,8 @@ export default function MealLogsPage() {
           await Promise.all(
             Object.values(loadedMealLogFoods).map(mealLogFood =>
               mealLogFood.forEach((mealLogFoodObject: MealLogFood) => {
-                loadFood(mealLogFoodObject.food_id, setFoods, token)
+                loadFood(mealLogFoodObject.food_id, setFoods, token);
+                loadBrandedFood(mealLogFoodObject.food_id, setBrandedFoods, token);
               })
             )
           );
@@ -275,7 +288,8 @@ export default function MealLogsPage() {
       await Promise.all(
         Object.values(loadedMealLogFoods).map((mealLogFoodArray: MealLogFood[]) =>
           mealLogFoodArray.forEach((mealLogFoodItem: MealLogFood) => {
-            loadFood(mealLogFoodItem.food_id, setFoods, token)
+            loadFood(mealLogFoodItem.food_id, setFoods, token);
+            loadBrandedFood(mealLogFoodItem.food_id, setBrandedFoods, token);
           })
         )
       );
@@ -392,7 +406,13 @@ export default function MealLogsPage() {
           throw new Error("No access token");
         }
 
-        await getFoods(20, 0, search, setFoodSearchResults, token);
+        const foods = await getFoods(20, 0, search, setFoodSearchResults, token);
+
+        await Promise.all(
+          foods.map((food: Food) => 
+            loadBrandedFood(food.id, setBrandedFoods, token)
+          )
+        );
 
       } catch (err) {
         console.error(err);
@@ -603,8 +623,8 @@ export default function MealLogsPage() {
                                 <p className="meal-log-food-text">{food.description}</p>
                                 <p className="meal-log-food-serving-text">
                                   {food.calories ? `${food.calories} cal, ` : ''}
-                                  {/* {food.brandedFood.serving_size || 1.0}
-                                  {food.brandedFood.serving_size_unit || ''} */}
+                                  {brandedFoods[food.id].serving_size || 1.0}
+                                  {brandedFoods[food.id].serving_size_unit || ''}
                                 </p>
                               </div>
 

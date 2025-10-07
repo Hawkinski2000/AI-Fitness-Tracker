@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { type MealLog, type MealLogFood, type Food } from "../pages/meal-logs/MealLogsPage";
+import { type MealLog, type MealLogFood, type Food, type BrandedFood } from "../pages/meal-logs/MealLogsPage";
 import { API_BASE_URL } from '../config/api';
 
 
@@ -197,4 +197,31 @@ export const getFoods = async (limit: number,
   setFoodSearchResults(foods);
 
   return foods;
+};
+
+// ---------------------------------------------------------------------------
+
+export const loadBrandedFood = async (foodId: number,
+                                      setBrandedFoods: React.Dispatch<React.SetStateAction<Record<number, BrandedFood>>>,
+                                      token: string) => {
+  const brandedFoodResponse = await axios.get(`${API_BASE_URL}/branded-foods/${foodId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  if (brandedFoodResponse.data.length === 0) {
+    return {};
+  }
+
+  const brandedFood = brandedFoodResponse.data;
+
+  setBrandedFoods(prev => ({
+    ...prev,
+    [foodId]: brandedFood
+  }));
+
+  return brandedFood;
 };
