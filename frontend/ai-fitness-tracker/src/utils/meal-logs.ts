@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { type MealLog, type MealLogFood, type Food, type BrandedFood } from "../pages/meal-logs/MealLogsPage";
+import { type MealLog, type MealLogFood, type Food, type BrandedFood, type FoodNutrient, type Nutrient } from "../pages/meal-logs/MealLogsPage";
 import { API_BASE_URL } from '../config/api';
 
 
@@ -224,4 +224,61 @@ export const loadBrandedFood = async (foodId: number,
   }));
 
   return brandedFood;
+};
+
+// ---------------------------------------------------------------------------
+
+export const loadFoodNutrients = async (foodId: number,
+                                        setFoodNutrients: React.Dispatch<React.SetStateAction<Record<number, FoodNutrient[]>>>,
+                                       token: string) => {
+  const foodNutrientsResponse = await axios.get(`${API_BASE_URL}/food-nutrients/${foodId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  if (foodNutrientsResponse.data.length === 0) {
+    return [];
+  }
+  
+  const newFoodNutrients: FoodNutrient[] = foodNutrientsResponse.data.map((foodNutrient: FoodNutrient) => ({
+    id: foodNutrient.id,
+    food_id: foodNutrient.food_id,
+    nutrient_id: foodNutrient.nutrient_id,
+    amount: foodNutrient.amount,
+  }));
+
+  setFoodNutrients(prev => ({
+    ...prev,
+    [foodId]: newFoodNutrients
+  }));
+
+  return newFoodNutrients;
+};
+
+export const loadNutrient = async (nutrient_id: number,
+                                   setNutrients: React.Dispatch<React.SetStateAction<Record<number, Nutrient>>>,
+                                   token: string) => {
+  const nutrientResponse = await axios.get(`${API_BASE_URL}/nutrients/${nutrient_id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  if (nutrientResponse.data.length === 0) {
+    return;
+  }
+
+  const nutrient = nutrientResponse.data;
+
+  setNutrients(prev => ({
+    ...prev,
+    [nutrient_id]: nutrient
+  }));
+
+  return nutrient;
 };

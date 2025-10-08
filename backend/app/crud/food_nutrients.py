@@ -24,16 +24,14 @@ def create_food_nutrient(food_nutrient: food_nutrient.FoodNutrientCreate, user_i
 
     return new_food_nutrient
 
-def get_food_nutrients(limit: int,
-                       skip: int,
+def get_food_nutrients(food_id: int,
                        user_id: int,
                        db: Session):
     food_nutrients = (
         db.query(FoodNutrient)
         .join(Food, FoodNutrient.food_id == Food.id)
-        .filter((Food.user_id == None) | (Food.user_id == user_id))
-        .limit(limit)
-        .offset(skip)
+        .filter((Food.user_id == None) | (Food.user_id == user_id),
+                Food.id == food_id)
         .all()
     )
     return food_nutrients

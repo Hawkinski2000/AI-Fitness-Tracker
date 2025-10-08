@@ -18,12 +18,11 @@ def create_food_nutrient(food_nutrient: food_nutrient.FoodNutrientCreate,
     return new_food_nutrient
 
 # Get all food nutrients
-@router.get("", response_model=list[food_nutrient.FoodNutrientResponse])
-def get_food_nutrients(limit: int = 10,
-                       skip: int = 0,
+@router.get("/{food_id}", response_model=list[food_nutrient.FoodNutrientResponse])
+def get_food_nutrients(food_id: int,
                        current_user: token.TokenData = Depends(get_current_user),
                        db: Session = Depends(get_db)):
-    food_nutrients = crud_food_nutrients.get_food_nutrients(limit, skip, current_user.user_id, db)
+    food_nutrients = crud_food_nutrients.get_food_nutrients(food_id, current_user.user_id, db)
     return food_nutrients
 
 # Get a food nutrient

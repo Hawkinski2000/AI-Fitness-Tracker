@@ -3,7 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/auth/useAuth";
 import { type User } from "../chat/ChatPage";
 import { refreshAccessToken, logOut, getUserFromToken, isTokenExpired } from "../../utils/auth";
-import { loadMealLogs, createMealLog, loadMealLogFoods, addMealLogFood, deleteMealLogFood, loadFood, getFoods, loadBrandedFood } from "../../utils/meal-logs";
+import { loadMealLogs,
+         createMealLog,
+         loadMealLogFoods,
+         addMealLogFood,
+         deleteMealLogFood,
+         loadFood, getFoods,
+         loadBrandedFood,
+         loadFoodNutrients,
+         loadNutrient } from "../../utils/meal-logs";
 import { PropagateLoader } from 'react-spinners';
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
@@ -15,6 +23,8 @@ import dotsIcon from '../../assets/dots-icon.svg';
 import copyIcon from '../../assets/copy-icon.svg';
 import moveIcon from '../../assets/move-icon.svg';
 import deleteIcon from '../../assets/delete-icon.svg';
+import backIcon from '../../assets/back-icon.svg';
+import checkIcon from '../../assets/check-icon.svg';
 import './MealLogsPage.css';
 
 
@@ -51,6 +61,17 @@ export interface BrandedFood {
   serving_size_unit: string | null;
   food_category: string | null;
 }
+export interface FoodNutrient {
+  id: number;
+  food_id: number;
+  nutrient_id: number;
+  amount: number;
+}
+export interface Nutrient {
+  id: number;
+  name: string;
+  unit_name: string;
+}
 
 export default function MealLogsPage() {
   const { accessToken, setAccessToken } = useAuth();
@@ -69,7 +90,13 @@ export default function MealLogsPage() {
 
   const [brandedFoods, setBrandedFoods] = useState<Record<number, BrandedFood>>({});
 
+  const [foodNutrients, setFoodNutrients] = useState<Record<number, FoodNutrient[]>>({});
+
+  const [nutrients, setNutrients] = useState<Record<number, Nutrient>>({});
+
   const [foodCalories, setFoodCalories] = useState<number>(0);
+
+  const [foodCaloriesFromMacros, setFoodCaloriesFromMacros] = useState<Record<number, number>>({});
 
   const [mealOptionsMenuOpenType, setMealOptionsMenuOpenType] = useState<string>('');
   const mealOptionsMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -79,6 +106,8 @@ export default function MealLogsPage() {
 
   const [foodsMenuOpenMealType, setFoodsMenuOpenMealType] = useState<string>('');
   const foodsMenuRef = useRef<HTMLDivElement | null>(null);
+
+  const [viewFoodMenuOpenId, setViewFoodMenuOpenId] = useState<number | null>(null);
 
   const [foodSearch, setFoodSearch] = useState<string>('');
   const searchTimeoutRef = useRef<number | null>(null);
@@ -206,6 +235,7 @@ export default function MealLogsPage() {
         setFoodsMenuOpenMealType('');
         setFoodSearch('');
         setFoodMenuInputFocused(false);
+        setViewFoodMenuOpenId(null);
       }
     }
 
@@ -459,6 +489,63 @@ export default function MealLogsPage() {
 
 // ---------------------------------------------------------------------------
 
+  const handleLoadFoodNutrients = async (foodId: number) => {
+    try {
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();  
+        setAccessToken(token);
+      }
+      if (!token) {
+        throw new Error("No access token");
+      }
+
+      const newFoodNutrients = await loadFoodNutrients(foodId, setFoodNutrients, token);
+
+      await Promise.all(
+        newFoodNutrients.map((foodNutrient: FoodNutrient) =>
+          loadNutrient(foodNutrient.nutrient_id, setNutrients, token)
+        )
+      );
+
+      const macros = newFoodNutrients.filter((foodNutrient: FoodNutrient) =>
+        [1003, 1004, 1005].includes(foodNutrient.nutrient_id));
+
+      const caloriesFromMacros = macros.reduce((sum, macro) =>
+        sum + macro.amount * (macro.nutrient_id === 1004 ? 9 : 4)
+      , 1);
+
+      setFoodCaloriesFromMacros(prev => ({
+        ...prev,
+        [foodId]: caloriesFromMacros
+      }));
+
+    } catch (err) {
+      console.error(err);
+      setAccessToken(null);
+    }
+  };
+
+// ---------------------------------------------------------------------------
+
+  const getMacroNutrient = (nutrientId: number) => {
+    if (!viewFoodMenuOpenId || !foodNutrients[viewFoodMenuOpenId]) {
+      return 0;
+    }
+
+    const foodMacroNutrient = foodNutrients[viewFoodMenuOpenId].find((foodNutrient: FoodNutrient) =>
+      foodNutrient.nutrient_id === nutrientId
+    );
+
+    if (!foodMacroNutrient) {
+      return 0;
+    }
+
+    return foodMacroNutrient.amount;
+  };
+
+// ---------------------------------------------------------------------------
+
   if (loading) {
     return (
       <div className='loading-screen'>
@@ -561,93 +648,254 @@ export default function MealLogsPage() {
 {/* ---------------------------------------------------------------------- */}
 {/* ---- Foods Menu ---- */}
 
-              <div
-                className={`foods-menu ${foodsMenuOpenMealType && 'foods-menu-open'}`}
-                ref={foodsMenuRef}
-              >
-
-                <button
-                  className="foods-menu-close-button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setFoodsMenuOpenMealType('');
-                  }}
+              {viewFoodMenuOpenId ? (
+                <div
+                  className={`foods-menu ${foodsMenuOpenMealType && 'foods-menu-open'}`}
+                  ref={foodsMenuRef}
                 >
-                  <img className="button-link-image" src={closeIcon} />
-                </button>
+                  <header className="view-food-menu-header">
+                    <div className="view-food-menu-section-content">
+                      <button
+                        className="view-food-menu-text-button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setViewFoodMenuOpenId(null);
+                        }}
+                      >
+                        <img className="button-link-image" src={backIcon} />
+                      </button>
+                      <p>Add Food</p>
+                      <button
+                        className="view-food-menu-text-button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAddFood(viewFoodMenuOpenId);
+                          setViewFoodMenuOpenId(null);
+                        }}
+                      >
+                        <img className="button-link-image" src={checkIcon} />
+                      </button>
+                    </div>
+                  </header>
 
-                <div className="foods-menu-input-container">
-                  <div className="foods-menu-input-placeholder-container">
-                    <input
-                      className='foods-menu-input'
-                      type='text'
-                      value={foodSearch}
-                      onChange={updateFoodSearch}
-                      onFocus={() => setFoodMenuInputFocused(true)}
-                      onBlur={() => setFoodMenuInputFocused(false)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          if (searchTimeoutRef.current) {
-                            clearTimeout(searchTimeoutRef.current);
-                          }
-                          handleFoodSearch(foodSearch);
-                          e.preventDefault();
-                        }
-                      }}
-                    />
-                    <span
-                      className={
-                        `placeholder foods-menu-placeholder
-                        ${foodSearch ? 'float' : ''}
-                        ${foodMenuInputFocused ? 'float focus' : ''}`
-                      }
-                    >
-                      Search foods
-                    </span>
-                  </div>
-                </div>
-                
-                <div className="foods-menu-results-section">
-                  <h3 className="foods-menu-results-header">Search Results</h3>
+                  {!foodNutrients[viewFoodMenuOpenId] ? (
+                    <div className="food-menu-results-loading-container">
+                      <PropagateLoader size={20} color="#00ffcc" />
+                    </div>
+                  ) : (
+                    <div className="view-food-menu-content">
+                      <section className="view-food-menu-section">
+                        <div className="view-food-menu-section-content">
+                          <h3 className="view-food-menu-content-heading">
+                            {foodSearchResults.filter((food: Food) => food.id === viewFoodMenuOpenId)[0].description || ''}
+                          </h3>
+                        </div>
+                      </section>
 
-                    {isSearching ? (
-                      <div className="food-menu-results-loading-container">
-                        <PropagateLoader size={20} color="#00ffcc" />
-                      </div>
-                    ) : (
-                      <div className="food-menu-results">
-                        {foodSearchResults.map((food: Food) => {
-                          return (
-                            <div key={food.id} className="foods-menu-results-food">
-                              <div className="meal-log-food-section">
-                                <p className="meal-log-food-text">{food.description}</p>
-                                <p className="meal-log-food-serving-text">
-                                  {food.calories ? `${food.calories} cal, ` : ''}
-                                  {brandedFoods[food.id].serving_size || 1.0}
-                                  {brandedFoods[food.id].serving_size_unit || ''}
-                                </p>
-                              </div>
+                      <section className="view-food-menu-section">
+                        <div className="view-food-menu-section-content">
+                          <p className="view-food-menu-section-column-text">Meal</p>
+                          <button className="view-food-menu-text-button">{foodsMenuOpenMealType}</button>
+                        </div>
+                      </section>
 
-                              <div className="meal-log-food-section">
-                                <div className="meal-options-button-container">
-                                  <button
-                                    className="foods-menu-add-button"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleAddFood(food.id);
-                                    }}
-                                  >
-                                    <img className="button-link-image" src={addIcon} />
-                                  </button>
-                                </div>
-                              </div>
+                      <section className="view-food-menu-section">
+                        <div className="view-food-menu-section-content">
+                          <p className="view-food-menu-section-column-text">Number of Servings</p>
+                          <button className="view-food-menu-text-button">
+                            1
+                          </button>
+                        </div>
+                      </section>
+
+                      <section className="view-food-menu-section">
+                        <div className="view-food-menu-section-content">
+                          <p className="view-food-menu-section-column-text">Serving Size</p>
+                          <button className="view-food-menu-text-button">
+                            {brandedFoods[viewFoodMenuOpenId].serving_size || ''} {brandedFoods[viewFoodMenuOpenId].serving_size_unit || ''}
+                          </button>
+                        </div>
+                      </section>
+
+                      <section className="view-food-menu-section">
+                        <div className="view-food-menu-section-content">
+                          <div className="view-food-menu-section-column">
+                            <p className="view-food-menu-section-column-text">
+                              {foodSearchResults.find((food: Food) => food.id === viewFoodMenuOpenId)?.calories ?? 0}
+                            </p>
+                            <p className="view-food-menu-section-column-label">cal</p>
+                          </div>
+
+                          <div className="view-food-menu-section-column">
+                            <p className="view-food-menu-section-column-label" style={{color: '#00ffcc'}}>
+                              {`${
+                                  (
+                                    getMacroNutrient(1005) * 4 / // 4 calories per g of carbs
+                                    foodCaloriesFromMacros[viewFoodMenuOpenId]
+                                    * 100
+                                  ).toFixed(1).replace(/\.0$/, '')
+                                } %`
+                              }
+                            </p>
+                            <p className="view-food-menu-section-column-text">
+                              {`${getMacroNutrient(1005).toFixed(1).replace(/\.0$/, '')} g`}
+                            </p>
+                            <p className="view-food-menu-section-column-label">Carbs</p>
+                          </div>
+
+                          <div className="view-food-menu-section-column">
+                            <p className="view-food-menu-section-column-label" style={{color: '#ff00c8'}}>
+                              {`${
+                                  (
+                                    getMacroNutrient(1004) * 9 / // 9 calories per g of fat
+                                    foodCaloriesFromMacros[viewFoodMenuOpenId]
+                                    * 100
+                                  ).toFixed(1).replace(/\.0$/, '')
+                                } %`
+                              }
+                            </p>
+                            <p className="view-food-menu-section-column-text">
+                              {`${getMacroNutrient(1004).toFixed(1).replace(/\.0$/, '')} g`}
+                            </p>
+                            <p className="view-food-menu-section-column-label">Fat</p>
+                          </div>
+
+                          <div className="view-food-menu-section-column">
+                            <p className="view-food-menu-section-column-label" style={{color: '#ffe600'}}>
+                              {`${
+                                  (
+                                    getMacroNutrient(1003) * 4 / // 4 calories per g of protein
+                                    foodCaloriesFromMacros[viewFoodMenuOpenId]
+                                    * 100
+                                  ).toFixed(1).replace(/\.0$/, '')
+                                } %`
+                              }
+                            </p>
+                            <p className="view-food-menu-section-column-text">
+                              {`${getMacroNutrient(1003).toFixed(1).replace(/\.0$/, '')} g`}
+                            </p>
+                            <p className="view-food-menu-section-column-label">Protein</p>
+                          </div>
+                        </div>
+                      </section>
+
+                      {foodNutrients[viewFoodMenuOpenId].map((foodNutrient: FoodNutrient) => {
+                        return (
+                          <section className="view-food-menu-section">
+                            <div className="view-food-menu-section-content">
+                              <p className="view-food-menu-section-column-text">
+                                {nutrients[foodNutrient.nutrient_id]?.name}
+                              </p>
+
+                              <p className="view-food-menu-section-column-text">
+                                {foodNutrient.amount.toFixed(1).replace(/\.0$/, '')}{' '}
+                                {nutrients[foodNutrient.nutrient_id]?.unit_name.toLowerCase()}
+                              </p>
                             </div>
-                          )
-                        })}
-                      </div>
+                          </section>
+                        )
+                      })}
+                    </div>
                     )}
                 </div>
-              </div>
+              ) : (
+                <div
+                  className={`foods-menu ${foodsMenuOpenMealType && 'foods-menu-open'}`}
+                  ref={foodsMenuRef}
+                >
+
+                  <button
+                    className="foods-menu-close-button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setFoodsMenuOpenMealType('');
+                    }}
+                  >
+                    <img className="button-link-image" src={closeIcon} />
+                  </button>
+
+                  <div className="foods-menu-input-container">
+                    <div className="foods-menu-input-placeholder-container">
+                      <input
+                        className='foods-menu-input'
+                        type='text'
+                        value={foodSearch}
+                        onChange={updateFoodSearch}
+                        onFocus={() => setFoodMenuInputFocused(true)}
+                        onBlur={() => setFoodMenuInputFocused(false)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            if (searchTimeoutRef.current) {
+                              clearTimeout(searchTimeoutRef.current);
+                            }
+                            handleFoodSearch(foodSearch);
+                            e.preventDefault();
+                          }
+                        }}
+                      />
+                      <span
+                        className={
+                          `placeholder foods-menu-placeholder
+                          ${foodSearch ? 'float' : ''}
+                          ${foodMenuInputFocused ? 'float focus' : ''}`
+                        }
+                      >
+                        Search foods
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="foods-menu-results-section">
+                    <h3 className="foods-menu-results-header">Search Results</h3>
+
+                      {isSearching ? (
+                        <div className="food-menu-results-loading-container">
+                          <PropagateLoader size={20} color="#00ffcc" />
+                        </div>
+                      ) : (
+                        <div className="food-menu-results">
+                          {foodSearchResults.map((food: Food) => {
+                            return (
+                              <div
+                                key={food.id}
+                                className="foods-menu-results-food"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleLoadFoodNutrients(food.id);
+                                  setViewFoodMenuOpenId(food.id);
+                                }}
+                              >
+                                <div className="meal-log-food-section">
+                                  <p className="meal-log-food-text">{food.description}</p>
+                                  <p className="meal-log-food-serving-text">
+                                    {food.calories ? `${food.calories} cal, ` : ''}
+                                    {brandedFoods[food.id].serving_size || 1.0}
+                                    {brandedFoods[food.id].serving_size_unit || ''}
+                                  </p>
+                                </div>
+
+                                <div className="meal-log-food-section">
+                                  <div className="meal-options-button-container">
+                                    <button
+                                      className="foods-menu-add-button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleAddFood(food.id);
+                                      }}
+                                    >
+                                      <img className="button-link-image" src={addIcon} />
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      )}
+                  </div>
+                </div>
+              )
+              }
 
 {/* ---------------------------------------------------------------------- */}
 {/* ---- Breakfast Section Header ---- */}
@@ -721,7 +969,10 @@ export default function MealLogsPage() {
                       ?.filter(mealLogFoodItem => mealLogFoodItem.meal_type === "breakfast")
                       .map((mealLogFood: MealLogFood) => {
                         return (
-                          <div key={mealLogFood.id} className="meal-log-food">
+                          <div
+                            key={mealLogFood.id}
+                            className="meal-log-food"
+                          >
                             <div className="meal-log-food-section">
                               <p className="meal-log-food-text">{foods[mealLogFood.food_id]?.description ?? ''}</p>
                               <p className="meal-log-food-serving-text">{mealLogFood.num_servings * mealLogFood.serving_size} {mealLogFood.serving_unit}</p>

@@ -118,7 +118,7 @@ app.include_router(branded_foods.router)
 # app.include_router(meal_log_nutrients.router)
 # app.include_router(meal_log_food_nutrients.router)
 app.include_router(food_nutrients.router)
-# app.include_router(nutrients.router)
+app.include_router(nutrients.router)
 
 app.include_router(workout_logs.router)
 app.include_router(workout_log_exercises.router)
