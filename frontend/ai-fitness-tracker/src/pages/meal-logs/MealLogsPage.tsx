@@ -110,6 +110,9 @@ export default function MealLogsPage() {
 
   const [viewFoodMenuOpenId, setViewFoodMenuOpenId] = useState<number | null>(null);
 
+  const [selectMealMenuOpenType, setSelectMealMenuOpenType] = useState<string>('');
+  const selectMealMenuRef = useRef<HTMLDivElement | null>(null);
+
   const [foodSearch, setFoodSearch] = useState<string>('');
   const searchTimeoutRef = useRef<number | null>(null);
   const [isSearching, setIsSearching] = useState(false);
@@ -242,11 +245,21 @@ export default function MealLogsPage() {
       if (target instanceof HTMLElement && target.classList.contains('add-food-button')) {
         setViewFoodMenuOpenId(null);
       }
+
+      if (
+        selectMealMenuOpenType &&
+        selectMealMenuRef.current &&
+        target instanceof Node &&
+        !selectMealMenuRef.current.contains(target) &&
+        !(target instanceof HTMLElement && target.classList.contains('select-meal-button'))
+      ) {
+        setSelectMealMenuOpenType('');
+      }
     }
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [mealOptionsMenuOpenType, mealFoodOptionsMenuOpenId, foodsMenuOpenMealType]);
+  }, [mealOptionsMenuOpenType, mealFoodOptionsMenuOpenId, foodsMenuOpenMealType, selectMealMenuOpenType]);
 
 // ---------------------------------------------------------------------------
 
@@ -700,7 +713,75 @@ export default function MealLogsPage() {
                       <section className="view-food-menu-section">
                         <div className="view-food-menu-section-content">
                           <p className="view-food-menu-section-column-text">Meal</p>
-                          <button className="view-food-menu-text-button">{foodsMenuOpenMealType}</button>
+                          <div className="view-food-menu-section-column">
+                            <button
+                              className="view-food-menu-text-button select-meal-button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectMealMenuOpenType((prev) => (prev === foodsMenuOpenMealType ? '' : foodsMenuOpenMealType));
+                              }}
+                            >
+                              {foodsMenuOpenMealType}
+                            </button>
+
+                            <div
+                              ref={el => { selectMealMenuRef.current = el }}
+                              className={`meal-options-menu select-meal-menu ${selectMealMenuOpenType && 'meal-options-menu-open'}`}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {foodsMenuOpenMealType !== 'breakfast' && (
+                                <button
+                                  className="meal-options-menu-button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setFoodsMenuOpenMealType('breakfast')
+                                    setSelectMealMenuOpenType('');
+                                  }}
+                                >
+                                  Breakfast
+                                </button>
+                              )}
+
+                              {foodsMenuOpenMealType !== 'lunch' && (
+                                <button
+                                  className="meal-options-menu-button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setFoodsMenuOpenMealType('lunch');
+                                    setSelectMealMenuOpenType('');
+                                  }}
+                                >
+                                  Lunch
+                                </button>
+                              )}
+
+                              {foodsMenuOpenMealType !== 'dinner' && (
+                                <button
+                                  className="meal-options-menu-button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setFoodsMenuOpenMealType('dinner');
+                                    setSelectMealMenuOpenType('');
+                                  }}
+                                >
+                                  Dinner
+                                </button>
+                              )}
+
+                              {foodsMenuOpenMealType !== 'snacks' && (
+                                <button
+                                  className="meal-options-menu-button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setFoodsMenuOpenMealType('snacks');
+                                    setSelectMealMenuOpenType('');
+                                  }}
+                                >
+                                  Snacks
+                                </button>
+                              )}
+                            </div>
+                          </div>
                         </div>
                       </section>
 

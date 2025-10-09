@@ -458,6 +458,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
 
 .view-food-menu-section-column-text {
@@ -496,6 +497,12 @@
 }
 .view-food-menu-text-button:hover {
   background-color: #8085a6;
+}
+
+.select-meal-menu {
+  position: absolute;
+  top: 2.5rem;
+  right: 0;
 }
 
 .macro-chart-canvas {
