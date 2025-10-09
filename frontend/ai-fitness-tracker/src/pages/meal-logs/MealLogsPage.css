@@ -113,7 +113,7 @@
   height: 0;
   width: calc(100vw - 200px);
   border-radius: 20px;
-  overflow-y: auto;
+  overflow: hidden;
   pointer-events: none;
   user-select: none;
   z-index: 3;
@@ -189,20 +189,20 @@
   color: #00ffcc;
 }
 
-.foods-menu-results-section {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 80%;
-}
-
 .foods-menu-results-header {
+  width: 80%;
   text-align: left;
   user-select: none;
 }
 
 .food-menu-results {
-  padding-bottom: 2.3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  width: 80%;
+  margin-bottom: 2rem;
+  overflow-y: auto;
 }
 
 .food-menu-results-loading-container {
@@ -219,8 +219,7 @@
 .foods-menu-results-food {
   display: flex;
   justify-content: space-between;
-  position: relative;
-  width: 100%;
+  width: calc(100% - 2rem);
   padding: 1rem;
   background-color: #0c0c1d;
   border: none;
@@ -421,10 +420,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  position: fixed;
-  left: 150px;
-  height: 50px;
-  width: calc(100vw - 200px);
+  width: 100%;
   background-color: #2e2e5e;
   box-shadow: 0 5px 10px 5px rgba(0, 0, 0, 0.25);
   border-radius: 20px 20px 0 0;
@@ -432,16 +428,20 @@
 }
 
 .view-food-menu-content {
-  position: relative;
-  top: 50px;
-  height: calc(100% - 50px);
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
   width: 100%;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
 }
 
 .view-food-menu-section {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
   border-bottom: 1px solid #8085a6;
 }
 
@@ -462,17 +462,20 @@
 
 .view-food-menu-section-column-text {
   margin: 0;
-  text-align: center;
+  text-align: left;
+  user-select: text;
 }
 
 .view-food-menu-section-column-label {
   margin: 0;
   font-size: 12px;
   text-align: center;
+  user-select: text;
 }
 
 .view-food-menu-content-heading {
   text-align: left;
+  user-select: text;
 }
 
 .view-food-menu-text-button {
@@ -493,6 +496,11 @@
 }
 .view-food-menu-text-button:hover {
   background-color: #8085a6;
+}
+
+.macro-chart-canvas {
+  height: 100px;
+  width: 100px;
 }
 
 @media (max-width: 500px) {

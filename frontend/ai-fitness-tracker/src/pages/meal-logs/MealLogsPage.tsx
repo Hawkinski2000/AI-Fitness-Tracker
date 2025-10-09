@@ -13,6 +13,7 @@ import { loadMealLogs,
          loadFoodNutrients,
          loadNutrient } from "../../utils/meal-logs";
 import { PropagateLoader } from 'react-spinners';
+import MacroDoughnutChart from "../../components/MacroDoughnutChart";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import arrowLeftIcon from '../../assets/arrow-left-icon.svg';
@@ -235,6 +236,10 @@ export default function MealLogsPage() {
         setFoodsMenuOpenMealType('');
         setFoodSearch('');
         setFoodMenuInputFocused(false);
+        setViewFoodMenuOpenId(null);
+      }
+
+      if (target instanceof HTMLElement && target.classList.contains('add-food-button')) {
         setViewFoodMenuOpenId(null);
       }
     }
@@ -678,7 +683,7 @@ export default function MealLogsPage() {
                     </div>
                   </header>
 
-                  {!foodNutrients[viewFoodMenuOpenId] ? (
+                  {(!foodNutrients[viewFoodMenuOpenId] || !foodCaloriesFromMacros[viewFoodMenuOpenId]) ? (
                     <div className="food-menu-results-loading-container">
                       <PropagateLoader size={20} color="#00ffcc" />
                     </div>
@@ -712,7 +717,8 @@ export default function MealLogsPage() {
                         <div className="view-food-menu-section-content">
                           <p className="view-food-menu-section-column-text">Serving Size</p>
                           <button className="view-food-menu-text-button">
-                            {brandedFoods[viewFoodMenuOpenId].serving_size || ''} {brandedFoods[viewFoodMenuOpenId].serving_size_unit || ''}
+                            {(brandedFoods[viewFoodMenuOpenId].serving_size)?.toFixed(1).replace(/\.0$/, '') || ''}{' '}
+                            {brandedFoods[viewFoodMenuOpenId].serving_size_unit || ''}
                           </button>
                         </div>
                       </section>
@@ -720,10 +726,12 @@ export default function MealLogsPage() {
                       <section className="view-food-menu-section">
                         <div className="view-food-menu-section-content">
                           <div className="view-food-menu-section-column">
-                            <p className="view-food-menu-section-column-text">
-                              {foodSearchResults.find((food: Food) => food.id === viewFoodMenuOpenId)?.calories ?? 0}
-                            </p>
-                            <p className="view-food-menu-section-column-label">cal</p>
+                            <MacroDoughnutChart
+                              calories={foodSearchResults.find((food: Food) => food.id === viewFoodMenuOpenId)?.calories ?? 0}
+                              carbsCalories={getMacroNutrient(1005) * 4}
+                              fatCalories={getMacroNutrient(1004) * 9}
+                              proteinCalories={getMacroNutrient(1003) * 4}
+                            />
                           </div>
 
                           <div className="view-food-menu-section-column">
@@ -795,6 +803,14 @@ export default function MealLogsPage() {
                           </section>
                         )
                       })}
+
+                      <section className="view-food-menu-section">
+                        <div className="view-food-menu-section-content">
+                          <p className="view-food-menu-section-column-text">
+                            Ingredients: {brandedFoods[viewFoodMenuOpenId].ingredients}
+                          </p>
+                        </div>
+                      </section>
                     </div>
                     )}
                 </div>
@@ -845,54 +861,52 @@ export default function MealLogsPage() {
                     </div>
                   </div>
                   
-                  <div className="foods-menu-results-section">
-                    <h3 className="foods-menu-results-header">Search Results</h3>
+                  <h3 className="foods-menu-results-header">Search Results</h3>
 
-                      {isSearching ? (
-                        <div className="food-menu-results-loading-container">
-                          <PropagateLoader size={20} color="#00ffcc" />
-                        </div>
-                      ) : (
-                        <div className="food-menu-results">
-                          {foodSearchResults.map((food: Food) => {
-                            return (
-                              <div
-                                key={food.id}
-                                className="foods-menu-results-food"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleLoadFoodNutrients(food.id);
-                                  setViewFoodMenuOpenId(food.id);
-                                }}
-                              >
-                                <div className="meal-log-food-section">
-                                  <p className="meal-log-food-text">{food.description}</p>
-                                  <p className="meal-log-food-serving-text">
-                                    {food.calories ? `${food.calories} cal, ` : ''}
-                                    {brandedFoods[food.id].serving_size || 1.0}
-                                    {brandedFoods[food.id].serving_size_unit || ''}
-                                  </p>
-                                </div>
+                    {isSearching ? (
+                      <div className="food-menu-results-loading-container">
+                        <PropagateLoader size={20} color="#00ffcc" />
+                      </div>
+                    ) : (
+                      <div className="food-menu-results">
+                        {foodSearchResults.map((food: Food) => {
+                          return (
+                            <div
+                              key={food.id}
+                              className="foods-menu-results-food"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleLoadFoodNutrients(food.id);
+                                setViewFoodMenuOpenId(food.id);
+                              }}
+                            >
+                              <div className="meal-log-food-section">
+                                <p className="meal-log-food-text">{food.description}</p>
+                                <p className="meal-log-food-serving-text">
+                                  {food.calories ? `${food.calories} cal, ` : ''}
+                                  {brandedFoods[food.id].serving_size?.toFixed(1).replace(/\.0$/, '') || 1}
+                                  {brandedFoods[food.id].serving_size_unit || ''}
+                                </p>
+                              </div>
 
-                                <div className="meal-log-food-section">
-                                  <div className="meal-options-button-container">
-                                    <button
-                                      className="foods-menu-add-button"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleAddFood(food.id);
-                                      }}
-                                    >
-                                      <img className="button-link-image" src={addIcon} />
-                                    </button>
-                                  </div>
+                              <div className="meal-log-food-section">
+                                <div className="meal-options-button-container">
+                                  <button
+                                    className="foods-menu-add-button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleAddFood(food.id);
+                                    }}
+                                  >
+                                    <img className="button-link-image" src={addIcon} />
+                                  </button>
                                 </div>
                               </div>
-                            )
-                          })}
-                        </div>
-                      )}
-                  </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
                 </div>
               )
               }
@@ -975,7 +989,10 @@ export default function MealLogsPage() {
                           >
                             <div className="meal-log-food-section">
                               <p className="meal-log-food-text">{foods[mealLogFood.food_id]?.description ?? ''}</p>
-                              <p className="meal-log-food-serving-text">{mealLogFood.num_servings * mealLogFood.serving_size} {mealLogFood.serving_unit}</p>
+                              <p className="meal-log-food-serving-text">
+                                {(mealLogFood.num_servings * mealLogFood.serving_size).toFixed(1).replace(/\.0$/, '')}{' '}
+                                {mealLogFood.serving_unit}
+                              </p>
                             </div>
 
                             <div className="meal-log-food-section">
