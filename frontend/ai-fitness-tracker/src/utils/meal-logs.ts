@@ -96,6 +96,8 @@ export const loadMealLogFoods = async (mealLogId: number,
 
 export const addMealLogFood = async (mealLogId: number,
                                      foodId: number,
+                                     numServings: number | null = null,
+                                     servingSize: number | null = null,
                                      foodsMenuOpenMealType: string,
                                      setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
                                      setFoods: React.Dispatch<React.SetStateAction<Record<number, Food>>>,
@@ -104,7 +106,9 @@ export const addMealLogFood = async (mealLogId: number,
     {
       meal_log_id: mealLogId,
       food_id: foodId,
-      meal_type: foodsMenuOpenMealType
+      meal_type: foodsMenuOpenMealType,
+      ...(numServings !== null && { num_servings: numServings }),
+      ...(servingSize !== null && { serving_size: servingSize })
     },
     {
       headers: {

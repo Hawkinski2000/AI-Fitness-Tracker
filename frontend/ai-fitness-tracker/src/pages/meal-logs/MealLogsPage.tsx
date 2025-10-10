@@ -113,6 +113,9 @@ export default function MealLogsPage() {
   const [selectMealMenuOpenType, setSelectMealMenuOpenType] = useState<string>('');
   const selectMealMenuRef = useRef<HTMLDivElement | null>(null);
 
+  const [numServings, setNumServings] = useState<number | null>(1);
+  const [servingSize, setServingSize] = useState<number | null>(null);
+
   const [foodSearch, setFoodSearch] = useState<string>('');
   const searchTimeoutRef = useRef<number | null>(null);
   const [isSearching, setIsSearching] = useState(false);
@@ -472,7 +475,9 @@ export default function MealLogsPage() {
     }, 1000);
   };
 
-  const handleAddFood = async (foodId: number) => {
+  const handleAddFood = async (foodId: number,
+                               numServings: number | null = null,
+                               servingSize: number | null = null) => {
     try {
       let token: string | null = accessToken;
       if (!accessToken || isTokenExpired(accessToken)) {
@@ -497,7 +502,14 @@ export default function MealLogsPage() {
 
       const mealLogId = mealLog.id;
 
-      await addMealLogFood(mealLogId, foodId, foodsMenuOpenMealType, setMealLogFoods, setFoods, token);
+      await addMealLogFood(mealLogId,
+                           foodId,
+                           numServings,
+                           servingSize,
+                           foodsMenuOpenMealType,
+                           setMealLogFoods,
+                           setFoods,
+                           token);
 
     } catch (err) {
       console.error(err);
@@ -687,7 +699,7 @@ export default function MealLogsPage() {
                         className="view-food-menu-text-button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleAddFood(viewFoodMenuOpenId);
+                          handleAddFood(viewFoodMenuOpenId, numServings, servingSize);
                           setViewFoodMenuOpenId(null);
                         }}
                       >
@@ -788,16 +800,39 @@ export default function MealLogsPage() {
                       <section className="view-food-menu-section">
                         <div className="view-food-menu-section-content">
                           <p className="view-food-menu-section-column-text">Number of Servings</p>
-                          <button className="view-food-menu-text-button">
-                            1
-                          </button>
+                            <input
+                              className="view-food-menu-input"
+                              type="number"
+                              value={numServings === null ? '' : numServings}
+                              onInput={(e) => {
+                                e.preventDefault();
+                                const value = e.currentTarget.value;
+                                const parsed = parseFloat(value);
+                                if (parsed < 0) {
+                                  setNumServings(1);
+                                }
+                                else {
+                                  setNumServings(parsed);
+                                }
+                              }}
+                              onBlur={() => {
+                                if (!numServings) {
+                                  setNumServings(1);
+                                }
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  e.currentTarget.blur();
+                                }
+                              }}
+                            />
                         </div>
                       </section>
 
                       <section className="view-food-menu-section">
                         <div className="view-food-menu-section-content">
                           <p className="view-food-menu-section-column-text">Serving Size</p>
-                          <button className="view-food-menu-text-button">
+                          <button className="view-food-menu-text-button serving-size-button">
                             {(brandedFoods[viewFoodMenuOpenId].serving_size)?.toFixed(1).replace(/\.0$/, '') || ''}{' '}
                             {brandedFoods[viewFoodMenuOpenId].serving_size_unit || ''}
                           </button>
@@ -808,10 +843,14 @@ export default function MealLogsPage() {
                         <div className="view-food-menu-section-content">
                           <div className="view-food-menu-section-column">
                             <MacroDoughnutChart
-                              calories={foodSearchResults.find((food: Food) => food.id === viewFoodMenuOpenId)?.calories ?? 0}
-                              carbsCalories={getMacroNutrient(1005) * 4}
-                              fatCalories={getMacroNutrient(1004) * 9}
-                              proteinCalories={getMacroNutrient(1003) * 4}
+                              calories={
+                                Number(((foodSearchResults.find((food: Food) =>
+                                food.id === viewFoodMenuOpenId)?.calories ?? 0) * (numServings || 1))
+                                .toFixed(1).replace(/\.0$/, ''))
+                              }
+                              carbsCalories={getMacroNutrient(1005) * 4 * (numServings || 1)}
+                              fatCalories={getMacroNutrient(1004) * 9 * (numServings || 1)}
+                              proteinCalories={getMacroNutrient(1003) * 4 * (numServings || 1)}
                             />
                           </div>
 
@@ -819,15 +858,15 @@ export default function MealLogsPage() {
                             <p className="view-food-menu-section-column-label" style={{color: '#00ffcc'}}>
                               {`${
                                   (
-                                    getMacroNutrient(1005) * 4 / // 4 calories per g of carbs
-                                    foodCaloriesFromMacros[viewFoodMenuOpenId]
+                                    (getMacroNutrient(1005) * 4 * (numServings || 1)) / // 4 calories per g of carbs
+                                    (foodCaloriesFromMacros[viewFoodMenuOpenId] * (numServings || 1))
                                     * 100
                                   ).toFixed(1).replace(/\.0$/, '')
                                 } %`
                               }
                             </p>
                             <p className="view-food-menu-section-column-text">
-                              {`${getMacroNutrient(1005).toFixed(1).replace(/\.0$/, '')} g`}
+                              {`${(getMacroNutrient(1005) * (numServings || 1)).toFixed(1).replace(/\.0$/, '')} g`}
                             </p>
                             <p className="view-food-menu-section-column-label">Carbs</p>
                           </div>
@@ -836,15 +875,15 @@ export default function MealLogsPage() {
                             <p className="view-food-menu-section-column-label" style={{color: '#ff00c8'}}>
                               {`${
                                   (
-                                    getMacroNutrient(1004) * 9 / // 9 calories per g of fat
-                                    foodCaloriesFromMacros[viewFoodMenuOpenId]
+                                    (getMacroNutrient(1004) * 9 * (numServings || 1)) / // 9 calories per g of fat
+                                    (foodCaloriesFromMacros[viewFoodMenuOpenId] * (numServings || 1))
                                     * 100
                                   ).toFixed(1).replace(/\.0$/, '')
                                 } %`
                               }
                             </p>
                             <p className="view-food-menu-section-column-text">
-                              {`${getMacroNutrient(1004).toFixed(1).replace(/\.0$/, '')} g`}
+                              {`${(getMacroNutrient(1004) * (numServings || 1)).toFixed(1).replace(/\.0$/, '')} g`}
                             </p>
                             <p className="view-food-menu-section-column-label">Fat</p>
                           </div>
@@ -853,15 +892,15 @@ export default function MealLogsPage() {
                             <p className="view-food-menu-section-column-label" style={{color: '#ffe600'}}>
                               {`${
                                   (
-                                    getMacroNutrient(1003) * 4 / // 4 calories per g of protein
-                                    foodCaloriesFromMacros[viewFoodMenuOpenId]
+                                    (getMacroNutrient(1003) * 4 * (numServings || 1)) / // 4 calories per g of protein
+                                    (foodCaloriesFromMacros[viewFoodMenuOpenId] * (numServings || 1))
                                     * 100
                                   ).toFixed(1).replace(/\.0$/, '')
                                 } %`
                               }
                             </p>
                             <p className="view-food-menu-section-column-text">
-                              {`${getMacroNutrient(1003).toFixed(1).replace(/\.0$/, '')} g`}
+                              {`${(getMacroNutrient(1003) * (numServings || 1)).toFixed(1).replace(/\.0$/, '')} g`}
                             </p>
                             <p className="view-food-menu-section-column-label">Protein</p>
                           </div>
@@ -877,7 +916,7 @@ export default function MealLogsPage() {
                               </p>
 
                               <p className="view-food-menu-section-column-text">
-                                {foodNutrient.amount.toFixed(1).replace(/\.0$/, '')}{' '}
+                                {(foodNutrient.amount * (numServings || 1)).toFixed(1).replace(/\.0$/, '')}{' '}
                                 {nutrients[foodNutrient.nutrient_id]?.unit_name.toLowerCase()}
                               </p>
                             </div>
@@ -958,6 +997,7 @@ export default function MealLogsPage() {
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleLoadFoodNutrients(food.id);
+                                setNumServings(1);
                                 setViewFoodMenuOpenId(food.id);
                               }}
                             >

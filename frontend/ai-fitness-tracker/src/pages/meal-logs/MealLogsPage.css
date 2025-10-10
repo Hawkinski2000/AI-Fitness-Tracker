@@ -499,10 +499,25 @@
   background-color: #8085a6;
 }
 
+.select-meal-button {
+  width: 5rem;
+}
+
 .select-meal-menu {
   position: absolute;
   top: 2.5rem;
   right: 0;
+}
+
+.view-food-menu-input {
+  width: 5rem;
+  padding: 0.25rem;
+  padding-left: 1rem;
+  text-align: center;
+}
+
+.serving-size-button {
+  width: 5rem;
 }
 
 .macro-chart-canvas {
