@@ -8,6 +8,8 @@ An AI-powered fitness tracker that generates insights based on diet, exercise, s
 
 ![Chat Page](images/chat_page.png)
 
+![View Food Menu](images/view_food_menu.png)
+
 ![User Flow Diagram](images/User%20Flow%20Diagram%20-%20AI%20Fitness%20Tracker.png)
 
 ![Entity Relationship Diagram](images/Entity%20Relationship%20Diagram%20-%20AI%20Fitness%20Tracker.svg)
