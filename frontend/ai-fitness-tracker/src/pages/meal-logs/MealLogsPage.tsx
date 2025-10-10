@@ -114,7 +114,11 @@ export default function MealLogsPage() {
   const selectMealMenuRef = useRef<HTMLDivElement | null>(null);
 
   const [numServings, setNumServings] = useState<number | null>(1);
-  const [servingSize] = useState<number | null>(null);
+
+  const [servingSize, setServingSize] = useState<number | null>(null);
+  const [servingSizeUnit, setServingSizeUnit] = useState<string>('');
+  const [selectServingSizeMenuOpen, setSelectServingSizeMenuOpen] = useState<boolean>(false);
+  const selectServingSizeMenuRef = useRef<HTMLDivElement | null>(null);
 
   const [foodSearch, setFoodSearch] = useState<string>('');
   const searchTimeoutRef = useRef<number | null>(null);
@@ -258,11 +262,21 @@ export default function MealLogsPage() {
       ) {
         setSelectMealMenuOpenType('');
       }
+
+      if (
+        selectServingSizeMenuOpen &&
+        selectServingSizeMenuRef.current &&
+        target instanceof Node &&
+        !selectServingSizeMenuRef.current.contains(target) &&
+        !(target instanceof HTMLElement && target.classList.contains('serving-size-button'))
+      ) {
+        setSelectServingSizeMenuOpen(false);
+      }
     }
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [mealOptionsMenuOpenType, mealFoodOptionsMenuOpenId, foodsMenuOpenMealType, selectMealMenuOpenType]);
+  }, [mealOptionsMenuOpenType, mealFoodOptionsMenuOpenId, foodsMenuOpenMealType, selectMealMenuOpenType, selectServingSizeMenuOpen]);
 
 // ---------------------------------------------------------------------------
 
@@ -832,10 +846,52 @@ export default function MealLogsPage() {
                       <section className="view-food-menu-section">
                         <div className="view-food-menu-section-content">
                           <p className="view-food-menu-section-column-text">Serving Size</p>
-                          <button className="view-food-menu-text-button serving-size-button">
-                            {(brandedFoods[viewFoodMenuOpenId].serving_size)?.toFixed(1).replace(/\.0$/, '') || ''}{' '}
-                            {brandedFoods[viewFoodMenuOpenId].serving_size_unit || ''}
-                          </button>
+                          <div className="view-food-menu-section-column">
+                            <button
+                              className="view-food-menu-text-button serving-size-button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectServingSizeMenuOpen((prev) => !prev);
+                              }}
+                            >
+                              {servingSize?.toFixed(1).replace(/\.0$/, '') || ''}{' '}
+                              {servingSizeUnit || ''}
+                            </button>
+
+                            <div
+                              ref={el => { selectServingSizeMenuRef.current = el }}
+                              className={`meal-options-menu select-serving-size-menu ${selectServingSizeMenuOpen && 'meal-options-menu-open'}`}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {(selectServingSizeMenuOpen && servingSize === 1) && (
+                                <button
+                                  className="meal-options-menu-button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setServingSize(brandedFoods[viewFoodMenuOpenId].serving_size || null);
+                                    setSelectServingSizeMenuOpen(false);
+                                  }}
+                                >
+                                  {(brandedFoods[viewFoodMenuOpenId].serving_size)?.toFixed(1).replace(/\.0$/, '') || ''}{' '}
+                                  {brandedFoods[viewFoodMenuOpenId].serving_size_unit || ''}
+                                </button>
+                              )}
+
+                              {(selectServingSizeMenuOpen &&
+                                servingSize === (brandedFoods[viewFoodMenuOpenId].serving_size || null)) && (
+                                <button
+                                  className="meal-options-menu-button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setServingSize(1);
+                                    setSelectServingSizeMenuOpen(false);
+                                  }}
+                                >
+                                  1 {brandedFoods[viewFoodMenuOpenId].serving_size_unit || ''}
+                                </button>
+                              )}
+                            </div>
+                          </div>
                         </div>
                       </section>
 
@@ -845,12 +901,30 @@ export default function MealLogsPage() {
                             <MacroDoughnutChart
                               calories={
                                 Number(((foodSearchResults.find((food: Food) =>
-                                food.id === viewFoodMenuOpenId)?.calories ?? 0) * (numServings || 1))
+                                food.id === viewFoodMenuOpenId)?.calories ?? 0)
+                                * (numServings || 1)
+                                * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
+                                / (brandedFoods[viewFoodMenuOpenId].serving_size || 1)))
                                 .toFixed(1).replace(/\.0$/, ''))
                               }
-                              carbsCalories={getMacroNutrient(1005) * 4 * (numServings || 1)}
-                              fatCalories={getMacroNutrient(1004) * 9 * (numServings || 1)}
-                              proteinCalories={getMacroNutrient(1003) * 4 * (numServings || 1)}
+                              carbsCalories={
+                                getMacroNutrient(1005) * 4
+                                * (numServings || 1)
+                                * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
+                                / (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
+                              }
+                              fatCalories={
+                                getMacroNutrient(1004) * 9
+                                * (numServings || 1)
+                                * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
+                                / (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
+                              }
+                              proteinCalories={
+                                getMacroNutrient(1003) * 4
+                                * (numServings || 1)
+                                * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
+                                / (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
+                              }
                             />
                           </div>
 
@@ -858,15 +932,26 @@ export default function MealLogsPage() {
                             <p className="view-food-menu-section-column-label" style={{color: '#00ffcc'}}>
                               {`${
                                   (
-                                    (getMacroNutrient(1005) * 4 * (numServings || 1)) / // 4 calories per g of carbs
-                                    (foodCaloriesFromMacros[viewFoodMenuOpenId] * (numServings || 1))
+                                    (getMacroNutrient(1005) * 4
+                                    * (numServings || 1)
+                                    * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
+                                    / (brandedFoods[viewFoodMenuOpenId].serving_size || 1)))
+                                    /
+                                    (foodCaloriesFromMacros[viewFoodMenuOpenId]
+                                    * (numServings || 1)
+                                    * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
+                                    / (brandedFoods[viewFoodMenuOpenId].serving_size || 1)))
                                     * 100
                                   ).toFixed(1).replace(/\.0$/, '')
                                 } %`
                               }
                             </p>
                             <p className="view-food-menu-section-column-text">
-                              {`${(getMacroNutrient(1005) * (numServings || 1)).toFixed(1).replace(/\.0$/, '')} g`}
+                              {`${(getMacroNutrient(1005)
+                                * (numServings || 1)
+                                * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
+                                / (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
+                                ).toFixed(1).replace(/\.0$/, '')} g`}
                             </p>
                             <p className="view-food-menu-section-column-label">Carbs</p>
                           </div>
@@ -875,15 +960,26 @@ export default function MealLogsPage() {
                             <p className="view-food-menu-section-column-label" style={{color: '#ff00c8'}}>
                               {`${
                                   (
-                                    (getMacroNutrient(1004) * 9 * (numServings || 1)) / // 9 calories per g of fat
-                                    (foodCaloriesFromMacros[viewFoodMenuOpenId] * (numServings || 1))
+                                    (getMacroNutrient(1004) * 9
+                                    * (numServings || 1)
+                                    * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
+                                    / (brandedFoods[viewFoodMenuOpenId].serving_size || 1)))
+                                    /
+                                    (foodCaloriesFromMacros[viewFoodMenuOpenId]
+                                    * (numServings || 1)
+                                    * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
+                                    / (brandedFoods[viewFoodMenuOpenId].serving_size || 1)))
                                     * 100
                                   ).toFixed(1).replace(/\.0$/, '')
                                 } %`
                               }
                             </p>
                             <p className="view-food-menu-section-column-text">
-                              {`${(getMacroNutrient(1004) * (numServings || 1)).toFixed(1).replace(/\.0$/, '')} g`}
+                              {`${(getMacroNutrient(1004)
+                                * (numServings || 1)
+                                * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
+                                / (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
+                                ).toFixed(1).replace(/\.0$/, '')} g`}
                             </p>
                             <p className="view-food-menu-section-column-label">Fat</p>
                           </div>
@@ -892,15 +988,26 @@ export default function MealLogsPage() {
                             <p className="view-food-menu-section-column-label" style={{color: '#ffe600'}}>
                               {`${
                                   (
-                                    (getMacroNutrient(1003) * 4 * (numServings || 1)) / // 4 calories per g of protein
-                                    (foodCaloriesFromMacros[viewFoodMenuOpenId] * (numServings || 1))
+                                    (getMacroNutrient(1003) * 4
+                                    * (numServings || 1)
+                                    * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
+                                    / (brandedFoods[viewFoodMenuOpenId].serving_size || 1)))
+                                    /
+                                    (foodCaloriesFromMacros[viewFoodMenuOpenId]
+                                    * (numServings || 1)
+                                    * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
+                                    / (brandedFoods[viewFoodMenuOpenId].serving_size || 1)))
                                     * 100
                                   ).toFixed(1).replace(/\.0$/, '')
                                 } %`
                               }
                             </p>
                             <p className="view-food-menu-section-column-text">
-                              {`${(getMacroNutrient(1003) * (numServings || 1)).toFixed(1).replace(/\.0$/, '')} g`}
+                              {`${(getMacroNutrient(1003)
+                                * (numServings || 1)
+                                * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
+                                / (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
+                                ).toFixed(1).replace(/\.0$/, '')} g`}
                             </p>
                             <p className="view-food-menu-section-column-label">Protein</p>
                           </div>
@@ -916,7 +1023,11 @@ export default function MealLogsPage() {
                               </p>
 
                               <p className="view-food-menu-section-column-text">
-                                {(foodNutrient.amount * (numServings || 1)).toFixed(1).replace(/\.0$/, '')}{' '}
+                                {(foodNutrient.amount
+                                * (numServings || 1)
+                                * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
+                                / (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
+                                ).toFixed(1).replace(/\.0$/, '')}{' '}
                                 {nutrients[foodNutrient.nutrient_id]?.unit_name.toLowerCase()}
                               </p>
                             </div>
@@ -998,6 +1109,8 @@ export default function MealLogsPage() {
                                 e.stopPropagation();
                                 handleLoadFoodNutrients(food.id);
                                 setNumServings(1);
+                                setServingSize(brandedFoods[food.id].serving_size || null);
+                                setServingSizeUnit(brandedFoods[food.id].serving_size_unit || '');
                                 setViewFoodMenuOpenId(food.id);
                               }}
                             >

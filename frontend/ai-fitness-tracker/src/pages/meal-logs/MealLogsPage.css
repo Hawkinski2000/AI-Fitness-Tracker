@@ -520,6 +520,12 @@
   width: 5rem;
 }
 
+.select-serving-size-menu {
+  position: absolute;
+  top: 2.5rem;
+  right: 0;
+}
+
 .macro-chart-canvas {
   height: 100px;
   width: 100px;
