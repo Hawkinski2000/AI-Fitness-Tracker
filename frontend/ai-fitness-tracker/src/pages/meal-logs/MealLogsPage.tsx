@@ -114,7 +114,7 @@ export default function MealLogsPage() {
   const selectMealMenuRef = useRef<HTMLDivElement | null>(null);
 
   const [numServings, setNumServings] = useState<number | null>(1);
-  const [servingSize, setServingSize] = useState<number | null>(null);
+  const [servingSize] = useState<number | null>(null);
 
   const [foodSearch, setFoodSearch] = useState<string>('');
   const searchTimeoutRef = useRef<number | null>(null);
