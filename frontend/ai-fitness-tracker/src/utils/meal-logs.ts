@@ -126,6 +126,43 @@ export const addMealLogFood = async (mealLogId: number,
   loadFood(foodId, setFoods, token);
 };
 
+export const updateMealLogFood = async (mealLogFoodId: number,
+                                        mealLogId: number | null,
+                                        numServings: number | null = null,
+                                        servingSize: number | null = null,
+                                        foodsMenuOpenMealType: string,
+                                        setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
+                                        token: string) => {
+  const mealLogFoodResponse = await axios.patch(`${API_BASE_URL}/meal-log-foods/${mealLogFoodId}`,
+    {
+      ...(mealLogId !== null && { meal_log_id: mealLogId }),
+      ...(foodsMenuOpenMealType !== null && { meal_type: foodsMenuOpenMealType }),
+      ...(numServings !== null && { num_servings: numServings }),
+      ...(servingSize !== null && { serving_size: servingSize })
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  const updatedMealLogFood = mealLogFoodResponse.data;
+
+  setMealLogFoods(prev => {
+    const currentMealLogFoods = prev[updatedMealLogFood.meal_log_id];
+
+    const updatedMealLogFoods = currentMealLogFoods.map((mealLogFood: MealLogFood) =>
+      mealLogFood.id === mealLogFoodId ? updatedMealLogFood : mealLogFood
+    );
+
+    return {
+      ...prev,
+      [updatedMealLogFood.meal_log_id]: updatedMealLogFoods
+    };
+  });
+};
+
 export const deleteMealLogFood = async (mealLogFoodId: number,
                                         setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
                                         token: string) => {
@@ -234,7 +271,7 @@ export const loadBrandedFood = async (foodId: number,
 
 export const loadFoodNutrients = async (foodId: number,
                                         setFoodNutrients: React.Dispatch<React.SetStateAction<Record<number, FoodNutrient[]>>>,
-                                       token: string) => {
+                                        token: string) => {
   const foodNutrientsResponse = await axios.get(`${API_BASE_URL}/food-nutrients/${foodId}`,
     {
       headers: {
@@ -261,6 +298,8 @@ export const loadFoodNutrients = async (foodId: number,
 
   return newFoodNutrients;
 };
+
+// ---------------------------------------------------------------------------
 
 export const loadNutrient = async (nutrient_id: number,
                                    setNutrients: React.Dispatch<React.SetStateAction<Record<number, Nutrient>>>,

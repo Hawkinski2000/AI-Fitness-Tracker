@@ -98,22 +98,30 @@ def get_meal_log_food(id: int, user_id: int, db: Session):
     )
     return meal_log_food
 
-def update_meal_log_food(id: int, meal_log_food: meal_log_food.MealLogFoodCreate, user_id: int, db: Session):
-    meal_log = (
-        db.query(MealLog)
-        .filter(MealLog.id == meal_log_food.meal_log_id, MealLog.user_id == user_id)
+def update_meal_log_food(id: int, meal_log_food: meal_log_food.MealLogFoodUpdate, user_id: int, db: Session):
+    if meal_log_food.meal_log_id:
+        meal_log = (
+            db.query(MealLog)
+            .filter(MealLog.id == meal_log_food.meal_log_id, MealLog.user_id == user_id)
+            .first()
+        )
+
+        if not meal_log:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Meal log not found"
+            )
+
+    meal_log_food_row = (
+        db.query(MealLogFood)
+        .join(MealLog, MealLogFood.meal_log_id == MealLog.id)
+        .filter(MealLogFood.id == id, MealLog.user_id == user_id)
         .first()
     )
 
-    if not meal_log:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Meal log not found"
-        )
-    
     food = (
         db.query(Food)
-        .filter(Food.id == meal_log_food.food_id,
+        .filter(Food.id == meal_log_food_row.food_id,
                 (Food.user_id == None) | (Food.user_id == user_id))
         .first()
     )
@@ -124,18 +132,27 @@ def update_meal_log_food(id: int, meal_log_food: meal_log_food.MealLogFoodCreate
             detail="Food not found"
         )
 
-    meal_log_food_row = (
-        db.query(MealLogFood)
-        .join(MealLog, MealLogFood.meal_log_id == MealLog.id)
-        .filter(MealLogFood.id == id, MealLog.user_id == user_id)
-        .first()
-    )
-
-    for key, value in meal_log_food.model_dump().items():
+    for key, value in meal_log_food.model_dump(exclude_unset=True).items():
         setattr(meal_log_food_row, key, value)
 
     db.commit()
     db.refresh(meal_log_food_row)
+
+    num_servings = meal_log_food_row.num_servings
+    serving_size = meal_log_food_row.serving_size
+
+    branded_food = db.query(BrandedFood).filter(BrandedFood.food_id == food.id).first()
+
+    if food.calories:
+        calories = round(num_servings * serving_size * food.calories / branded_food.serving_size or 1.0)
+        meal_log_food_row.calories = calories
+
+    food_nutrients = db.query(FoodNutrient).filter(FoodNutrient.food_id == food.id).all()
+    
+    for food_nutrient in food_nutrients:
+        food_nutrient.amount = num_servings * serving_size * food_nutrient.amount / branded_food.serving_size or 1.0
+
+    db.commit()
 
     crud_meal_logs.recalculate_meal_log_calories(meal_log_id=meal_log_food_row.meal_log_id, db=db)
     crud_meal_logs.recalculate_meal_log_nutrients(meal_log_id=meal_log_food_row.meal_log_id, db=db)

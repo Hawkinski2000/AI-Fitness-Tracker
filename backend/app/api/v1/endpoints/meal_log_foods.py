@@ -32,9 +32,9 @@ def get_meal_log_foods(meal_log_id: int,
 #     return meal_log_food
 
 # Update a meal log food
-@router.put("/{id}", response_model=meal_log_food.MealLogFoodResponse)
+@router.patch("/{id}", response_model=meal_log_food.MealLogFoodResponse)
 def update_meal_log_food(id: int,
-                         meal_log_food: meal_log_food.MealLogFoodCreate,
+                         meal_log_food: meal_log_food.MealLogFoodUpdate,
                          current_user: token.TokenData = Depends(get_current_user),
                          db: Session = Depends(get_db)):
     updated_meal_log_food = crud_meal_log_foods.update_meal_log_food(id, meal_log_food, current_user.user_id, db)

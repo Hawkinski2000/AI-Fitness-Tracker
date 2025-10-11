@@ -7,6 +7,7 @@ import { loadMealLogs,
          createMealLog,
          loadMealLogFoods,
          addMealLogFood,
+         updateMealLogFood,
          deleteMealLogFood,
          loadFood, getFoods,
          loadBrandedFood,
@@ -119,6 +120,8 @@ export default function MealLogsPage() {
   const [servingSizeUnit, setServingSizeUnit] = useState<string>('');
   const [selectServingSizeMenuOpen, setSelectServingSizeMenuOpen] = useState<boolean>(false);
   const selectServingSizeMenuRef = useRef<HTMLDivElement | null>(null);
+
+  const [editingMealLogFoodId, setEditingMealLogFoodId] = useState<number | null>(null);
 
   const [foodSearch, setFoodSearch] = useState<string>('');
   const searchTimeoutRef = useRef<number | null>(null);
@@ -247,6 +250,7 @@ export default function MealLogsPage() {
         setFoodSearch('');
         setFoodMenuInputFocused(false);
         setViewFoodMenuOpenId(null);
+        setEditingMealLogFoodId(null);
       }
 
       if (target instanceof HTMLElement && target.classList.contains('add-food-button')) {
@@ -533,6 +537,36 @@ export default function MealLogsPage() {
 
 // ---------------------------------------------------------------------------
 
+  const handleUpdateFood = async (mealLogFoodId: number,
+                                  mealLogId: number | null,
+                                  numServings: number | null = null,
+                                  servingSize: number | null = null) => {
+    try {
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();  
+        setAccessToken(token);
+      }
+      if (!token) {
+        throw new Error("No access token");
+      }
+
+      await updateMealLogFood(mealLogFoodId,
+                              mealLogId,
+                              numServings,
+                              servingSize,
+                              foodsMenuOpenMealType,
+                              setMealLogFoods,
+                              token);
+
+    } catch (err) {
+      console.error(err);
+      setAccessToken(null);
+    }
+  };
+
+// ---------------------------------------------------------------------------
+
   const handleLoadFoodNutrients = async (foodId: number) => {
     try {
       let token: string | null = accessToken;
@@ -703,17 +737,31 @@ export default function MealLogsPage() {
                         className="view-food-menu-text-button"
                         onClick={(e) => {
                           e.stopPropagation();
+                          setEditingMealLogFoodId(null);
                           setViewFoodMenuOpenId(null);
                         }}
                       >
                         <img className="button-link-image" src={backIcon} />
                       </button>
-                      <p>Add Food</p>
+                      <p>
+                        {editingMealLogFoodId ? 'Edit Entry' : 'Add Food'}
+                      </p>
                       <button
                         className="view-food-menu-text-button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleAddFood(viewFoodMenuOpenId, numServings, servingSize);
+                          if (editingMealLogFoodId && currentMealLogDate) {
+                            handleUpdateFood(editingMealLogFoodId,
+                                             mealLogs[currentMealLogDate].id,
+                                             numServings,
+                                             servingSize);
+                            setEditingMealLogFoodId(null);
+                            setViewFoodMenuOpenId(null);
+                            setFoodsMenuOpenMealType('');
+                          }
+                          else {
+                            handleAddFood(viewFoodMenuOpenId, numServings, servingSize);
+                          }
                           setViewFoodMenuOpenId(null);
                         }}
                       >
@@ -731,7 +779,21 @@ export default function MealLogsPage() {
                       <section className="view-food-menu-section">
                         <div className="view-food-menu-section-content">
                           <h3 className="view-food-menu-content-heading">
-                            {foodSearchResults.filter((food: Food) => food.id === viewFoodMenuOpenId)[0].description || ''}
+                            {
+                              editingMealLogFoodId && currentMealLogDate
+                                ? (
+                                    foods[
+                                      mealLogFoods[mealLogs[currentMealLogDate].id]
+                                        ?.find((mealLogFood: MealLogFood) =>
+                                          mealLogFood.id === editingMealLogFoodId)
+                                        ?.food_id ?? -1
+                                    ]?.description ?? ''
+                                  )
+                                : (
+                                    foodSearchResults.find((food: Food) =>
+                                      food.id === viewFoodMenuOpenId)?.description || ''
+                                  )
+                            }
                           </h3>
                         </div>
                       </section>
@@ -877,8 +939,7 @@ export default function MealLogsPage() {
                                 </button>
                               )}
 
-                              {(selectServingSizeMenuOpen &&
-                                servingSize === (brandedFoods[viewFoodMenuOpenId].serving_size || null)) && (
+                              {(selectServingSizeMenuOpen && servingSize !== 1) && (
                                 <button
                                   className="meal-options-menu-button"
                                   onClick={(e) => {
@@ -900,12 +961,28 @@ export default function MealLogsPage() {
                           <div className="view-food-menu-section-column">
                             <MacroDoughnutChart
                               calories={
-                                Number(((foodSearchResults.find((food: Food) =>
-                                food.id === viewFoodMenuOpenId)?.calories ?? 0)
-                                * (numServings || 1)
-                                * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
-                                / (brandedFoods[viewFoodMenuOpenId].serving_size || 1)))
-                                .toFixed(1).replace(/\.0$/, ''))
+                                Number(
+                                  (
+                                    (
+                                      editingMealLogFoodId && currentMealLogDate && mealLogFoods[mealLogs[currentMealLogDate].id]
+                                        ? (
+                                            foods[mealLogFoods[mealLogs[currentMealLogDate].id].find((mealLogFood: MealLogFood) =>
+                                              mealLogFood.id === editingMealLogFoodId
+                                            )?.food_id ?? -1]?.calories ?? 0
+                                          )
+                                        : (
+                                            foodSearchResults.find((food: Food) =>
+                                              food.id === viewFoodMenuOpenId
+                                            )?.calories ?? 0
+                                          )
+                                    )
+                                    * (numServings || 1)
+                                    * (
+                                        (servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
+                                        / (brandedFoods[viewFoodMenuOpenId].serving_size || 1)
+                                      )
+                                  ).toFixed(1)
+                                )
                               }
                               carbsCalories={
                                 getMacroNutrient(1005) * 4
@@ -1220,6 +1297,33 @@ export default function MealLogsPage() {
                           <div
                             key={mealLogFood.id}
                             className="meal-log-food"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (!foodNutrients[mealLogFood.food_id]) {
+                                handleLoadFoodNutrients(mealLogFood.food_id);
+                              }
+                              if (!mealLogFood.num_servings) {
+                                setNumServings(1);
+                              }
+                              else {
+                                setNumServings(mealLogFood.num_servings);
+                              }
+                              if (!mealLogFood.serving_size) {
+                                setServingSize(brandedFoods[mealLogFood.food_id].serving_size || null);
+                              }
+                              else {
+                                setServingSize(mealLogFood.serving_size);
+                              }
+                              if (!mealLogFood.serving_unit) {
+                                setServingSizeUnit(brandedFoods[mealLogFood.food_id].serving_size_unit || '');
+                              }
+                              else {
+                                setServingSizeUnit(mealLogFood.serving_unit);
+                              }
+                              setEditingMealLogFoodId(mealLogFood.id);
+                              setFoodsMenuOpenMealType('breakfast');
+                              setViewFoodMenuOpenId(mealLogFood.food_id);
+                            }}
                           >
                             <div className="meal-log-food-section">
                               <p className="meal-log-food-text">{foods[mealLogFood.food_id]?.description ?? ''}</p>
@@ -1377,7 +1481,37 @@ export default function MealLogsPage() {
                       ?.filter(mealLogFoodItem => mealLogFoodItem.meal_type === "lunch")
                       .map((mealLogFood: MealLogFood) => {
                         return (
-                          <div key={mealLogFood.id} className="meal-log-food">
+                          <div
+                            key={mealLogFood.id}
+                            className="meal-log-food"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (!foodNutrients[mealLogFood.food_id]) {
+                                handleLoadFoodNutrients(mealLogFood.food_id);
+                              }
+                              if (!mealLogFood.num_servings) {
+                                setNumServings(1);
+                              }
+                              else {
+                                setNumServings(mealLogFood.num_servings);
+                              }
+                              if (!mealLogFood.serving_size) {
+                                setServingSize(brandedFoods[mealLogFood.food_id].serving_size || null);
+                              }
+                              else {
+                                setServingSize(mealLogFood.serving_size);
+                              }
+                              if (!mealLogFood.serving_unit) {
+                                setServingSizeUnit(brandedFoods[mealLogFood.food_id].serving_size_unit || '');
+                              }
+                              else {
+                                setServingSizeUnit(mealLogFood.serving_unit);
+                              }
+                              setEditingMealLogFoodId(mealLogFood.id);
+                              setFoodsMenuOpenMealType('lunch');
+                              setViewFoodMenuOpenId(mealLogFood.food_id);
+                            }}
+                          >
                             <div className="meal-log-food-section">
                               <p className="meal-log-food-text">{foods[mealLogFood.food_id]?.description ?? ''}</p>
                               <p className="meal-log-food-serving-text">{mealLogFood.num_servings * mealLogFood.serving_size} {mealLogFood.serving_unit}</p>
@@ -1531,7 +1665,37 @@ export default function MealLogsPage() {
                       ?.filter(mealLogFoodItem => mealLogFoodItem.meal_type === "dinner")
                       .map((mealLogFood: MealLogFood) => {
                         return (
-                          <div key={mealLogFood.id} className="meal-log-food">
+                          <div
+                            key={mealLogFood.id}
+                            className="meal-log-food"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (!foodNutrients[mealLogFood.food_id]) {
+                                handleLoadFoodNutrients(mealLogFood.food_id);
+                              }
+                              if (!mealLogFood.num_servings) {
+                                setNumServings(1);
+                              }
+                              else {
+                                setNumServings(mealLogFood.num_servings);
+                              }
+                              if (!mealLogFood.serving_size) {
+                                setServingSize(brandedFoods[mealLogFood.food_id].serving_size || null);
+                              }
+                              else {
+                                setServingSize(mealLogFood.serving_size);
+                              }
+                              if (!mealLogFood.serving_unit) {
+                                setServingSizeUnit(brandedFoods[mealLogFood.food_id].serving_size_unit || '');
+                              }
+                              else {
+                                setServingSizeUnit(mealLogFood.serving_unit);
+                              }
+                              setEditingMealLogFoodId(mealLogFood.id);
+                              setFoodsMenuOpenMealType('dinner');
+                              setViewFoodMenuOpenId(mealLogFood.food_id);
+                            }}
+                          >
                             <div className="meal-log-food-section">
                               <p className="meal-log-food-text">{foods[mealLogFood.food_id]?.description ?? ''}</p>
                               <p className="meal-log-food-serving-text">{mealLogFood.num_servings * mealLogFood.serving_size} {mealLogFood.serving_unit}</p>
@@ -1685,7 +1849,37 @@ export default function MealLogsPage() {
                       ?.filter(mealLogFoodItem => mealLogFoodItem.meal_type === "snacks")
                       .map((mealLogFood: MealLogFood) => {
                         return (
-                          <div key={mealLogFood.id} className="meal-log-food">
+                          <div
+                            key={mealLogFood.id}
+                            className="meal-log-food"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (!foodNutrients[mealLogFood.food_id]) {
+                                handleLoadFoodNutrients(mealLogFood.food_id);
+                              }
+                              if (!mealLogFood.num_servings) {
+                                setNumServings(1);
+                              }
+                              else {
+                                setNumServings(mealLogFood.num_servings);
+                              }
+                              if (!mealLogFood.serving_size) {
+                                setServingSize(brandedFoods[mealLogFood.food_id].serving_size || null);
+                              }
+                              else {
+                                setServingSize(mealLogFood.serving_size);
+                              }
+                              if (!mealLogFood.serving_unit) {
+                                setServingSizeUnit(brandedFoods[mealLogFood.food_id].serving_size_unit || '');
+                              }
+                              else {
+                                setServingSizeUnit(mealLogFood.serving_unit);
+                              }
+                              setEditingMealLogFoodId(mealLogFood.id);
+                              setFoodsMenuOpenMealType('snacks');
+                              setViewFoodMenuOpenId(mealLogFood.food_id);
+                            }}
+                          >
                             <div className="meal-log-food-section">
                               <p className="meal-log-food-text">{foods[mealLogFood.food_id]?.description ?? ''}</p>
                               <p className="meal-log-food-serving-text">{mealLogFood.num_servings * mealLogFood.serving_size} {mealLogFood.serving_unit}</p>

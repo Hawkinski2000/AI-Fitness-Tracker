@@ -13,6 +13,14 @@ class MealLogFoodCreate(MealLogFoodBase):
     serving_size: Optional[float] = None
     serving_unit: Optional[str] = None
 
+class MealLogFoodUpdate(BaseModel):
+    meal_log_id: Optional[int] = None
+    food_id: Optional[int] = None
+    meal_type: Optional[str] = None
+    num_servings: Optional[float] = None
+    serving_size: Optional[float] = None
+    serving_unit: Optional[str] = None
+
 class MealLogFoodResponse(MealLogFoodBase):
     id: int
     num_servings: float
