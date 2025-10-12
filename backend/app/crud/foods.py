@@ -19,6 +19,7 @@ def get_foods(limit: int,
         db.query(Food)
         .filter((Food.user_id == None) | (Food.user_id == user_id),
                 Food.description.ilike(f"%{search}%"))
+        .order_by(Food.id)
         .limit(limit)
         .offset(skip)
         .all()

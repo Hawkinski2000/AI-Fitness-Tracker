@@ -249,7 +249,6 @@ export default function MealLogsPage() {
         setFoodsMenuOpenMealType('');
         setFoodSearch('');
         setFoodMenuInputFocused(false);
-        setViewFoodMenuOpenId(null);
         setEditingMealLogFoodId(null);
       }
 
@@ -1297,8 +1296,21 @@ export default function MealLogsPage() {
                           <div
                             key={mealLogFood.id}
                             className="meal-log-food"
+                            onMouseDown={(e) => {
+                              e.stopPropagation();
+                              setMealOptionsMenuOpenType('');
+                            }}
                             onClick={(e) => {
                               e.stopPropagation();
+                              setMealFoodOptionsMenuOpenId(null);
+                              
+                              if (editingMealLogFoodId === mealLogFood.id) {
+                                setEditingMealLogFoodId(null);
+                                setFoodsMenuOpenMealType('');
+                                setMealFoodOptionsMenuOpenId(null);
+                                return;
+                              }
+
                               if (!foodNutrients[mealLogFood.food_id]) {
                                 handleLoadFoodNutrients(mealLogFood.food_id);
                               }
@@ -1340,6 +1352,9 @@ export default function MealLogsPage() {
                                   className="meal-log-food-options-button"
                                   onClick={(e) => {
                                     e.stopPropagation();
+                                    setFoodsMenuOpenMealType('');
+                                    setViewFoodMenuOpenId(null);
+                                    setEditingMealLogFoodId(null);
                                     setMealFoodOptionsMenuOpenId((prev) => (prev === mealLogFood.id ? null : mealLogFood.id));
                                   }}
                                 >
@@ -1402,7 +1417,14 @@ export default function MealLogsPage() {
                       e.stopPropagation();
                       setFoodSearch('');
                       setFoodMenuInputFocused(false);
-                      setFoodsMenuOpenMealType((prev) => (prev === 'breakfast' ? '' : 'breakfast'));
+                      if (!editingMealLogFoodId) {
+                        setFoodsMenuOpenMealType((prev) => (prev === 'breakfast' ? '' : 'breakfast'));
+                      }
+                      else {
+                        setEditingMealLogFoodId(null);
+                        setViewFoodMenuOpenId(null);
+                        setFoodsMenuOpenMealType('breakfast');
+                      }
                     }}
                   >
                     Add Food
@@ -1484,8 +1506,21 @@ export default function MealLogsPage() {
                           <div
                             key={mealLogFood.id}
                             className="meal-log-food"
+                            onMouseDown={(e) => {
+                              e.stopPropagation();
+                              setMealOptionsMenuOpenType('');
+                            }}
                             onClick={(e) => {
                               e.stopPropagation();
+                              setMealFoodOptionsMenuOpenId(null);
+
+                              if (editingMealLogFoodId === mealLogFood.id) {
+                                setEditingMealLogFoodId(null);
+                                setFoodsMenuOpenMealType('');
+                                setMealFoodOptionsMenuOpenId(null);
+                                return;
+                              }
+
                               if (!foodNutrients[mealLogFood.food_id]) {
                                 handleLoadFoodNutrients(mealLogFood.food_id);
                               }
@@ -1524,6 +1559,9 @@ export default function MealLogsPage() {
                                   className="meal-log-food-options-button"
                                   onClick={(e) => {
                                     e.stopPropagation();
+                                    setFoodsMenuOpenMealType('');
+                                    setViewFoodMenuOpenId(null);
+                                    setEditingMealLogFoodId(null);
                                     setMealFoodOptionsMenuOpenId((prev) => (prev === mealLogFood.id ? null : mealLogFood.id));
                                   }}
                                 >
@@ -1586,7 +1624,14 @@ export default function MealLogsPage() {
                       e.stopPropagation();
                       setFoodSearch('');
                       setFoodMenuInputFocused(false);
-                      setFoodsMenuOpenMealType((prev) => (prev === 'lunch' ? '' : 'lunch'));
+                      if (!editingMealLogFoodId) {
+                        setFoodsMenuOpenMealType((prev) => (prev === 'lunch' ? '' : 'lunch'));
+                      }
+                      else {
+                        setEditingMealLogFoodId(null);
+                        setViewFoodMenuOpenId(null);
+                        setFoodsMenuOpenMealType('lunch');
+                      }
                     }}
                     >
                     Add Food
@@ -1668,8 +1713,21 @@ export default function MealLogsPage() {
                           <div
                             key={mealLogFood.id}
                             className="meal-log-food"
+                            onMouseDown={(e) => {
+                              e.stopPropagation();
+                              setMealOptionsMenuOpenType('');
+                            }}
                             onClick={(e) => {
                               e.stopPropagation();
+                              setMealFoodOptionsMenuOpenId(null);
+
+                              if (editingMealLogFoodId === mealLogFood.id) {
+                                setEditingMealLogFoodId(null);
+                                setFoodsMenuOpenMealType('');
+                                setMealFoodOptionsMenuOpenId(null);
+                                return;
+                              }
+
                               if (!foodNutrients[mealLogFood.food_id]) {
                                 handleLoadFoodNutrients(mealLogFood.food_id);
                               }
@@ -1708,6 +1766,9 @@ export default function MealLogsPage() {
                                   className="meal-log-food-options-button"
                                   onClick={(e) => {
                                     e.stopPropagation();
+                                    setFoodsMenuOpenMealType('');
+                                    setViewFoodMenuOpenId(null);
+                                    setEditingMealLogFoodId(null);
                                     setMealFoodOptionsMenuOpenId((prev) => (prev === mealLogFood.id ? null : mealLogFood.id));
                                   }}
                                 >
@@ -1770,7 +1831,14 @@ export default function MealLogsPage() {
                       e.stopPropagation();
                       setFoodSearch('');
                       setFoodMenuInputFocused(false);
-                      setFoodsMenuOpenMealType((prev) => (prev === 'dinner' ? '' : 'dinner'));
+                      if (!editingMealLogFoodId) {
+                        setFoodsMenuOpenMealType((prev) => (prev === 'dinner' ? '' : 'dinner'));
+                      }
+                      else {
+                        setEditingMealLogFoodId(null);
+                        setViewFoodMenuOpenId(null);
+                        setFoodsMenuOpenMealType('dinner');
+                      }
                     }}
                   >
                     Add Food
@@ -1852,8 +1920,21 @@ export default function MealLogsPage() {
                           <div
                             key={mealLogFood.id}
                             className="meal-log-food"
+                            onMouseDown={(e) => {
+                              e.stopPropagation();
+                              setMealOptionsMenuOpenType('');
+                            }}
                             onClick={(e) => {
                               e.stopPropagation();
+                              setMealFoodOptionsMenuOpenId(null);
+
+                              if (editingMealLogFoodId === mealLogFood.id) {
+                                setEditingMealLogFoodId(null);
+                                setFoodsMenuOpenMealType('');
+                                setMealFoodOptionsMenuOpenId(null);
+                                return;
+                              }
+
                               if (!foodNutrients[mealLogFood.food_id]) {
                                 handleLoadFoodNutrients(mealLogFood.food_id);
                               }
@@ -1892,6 +1973,9 @@ export default function MealLogsPage() {
                                   className="meal-log-food-options-button"
                                   onClick={(e) => {
                                     e.stopPropagation();
+                                    setFoodsMenuOpenMealType('');
+                                    setViewFoodMenuOpenId(null);
+                                    setEditingMealLogFoodId(null);
                                     setMealFoodOptionsMenuOpenId((prev) => (prev === mealLogFood.id ? null : mealLogFood.id));
                                   }}
                                 >
@@ -1954,7 +2038,14 @@ export default function MealLogsPage() {
                       e.stopPropagation();
                       setFoodSearch('');
                       setFoodMenuInputFocused(false);
-                      setFoodsMenuOpenMealType((prev) => (prev === 'snacks' ? '' : 'snacks'));
+                      if (!editingMealLogFoodId) {
+                        setFoodsMenuOpenMealType((prev) => (prev === 'snacks' ? '' : 'snacks'));
+                      }
+                      else {
+                        setEditingMealLogFoodId(null);
+                        setViewFoodMenuOpenId(null);
+                        setFoodsMenuOpenMealType('snacks');
+                      }
                     }}
                   >
                     Add Food
