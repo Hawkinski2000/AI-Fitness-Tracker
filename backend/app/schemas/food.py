@@ -16,3 +16,7 @@ class FoodResponse(FoodBase):
     user_created_at: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)
+
+class FoodListResponse(BaseModel):
+    foods: list[FoodResponse]
+    total_count: int

@@ -191,6 +191,7 @@
 
 .foods-menu-results-header {
   width: 80%;
+  margin-bottom: 0.25rem;
   text-align: left;
   user-select: none;
 }
@@ -252,6 +253,44 @@
 .foods-menu-add-button:hover {
   background-color: #8085a6;
   transform: rotate(90deg);
+}
+
+.search-results-page-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 0.5rem 0;
+  background-color: #2e2e5e;
+}
+
+.search-results-page-nav-text {
+  margin: 0 0.25rem;
+}
+
+.search-results-page-nav-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: fit-content;
+  width: fit-content;
+  padding: 0.5rem;
+  margin: 0 0.25rem;
+  background: none;
+  border: none;
+  border-radius: 5px;
+  color: #eceff4;
+  font-size: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.search-results-page-nav-button:hover {
+  background-color: #8085a6;
+}
+
+.search-results-page-nav-button-active {
+  background-color: #8085a6;
 }
 
 .meals-container {

@@ -229,15 +229,15 @@ export const getFoods = async (limit: number,
     }
   );
 
-  if (foodsResponse.data.length === 0) {
+  if (foodsResponse.data.foods.length === 0) {
     return [];
   }
 
-  const foods = foodsResponse.data;
+  const foodSearchObject = foodsResponse.data;
 
-  setFoodSearchResults(foods);
+  setFoodSearchResults(foodsResponse.data.foods);
 
-  return foods;
+  return foodSearchObject;
 };
 
 // ---------------------------------------------------------------------------

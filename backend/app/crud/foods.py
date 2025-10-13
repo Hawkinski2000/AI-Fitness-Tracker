@@ -15,16 +15,28 @@ def get_foods(limit: int,
               search: str,
               user_id: int,
               db: Session):
-    foods = (
+    all_foods_query = (
         db.query(Food)
         .filter((Food.user_id == None) | (Food.user_id == user_id),
                 Food.description.ilike(f"%{search}%"))
+    )
+
+    total_count = all_foods_query.count()
+
+    foods = (
+        all_foods_query
         .order_by(Food.id)
         .limit(limit)
         .offset(skip)
         .all()
     )
-    return foods
+
+    food_search_results = {
+        "foods": foods,
+        "total_count": total_count
+    }
+
+    return food_search_results
 
 def get_food(id: int, user_id: int, db: Session):
     food = (

@@ -129,6 +129,30 @@ export default function MealLogsPage() {
   const [foodMenuInputFocused, setFoodMenuInputFocused] = useState<boolean>(false);
   const [foodSearchResults, setFoodSearchResults] = useState<Food[]>([]);
 
+  const [totalPages, setTotalPages] = useState<number | null>(null);
+  const [currentPageNumber, setCurrentPageNumber] = useState<number | null>(null);
+  const MAX_RESULTS_PER_PAGE = 30;
+  const MAX_PAGE_BUTTONS = 10;
+  let startPage = 1;
+  let endPage = totalPages || 1;
+  if (totalPages && currentPageNumber) {
+    if (totalPages <= MAX_PAGE_BUTTONS) {
+      startPage = 1;
+      endPage = totalPages;
+
+    } else {
+      const blockIndex = Math.floor((currentPageNumber - 1) / MAX_PAGE_BUTTONS);
+      startPage = blockIndex * MAX_PAGE_BUTTONS + 1;
+      endPage = Math.min(totalPages, startPage + MAX_PAGE_BUTTONS - 1);
+
+      if (totalPages >= MAX_PAGE_BUTTONS && (endPage - startPage + 1) < MAX_PAGE_BUTTONS) {
+        endPage = totalPages;
+        startPage = Math.max(1, totalPages - MAX_PAGE_BUTTONS + 1);
+      }
+    }
+  }
+  const pageNumbers = Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
+
   const [accountMenuOpen, setAccountMenuOpen] = useState<boolean>(false);
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
 
@@ -445,18 +469,19 @@ export default function MealLogsPage() {
       return;
     }
 
-    handleFoodSearch(search);
+    handleFoodSearch(search, 1);
   };
 
 // ---------------------------------------------------------------------------
 
-  const handleFoodSearch = async (search: string) => {
+  const handleFoodSearch = async (search: string, pageNumber: number) => {
     setFoodSearch(search);
 
     if (search === '') {
       return;
     }
 
+    setFoodSearchResults([]);
     setIsSearching(true);
 
     if (searchTimeoutRef.current) {
@@ -474,7 +499,15 @@ export default function MealLogsPage() {
           throw new Error("No access token");
         }
 
-        const foods = await getFoods(20, 0, search, setFoodSearchResults, token);
+        const skip = (pageNumber - 1) * MAX_RESULTS_PER_PAGE;
+
+        const foodSearchObject = await getFoods(MAX_RESULTS_PER_PAGE, skip, search, setFoodSearchResults, token);
+        
+        const numPages = Math.ceil(foodSearchObject.total_count / MAX_RESULTS_PER_PAGE);
+        setTotalPages(numPages);
+        setCurrentPageNumber(pageNumber);
+
+        const foods = foodSearchObject.foods;
 
         await Promise.all(
           foods.map((food: Food) => 
@@ -1121,6 +1154,9 @@ export default function MealLogsPage() {
                     </div>
                     )}
                 </div>
+
+// ---------------------------------------------------------------------------
+
               ) : (
                 <div
                   className={`foods-menu ${foodsMenuOpenMealType && 'foods-menu-open'}`}
@@ -1151,7 +1187,7 @@ export default function MealLogsPage() {
                             if (searchTimeoutRef.current) {
                               clearTimeout(searchTimeoutRef.current);
                             }
-                            handleFoodSearch(foodSearch);
+                            handleFoodSearch(foodSearch, 1);
                             e.preventDefault();
                           }
                         }}
@@ -1215,11 +1251,101 @@ export default function MealLogsPage() {
                             </div>
                           )
                         })}
+
+                        {foodSearchResults.length > 0 && totalPages && pageNumbers && (
+                          <nav className="search-results-page-nav">
+                            {currentPageNumber !== 1 && (
+                              <button
+                                className="search-results-page-nav-button"
+                                onClick={() => {
+                                  if (currentPageNumber) {
+                                    setCurrentPageNumber(currentPageNumber - 1);
+                                    handleFoodSearch(foodSearch, currentPageNumber - 1);
+                                  }
+                                }}
+                              >
+                                <img className="button-link-image" src={arrowLeftIcon} />
+                                Previous
+                              </button>
+                            )}
+
+                            {currentPageNumber && (currentPageNumber > MAX_PAGE_BUTTONS) && (
+                              <>
+                                <button
+                                  className="search-results-page-nav-button"
+                                  onClick={() => {
+                                    if (currentPageNumber) {
+                                      setCurrentPageNumber(1);
+                                      handleFoodSearch(foodSearch, 1);
+                                    }
+                                  }}
+                                >
+                                  1
+                                </button>
+
+                                <p className="search-results-page-nav-text">&hellip;</p>
+                              </>
+                            )}
+
+                            {pageNumbers.map((pageNumber: number) => (
+                              <button
+                                key={pageNumber}
+                                className="search-results-page-nav-button"
+                                style={
+                                  pageNumber === currentPageNumber
+                                    ? {backgroundColor: "#8085a6", color: "#00ffcc"}
+                                    : undefined
+                                }
+                                onClick={() => {
+                                  if (currentPageNumber) {
+                                    setCurrentPageNumber(pageNumber);
+                                    handleFoodSearch(foodSearch, pageNumber);
+                                  }
+                                }}
+                              >
+                                {pageNumber}
+                              </button>
+                            ))}
+
+                            {currentPageNumber && (totalPages - currentPageNumber >= MAX_PAGE_BUTTONS) && (
+                              <>
+                                <p className="search-results-page-nav-text">&hellip;</p>
+
+                                <button
+                                  className="search-results-page-nav-button"
+                                  onClick={() => {
+                                    if (currentPageNumber) {
+                                      setCurrentPageNumber(totalPages);
+                                      handleFoodSearch(foodSearch, totalPages);
+                                    }
+                                  }}
+                                >
+                                  {totalPages}
+                                </button>
+                              </>
+                            )}
+
+                            {currentPageNumber !== totalPages && (
+                              <button
+                                className="search-results-page-nav-button"
+                                onClick={() => {
+                                  if (currentPageNumber) {
+                                    setCurrentPageNumber(currentPageNumber + 1);
+                                    handleFoodSearch(foodSearch, currentPageNumber + 1);
+                                  }
+                                }}
+                              >
+                                Next
+                                <img className="button-link-image" src={arrowRightIcon} />
+                              </button>
+                            )}
+                          </nav>
+                        )}
                       </div>
                     )}
                 </div>
               )
-              }
+            }
 
 {/* ---------------------------------------------------------------------- */}
 {/* ---- Breakfast Section Header ---- */}

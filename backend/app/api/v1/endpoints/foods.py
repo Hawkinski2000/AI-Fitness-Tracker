@@ -19,7 +19,7 @@ def create_food(food: food.FoodCreate,
     return new_food
 
 # Get all foods
-@router.get("", response_model=list[food.FoodResponse])
+@router.get("", response_model=food.FoodListResponse)
 def get_foods(limit: int = 10,
               skip: int = 0,
               search: Optional[str] = "",
@@ -28,8 +28,9 @@ def get_foods(limit: int = 10,
     if search:
         search = "%".join(search.split())
 
-    foods = crud_foods.get_foods(limit, skip, search, current_user.user_id, db)
-    return foods
+    food_search_results = crud_foods.get_foods(limit, skip, search, current_user.user_id, db)
+
+    return food_search_results
 
 # Get a food
 @router.get("/{id}", response_model=food.FoodResponse)
