@@ -246,6 +246,15 @@ export default function MealLogsPage() {
       const target = event.target;
 
       if (
+        accountMenuRef.current &&
+        target instanceof Node &&
+        !accountMenuRef.current.contains(target) &&
+        !(target instanceof HTMLElement && target.classList.contains('account-image'))
+      ) {
+        setAccountMenuOpen(false);
+      }
+
+      if (
         mealOptionsMenuOpenType &&
         mealOptionsMenuRefs.current[mealOptionsMenuOpenType] &&
         target instanceof Node &&
@@ -1137,7 +1146,7 @@ export default function MealLogsPage() {
                       {foodNutrients[viewFoodMenuOpenId] && foodNutrients[viewFoodMenuOpenId].map((foodNutrient: FoodNutrient) => {
                         return (
                           <section className="view-food-menu-section">
-                            <div className="view-food-menu-section-content">
+                            <div key={foodNutrient.id} className="view-food-menu-section-content">
                               <p className="view-food-menu-section-column-text">
                                 {nutrients[foodNutrient.nutrient_id]?.name}
                               </p>

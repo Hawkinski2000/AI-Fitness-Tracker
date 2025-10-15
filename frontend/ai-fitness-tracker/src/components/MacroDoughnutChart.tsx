@@ -38,7 +38,7 @@ export default function MacroDoughnutChart({ calories, carbsCalories, fatCalorie
         ctx.fillStyle = '#eceff4';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'bottom';
-        ctx.fillText(calories.toString(), centerX, centerY + 2);
+        ctx.fillText(calories.toFixed(0).replace(/\.0$/, ''), centerX, centerY + 2);
 
         ctx.font = '12px outfit, arial';
         ctx.fillStyle = '#eceff4';
