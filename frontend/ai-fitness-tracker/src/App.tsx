@@ -5,8 +5,8 @@ import HomePage from './pages/home/HomePage';
 import LoginPage from './pages/login/LoginPage';
 import SignupPage from './pages/signup/SignupPage';
 import AboutYouPage from './pages/about-you/AboutYouPage';
-import ChatPage from './pages/chat/ChatPage';
-import MealLogsPage from './pages/meal-logs/MealLogsPage';
+import ChatPage from './pages/chat/components/ChatPage/ChatPage';
+import MealLogsPage from './pages/meal-logs/components/MealLogsPage/MealLogsPage';
 
 
 export default function App() {

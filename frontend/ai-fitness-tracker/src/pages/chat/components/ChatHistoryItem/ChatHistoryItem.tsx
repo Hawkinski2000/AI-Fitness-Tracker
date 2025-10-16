@@ -1,8 +1,8 @@
-import { type Chat } from '../pages/chat/ChatPage.tsx';
-import dotsIcon from '../assets/dots-icon.svg';
-import editIcon from '../assets/edit-icon.svg';
-import pinIcon from '../assets/pin-icon.svg';
-import deleteIcon from '../assets/delete-icon.svg';
+import { type Chat } from '../../types/chat';
+import dotsIcon from '../../../../assets/dots-icon.svg';
+import editIcon from '../../../../assets/edit-icon.svg';
+import pinIcon from '../../../../assets/pin-icon.svg';
+import deleteIcon from '../../../../assets/delete-icon.svg';
 
 
 type ChatHistoryItemProps = {
@@ -19,6 +19,7 @@ type ChatHistoryItemProps = {
   handleUpdateChatTitle: (chatId: number) => Promise<void>;
   handleDeleteChat: (chatId: number) => Promise<void>;
 };
+
 
 export default function ChatHistoryItem({
   chat,

@@ -1,57 +1,28 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from 'react-router-dom';
 import { PropagateLoader } from 'react-spinners';
-import { API_BASE_URL } from "../../config/api";
-import { useAuth } from "../../context/auth/useAuth";
-import { refreshAccessToken, logOut, getUserFromToken, isTokenExpired } from "../../utils/auth";
-import { createChat, deleteChat, generateChatTitle, updateChatTitle, loadChats, loadChatHistory } from "../../utils/chats";
-import ChatHistoryItem from "../../components/ChatHistoryItem";
-import ConversationItem from "../../components/ConversationItem";
-import Header from "../../components/Header";
-import Sidebar from "../../components/Sidebar";
-import closePanelIcon from '../../assets/close-panel-icon.svg';
-import openPanelIcon from '../../assets/open-panel-icon.svg';
-import newChatIcon from '../../assets/new-chat-icon.svg';
-import searchIcon from '../../assets/search-icon.svg';
-import arrowUpIcon from '../../assets/arrow-up-icon.svg';
-import arrowDownIcon from '../../assets/arrow-down-icon.svg';
+import { API_BASE_URL } from "../../../../config/api";
+import { useAuth } from "../../../../context/auth/useAuth";
+import { type UserType } from "../../../../types/app";
+import { type Chat, type ConversationItemType, type ReasoningEvent } from "../../types/chat"
+import { refreshAccessToken, logOut, getUserFromToken, isTokenExpired } from "../../../../utils/auth";
+import { createChat, deleteChat, generateChatTitle, updateChatTitle, loadChats, loadChatHistory } from "../../utils/chat";
+import Header from "../../../../components/Header/Header";
+import Sidebar from "../../../../components/Sidebar/Sidebar";
+import ChatHistoryItem from "../ChatHistoryItem/ChatHistoryItem";
+import ConversationItem from "../ConversationItem/ConversationItem";
+import closePanelIcon from './assets/close-panel-icon.svg';
+import openPanelIcon from './assets/open-panel-icon.svg';
+import newChatIcon from './assets/new-chat-icon.svg';
+import searchIcon from './assets/search-icon.svg';
+import arrowUpIcon from './assets/arrow-up-icon.svg';
+import arrowDownIcon from './assets/arrow-down-icon.svg';
 import './ChatPage.css';
 
 
-export interface User {
-  id: number;
-  username: string;
-  email: string;
-  first_name?: string | null;
-  sex?: string | null;
-  age?: string | null;
-  height?: string | null;
-  weight?: string | null;
-  goal?: string | null;
-}
-export interface Chat {
-  id: number;
-  title: string;
-}
-export interface FunctionCallContent {
-  action?: string;
-  doneAction: string;
-}
-export interface ReasoningEvent {
-  active: boolean;
-  startTime: number;
-  durationSecs: number;
-}
-export interface ConversationItem {
-  type: "user" | "assistant" | "reasoning" | "function_call";
-  content: string | FunctionCallContent | ReasoningEvent;
-  call_id?: string;
-  id?: string;
-}
-
 export default function ChatPage() {
   const { accessToken, setAccessToken } = useAuth();
-  const [userData, setUserData] = useState<User | null>(null);
+  const [userData, setUserData] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
@@ -60,7 +31,7 @@ export default function ChatPage() {
   const [currentChatId, setCurrentChatId] = useState<number | null>(null);
   const chatsLoadedRef = useRef<Record<number, boolean>>({});
   
-  const [conversations, setConversations] = useState<Record<number, ConversationItem[]>>({});
+  const [conversations, setConversations] = useState<Record<number, ConversationItemType[]>>({});
   const [messages, setMessages] = useState<Record<number, string>>({});
 
   const [accountMenuOpen, setAccountMenuOpen] = useState<boolean>(false);

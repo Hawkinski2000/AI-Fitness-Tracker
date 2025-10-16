@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from "../../context/auth/useAuth";
-import { type User } from "../chat/ChatPage";
-import { refreshAccessToken, logOut, getUserFromToken, isTokenExpired } from "../../utils/auth";
+import { useAuth } from "../../../../context/auth/useAuth";
+import { type UserType } from "../../../../types/app";
+import { refreshAccessToken, logOut, getUserFromToken, isTokenExpired } from "../../../../utils/auth";
 import { loadMealLogs,
          createMealLog,
          loadMealLogFoods,
@@ -12,21 +12,21 @@ import { loadMealLogs,
          loadFood, getFoods,
          loadBrandedFood,
          loadFoodNutrients,
-         loadNutrient } from "../../utils/meal-logs";
+         loadNutrient } from "../../../../utils/meal-logs";
 import { PropagateLoader } from 'react-spinners';
-import MacroDoughnutChart from "../../components/MacroDoughnutChart";
-import Header from "../../components/Header";
-import Sidebar from "../../components/Sidebar";
-import arrowLeftIcon from '../../assets/arrow-left-icon.svg';
-import arrowRightIcon from '../../assets/arrow-right-icon.svg';
-import closeIcon from '../../assets/close-icon.svg';
-import addIcon from '../../assets/add-icon.svg';
-import dotsIcon from '../../assets/dots-icon.svg';
-import copyIcon from '../../assets/copy-icon.svg';
-import moveIcon from '../../assets/move-icon.svg';
-import deleteIcon from '../../assets/delete-icon.svg';
-import backIcon from '../../assets/back-icon.svg';
-import checkIcon from '../../assets/check-icon.svg';
+import MacroDoughnutChart from "../MacroDoughnutChart/MacroDoughnutChart";
+import Header from "../../../../components/Header/Header";
+import Sidebar from "../../../../components/Sidebar/Sidebar";
+import arrowLeftIcon from '../../../../assets/arrow-left-icon.svg';
+import arrowRightIcon from '../../../../assets/arrow-right-icon.svg';
+import closeIcon from '../../../../assets/close-icon.svg';
+import addIcon from '../../../../assets/add-icon.svg';
+import dotsIcon from '../../../../assets/dots-icon.svg';
+import copyIcon from '../../../../assets/copy-icon.svg';
+import moveIcon from '../../../../assets/move-icon.svg';
+import deleteIcon from '../../../../assets/delete-icon.svg';
+import backIcon from '../../../../assets/back-icon.svg';
+import checkIcon from '../../../../assets/check-icon.svg';
 import './MealLogsPage.css';
 
 
@@ -77,7 +77,7 @@ export interface Nutrient {
 
 export default function MealLogsPage() {
   const { accessToken, setAccessToken } = useAuth();
-  const [userData, setUserData] = useState<User | null>(null);
+  const [userData, setUserData] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();

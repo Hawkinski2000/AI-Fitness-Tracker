@@ -1,6 +1,6 @@
-import { type User } from '../pages/chat/ChatPage.tsx'
-import AccountImage from './AccountImage';
-import tokenIcon from '../assets/token-icon.svg';
+import { type UserType } from '../../types/app'
+import AccountImage from '../AccountImage/AccountImage';
+import tokenIcon from './assets/token-icon.svg';
 
 
 type HeaderProps = {
@@ -8,10 +8,11 @@ type HeaderProps = {
   tokensRemaining: number;
   accountMenuOpen: boolean;
   setAccountMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  userData: User | null;
+  userData: UserType | null;
   accountMenuRef: React.RefObject<HTMLDivElement | null>;
   handleLogOut: () => Promise<void>;
 };
+
 
 export default function Header({
   isRemovingTokens,

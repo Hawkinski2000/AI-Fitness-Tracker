@@ -1,13 +1,13 @@
-import { type User } from '../pages/chat/ChatPage.tsx'
-import accountIcon from '../assets/account-icon.svg';
-import settingsIcon from '../assets/settings-icon.svg';
-import logoutIcon from '../assets/logout-icon.svg';
+import { type UserType } from '../../types/app'
+import accountIcon from './assets/account-icon.svg';
+import settingsIcon from './assets/settings-icon.svg';
+import logoutIcon from './assets/logout-icon.svg';
 
 
 type AccountImageProps = {
   accountMenuOpen: boolean;
   setAccountMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  userData: User | null;
+  userData: UserType | null;
   accountMenuRef: React.RefObject<HTMLDivElement | null>;
   handleLogOut: () => Promise<void>;
 };

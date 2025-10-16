@@ -1,16 +1,16 @@
-import { type ConversationItem } from '../pages/chat/ChatPage';
-import { type ReasoningEvent } from '../pages/chat/ChatPage';
+import { type ConversationItemType, type ReasoningEvent } from '../../types/chat';
 import { PulseLoader } from 'react-spinners';
 import ReactMarkdown from 'react-markdown';
-import doneIcon from '../assets/done-icon.svg';
+import doneIcon from '../../../../assets/done-icon.svg';
 
 
 type ConversationItemProps = {
-  item: ConversationItem;
+  item: ConversationItemType;
   index: number;
   reasoningEvents: Record<string, ReasoningEvent>;
   callingFunctions: Record<string, boolean>;
 };
+
 
 export default function ConversationItem({
   item,

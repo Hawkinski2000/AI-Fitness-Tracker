@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { type Chat, type ConversationItem } from '../pages/chat/ChatPage';
-import { API_BASE_URL } from '../config/api';
+import { type Chat, type ConversationItemType, type Message } from '../types/chat';
+import { API_BASE_URL } from '../../../config/api';
 
 
 export const createChat = async (setChats: React.Dispatch<React.SetStateAction<Chat[]>>,
@@ -21,6 +21,7 @@ export const createChat = async (setChats: React.Dispatch<React.SetStateAction<C
   return newChat;
 };
 
+
 export const deleteChat = async (chatId: number,
                                  setChats: React.Dispatch<React.SetStateAction<Chat[]>>,
                                  token: string) => {
@@ -35,46 +36,7 @@ export const deleteChat = async (chatId: number,
   setChats(prevChats => prevChats.filter(chat => chat.id !== chatId));
 };
 
-export const updateChatTitle = async (chatId: number,
-                                      newChatTitle: string | null,
-                                      token: string) => {
-  if (!newChatTitle) {
-    return;
-  }
-                                  
-  await axios.patch(`${API_BASE_URL}/chats/${chatId}`,
-    {title: newChatTitle},
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }
-  );  
-};
-
-export const generateChatTitle = async (chatId: number,
-                                        userMessage: string | null,
-                                        token: string) => {
-  if (!userMessage) {
-    return;
-  }
-  
-  const response = await axios.post(`${API_BASE_URL}/chats/generate-title`,
-    {
-      chat_id: chatId,
-      user_message: userMessage
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }
-  );
-
-  const newChatTitle = response.data.new_chat_title;
-
-  return newChatTitle;
-};
+// ---------------------------------------------------------------------------
 
 export const loadChats = async (setChats: React.Dispatch<React.SetStateAction<Chat[]>>,
                                 token: string) => {
@@ -96,19 +58,9 @@ export const loadChats = async (setChats: React.Dispatch<React.SetStateAction<Ch
   return chats;
 };
 
-interface Message {
-  type: 'message' | 'reasoning' | 'function_call'
-  role?: 'user' | 'assistant'
-  message: {
-    id?: string
-    call_id?: string
-    content?: string | { text: string }[];
-    name?: string;
-  };
-  duration_secs?: number;
-}
+
 export const loadChatHistory = async (chatId: number,
-                                      setConversations: React.Dispatch<React.SetStateAction<Record<number, ConversationItem[]>>>,
+                                      setConversations: React.Dispatch<React.SetStateAction<Record<number, ConversationItemType[]>>>,
                                       token: string) => {
   const messagesResponse = await axios.get(`${API_BASE_URL}/messages/${chatId}`,
     {
@@ -118,7 +70,7 @@ export const loadChatHistory = async (chatId: number,
     }
   );
 
-  const formattedMessages: ConversationItem[] = messagesResponse.data.map((message: Message) => {
+  const formattedMessages: ConversationItemType[] = messagesResponse.data.map((message: Message) => {
     let text = '';
     if (message.type === 'message' && message.message.content) {
       if (message.role === 'user') {
@@ -182,4 +134,47 @@ export const loadChatHistory = async (chatId: number,
     ...prev,
     [chatId]: formattedMessages
   }));
+};
+
+// ---------------------------------------------------------------------------
+
+export const generateChatTitle = async (chatId: number,
+                                        userMessage: string | null,
+                                        token: string) => {
+  if (!userMessage) {
+    return;
+  }
+  
+  const response = await axios.post(`${API_BASE_URL}/chats/generate-title`,
+    {
+      chat_id: chatId,
+      user_message: userMessage
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  const newChatTitle = response.data.new_chat_title;
+
+  return newChatTitle;
+};
+
+export const updateChatTitle = async (chatId: number,
+                                      newChatTitle: string | null,
+                                      token: string) => {
+  if (!newChatTitle) {
+    return;
+  }
+                                  
+  await axios.patch(`${API_BASE_URL}/chats/${chatId}`,
+    {title: newChatTitle},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );  
 };
