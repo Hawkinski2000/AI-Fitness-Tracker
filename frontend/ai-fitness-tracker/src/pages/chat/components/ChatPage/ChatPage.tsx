@@ -6,7 +6,8 @@ import { useAuth } from "../../../../context/auth/useAuth";
 import { type UserType } from "../../../../types/app";
 import { type Chat, type ConversationItemType, type ReasoningEvent } from "../../types/chat"
 import { refreshAccessToken, logOut, getUserFromToken, isTokenExpired } from "../../../../utils/auth";
-import { createChat, deleteChat, generateChatTitle, updateChatTitle, loadChats, loadChatHistory } from "../../utils/chat";
+import { generateChatTitle, updateChatTitle, loadChats, loadChatHistory } from "../../utils/chat";
+import useChatActions from "../../hooks/useChatActions";
 import Header from "../../../../components/Header/Header";
 import Sidebar from "../../../../components/Sidebar/Sidebar";
 import ChatHistoryItem from "../ChatHistoryItem/ChatHistoryItem";
@@ -63,105 +64,25 @@ export default function ChatPage() {
 
   const [chatHistoryCollapsed, setChatHistoryCollapsed] = useState(false);
 
-// ---------------------------------------------------------------------------
+  const scrollToBottom = useCallback((chatId: number, behavior: ScrollBehavior = "auto") => {
+    requestAnimationFrame(() => {
+      bottomRefs.current[chatId]?.scrollIntoView({ behavior });
+    });
+  }, []);
 
-  const handleSelectChat = useCallback(async (chatId: number) => {
-    userScrolledUpRef.current = false;
-    setDistanceFromBottom(0);
-
-    try {
-      let token: string | null = accessToken;
-      if (!accessToken || isTokenExpired(accessToken)) {
-        token = await refreshAccessToken();  
-        setAccessToken(token);
-      }
-      if (!token) {
-        throw new Error("No access token");
-      }
-
-      setCurrentChatId(chatId);
-
-      if (!chatsLoadedRef.current[chatId]) {
-        await loadChatHistory(chatId, setConversations, token);
-        chatsLoadedRef.current[chatId] = true;
-      }
-
-      scrollToBottom(chatId);
-
-      const container = conversationRefs.current[chatId];
-      if (!container) {
-        return;
-      }
-      container.style.minHeight = '';
-
-    } catch (err) {
-      console.error(err);
-      setAccessToken(null);
-    }
-  }, [accessToken, setAccessToken]);
-
-// ---------------------------------------------------------------------------  
-
-  const handleCreateChat = useCallback(async () => {
-    try {
-      let token: string | null = accessToken;
-      if (!accessToken || isTokenExpired(accessToken)) {
-        token = await refreshAccessToken();
-        setAccessToken(token);
-      }
-      if (!token) {
-        throw new Error("No access token");
-      }
-
-      const newChat = await createChat(setChats, token);
-
-      const chatId = newChat.id;
-      setCurrentChatId(chatId);
-      handleSelectChat(chatId);
-
-    } catch (err) {
-      console.error(err);
-      setAccessToken(null);
-    }
-  }, [accessToken, setAccessToken, setChats, handleSelectChat]);
-
-// ---------------------------------------------------------------------------
-
-  const handleDeleteChat = async (chatId: number) => {
-    try {
-      let token: string | null = accessToken;
-      if (!accessToken || isTokenExpired(accessToken)) {
-        token = await refreshAccessToken();
-        setAccessToken(token);
-      }
-      if (!token) {
-        throw new Error("No access token");
-      }
-
-      const newChats = chats.filter(chat => chat.id !== chatId);
-
-      await deleteChat(chatId, setChats, token);
-
-      setConversations(prevConversations => {
-        const updated = { ...prevConversations };
-        delete updated[chatId];
-        return updated;
-      });
-
-      if (newChats.length === 0) {
-        handleCreateChat();
-        return;
-      }
-
-      const newCurrentChatId = newChats[0].id;
-      setCurrentChatId(newCurrentChatId);
-      handleSelectChat(newCurrentChatId);
-
-    } catch (err) {
-      console.error(err);
-      setAccessToken(null);
-    }
-  };
+  const { handleSelectChat, handleCreateChat, handleDeleteChat } = useChatActions(
+    accessToken,
+    setAccessToken,
+    chats,
+    setChats,
+    setCurrentChatId,
+    setConversations,
+    setDistanceFromBottom,
+    chatsLoadedRef,
+    conversationRefs,
+    userScrolledUpRef,
+    scrollToBottom
+  )
 
 // ---------------------------------------------------------------------------
 
@@ -207,17 +128,7 @@ export default function ChatPage() {
     };
 
     fetchData();
-  }, [setAccessToken, handleCreateChat, navigate]);
-
-// ---------------------------------------------------------------------------
-
-  const scrollToBottom = (chatId: number, behavior: ScrollBehavior = "auto") => {
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        bottomRefs.current[chatId]?.scrollIntoView({ behavior: behavior });
-      });
-    });
-  };
+  }, [setAccessToken, handleCreateChat, scrollToBottom, navigate]);
 
 // ---------------------------------------------------------------------------
 
