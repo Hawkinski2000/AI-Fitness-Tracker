@@ -11,7 +11,7 @@ import useInitializeChatPage from "../../hooks/useInitializeChatPage";
 import Header from "../../../../components/Header/Header";
 import Sidebar from "../../../../components/Sidebar/Sidebar";
 import ChatHistoryItem from "../ChatHistoryItem/ChatHistoryItem";
-import ConversationItem from "../ConversationItem/ConversationItem";
+import Conversation from "../Conversation/Conversation";
 import closePanelIcon from './assets/close-panel-icon.svg';
 import openPanelIcon from './assets/open-panel-icon.svg';
 import newChatIcon from './assets/new-chat-icon.svg';
@@ -666,6 +666,7 @@ export default function ChatPage() {
                 {chats.map((chat) => {
                   return (
                     <ChatHistoryItem
+                      key={chat.id}
                       chat={chat}
                       editingChatTitleId={editingChatTitleId}
                       editingChatTitleRefs={editingChatTitleRefs}
@@ -722,36 +723,15 @@ export default function ChatPage() {
 {/* ---------------------------------------------------------------------- */}
 {/* ---- Conversation ---- */}
 
-              <div
-                className="conversation-container"
-                ref={el => { 
-                  if (currentChatId !== null) {
-                    conversationRefs.current[currentChatId] = el;
-                  }
-                }}
-              >
-                {currentChatId !== null &&
-                  (conversations[currentChatId] || []).map((item, index) => {
-                    return (
-                      <ConversationItem
-                        item={item}
-                        index={index}
-                        reasoningEvents={reasoningEvents}
-                        callingFunctions={callingFunctions}
-                      />
-                    )
-                  })
-                }
-                
-                <div
-                  ref={el => { 
-                    if (currentChatId !== null) {
-                      bottomRefs.current[currentChatId] = el;
-                    }
-                  }}
-                />
-              </div>
-            
+              <Conversation
+                currentChatId={currentChatId}
+                conversations={conversations}
+                conversationRefs={conversationRefs}
+                bottomRefs={bottomRefs}
+                reasoningEvents={reasoningEvents}
+                callingFunctions={callingFunctions}
+              />
+              
 {/* ---------------------------------------------------------------------- */}
 {/* ---- Message Input ---- */}
 
