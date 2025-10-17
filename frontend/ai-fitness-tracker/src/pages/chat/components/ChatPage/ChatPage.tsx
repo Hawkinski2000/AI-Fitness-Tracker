@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { PropagateLoader } from 'react-spinners';
 import { API_BASE_URL } from "../../../../config/api";
 import { useAuth } from "../../../../context/auth/useAuth";
-import { type UserType } from "../../../../types/app";
 import { type Chat, type ConversationItemType, type ReasoningEvent } from "../../types/chat"
-import { refreshAccessToken, logOut, getUserFromToken, isTokenExpired } from "../../../../utils/auth";
-import { generateChatTitle, updateChatTitle, loadChats, loadChatHistory } from "../../utils/chat";
+import { refreshAccessToken, logOut, isTokenExpired } from "../../../../utils/auth";
+import { generateChatTitle, updateChatTitle } from "../../utils/chat";
 import useChatActions from "../../hooks/useChatActions";
+import useInitializeChatPage from "../../hooks/useInitializeChatPage";
 import Header from "../../../../components/Header/Header";
 import Sidebar from "../../../../components/Sidebar/Sidebar";
 import ChatHistoryItem from "../ChatHistoryItem/ChatHistoryItem";
@@ -23,9 +23,6 @@ import './ChatPage.css';
 
 export default function ChatPage() {
   const { accessToken, setAccessToken } = useAuth();
-  const [userData, setUserData] = useState<UserType | null>(null);
-  const [loading, setLoading] = useState(true);
-
   const navigate = useNavigate();
 
   const [chats, setChats] = useState<Chat[]>([]);
@@ -82,53 +79,18 @@ export default function ChatPage() {
     conversationRefs,
     userScrolledUpRef,
     scrollToBottom
-  )
+  );
 
-// ---------------------------------------------------------------------------
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = await refreshAccessToken();  
-
-        if (!token) {
-          throw new Error("No access token");
-        }
-
-        setAccessToken(token);
-
-        const userData = await getUserFromToken(token);
-        setUserData(userData);
-        setTokensRemaining(Math.min(userData.input_tokens_remaining, userData.output_tokens_remaining))
-
-        const loadedChats = await loadChats(setChats, token);
-
-        if (loadedChats.length > 0) {
-          const mostRecentChat = loadedChats[0];
-          const chatId = mostRecentChat.id;
-          setCurrentChatId(chatId);
-
-          await loadChatHistory(chatId, setConversations, token);
-          chatsLoadedRef.current[chatId] = true;
-
-          scrollToBottom(chatId);
-        }
-        else {
-          handleCreateChat();
-        }
-
-      } catch (err) {
-        console.error(err);
-        setAccessToken(null);
-        navigate("/");
-
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [setAccessToken, handleCreateChat, scrollToBottom, navigate]);
+  const { userData, loading } = useInitializeChatPage(
+    setAccessToken,
+    setTokensRemaining,
+    setChats,
+    setCurrentChatId,
+    setConversations,
+    chatsLoadedRef,
+    scrollToBottom,
+    handleCreateChat
+  );
 
 // ---------------------------------------------------------------------------
 
