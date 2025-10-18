@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 
 
 const useMessageInput = (
@@ -11,7 +11,7 @@ const useMessageInput = (
   const inputTimeouts = useRef<Record<number, number | null>>({});
 
 
-  const handleInput = (event: React.FormEvent<HTMLDivElement>) => {    
+  const handleInput = useCallback((event: React.FormEvent<HTMLDivElement>) => {    
     if (!currentChatId) {
       return;
     }
@@ -49,11 +49,11 @@ const useMessageInput = (
         };
       });
     }
-  };
+  }, [currentChatId, expandedInputs]);
 
 // ---------------------------------------------------------------------------
 
-  const handleSendMessage = () => {
+  const handleSendMessage = useCallback(() => {
     if (!currentChatId || !messages[currentChatId]) {
       return;
     }
@@ -77,7 +77,7 @@ const useMessageInput = (
         [currentChatId]: false,
       };
     });
-  };
+  }, [currentChatId, messages, createMessageStream]);
 
 
   return {

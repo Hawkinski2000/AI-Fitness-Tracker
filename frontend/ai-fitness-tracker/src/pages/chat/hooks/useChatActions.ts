@@ -1,22 +1,34 @@
-import { useCallback } from "react";
-import { refreshAccessToken, isTokenExpired } from "../../../utils/auth";
+import { useState, useCallback } from "react";
 import { type Chat, type ConversationItemType } from "../types/chat";
-import { loadChatHistory, createChat, deleteChat } from "../utils/chat";
+import { useAuth } from "../../../context/auth/useAuth";
+import { refreshAccessToken, isTokenExpired } from "../../../utils/auth";
+import {
+  loadChatHistory,
+  createChat,
+  deleteChat,
+  generateChatTitle,
+  updateChatTitle
+} from "../utils/chat";
 
 
 const useChatActions = (
-  accessToken: string | null,
-  setAccessToken: React.Dispatch<React.SetStateAction<string | null>>,
   chats: Chat[],
   setChats: React.Dispatch<React.SetStateAction<Chat[]>>,
   setCurrentChatId: React.Dispatch<React.SetStateAction<number | null>>,
   setConversations: React.Dispatch<React.SetStateAction<Record<number, ConversationItemType[]>>>,
   setDistanceFromBottom: React.Dispatch<React.SetStateAction<number>>,
+  setEditingChatTitleId: React.Dispatch<React.SetStateAction<number | null>>,
   chatsLoadedRef: React.RefObject<Record<number, boolean>>,
   conversationRefs: React.RefObject<Record<number, HTMLDivElement | null>>,
   userScrolledUpRef: React.RefObject<boolean>,
-  scrollToBottom: (chatId: number, behavior?: ScrollBehavior) => void
+  editingChatTitleRefs: React.RefObject<Record<number, HTMLDivElement | null>>,
+  scrollToBottom: (chatId: number, behavior?: ScrollBehavior) => void,
 ) => {
+  const { accessToken, setAccessToken } = useAuth();
+
+  const [newChatTitle, setNewChatTitle] = useState<string | null>(null);
+
+
   const handleSelectChat = useCallback(async (chatId: number) => {
     userScrolledUpRef.current = false;
     setDistanceFromBottom(0);
@@ -140,8 +152,85 @@ const useChatActions = (
     handleSelectChat,
   ]);
 
+// ---------------------------------------------------------------------------
 
-  return { handleSelectChat, handleCreateChat, handleDeleteChat };
+  const handleGenerateChatTitle = useCallback(async (chatId: number, userMessage: string) => {
+    try {
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();
+        setAccessToken(token);
+      }
+      if (!token) {
+        throw new Error("No access token");
+      }
+
+      const newChatTitle = await generateChatTitle(chatId, userMessage, token);
+      return newChatTitle;
+
+    } catch (err) {
+      console.error(err);
+      setAccessToken(null);
+      return "New chat";
+    }
+  }, [accessToken, setAccessToken]);
+
+// ---------------------------------------------------------------------------
+
+  const handleUpdateChatTitle = useCallback(async (chatId: number) => {
+    try {
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();
+        setAccessToken(token);
+      }
+      if (!token) {
+        throw new Error("No access token");
+      }
+
+      const element = editingChatTitleRefs.current[chatId];
+      if (!element) {
+        return;
+      }
+      const title = element.querySelector<HTMLElement>('.chat-title');
+      if (title) {
+        const range = document.createRange();
+        range.setStart(title, 0);
+        range.collapse(true);
+        const selection = window.getSelection();
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+
+        title.scrollLeft = 0;
+      }
+      setEditingChatTitleId(null);
+
+      await updateChatTitle(chatId, newChatTitle, token);
+
+      setNewChatTitle(null);
+
+    } catch (err) {
+      console.error(err);
+      setAccessToken(null);
+    }
+  }, [
+    accessToken,
+    setAccessToken,
+    newChatTitle,
+    setNewChatTitle,
+    setEditingChatTitleId,
+    editingChatTitleRefs
+  ]);
+
+
+  return {
+    handleSelectChat,
+    handleCreateChat,
+    handleDeleteChat,
+    handleGenerateChatTitle,
+    handleUpdateChatTitle,
+    setNewChatTitle
+  };
 };
 
 

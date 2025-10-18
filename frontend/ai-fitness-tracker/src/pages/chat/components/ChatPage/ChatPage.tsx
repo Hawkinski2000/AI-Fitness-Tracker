@@ -2,8 +2,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../../../context/auth/useAuth";
 import { type Chat, type ConversationItemType } from "../../types/chat"
-import { refreshAccessToken, logOut, isTokenExpired } from "../../../../utils/auth";
-import { generateChatTitle, updateChatTitle } from "../../utils/chat";
+import { logOut } from "../../../../utils/auth";
 import useChatActions from "../../hooks/useChatActions";
 import useInitializeChatPage from "../../hooks/useInitializeChatPage";
 import useMessageInput from "../../hooks/useMessageInput";
@@ -20,7 +19,7 @@ import './ChatPage.css';
 
 
 export default function ChatPage() {
-  const { accessToken, setAccessToken } = useAuth();
+  const { setAccessToken } = useAuth();
   const navigate = useNavigate();
 
   const [chats, setChats] = useState<Chat[]>([]);
@@ -37,7 +36,6 @@ export default function ChatPage() {
 
   const [editingChatTitleId, setEditingChatTitleId] = useState<number | null>(null);
   const editingChatTitleRefs = useRef<Record<number, HTMLDivElement | null>>({});
-  const [newChatTitle, setNewChatTitle] = useState<string | null>(null);
 
   const conversationRefs = useRef<Record<number, HTMLDivElement | null>>({})
   const bottomRefs = useRef<Record<number, HTMLDivElement | null>>({});
@@ -56,22 +54,28 @@ export default function ChatPage() {
     });
   }, []);
 
-  const { handleSelectChat, handleCreateChat, handleDeleteChat } = useChatActions(
-    accessToken,
-    setAccessToken,
+  const {
+    handleSelectChat,
+    handleCreateChat,
+    handleDeleteChat,
+    handleGenerateChatTitle,
+    handleUpdateChatTitle,
+    setNewChatTitle
+  } = useChatActions(
     chats,
     setChats,
     setCurrentChatId,
     setConversations,
     setDistanceFromBottom,
+    setEditingChatTitleId,
     chatsLoadedRef,
     conversationRefs,
     userScrolledUpRef,
+    editingChatTitleRefs,
     scrollToBottom
   );
 
   const { userData, loading } = useInitializeChatPage(
-    setAccessToken,
     setTokensRemaining,
     setChats,
     setCurrentChatId,
@@ -141,69 +145,6 @@ export default function ChatPage() {
 
     container.style.minHeight = '';
   }, [currentChatId]);
-
-// ---------------------------------------------------------------------------
-
-  const handleGenerateChatTitle = async (chatId: number, userMessage: string) => {
-    try {
-      let token: string | null = accessToken;
-      if (!accessToken || isTokenExpired(accessToken)) {
-        token = await refreshAccessToken();
-        setAccessToken(token);
-      }
-      if (!token) {
-        throw new Error("No access token");
-      }
-
-      const newChatTitle = await generateChatTitle(chatId, userMessage, token);
-      return newChatTitle;
-
-    } catch (err) {
-      console.error(err);
-      setAccessToken(null);
-      return "New chat";
-    }
-  };
-
-// ---------------------------------------------------------------------------
-
-  const handleUpdateChatTitle = useCallback(async (chatId: number) => {
-      try {
-        let token: string | null = accessToken;
-        if (!accessToken || isTokenExpired(accessToken)) {
-          token = await refreshAccessToken();
-          setAccessToken(token);
-        }
-        if (!token) {
-          throw new Error("No access token");
-        }
-
-        const element = editingChatTitleRefs.current[chatId];
-        if (!element) {
-          return;
-        }
-        const title = element.querySelector<HTMLElement>('.chat-title');
-        if (title) {
-          const range = document.createRange();
-          range.setStart(title, 0);
-          range.collapse(true);
-          const selection = window.getSelection();
-          selection?.removeAllRanges();
-          selection?.addRange(range);
-
-          title.scrollLeft = 0;
-        }
-        setEditingChatTitleId(null);
-
-        await updateChatTitle(chatId, newChatTitle, token);
-
-        setNewChatTitle(null);
-
-      } catch (err) {
-        console.error(err);
-        setAccessToken(null);
-      }
-    }, [accessToken, setAccessToken, newChatTitle, setNewChatTitle])
 
 // ---------------------------------------------------------------------------
 

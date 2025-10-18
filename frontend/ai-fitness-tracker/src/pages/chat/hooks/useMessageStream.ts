@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { type ConversationItemType, type Chat, type ReasoningEvent } from "../types/chat";
 import { useAuth } from "../../../context/auth/useAuth";
-import { API_BASE_URL } from "../../../config/api";
 import { refreshAccessToken, isTokenExpired } from "../../../utils/auth";
+import { API_BASE_URL } from "../../../config/api";
 
 
 const useMessageStream = (
@@ -26,7 +26,7 @@ const useMessageStream = (
   const [callingFunctions, setCallingFunctions] = useState<Record<string, boolean>>({});  
 
 
-  const updateTokensRemaining = (newTokensRemaining: number) => {
+  const updateTokensRemaining = useCallback((newTokensRemaining: number) => {
     const updateStepDurationMs = 1;
     const tokensRemovedPerStep = 10;
 
@@ -41,10 +41,11 @@ const useMessageStream = (
         return next;
     });
     }, updateStepDurationMs);
-  };
+  }, [setTokensRemaining]);
 
+// ---------------------------------------------------------------------------
 
-  const createMessageStream = async (userMessage: string, chatId: number) => {
+  const createMessageStream = useCallback(async (userMessage: string, chatId: number) => {
     try {
       let token: string | null = accessToken;
       if (!accessToken || isTokenExpired(accessToken)) {
@@ -282,7 +283,22 @@ const useMessageStream = (
     } finally {
       generatingMessageRef.current = false;
     }
-  };
+  }, [
+    accessToken,
+    setAccessToken,
+    chats,
+    setChats,
+    conversations,
+    setConversations,
+    tokensRemaining,
+    conversationRefs,
+    generatingMessageRef,
+    userScrolledUpRef,
+    handleGenerateChatTitle,
+    scrollToBottom,
+    scrollUserMessage,
+    updateTokensRemaining
+  ]);
 
 
   return {

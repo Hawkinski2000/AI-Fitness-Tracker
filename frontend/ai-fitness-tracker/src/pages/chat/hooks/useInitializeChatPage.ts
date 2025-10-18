@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
-import { refreshAccessToken, getUserFromToken } from "../../../utils/auth";
 import { type UserType } from "../../../types/app"
 import { type Chat, type ConversationItemType } from "../types/chat";
+import { useAuth } from "../../../context/auth/useAuth";
+import { refreshAccessToken, getUserFromToken } from "../../../utils/auth";
 import { loadChats, loadChatHistory } from "../utils/chat";
 
 
 const useInitializeChatPage = (
-  setAccessToken: React.Dispatch<React.SetStateAction<string | null>>,
   setTokensRemaining: React.Dispatch<React.SetStateAction<number>>,
   setChats: React.Dispatch<React.SetStateAction<Chat[]>>,
   setCurrentChatId: React.Dispatch<React.SetStateAction<number | null>>,
@@ -16,6 +16,8 @@ const useInitializeChatPage = (
   scrollToBottom: (chatId: number, behavior?: ScrollBehavior) => void,
   handleCreateChat: () => Promise<void>,
 ) => {
+  const { setAccessToken } = useAuth();
+
   const [userData, setUserData] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -23,7 +25,7 @@ const useInitializeChatPage = (
 
 
   useEffect(() => {
-    const fetchData = async () => {
+    const initializeChatPage = async () => {
       try {
         const token = await refreshAccessToken();  
 
@@ -63,7 +65,7 @@ const useInitializeChatPage = (
       }
     };
 
-    fetchData();
+    initializeChatPage();
     }, [
       setAccessToken,
       setUserData,
