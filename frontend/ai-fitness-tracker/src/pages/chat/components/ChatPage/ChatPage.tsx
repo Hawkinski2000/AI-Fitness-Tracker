@@ -10,15 +10,11 @@ import useInitializeChatPage from "../../hooks/useInitializeChatPage";
 import LoadingScreen from "../../../../components/LoadingScreen/LoadingScreen";
 import Header from "../../../../components/Header/Header";
 import Sidebar from "../../../../components/Sidebar/Sidebar";
-import ChatHistoryItem from "../ChatHistoryItem/ChatHistoryItem";
+import ChatPageSidebar from "../ChatPageSidebar/ChatPageSidebar";
 import ChatWelcomeHeading from "../ChatWelcomeHeading/ChatWelcomeHeading";
 import Conversation from "../Conversation/Conversation";
 import MessageInput from "../MessageInput/MessageInput";
 import ScrollButton from "../ScrollButton/ScrollButton";
-import closePanelIcon from './assets/close-panel-icon.svg';
-import openPanelIcon from './assets/open-panel-icon.svg';
-import newChatIcon from './assets/new-chat-icon.svg';
-import searchIcon from './assets/search-icon.svg';
 import './ChatPage.css';
 
 
@@ -618,82 +614,23 @@ export default function ChatPage() {
         <div className="page-body">
           <Sidebar currentPage={'chat'} />
 
-{/* ---------------------------------------------------------------------- */}
-{/* ---- Chat History ---- */}
-
-          {!chatHistoryCollapsed ? (
-            <nav className="chat-history">
-              <div className="chat-history-button-container">
-                <div className="chat-history-collapse-button-container">
-                  <button
-                  className="chat-history-collapse-button"
-                  onClick={() => setChatHistoryCollapsed(true)}
-                >
-                  <img className="button-link-image" src={closePanelIcon} />
-                </button>
-                </div>
-                <div className="chat-history-item">
-                  <button
-                    className="button-link chat-history-button-link"
-                    onClick={handleCreateChat}
-                  >
-                    <img className="button-link-image" src={newChatIcon} />
-                    New chat
-                  </button>
-                </div>
-
-                <div className="chat-history-item">
-                  <button
-                    className="button-link chat-history-button-link"
-                  >
-                    <img className="button-link-image" src={searchIcon} />
-                    Search chats
-                  </button>
-                </div>
-              </div>
-
-              <div className="chats-container">
-                <div className="chat-history-text-container">Chats</div>
-
-                {chats.map((chat) => {
-                  return (
-                    <ChatHistoryItem
-                      key={chat.id}
-                      chat={chat}
-                      editingChatTitleId={editingChatTitleId}
-                      editingChatTitleRefs={editingChatTitleRefs}
-                      currentChatId={currentChatId}
-                      chatOptionsMenuOpenId={chatOptionsMenuOpenId}
-                      setNewChatTitle={setNewChatTitle}
-                      setChatOptionsMenuOpenId={setChatOptionsMenuOpenId}
-                      chatOptionsMenuRefs={chatOptionsMenuRefs}
-                      setEditingChatTitleId={setEditingChatTitleId}
-                      handleSelectChat={handleSelectChat}
-                      handleUpdateChatTitle={handleUpdateChatTitle}
-                      handleDeleteChat={handleDeleteChat}
-                    />
-                  );
-                })}
-              </div>
-            </nav>
-          ) : (
-            <nav className="chat-history chat-history-collapsed">
-              <div
-                className="chat-history-collapse-button-container"
-                style={{ textAlign: 'center' }}
-              >
-                <button
-                  className="chat-history-collapse-button"
-                  onClick={() => setChatHistoryCollapsed(false)}
-                >
-                  <img className="button-link-image" src={openPanelIcon} />
-                </button>
-              </div>
-            </nav>
-          )}
-          
-{/* ---------------------------------------------------------------------- */}
-{/* ---- Chat ---- */}
+          <ChatPageSidebar
+            chatHistoryCollapsed={chatHistoryCollapsed}
+            setChatHistoryCollapsed={setChatHistoryCollapsed}
+            currentChatId={currentChatId}
+            chats={chats}
+            editingChatTitleId={editingChatTitleId}
+            setEditingChatTitleId={setEditingChatTitleId}
+            chatOptionsMenuOpenId={chatOptionsMenuOpenId}
+            setChatOptionsMenuOpenId={setChatOptionsMenuOpenId}
+            setNewChatTitle={setNewChatTitle}
+            chatOptionsMenuRefs={chatOptionsMenuRefs}
+            editingChatTitleRefs={editingChatTitleRefs}
+            handleSelectChat={handleSelectChat}
+            handleCreateChat={handleCreateChat}
+            handleDeleteChat={handleDeleteChat}
+            handleUpdateChatTitle={handleUpdateChatTitle}
+          />
 
           <main
             className={`page-main chat-main ${chatHistoryCollapsed ? 'chat-main-collapsed' : ''}`}
