@@ -1,5 +1,6 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef } from "react";
 import { type Chat, type ConversationItemType } from "../../types/chat"
+import useChatScroll from "../../hooks/useChatScroll";
 import useChatActions from "../../hooks/useChatActions";
 import useInitializeChatPage from "../../hooks/useInitializeChatPage";
 import useMessageInput from "../../hooks/useMessageInput";
@@ -32,21 +33,25 @@ export default function ChatPage() {
   const editingChatTitleRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
   const conversationRefs = useRef<Record<number, HTMLDivElement | null>>({})
-  const bottomRefs = useRef<Record<number, HTMLDivElement | null>>({});
-  const mainRef = useRef<HTMLDivElement | null>(null);
-  const userScrolledUpRef = useRef(false);
-  const [distanceFromBottom, setDistanceFromBottom] = useState<number>(0);
   const generatingMessageRef = useRef(false);
 
   const [tokensRemaining, setTokensRemaining] = useState<number>(0);
 
   const [chatHistoryCollapsed, setChatHistoryCollapsed] = useState(false);
 
-  const scrollToBottom = useCallback((chatId: number, behavior: ScrollBehavior = "auto") => {
-    requestAnimationFrame(() => {
-      bottomRefs.current[chatId]?.scrollIntoView({ behavior });
-    });
-  }, []);
+  const {
+    distanceFromBottom,
+    setDistanceFromBottom,
+    bottomRefs,
+    userScrolledUpRef,
+    scrollToBottom,
+    scrollUserMessage,
+    attachScrollListener
+  } = useChatScroll(
+    currentChatId,
+    conversationRefs,
+    generatingMessageRef
+  );
 
   const {
     handleSelectChat,
@@ -78,67 +83,6 @@ export default function ChatPage() {
     scrollToBottom,
     handleCreateChat
   );
-
-// ---------------------------------------------------------------------------
-
-  const scrollUserMessage = (chatId: number) => {
-    const container = conversationRefs.current[chatId];
-
-    if (!container) {
-      return;
-    }
-
-    const viewportHeight = window.innerHeight;
-    const extraSpace = viewportHeight / 2 - 100;
-    container.style.minHeight = `${container.scrollHeight + extraSpace}px`;
-
-    bottomRefs.current[chatId]?.scrollIntoView({ behavior: "smooth" });
-  }
-
-// ---------------------------------------------------------------------------
-
-  const attachScrollListener = (element: HTMLDivElement | null) => {
-  if (!element) {
-    return;
-  }
-
-  mainRef.current = element;
-
-  let lastScrollTop = element.scrollTop;
-
-  const handleScroll = () => {
-    const currentScrollTop = element.scrollTop;
-    const distance = element.scrollHeight - element.clientHeight - currentScrollTop;
-
-    if (currentScrollTop < lastScrollTop && generatingMessageRef.current) {
-      userScrolledUpRef.current = true;
-    } else if (currentScrollTop > lastScrollTop) {
-      userScrolledUpRef.current = false;
-    }
-
-    lastScrollTop = currentScrollTop;
-
-    setDistanceFromBottom(distance);
-  };
-
-  element.addEventListener("scroll", handleScroll);
-  return () => element.removeEventListener("scroll", handleScroll);
-};
-
-// ---------------------------------------------------------------------------
-
-  useEffect(() => {
-    if (currentChatId === null) {
-      return;
-    }
-    
-    const container = conversationRefs.current[currentChatId];
-    if (!container) {
-      return;
-    }
-
-    container.style.minHeight = '';
-  }, [currentChatId]);
 
 // ---------------------------------------------------------------------------
 
@@ -200,8 +144,6 @@ export default function ChatPage() {
     scrollUserMessage,
     scrollToBottom
   )
-
-// ---------------------------------------------------------------------------
 
   const {
     handleInput,
