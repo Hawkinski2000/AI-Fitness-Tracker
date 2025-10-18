@@ -1,7 +1,8 @@
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { type Chat, type ConversationItemType } from "../../types/chat"
 import useChatScroll from "../../hooks/useChatScroll";
 import useChatActions from "../../hooks/useChatActions";
+import useChatClickOutside from "../../hooks/useChatClickOutside";
 import useInitializeChatPage from "../../hooks/useInitializeChatPage";
 import useMessageInput from "../../hooks/useMessageInput";
 import useMessageStream from "../../hooks/useMessageStream";
@@ -17,14 +18,16 @@ import './ChatPage.css';
 
 
 export default function ChatPage() {
+  const [accountMenuOpen, setAccountMenuOpen] = useState<boolean>(false);
+  const accountMenuRef = useRef<HTMLDivElement | null>(null);
+
+  const [tokensRemaining, setTokensRemaining] = useState<number>(0);
+
   const [chats, setChats] = useState<Chat[]>([]);
   const [currentChatId, setCurrentChatId] = useState<number | null>(null);
   const chatsLoadedRef = useRef<Record<number, boolean>>({});
   
-  const [conversations, setConversations] = useState<Record<number, ConversationItemType[]>>({});
-
-  const [accountMenuOpen, setAccountMenuOpen] = useState<boolean>(false);
-  const accountMenuRef = useRef<HTMLDivElement | null>(null);
+  const [chatHistoryCollapsed, setChatHistoryCollapsed] = useState(false);
 
   const [chatOptionsMenuOpenId, setChatOptionsMenuOpenId] = useState<number | null>(null);
   const chatOptionsMenuRefs = useRef<Record<number, HTMLDivElement | null>>({});
@@ -32,12 +35,9 @@ export default function ChatPage() {
   const [editingChatTitleId, setEditingChatTitleId] = useState<number | null>(null);
   const editingChatTitleRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
+  const [conversations, setConversations] = useState<Record<number, ConversationItemType[]>>({});
   const conversationRefs = useRef<Record<number, HTMLDivElement | null>>({})
   const generatingMessageRef = useRef(false);
-
-  const [tokensRemaining, setTokensRemaining] = useState<number>(0);
-
-  const [chatHistoryCollapsed, setChatHistoryCollapsed] = useState(false);
 
   const {
     distanceFromBottom,
@@ -74,6 +74,17 @@ export default function ChatPage() {
     scrollToBottom
   );
 
+  useChatClickOutside(
+    chatOptionsMenuOpenId,
+    setChatOptionsMenuOpenId,
+    editingChatTitleId,
+    setAccountMenuOpen,
+    chatOptionsMenuRefs,
+    editingChatTitleRefs,
+    accountMenuRef,
+    handleUpdateChatTitle
+  );
+
   const { userData, loading } = useInitializeChatPage(
     setTokensRemaining,
     setChats,
@@ -83,47 +94,6 @@ export default function ChatPage() {
     scrollToBottom,
     handleCreateChat
   );
-
-// ---------------------------------------------------------------------------
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target;
-
-      if (
-        chatOptionsMenuOpenId &&
-        chatOptionsMenuRefs.current[chatOptionsMenuOpenId] &&
-        target instanceof Node &&
-        !chatOptionsMenuRefs.current[chatOptionsMenuOpenId].contains(target) &&
-        !(target instanceof HTMLElement && target.classList.contains('chat-options-button'))
-      ) {
-        setChatOptionsMenuOpenId(null);
-      }
-
-      if (
-        editingChatTitleId &&
-        editingChatTitleRefs.current[editingChatTitleId] &&
-        target instanceof Node &&
-        !editingChatTitleRefs.current[editingChatTitleId].contains(target)
-      ) {
-        handleUpdateChatTitle(editingChatTitleId);
-      }
-
-      if (
-        accountMenuRef.current &&
-        target instanceof Node &&
-        !accountMenuRef.current.contains(target) &&
-        !(target instanceof HTMLElement && target.classList.contains('account-image'))
-      ) {
-        setAccountMenuOpen(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [chatOptionsMenuOpenId, editingChatTitleId, handleUpdateChatTitle]);
-
-// ---------------------------------------------------------------------------
 
   const {
     isRemovingTokens,
@@ -155,8 +125,7 @@ export default function ChatPage() {
     createMessageStream
   )
 
-// ---------------------------------------------------------------------------
-
+  
   if (loading) {
     return <LoadingScreen />;
   }
