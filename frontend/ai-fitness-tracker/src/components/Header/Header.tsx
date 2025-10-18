@@ -10,7 +10,6 @@ type HeaderProps = {
   setAccountMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   userData: UserType | null;
   accountMenuRef: React.RefObject<HTMLDivElement | null>;
-  handleLogOut: () => Promise<void>;
 };
 
 
@@ -21,7 +20,6 @@ export default function Header({
   setAccountMenuOpen,
   userData,
   accountMenuRef,
-  handleLogOut
 }: HeaderProps) {
   return (
     <header className='page-header'>
@@ -42,7 +40,6 @@ export default function Header({
         setAccountMenuOpen={setAccountMenuOpen}
         userData={userData}
         accountMenuRef={accountMenuRef}
-        handleLogOut={handleLogOut}
       />
     </header>
   );

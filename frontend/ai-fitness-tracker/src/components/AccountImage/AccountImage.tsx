@@ -1,4 +1,7 @@
+import { useNavigate } from 'react-router-dom';
 import { type UserType } from '../../types/app'
+import { useAuth } from "../../context/auth/useAuth";
+import { logOut } from "../../utils/auth";
 import accountIcon from './assets/account-icon.svg';
 import settingsIcon from './assets/settings-icon.svg';
 import logoutIcon from './assets/logout-icon.svg';
@@ -9,16 +12,20 @@ type AccountImageProps = {
   setAccountMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   userData: UserType | null;
   accountMenuRef: React.RefObject<HTMLDivElement | null>;
-  handleLogOut: () => Promise<void>;
 };
+
 
 export default function AccountImage({
   accountMenuOpen,
   setAccountMenuOpen,
   userData,
-  accountMenuRef,
-  handleLogOut
+  accountMenuRef
 }: AccountImageProps) {
+  const { setAccessToken } = useAuth();
+
+  const navigate = useNavigate();
+
+
   return (
     <>
       <div
@@ -55,7 +62,11 @@ export default function AccountImage({
 
         <button
           className="account-menu-button"
-          onClick={handleLogOut}
+          onClick={() => {
+            logOut();
+            setAccessToken(null);
+            navigate("/");
+          }}
         >
           <img className="button-link-image" src={logoutIcon} />
           Log out

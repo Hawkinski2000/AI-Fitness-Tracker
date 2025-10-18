@@ -1,8 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from "react";
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from "../../../../context/auth/useAuth";
 import { type Chat, type ConversationItemType } from "../../types/chat"
-import { logOut } from "../../../../utils/auth";
 import useChatActions from "../../hooks/useChatActions";
 import useInitializeChatPage from "../../hooks/useInitializeChatPage";
 import useMessageInput from "../../hooks/useMessageInput";
@@ -19,9 +16,6 @@ import './ChatPage.css';
 
 
 export default function ChatPage() {
-  const { setAccessToken } = useAuth();
-  const navigate = useNavigate();
-
   const [chats, setChats] = useState<Chat[]>([]);
   const [currentChatId, setCurrentChatId] = useState<number | null>(null);
   const chatsLoadedRef = useRef<Record<number, boolean>>({});
@@ -209,14 +203,6 @@ export default function ChatPage() {
 
 // ---------------------------------------------------------------------------
 
-  const handleLogOut = async () => {
-    logOut();
-    setAccessToken(null);
-    navigate("/");
-  };
-
-// ---------------------------------------------------------------------------
-
   const {
     handleInput,
     handleSendMessage,
@@ -243,7 +229,6 @@ export default function ChatPage() {
           setAccountMenuOpen={setAccountMenuOpen}
           userData={userData}
           accountMenuRef={accountMenuRef}
-          handleLogOut={handleLogOut}
         />
 
         <div className="page-body">
