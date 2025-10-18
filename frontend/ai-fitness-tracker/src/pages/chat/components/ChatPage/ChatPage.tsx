@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from 'react-router-dom';
-import { PropagateLoader } from 'react-spinners';
 import { API_BASE_URL } from "../../../../config/api";
 import { useAuth } from "../../../../context/auth/useAuth";
 import { type Chat, type ConversationItemType, type ReasoningEvent } from "../../types/chat"
@@ -8,16 +7,18 @@ import { refreshAccessToken, logOut, isTokenExpired } from "../../../../utils/au
 import { generateChatTitle, updateChatTitle } from "../../utils/chat";
 import useChatActions from "../../hooks/useChatActions";
 import useInitializeChatPage from "../../hooks/useInitializeChatPage";
+import LoadingScreen from "../../../../components/LoadingScreen/LoadingScreen";
 import Header from "../../../../components/Header/Header";
 import Sidebar from "../../../../components/Sidebar/Sidebar";
 import ChatHistoryItem from "../ChatHistoryItem/ChatHistoryItem";
+import ChatWelcomeHeading from "../ChatWelcomeHeading/ChatWelcomeHeading";
 import Conversation from "../Conversation/Conversation";
+import MessageInput from "../MessageInput/MessageInput";
+import ScrollButton from "../ScrollButton/ScrollButton";
 import closePanelIcon from './assets/close-panel-icon.svg';
 import openPanelIcon from './assets/open-panel-icon.svg';
 import newChatIcon from './assets/new-chat-icon.svg';
 import searchIcon from './assets/search-icon.svg';
-import arrowUpIcon from './assets/arrow-up-icon.svg';
-import arrowDownIcon from './assets/arrow-down-icon.svg';
 import './ChatPage.css';
 
 
@@ -597,20 +598,13 @@ export default function ChatPage() {
 
   if (loading) {
     return (
-      <div className='loading-screen'>
-        <PropagateLoader size={20} color="#00ffcc" />
-      </div>
+      <LoadingScreen />
     );
   }
-
-// ---------------------------------------------------------------------------
 
   return (
     <>
       <div className='chat-page'>
-
-{/* ---------------------------------------------------------------------- */}
-
         <Header
           isRemovingTokens={isRemovingTokens}
           tokensRemaining={tokensRemaining}
@@ -620,8 +614,6 @@ export default function ChatPage() {
           accountMenuRef={accountMenuRef}
           handleLogOut={handleLogOut}
         />
-
-{/* ---------------------------------------------------------------------- */}
 
         <div className="page-body">
           <Sidebar currentPage={'chat'} />
@@ -704,24 +696,13 @@ export default function ChatPage() {
 {/* ---- Chat ---- */}
 
           <main
-            className={`page-main ${chatHistoryCollapsed ? 'chat-main-collapsed' : ''}`}
-            style={{ transition: 'all 0.25s' }}
+            className={`page-main chat-main ${chatHistoryCollapsed ? 'chat-main-collapsed' : ''}`}
             ref={attachScrollListener}
           >
             <div className='chat-page-content'>
               {currentChatId !== null && (conversations[currentChatId]?.length || 0) === 0 && (
-                <div>
-                  <h1 className='page-heading chat-heading'>
-                    Welcome
-                    {userData?.first_name || userData?.username
-                      ? `, ${userData.first_name || userData.username}!`
-                      : " back!"}
-                  </h1>
-                </div>
+                <ChatWelcomeHeading userData={userData} />
               )}
-
-{/* ---------------------------------------------------------------------- */}
-{/* ---- Conversation ---- */}
 
               <Conversation
                 currentChatId={currentChatId}
@@ -732,60 +713,21 @@ export default function ChatPage() {
                 callingFunctions={callingFunctions}
               />
               
-{/* ---------------------------------------------------------------------- */}
-{/* ---- Message Input ---- */}
+              <MessageInput
+                currentChatId={currentChatId}
+                expandedInputs={expandedInputs}
+                inputRefs={inputRefs}
+                handleInput={handleInput}
+                handleSendMessage={handleSendMessage}
+              />
 
-              <div
-                className={
-                  `message-input-container
-                  ${currentChatId !== null && expandedInputs[currentChatId] ? "expanded" : ""}`
-                }
-                onClick={() => {
-                  if (currentChatId !== null) {
-                    inputRefs.current[currentChatId]?.focus()
-                  }
-                }}
-              >
-                <div
-                  ref={el => { 
-                    if (currentChatId !== null) {
-                      inputRefs.current[currentChatId] = el;
-                    }
-                  }}
-                  contentEditable
-                  data-placeholder="How can I help you today?"
-                  className="message-input"
-                  onInput={handleInput}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleSendMessage();
-                      e.preventDefault();
-                    }
-                  }}
-                />
-                <button className="send-message-button" onClick={handleSendMessage}>
-                  <img className="button-link-image" src={arrowUpIcon} />
-                </button>
-              </div>
-
-{/* ---------------------------------------------------------------------- */}
-{/* ---- Scroll Button ---- */}
-
-              <div className="scroll-button-container">
-                <button
-                  className="scroll-button"
-                  onClick={() => {
-                    userScrolledUpRef.current = false;
-                    setDistanceFromBottom(0);
-                    if (currentChatId) {
-                      scrollToBottom(currentChatId, 'smooth');
-                    }
-                  }}
-                  style={(userScrolledUpRef.current || distanceFromBottom > 100) ? undefined : { opacity: '0', pointerEvents: 'none' }}
-                >
-                  <img className="button-link-image" src={arrowDownIcon} />
-                </button>
-              </div>
+              <ScrollButton
+                currentChatId={currentChatId}
+                distanceFromBottom={distanceFromBottom}
+                setDistanceFromBottom={setDistanceFromBottom}
+                userScrolledUpRef={userScrolledUpRef}
+                scrollToBottom={scrollToBottom}
+              />
             </div>
           </main>
         </div>

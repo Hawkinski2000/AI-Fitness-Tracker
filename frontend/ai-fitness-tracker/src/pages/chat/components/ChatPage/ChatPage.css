@@ -177,6 +177,10 @@
               padding-top 0s;
 }
 
+.chat-main {
+  transition: all 0.25s;
+}
+
 .chat-main-collapsed {
   margin-left: 150px;
   width: calc(100vw - 150px);
