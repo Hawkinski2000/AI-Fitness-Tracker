@@ -7,6 +7,7 @@ import { refreshAccessToken, logOut, isTokenExpired } from "../../../../utils/au
 import { generateChatTitle, updateChatTitle } from "../../utils/chat";
 import useChatActions from "../../hooks/useChatActions";
 import useInitializeChatPage from "../../hooks/useInitializeChatPage";
+import useMessageInput from "../../hooks/useMessageInput";
 import LoadingScreen from "../../../../components/LoadingScreen/LoadingScreen";
 import Header from "../../../../components/Header/Header";
 import Sidebar from "../../../../components/Sidebar/Sidebar";
@@ -27,7 +28,6 @@ export default function ChatPage() {
   const chatsLoadedRef = useRef<Record<number, boolean>>({});
   
   const [conversations, setConversations] = useState<Record<number, ConversationItemType[]>>({});
-  const [messages, setMessages] = useState<Record<number, string>>({});
 
   const [accountMenuOpen, setAccountMenuOpen] = useState<boolean>(false);
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
@@ -38,10 +38,6 @@ export default function ChatPage() {
   const [editingChatTitleId, setEditingChatTitleId] = useState<number | null>(null);
   const editingChatTitleRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const [newChatTitle, setNewChatTitle] = useState<string | null>(null);
-
-  const [expandedInputs, setExpandedInputs] = useState<Record<number, boolean>>({});
-  const inputRefs = useRef<Record<number, HTMLDivElement | null>>({});
-  const inputTimeouts = useRef<Record<number, number | null>>({});
 
   const conversationRefs = useRef<Record<number, HTMLDivElement | null>>({})
   const bottomRefs = useRef<Record<number, HTMLDivElement | null>>({});
@@ -522,80 +518,20 @@ export default function ChatPage() {
 
 // ---------------------------------------------------------------------------
 
-  const handleSendMessage = () => {
-    if (!currentChatId || !messages[currentChatId]) {
-      return;
-    }
-
-    createMessageStream(messages[currentChatId], currentChatId);
-
-    setMessages(prev => {
-      return {
-        ...prev,
-        [currentChatId]: "",
-      };
-    });
-
-    if (inputRefs.current[currentChatId]) {
-      inputRefs.current[currentChatId].textContent = "";
-    }
-
-    setExpandedInputs(prev => {
-      return {
-        ...prev,
-        [currentChatId]: false,
-      };
-    });
-  };
-
-// ---------------------------------------------------------------------------
-
-  const handleInput = (event: React.FormEvent<HTMLDivElement>) => {
-    if (!currentChatId) {
-      return;
-    }
-
-    const element = event.currentTarget;
-    const text = element.textContent || "";
-
-    if (inputTimeouts.current[currentChatId]) {
-      clearTimeout(inputTimeouts.current[currentChatId]);
-    }
-    
-    inputTimeouts.current[currentChatId] = setTimeout(() => {
-      setMessages(prev => {
-        return {
-          ...prev,
-          [currentChatId]: text,
-        };
-      });
-    }, 100);
-
-    const MIN_HEIGHT = 56;
-
-    if (!expandedInputs[currentChatId] && text.length > 0 && element.scrollHeight > MIN_HEIGHT) {
-      setExpandedInputs(prev => {
-      return {
-        ...prev,
-        [currentChatId]: true,
-      };
-    });
-    } else if (expandedInputs[currentChatId] && text.length === 0) {
-      setExpandedInputs(prev => {
-        return {
-          ...prev,
-          [currentChatId]: false,
-        };
-      });
-    }
-  };
+  const {
+    handleInput,
+    handleSendMessage,
+    expandedInputs,
+    inputRefs
+  } = useMessageInput(
+    currentChatId,
+    createMessageStream
+  )
 
 // ---------------------------------------------------------------------------
 
   if (loading) {
-    return (
-      <LoadingScreen />
-    );
+    return <LoadingScreen />;
   }
 
   return (

@@ -78,6 +78,7 @@ const useInitializeChatPage = (
       navigate
     ]);
 
+    
   return { userData, loading };
 };
 
