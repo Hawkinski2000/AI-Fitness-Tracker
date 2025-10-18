@@ -142,7 +142,7 @@ export const generateChatTitle = async (chatId: number,
                                         userMessage: string | null,
                                         token: string) => {
   if (!userMessage) {
-    return;
+    return "New chat";
   }
   
   const response = await axios.post(`${API_BASE_URL}/chats/generate-title`,
@@ -157,7 +157,7 @@ export const generateChatTitle = async (chatId: number,
     }
   );
 
-  const newChatTitle = response.data.new_chat_title;
+  const newChatTitle: string = response.data.new_chat_title;
 
   return newChatTitle;
 };
