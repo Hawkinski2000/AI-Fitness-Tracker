@@ -1,8 +1,6 @@
 import { type Chat } from '../../types/chat';
+import ChatOptionsMenu from '../ChatOptionsMenu/ChatOptionsMenu';
 import dotsIcon from '../../../../assets/dots-icon.svg';
-import editIcon from '../../../../assets/edit-icon.svg';
-import pinIcon from '../../../../assets/pin-icon.svg';
-import deleteIcon from '../../../../assets/delete-icon.svg';
 
 
 type ChatHistoryItemProps = {
@@ -87,54 +85,17 @@ export default function ChatHistoryItem({
           <img className="button-link-image" src={dotsIcon} />
         </button>
       </div>
-      <div
-        ref={el => { chatOptionsMenuRefs.current[chat.id] = el }}
-        className={`chat-options-menu ${chatOptionsMenuOpenId === chat.id && 'chat-options-menu-open'}`}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button
-          className="chat-options-menu-button"
-          onClick={(e) => {
-            e.stopPropagation();
-            
-            setEditingChatTitleId((prev) => (prev === chat.id ? null : chat.id));
-            setChatOptionsMenuOpenId(null);
-            requestAnimationFrame(() => {
-              const chatTitle = editingChatTitleRefs.current[chat.id];
-              if (!chatTitle) {
-                return;
-              }
 
-              chatTitle.focus();
-
-              const range = document.createRange();
-              range.selectNodeContents(chatTitle);
-              const selection = window.getSelection();
-              selection?.removeAllRanges();
-              selection?.addRange(range);
-            });
-          }}
-        >
-          <img className="button-link-image" src={editIcon} />
-          Rename
-        </button>
-        <button
-          className="chat-options-menu-button"
-        >
-          <img className="button-link-image" src={pinIcon} />
-          Pin
-        </button>
-        <button
-          className="chat-options-menu-button chat-options-delete-button"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleDeleteChat(chat.id);
-          }}
-        >
-          <img className="button-link-image" src={deleteIcon} />
-          Delete
-        </button>
-      </div>
+      <ChatOptionsMenu
+        key={chat.id}
+        chat={chat}
+        chatOptionsMenuOpenId={chatOptionsMenuOpenId}
+        setChatOptionsMenuOpenId={setChatOptionsMenuOpenId}
+        setEditingChatTitleId={setEditingChatTitleId}
+        chatOptionsMenuRefs={chatOptionsMenuRefs}
+        editingChatTitleRefs={editingChatTitleRefs}
+        handleDeleteChat={handleDeleteChat}
+      />
     </div>
   );
 }
