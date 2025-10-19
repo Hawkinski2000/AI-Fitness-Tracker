@@ -11,7 +11,7 @@ const useMessageInput = (
   const inputTimeouts = useRef<Record<number, number | null>>({});
 
 
-  const handleInput = useCallback((event: React.FormEvent<HTMLDivElement>) => {    
+  const handleInput = useCallback((event: React.FormEvent<HTMLDivElement>) => {
     if (!currentChatId) {
       return;
     }

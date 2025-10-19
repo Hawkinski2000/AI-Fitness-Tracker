@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../../../context/auth/useAuth";
 import { type UserType } from "../../../../types/app";
-import { refreshAccessToken, logOut, getUserFromToken, isTokenExpired } from "../../../../utils/auth";
+import { refreshAccessToken, getUserFromToken, isTokenExpired } from "../../../../utils/auth";
 import { loadMealLogs,
          createMealLog,
          loadMealLogFoods,
@@ -315,14 +315,6 @@ export default function MealLogsPage() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [mealOptionsMenuOpenType, mealFoodOptionsMenuOpenId, foodsMenuOpenMealType, selectMealMenuOpenType, selectServingSizeMenuOpen]);
-
-// ---------------------------------------------------------------------------
-
-  const handleLogOut = async () => {
-    logOut();
-    setAccessToken(null);
-    navigate("/");
-  };
 
 // ---------------------------------------------------------------------------
 
@@ -682,7 +674,6 @@ export default function MealLogsPage() {
           setAccountMenuOpen={setAccountMenuOpen}
           userData={userData}
           accountMenuRef={accountMenuRef}
-          handleLogOut={handleLogOut}
         />
 
 {/* ---------------------------------------------------------------------- */}

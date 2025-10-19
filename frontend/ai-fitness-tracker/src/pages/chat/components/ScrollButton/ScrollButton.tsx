@@ -28,7 +28,11 @@ export default function ScrollButton({
             scrollToBottom(currentChatId, 'smooth');
           }
         }}
-        style={(userScrolledUpRef.current || distanceFromBottom > 100) ? undefined : { opacity: '0', pointerEvents: 'none' }}
+        style={
+          (userScrolledUpRef.current || distanceFromBottom > 100)
+            ? undefined
+            : { opacity: '0', pointerEvents: 'none' }
+        }
       >
         <img className="button-link-image" src={arrowDownIcon} />
       </button>

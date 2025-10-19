@@ -37,6 +37,7 @@ export default function ChatPage() {
 
   const [conversations, setConversations] = useState<Record<number, ConversationItemType[]>>({});
   const conversationRefs = useRef<Record<number, HTMLDivElement | null>>({})
+
   const generatingMessageRef = useRef(false);
 
   const {
@@ -125,7 +126,7 @@ export default function ChatPage() {
     createMessageStream
   )
 
-  
+
   if (loading) {
     return <LoadingScreen />;
   }

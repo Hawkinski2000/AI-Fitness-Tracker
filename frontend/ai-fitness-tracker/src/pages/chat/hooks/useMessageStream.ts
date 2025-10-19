@@ -144,7 +144,8 @@ const useMessageStream = (
             if (event.type === "text_delta") {
               setConversations(prev => {
                 const chatMessages = prev[chatId] || [];
-                if (chatMessages.length > 0 && chatMessages[chatMessages.length - 1].type === "assistant") {
+                if (chatMessages.length > 0 &&
+                    chatMessages[chatMessages.length - 1].type === "assistant") {
                   const updated = [...chatMessages];
                   const last = updated[updated.length - 1];
                   const newContent = last.content + event.delta;

@@ -37,7 +37,9 @@ const useInitializeChatPage = (
 
         const userData = await getUserFromToken(token);
         setUserData(userData);
-        setTokensRemaining(Math.min(userData.input_tokens_remaining, userData.output_tokens_remaining))
+        setTokensRemaining(
+          Math.min(userData.input_tokens_remaining, userData.output_tokens_remaining)
+        )
 
         const loadedChats = await loadChats(setChats, token);
 
