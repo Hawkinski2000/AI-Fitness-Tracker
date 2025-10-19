@@ -3,16 +3,12 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func, delete
 import asyncio
 import tiktoken
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 from fastapi import HTTPException
 from app.schemas import message
 from app.models.models import Message, Chat
 import app.agent.agent as agent
-from app.core.constants import (
-    MAX_INPUT_TOKENS,
-    MAX_OUTPUT_TOKENS,
-    MAX_USER_MESSAGE_TOKENS
-)
+from app.core.constants import MAX_USER_MESSAGE_TOKENS
 
 
 encoding = tiktoken.get_encoding("cl100k_base")
@@ -31,13 +27,6 @@ async def create_message(message: message.MessageCreate, user_id: int, db: Sessi
         )
     
     user = chat.user
-
-    now_utc = datetime.now(timezone.utc)
-    if now_utc - user.last_token_reset >= timedelta(hours=24):
-        user.input_tokens_remaining = MAX_INPUT_TOKENS
-        user.output_tokens_remaining = MAX_OUTPUT_TOKENS
-        user.last_token_reset = now_utc
-        db.commit()
 
     if user.input_tokens_remaining <= 0 or user.output_tokens_remaining <= 0:
         raise HTTPException(

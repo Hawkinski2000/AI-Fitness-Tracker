@@ -2,9 +2,14 @@ from fastapi import HTTPException, status
 import requests
 from sqlalchemy.orm import Session
 import bcrypt
+from datetime import datetime, timezone, timedelta
 from app.schemas import user
 from app.models.models import User
 from app.core.config import settings
+from app.core.constants import (
+    MAX_INPUT_TOKENS,
+    MAX_OUTPUT_TOKENS
+)
 
 
 def create_user(user: user.UserCreate, db: Session):
@@ -61,6 +66,13 @@ def get_user(id: int, user_id: int, db: Session):
     
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    now_utc = datetime.now(timezone.utc)
+    if now_utc - user.last_token_reset >= timedelta(hours=24):
+        user.input_tokens_remaining = MAX_INPUT_TOKENS
+        user.output_tokens_remaining = MAX_OUTPUT_TOKENS
+        user.last_token_reset = now_utc
+        db.commit()
 
     return user
 
