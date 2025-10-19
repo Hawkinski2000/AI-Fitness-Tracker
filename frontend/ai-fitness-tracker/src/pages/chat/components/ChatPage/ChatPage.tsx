@@ -185,6 +185,7 @@ export default function ChatPage() {
               <MessageInput
                 currentChatId={currentChatId}
                 expandedInputs={expandedInputs}
+                tokensRemaining={tokensRemaining}
                 inputRefs={inputRefs}
                 handleInput={handleInput}
                 handleSendMessage={handleSendMessage}

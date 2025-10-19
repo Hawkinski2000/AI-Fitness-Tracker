@@ -41,6 +41,11 @@
               0 0 5px 5px rgba(0, 0, 0, 0.1);
 }
 
+.message-input-container-disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
 .message-input {
   flex: 1;
   min-height: 56px;
@@ -72,6 +77,13 @@
 }
 .message-input-container.expanded-scrolling .message-input {
   padding: 1rem;
+}
+
+.message-input-placeholder {
+  position: absolute;
+  left: 1rem;
+  color: #8085a6;
+  pointer-events: none;
 }
 
 .conversation-container {
