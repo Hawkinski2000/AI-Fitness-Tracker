@@ -1,8 +1,9 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 
 
 const useMessageInput = (
   currentChatId: number | null,
+  tokensRemaining: number,
   createMessageStream: (userMessage: string, chatId: number) => Promise<void>
 ) => {
   const [messages, setMessages] = useState<Record<number, string>>({});
@@ -10,6 +11,14 @@ const useMessageInput = (
   const inputRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const inputTimeouts = useRef<Record<number, number | null>>({});
 
+
+  useEffect(() => {
+    if (currentChatId && tokensRemaining <= 0) {
+      inputRefs.current[currentChatId]?.blur()
+    }
+  }, [currentChatId, tokensRemaining]);
+
+// ---------------------------------------------------------------------------
 
   const handleInput = useCallback((event: React.FormEvent<HTMLDivElement>) => {
     if (!currentChatId) {

@@ -122,6 +122,7 @@ export default function ChatPage() {
     inputRefs
   } = useMessageInput(
     currentChatId,
+    tokensRemaining,
     createMessageStream
   )
 
