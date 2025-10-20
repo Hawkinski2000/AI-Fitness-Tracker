@@ -48,7 +48,7 @@ export default function MessageInput({
         className="message-input"
         onInput={(e) => {
           handleInput(e);
-          setPlaceholderVisible(e.currentTarget.textContent.length === 0);
+          setPlaceholderVisible((e.currentTarget.textContent ?? "").length === 0);
         }}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
