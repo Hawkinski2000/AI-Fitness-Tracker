@@ -102,7 +102,6 @@ export default function ChatPage() {
     reasoningEvents,
     callingFunctions
   } = useMessageStream(
-    tokensRemaining,
     setTokensRemaining,
     conversations,
     setConversations,

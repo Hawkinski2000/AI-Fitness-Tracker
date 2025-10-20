@@ -1,12 +1,11 @@
 import { useState, useCallback } from "react";
 import { type ConversationItemType, type Chat, type ReasoningEvent } from "../types/chat";
 import { useAuth } from "../../../context/auth/useAuth";
-import { refreshAccessToken, isTokenExpired } from "../../../utils/auth";
+import { refreshAccessToken, isTokenExpired, getUserFromToken } from "../../../utils/auth";
 import { API_BASE_URL } from "../../../config/api";
 
 
 const useMessageStream = (
-  tokensRemaining: number,
   setTokensRemaining: React.Dispatch<React.SetStateAction<number>>,
   conversations: Record<number, ConversationItemType[]>,
   setConversations: React.Dispatch<React.SetStateAction<Record<number, ConversationItemType[]>>>,
@@ -262,12 +261,6 @@ const useMessageStream = (
                   };
                 });
               }, 1000);
-
-            } else if (event.type === "usage") {
-              const inputTokens = event.usage.input_tokens;
-              const outputTokens = event.usage.output_tokens;
-              const newTokensRemaining = tokensRemaining - inputTokens - outputTokens;
-              updateTokensRemaining(newTokensRemaining);
             }
 
             if (!userScrolledUpRef.current) {
@@ -276,6 +269,11 @@ const useMessageStream = (
           }
         }
       }
+
+      const userData = await getUserFromToken(token);
+      updateTokensRemaining(
+        Math.min(userData.input_tokens_remaining, userData.output_tokens_remaining)
+      )
 
     } catch (err) {
       console.error(err);
@@ -291,7 +289,6 @@ const useMessageStream = (
     setChats,
     conversations,
     setConversations,
-    tokensRemaining,
     conversationRefs,
     generatingMessageRef,
     userScrolledUpRef,

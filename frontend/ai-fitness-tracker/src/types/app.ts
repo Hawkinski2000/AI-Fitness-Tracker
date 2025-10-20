@@ -8,4 +8,6 @@ export interface UserType {
   height?: string | null;
   weight?: string | null;
   goal?: string | null;
+  input_tokens_remaining: number;
+  output_tokens_remaining: number;
 }

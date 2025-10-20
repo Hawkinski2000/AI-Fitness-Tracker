@@ -52,8 +52,9 @@ export default function MessageInput({
         }}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
-            handleSendMessage();
             e.preventDefault();
+            handleSendMessage();
+            setPlaceholderVisible(true);
           }
         }}
       />

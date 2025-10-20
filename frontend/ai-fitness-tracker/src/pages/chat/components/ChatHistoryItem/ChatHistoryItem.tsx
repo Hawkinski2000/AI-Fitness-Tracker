@@ -87,7 +87,7 @@ export default function ChatHistoryItem({
       </div>
 
       <ChatOptionsMenu
-        key={chat.id}
+        key={`menu-${chat.id}`}
         chat={chat}
         chatOptionsMenuOpenId={chatOptionsMenuOpenId}
         setChatOptionsMenuOpenId={setChatOptionsMenuOpenId}
