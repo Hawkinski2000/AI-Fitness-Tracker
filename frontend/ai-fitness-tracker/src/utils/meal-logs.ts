@@ -1,5 +1,12 @@
 import axios from 'axios';
-import { type MealLog, type MealLogFood, type Food, type BrandedFood, type FoodNutrient, type Nutrient } from "../pages/meal-logs/components/MealLogsPage/MealLogsPage";
+import {
+  type MealLog,
+  type MealLogFood,
+  type Food,
+  type BrandedFood,
+  type FoodNutrient,
+  type Nutrient
+} from "../pages/meal-logs/types/meal-logs";
 import { API_BASE_URL } from '../config/api';
 
 
