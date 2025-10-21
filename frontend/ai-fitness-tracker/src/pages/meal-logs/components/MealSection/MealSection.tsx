@@ -5,7 +5,7 @@ import {
   type BrandedFood,
   type FoodNutrient,
 } from "../../types/meal-logs";
-import { capitalizeFirstLetter } from "../../../../utils/app";
+import MealSectionHeader from "../MealSectionHeader/MealSectionHeader";
 import dotsIcon from '../../../../assets/dots-icon.svg';
 import copyIcon from '../../../../assets/copy-icon.svg';
 import moveIcon from '../../../../assets/move-icon.svg';
@@ -70,63 +70,13 @@ export default function MealSection({
 }: MealSectionProps) {
   return (
     <section className="meal-section">
-      <div className="meal-type-container">
-        <h3 className="meal-type">
-          {capitalizeFirstLetter(mealType)}
-        </h3>
-
-        <button
-          className="meal-options-button"
-          onClick={(e) => {
-            e.stopPropagation();
-            setMealOptionsMenuOpenType((prev) => (prev === mealType ? '' : mealType));
-          }}
-        >
-          <img className="button-link-image" src={dotsIcon} />
-        </button>
-
-  {/* ---------------------------------------------------------------------- */}
-  {/* ---- Meal Section Header Options Menu ---- */}
-
-        <div
-          ref={el => { mealOptionsMenuRefs.current[mealType] = el }}
-          className={`meal-options-menu ${mealOptionsMenuOpenType === mealType && 'meal-options-menu-open'}`}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <button
-            className="meal-options-menu-button"
-            onClick={(e) => {
-              e.stopPropagation();
-              // handleCopyMeal(mealType, ...);
-            }}
-          >
-            <img className="button-link-image" src={copyIcon} />
-            Copy to...
-          </button>
-
-          <button
-            className="meal-options-menu-button"
-            onClick={(e) => {
-              e.stopPropagation();
-              // handleMoveMeal(mealType, ...);
-            }}
-          >
-            <img className="button-link-image" src={moveIcon} />
-            Move to...
-          </button>
-
-          <button
-            className="meal-options-menu-button meal-options-delete-button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDeleteMeal(mealType);
-            }}
-          >
-            <img className="button-link-image" src={deleteIcon} />
-            Delete Meal
-          </button>
-        </div>
-      </div>
+      <MealSectionHeader
+        mealType={mealType}
+        mealOptionsMenuOpenType={mealOptionsMenuOpenType}
+        setMealOptionsMenuOpenType={setMealOptionsMenuOpenType}
+        mealOptionsMenuRefs={mealOptionsMenuRefs}
+        handleDeleteMeal={handleDeleteMeal}
+      />
 
   {/* ---------------------------------------------------------------------- */}
   {/* ---- Meal Section Foods ---- */}
