@@ -465,6 +465,8 @@ export default function MealLogsPage() {
     }, 1000);
   };
 
+// ---------------------------------------------------------------------------
+
   const handleAddFood = async (foodId: number,
                                numServings: number | null = null,
                                servingSize: number | null = null) => {

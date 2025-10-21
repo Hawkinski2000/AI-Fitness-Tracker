@@ -1,8 +1,6 @@
+import MealOptionsMenu from "../MealOptionsMenu/MealOptionsMenu";
 import { capitalizeFirstLetter } from "../../../../utils/app";
 import dotsIcon from '../../../../assets/dots-icon.svg';
-import copyIcon from '../../../../assets/copy-icon.svg';
-import moveIcon from '../../../../assets/move-icon.svg';
-import deleteIcon from '../../../../assets/delete-icon.svg';
 
 
 type MealSectionHeaderProps = {
@@ -37,47 +35,12 @@ export default function MealSectionHeader({
         <img className="button-link-image" src={dotsIcon} />
       </button>
 
-  {/* ---------------------------------------------------------------------- */}
-  {/* ---- Meal Section Header Options Menu ---- */}
-
-      <div
-        ref={el => { mealOptionsMenuRefs.current[mealType] = el }}
-        className={`meal-options-menu ${mealOptionsMenuOpenType === mealType && 'meal-options-menu-open'}`}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button
-          className="meal-options-menu-button"
-          onClick={(e) => {
-            e.stopPropagation();
-            // handleCopyMeal(mealType, ...);
-          }}
-        >
-          <img className="button-link-image" src={copyIcon} />
-          Copy to...
-        </button>
-
-        <button
-          className="meal-options-menu-button"
-          onClick={(e) => {
-            e.stopPropagation();
-            // handleMoveMeal(mealType, ...);
-          }}
-        >
-          <img className="button-link-image" src={moveIcon} />
-          Move to...
-        </button>
-
-        <button
-          className="meal-options-menu-button meal-options-delete-button"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleDeleteMeal(mealType);
-          }}
-        >
-          <img className="button-link-image" src={deleteIcon} />
-          Delete Meal
-        </button>
-      </div>
+      <MealOptionsMenu
+        mealType={mealType}
+        mealOptionsMenuOpenType={mealOptionsMenuOpenType}
+        mealOptionsMenuRefs={mealOptionsMenuRefs}
+        handleDeleteMeal={handleDeleteMeal}
+      />
     </div>
   );
 }
