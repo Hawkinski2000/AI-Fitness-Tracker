@@ -8,6 +8,7 @@ import {
   type Nutrient
 } from "../../types/meal-logs";
 import useInitializeMealLogsPage from "../../hooks/useInitializeMealLogsPage";
+import useMealLogsCaloriesHeader from "../../hooks/useMealLogsCaloriesHeader";
 import { useAuth } from "../../../../context/auth/useAuth";
 import { refreshAccessToken, isTokenExpired } from "../../../../utils/auth";
 import { createMealLog,
@@ -102,30 +103,13 @@ export default function MealLogsPage() {
     setBrandedFoods
   );
 
-// ---------------------------------------------------------------------------
-
-    useEffect(() => {
-      if (!currentMealLogDate) {
-        return;
-      }
-
-      const currentMealLog = mealLogs[currentMealLogDate];
-      if (!currentMealLog) {
-        setFoodCalories(0);
-        return;
-      }
-
-      const currentMealLogFoods = mealLogFoods[currentMealLog.id] || [];
-
-      let totalCalories = 0;
-
-      currentMealLogFoods.forEach((mealLogFood: MealLogFood) => {
-        totalCalories += mealLogFood.calories || 0;
-      });
-
-      setFoodCalories(totalCalories);
-    }, [currentMealLogDate, mealLogs, mealLogFoods]);
-
+  useMealLogsCaloriesHeader(
+    currentMealLogDate,
+    mealLogs,
+    mealLogFoods,
+    setFoodCalories
+  );
+    
 // ---------------------------------------------------------------------------
 
   useEffect(() => {
