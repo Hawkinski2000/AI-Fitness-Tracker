@@ -7,7 +7,7 @@ import {
   type BrandedFood,
   type FoodNutrient,
   type Nutrient
-} from "../../types/meal-logs"
+} from "../../types/meal-logs";
 import { useAuth } from "../../../../context/auth/useAuth";
 import { type UserType } from "../../../../types/app";
 import { refreshAccessToken, getUserFromToken, isTokenExpired } from "../../../../utils/auth";
@@ -28,10 +28,7 @@ import DateNav from "../DateNav/DateNav";
 import CaloriesHeader from "../CaloriesHeader/CaloriesHeader";
 import ViewFoodMenu from "../ViewFoodMenu/ViewFoodMenu";
 import FoodsMenu from "../FoodsMenu/FoodsMenu";
-import dotsIcon from '../../../../assets/dots-icon.svg';
-import copyIcon from '../../../../assets/copy-icon.svg';
-import moveIcon from '../../../../assets/move-icon.svg';
-import deleteIcon from '../../../../assets/delete-icon.svg';
+import MealSection from "../MealSection/MealSection";
 import './MealLogsPage.css';
 
 
@@ -678,839 +675,120 @@ export default function MealLogsPage() {
                   handleLoadFoodNutrients={handleLoadFoodNutrients}
                   handleAddFood={handleAddFood}
                 />
-              )
-            }
+              )}
 
-{/* ---------------------------------------------------------------------- */}
-{/* ---- Breakfast Section Header ---- */}
               <div className="meals-container">
-                <section className="meal-section">
-                  <div className="meal-type-container">
-                    <h3 className="meal-type">
-                      Breakfast
-                    </h3>
-
-                    <button
-                      className="meal-options-button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setMealOptionsMenuOpenType((prev) => (prev === 'breakfast' ? '' : 'breakfast'));
-                      }}
-                    >
-                      <img className="button-link-image" src={dotsIcon} />
-                    </button>
-
-{/* ---------------------------------------------------------------------- */}
-{/* ---- Breakfast Section Header Options Menu ---- */}
-
-                    <div
-                      ref={el => { mealOptionsMenuRefs.current['breakfast'] = el }}
-                      className={`meal-options-menu ${mealOptionsMenuOpenType === 'breakfast' && 'meal-options-menu-open'}`}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <button
-                        className="meal-options-menu-button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          // handleCopyMeal('breakfast', ...);
-                        }}
-                      >
-                        <img className="button-link-image" src={copyIcon} />
-                        Copy to...
-                      </button>
-
-                      <button
-                        className="meal-options-menu-button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          // handleMoveMeal('breakfast', ...);
-                        }}
-                      >
-                        <img className="button-link-image" src={moveIcon} />
-                        Move to...
-                      </button>
-
-                      <button
-                        className="meal-options-menu-button meal-options-delete-button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteMeal('breakfast');
-                        }}
-                      >
-                        <img className="button-link-image" src={deleteIcon} />
-                        Delete Meal
-                      </button>
-                    </div>
-                  </div>
-
-{/* ---------------------------------------------------------------------- */}
-{/* ---- Breakfast Section Foods ---- */}
-
-                  {
-                    currentMealLogDate &&
-                    mealLogs[currentMealLogDate] &&
-                    mealLogFoods[mealLogs[currentMealLogDate].id]
-                      ?.filter(mealLogFoodItem => mealLogFoodItem.meal_type === "breakfast")
-                      .map((mealLogFood: MealLogFood) => {
-                        return (
-                          <div
-                            key={mealLogFood.id}
-                            className="meal-log-food"
-                            onMouseDown={(e) => {
-                              e.stopPropagation();
-                              setMealOptionsMenuOpenType('');
-                            }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setMealFoodOptionsMenuOpenId(null);
-                              
-                              if (editingMealLogFoodId === mealLogFood.id) {
-                                setEditingMealLogFoodId(null);
-                                setFoodsMenuOpenMealType('');
-                                setMealFoodOptionsMenuOpenId(null);
-                                return;
-                              }
-
-                              if (!foodNutrients[mealLogFood.food_id]) {
-                                handleLoadFoodNutrients(mealLogFood.food_id);
-                              }
-                              if (!mealLogFood.num_servings) {
-                                setNumServings(1);
-                              }
-                              else {
-                                setNumServings(mealLogFood.num_servings);
-                              }
-                              if (!mealLogFood.serving_size) {
-                                setServingSize(brandedFoods[mealLogFood.food_id].serving_size || null);
-                              }
-                              else {
-                                setServingSize(mealLogFood.serving_size);
-                              }
-                              if (!mealLogFood.serving_unit) {
-                                setServingSizeUnit(brandedFoods[mealLogFood.food_id].serving_size_unit || '');
-                              }
-                              else {
-                                setServingSizeUnit(mealLogFood.serving_unit);
-                              }
-                              setEditingMealLogFoodId(mealLogFood.id);
-                              setFoodsMenuOpenMealType('breakfast');
-                              setViewFoodMenuOpenId(mealLogFood.food_id);
-                            }}
-                          >
-                            <div className="meal-log-food-section">
-                              <p className="meal-log-food-text">{foods[mealLogFood.food_id]?.description ?? ''}</p>
-                              <p className="meal-log-food-serving-text">
-                                {(mealLogFood.num_servings * mealLogFood.serving_size).toFixed(1).replace(/\.0$/, '')}{' '}
-                                {mealLogFood.serving_unit}
-                              </p>
-                            </div>
-
-                            <div className="meal-log-food-section">
-                              <div className="meal-options-button-container">
-                                <button
-                                  className="meal-log-food-options-button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setFoodsMenuOpenMealType('');
-                                    setViewFoodMenuOpenId(null);
-                                    setEditingMealLogFoodId(null);
-                                    setMealFoodOptionsMenuOpenId((prev) => (prev === mealLogFood.id ? null : mealLogFood.id));
-                                  }}
-                                >
-                                  <img className="button-link-image" src={dotsIcon} />
-                                </button>
-                                </div>
-                                <p className="meal-log-food-text">{mealLogFood.calories ? `${mealLogFood.calories} calories` : ''}</p>
-
-{/* ---------------------------------------------------------------------- */}
-{/* ---- Breakfast Section Foods Options Menu ---- */}
-
-                              <div
-                                ref={el => { mealFoodOptionsMenuRefs.current[mealLogFood.id] = el }}
-                                className={`meal-options-menu meal-log-food-options-menu ${mealFoodOptionsMenuOpenId === mealLogFood.id && 'meal-options-menu-open'}`}
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <button
-                                  className="meal-options-menu-button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    // handleCopyMealFood('breakfast', ...);
-                                  }}
-                                >
-                                  <img className="button-link-image" src={copyIcon} />
-                                  Copy to...
-                                </button>
-
-                                <button
-                                  className="meal-options-menu-button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    // handleMoveMealFood('breakfast', ...);
-                                  }}
-                                >
-                                  <img className="button-link-image" src={moveIcon} />
-                                  Move to...
-                                </button>
-
-                                <button
-                                  className="meal-options-menu-button meal-options-delete-button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDeleteMealLogFood(mealLogFood.id);
-                                  }}
-                                >
-                                  <img className="button-link-image" src={deleteIcon} />
-                                  Delete Entry
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        )
-                      })
-                  }
-                
-{/* ---------------------------------------------------------------------- */}
-
-                  <button
-                    className="add-food-button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setFoodSearch('');
-                      setFoodMenuInputFocused(false);
-                      if (!editingMealLogFoodId) {
-                        setFoodsMenuOpenMealType((prev) => (prev === 'breakfast' ? '' : 'breakfast'));
-                      }
-                      else {
-                        setEditingMealLogFoodId(null);
-                        setViewFoodMenuOpenId(null);
-                        setFoodsMenuOpenMealType('breakfast');
-                      }
-                    }}
-                  >
-                    Add Food
-                  </button>
-                </section>
-
-{/* ---------------------------------------------------------------------- */}
-{/* ---- Lunch Section Header ---- */}
-
-                <section className="meal-section">
-                  <div className="meal-type-container">
-                    <h3 className="meal-type">
-                      Lunch
-                    </h3>
-
-                    <button
-                      className="meal-options-button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setMealOptionsMenuOpenType((prev) => (prev === 'lunch' ? '' : 'lunch'));
-                      }}
-                    >
-                      <img className="button-link-image" src={dotsIcon} />
-                    </button>
-
-{/* ---------------------------------------------------------------------- */}
-{/* ---- Lunch Section Header Options Menu ---- */}
-
-                    <div
-                      ref={el => { mealOptionsMenuRefs.current['lunch'] = el }}
-                      className={`meal-options-menu ${mealOptionsMenuOpenType === 'lunch' && 'meal-options-menu-open'}`}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <button
-                        className="meal-options-menu-button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          // handleCopyMeal('lunch', ...);
-                        }}
-                      >
-                        <img className="button-link-image" src={copyIcon} />
-                        Copy to...
-                      </button>
-
-                      <button
-                        className="meal-options-menu-button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          // handleMoveMeal('lunch', ...);
-                        }}
-                      >
-                        <img className="button-link-image" src={moveIcon} />
-                        Move to...
-                      </button>
-
-                      <button
-                        className="meal-options-menu-button meal-options-delete-button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteMeal('lunch');
-                        }}
-                      >
-                        <img className="button-link-image" src={deleteIcon} />
-                        Delete Meal
-                      </button>
-                    </div>
-                  </div>
-
-{/* ---------------------------------------------------------------------- */}
-{/* ---- Lunch Section Foods ---- */}
-
-                  {
-                    currentMealLogDate &&
-                    mealLogs[currentMealLogDate] &&
-                    mealLogFoods[mealLogs[currentMealLogDate].id]
-                      ?.filter(mealLogFoodItem => mealLogFoodItem.meal_type === "lunch")
-                      .map((mealLogFood: MealLogFood) => {
-                        return (
-                          <div
-                            key={mealLogFood.id}
-                            className="meal-log-food"
-                            onMouseDown={(e) => {
-                              e.stopPropagation();
-                              setMealOptionsMenuOpenType('');
-                            }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setMealFoodOptionsMenuOpenId(null);
-
-                              if (editingMealLogFoodId === mealLogFood.id) {
-                                setEditingMealLogFoodId(null);
-                                setFoodsMenuOpenMealType('');
-                                setMealFoodOptionsMenuOpenId(null);
-                                return;
-                              }
-
-                              if (!foodNutrients[mealLogFood.food_id]) {
-                                handleLoadFoodNutrients(mealLogFood.food_id);
-                              }
-                              if (!mealLogFood.num_servings) {
-                                setNumServings(1);
-                              }
-                              else {
-                                setNumServings(mealLogFood.num_servings);
-                              }
-                              if (!mealLogFood.serving_size) {
-                                setServingSize(brandedFoods[mealLogFood.food_id].serving_size || null);
-                              }
-                              else {
-                                setServingSize(mealLogFood.serving_size);
-                              }
-                              if (!mealLogFood.serving_unit) {
-                                setServingSizeUnit(brandedFoods[mealLogFood.food_id].serving_size_unit || '');
-                              }
-                              else {
-                                setServingSizeUnit(mealLogFood.serving_unit);
-                              }
-                              setEditingMealLogFoodId(mealLogFood.id);
-                              setFoodsMenuOpenMealType('lunch');
-                              setViewFoodMenuOpenId(mealLogFood.food_id);
-                            }}
-                          >
-                            <div className="meal-log-food-section">
-                              <p className="meal-log-food-text">{foods[mealLogFood.food_id]?.description ?? ''}</p>
-                              <p className="meal-log-food-serving-text">{mealLogFood.num_servings * mealLogFood.serving_size} {mealLogFood.serving_unit}</p>
-                            </div>
-
-                            <div className="meal-log-food-section">
-                              <div className="meal-options-button-container">
-                                <button
-                                  className="meal-log-food-options-button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setFoodsMenuOpenMealType('');
-                                    setViewFoodMenuOpenId(null);
-                                    setEditingMealLogFoodId(null);
-                                    setMealFoodOptionsMenuOpenId((prev) => (prev === mealLogFood.id ? null : mealLogFood.id));
-                                  }}
-                                >
-                                  <img className="button-link-image" src={dotsIcon} />
-                                </button>
-                              </div>
-                              <p className="meal-log-food-text">{mealLogFood.calories ? `${mealLogFood.calories} calories` : ''}</p>
-
-{/* ---------------------------------------------------------------------- */}
-{/* ---- Lunch Section Foods Options Menu ---- */}
-
-                              <div
-                                ref={el => { mealFoodOptionsMenuRefs.current[mealLogFood.id] = el }}
-                                className={`meal-options-menu meal-log-food-options-menu ${mealFoodOptionsMenuOpenId === mealLogFood.id && 'meal-options-menu-open'}`}
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <button
-                                  className="meal-options-menu-button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    // handleCopyMealFood('lunch', ...);
-                                  }}
-                                >
-                                  <img className="button-link-image" src={copyIcon} />
-                                  Copy to...
-                                </button>
-
-                                <button
-                                  className="meal-options-menu-button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    // handleMoveMealFood('lunch', ...);
-                                  }}
-                                >
-                                  <img className="button-link-image" src={moveIcon} />
-                                  Move to...
-                                </button>
-
-                                <button
-                                  className="meal-options-menu-button meal-options-delete-button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDeleteMealLogFood(mealLogFood.id);
-                                  }}
-                                >
-                                  <img className="button-link-image" src={deleteIcon} />
-                                  Delete Entry
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        )
-                      })
-                  }
-
-{/* ---------------------------------------------------------------------- */}
-
-                  <button
-                    className="add-food-button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setFoodSearch('');
-                      setFoodMenuInputFocused(false);
-                      if (!editingMealLogFoodId) {
-                        setFoodsMenuOpenMealType((prev) => (prev === 'lunch' ? '' : 'lunch'));
-                      }
-                      else {
-                        setEditingMealLogFoodId(null);
-                        setViewFoodMenuOpenId(null);
-                        setFoodsMenuOpenMealType('lunch');
-                      }
-                    }}
-                    >
-                    Add Food
-                  </button>
-                </section>
-
-{/* ---------------------------------------------------------------------- */}
-{/* ---- Dinner Section Header ---- */}
-
-                <section className="meal-section">
-                  <div className="meal-type-container">
-                    <h3 className="meal-type">
-                      Dinner
-                    </h3>
-
-                    <button
-                      className="meal-options-button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setMealOptionsMenuOpenType((prev) => (prev === 'dinner' ? '' : 'dinner'));
-                      }}
-                    >
-                      <img className="button-link-image" src={dotsIcon} />
-                    </button>
-
-{/* ---------------------------------------------------------------------- */}
-{/* ---- Dinner Section Header Options Menu ---- */}
-
-                    <div
-                      ref={el => { mealOptionsMenuRefs.current['dinner'] = el }}
-                      className={`meal-options-menu ${mealOptionsMenuOpenType === 'dinner' && 'meal-options-menu-open'}`}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <button
-                        className="meal-options-menu-button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          // handleCopyMeal('dinner', ...);
-                        }}
-                      >
-                        <img className="button-link-image" src={copyIcon} />
-                        Copy to...
-                      </button>
-
-                      <button
-                        className="meal-options-menu-button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          // handleMoveMeal('dinner', ...);
-                        }}
-                      >
-                        <img className="button-link-image" src={moveIcon} />
-                        Move to...
-                      </button>
-
-                      <button
-                        className="meal-options-menu-button meal-options-delete-button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteMeal('dinner');
-                        }}
-                      >
-                        <img className="button-link-image" src={deleteIcon} />
-                        Delete Meal
-                      </button>
-                    </div>
-                  </div>
-
-{/* ---------------------------------------------------------------------- */}
-{/* ---- Dinner Section Foods ---- */}
-
-                  {
-                    currentMealLogDate &&
-                    mealLogs[currentMealLogDate] &&
-                    mealLogFoods[mealLogs[currentMealLogDate].id]
-                      ?.filter(mealLogFoodItem => mealLogFoodItem.meal_type === "dinner")
-                      .map((mealLogFood: MealLogFood) => {
-                        return (
-                          <div
-                            key={mealLogFood.id}
-                            className="meal-log-food"
-                            onMouseDown={(e) => {
-                              e.stopPropagation();
-                              setMealOptionsMenuOpenType('');
-                            }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setMealFoodOptionsMenuOpenId(null);
-
-                              if (editingMealLogFoodId === mealLogFood.id) {
-                                setEditingMealLogFoodId(null);
-                                setFoodsMenuOpenMealType('');
-                                setMealFoodOptionsMenuOpenId(null);
-                                return;
-                              }
-
-                              if (!foodNutrients[mealLogFood.food_id]) {
-                                handleLoadFoodNutrients(mealLogFood.food_id);
-                              }
-                              if (!mealLogFood.num_servings) {
-                                setNumServings(1);
-                              }
-                              else {
-                                setNumServings(mealLogFood.num_servings);
-                              }
-                              if (!mealLogFood.serving_size) {
-                                setServingSize(brandedFoods[mealLogFood.food_id].serving_size || null);
-                              }
-                              else {
-                                setServingSize(mealLogFood.serving_size);
-                              }
-                              if (!mealLogFood.serving_unit) {
-                                setServingSizeUnit(brandedFoods[mealLogFood.food_id].serving_size_unit || '');
-                              }
-                              else {
-                                setServingSizeUnit(mealLogFood.serving_unit);
-                              }
-                              setEditingMealLogFoodId(mealLogFood.id);
-                              setFoodsMenuOpenMealType('dinner');
-                              setViewFoodMenuOpenId(mealLogFood.food_id);
-                            }}
-                          >
-                            <div className="meal-log-food-section">
-                              <p className="meal-log-food-text">{foods[mealLogFood.food_id]?.description ?? ''}</p>
-                              <p className="meal-log-food-serving-text">{mealLogFood.num_servings * mealLogFood.serving_size} {mealLogFood.serving_unit}</p>
-                            </div>
-
-                            <div className="meal-log-food-section">
-                              <div className="meal-options-button-container">
-                                <button
-                                  className="meal-log-food-options-button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setFoodsMenuOpenMealType('');
-                                    setViewFoodMenuOpenId(null);
-                                    setEditingMealLogFoodId(null);
-                                    setMealFoodOptionsMenuOpenId((prev) => (prev === mealLogFood.id ? null : mealLogFood.id));
-                                  }}
-                                >
-                                  <img className="button-link-image" src={dotsIcon} />
-                                </button>
-                              </div>
-                              <p className="meal-log-food-text">{mealLogFood.calories ? `${mealLogFood.calories} calories` : ''}</p>
-
-{/* ---------------------------------------------------------------------- */}
-{/* ---- Dinner Section Foods Options Menu ---- */}
-
-                              <div
-                                ref={el => { mealFoodOptionsMenuRefs.current[mealLogFood.id] = el }}
-                                className={`meal-options-menu meal-log-food-options-menu ${mealFoodOptionsMenuOpenId === mealLogFood.id && 'meal-options-menu-open'}`}
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <button
-                                  className="meal-options-menu-button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    // handleCopyMealFood('dinner', ...);
-                                  }}
-                                >
-                                  <img className="button-link-image" src={copyIcon} />
-                                  Copy to...
-                                </button>
-
-                                <button
-                                  className="meal-options-menu-button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    // handleMoveMealFood('dinner', ...);
-                                  }}
-                                >
-                                  <img className="button-link-image" src={moveIcon} />
-                                  Move to...
-                                </button>
-
-                                <button
-                                  className="meal-options-menu-button meal-options-delete-button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDeleteMealLogFood(mealLogFood.id);
-                                  }}
-                                >
-                                  <img className="button-link-image" src={deleteIcon} />
-                                  Delete Entry
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        )
-                      })
-                  }
-
-{/* ---------------------------------------------------------------------- */}
-
-                  <button
-                    className="add-food-button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setFoodSearch('');
-                      setFoodMenuInputFocused(false);
-                      if (!editingMealLogFoodId) {
-                        setFoodsMenuOpenMealType((prev) => (prev === 'dinner' ? '' : 'dinner'));
-                      }
-                      else {
-                        setEditingMealLogFoodId(null);
-                        setViewFoodMenuOpenId(null);
-                        setFoodsMenuOpenMealType('dinner');
-                      }
-                    }}
-                  >
-                    Add Food
-                  </button>
-                </section>
-
-{/* ---------------------------------------------------------------------- */}
-{/* ---- Snacks Section Header ---- */}
-
-                <section className="meal-section">
-                  <div className="meal-type-container">
-                    <h3 className="meal-type">
-                      Snacks
-                    </h3>
-
-                    <button
-                      className="meal-options-button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setMealOptionsMenuOpenType((prev) => (prev === 'snacks' ? '' : 'snacks'));
-                      }}
-                    >
-                      <img className="button-link-image" src={dotsIcon} />
-                    </button>
-
-{/* ---------------------------------------------------------------------- */}
-{/* ---- Snacks Section Header Options Menu ---- */}
-
-                    <div
-                      ref={el => { mealOptionsMenuRefs.current['snacks'] = el }}
-                      className={`meal-options-menu ${mealOptionsMenuOpenType === 'snacks' && 'meal-options-menu-open'}`}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <button
-                        className="meal-options-menu-button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          // handleCopyMeal('snacks', ...);
-                        }}
-                      >
-                        <img className="button-link-image" src={copyIcon} />
-                        Copy to...
-                      </button>
-
-                      <button
-                        className="meal-options-menu-button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          // handleMoveMeal('snacks', ...);
-                        }}
-                      >
-                        <img className="button-link-image" src={moveIcon} />
-                        Move to...
-                      </button>
-
-                      <button
-                        className="meal-options-menu-button meal-options-delete-button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteMeal('snacks');
-                        }}
-                      >
-                        <img className="button-link-image" src={deleteIcon} />
-                        Delete Meal
-                      </button>
-                    </div>
-                  </div>
-
-{/* ---------------------------------------------------------------------- */}
-{/* ---- Snacks Section Foods ---- */}
-
-                  {
-                    currentMealLogDate &&
-                    mealLogs[currentMealLogDate] &&
-                    mealLogFoods[mealLogs[currentMealLogDate].id]
-                      ?.filter(mealLogFoodItem => mealLogFoodItem.meal_type === "snacks")
-                      .map((mealLogFood: MealLogFood) => {
-                        return (
-                          <div
-                            key={mealLogFood.id}
-                            className="meal-log-food"
-                            onMouseDown={(e) => {
-                              e.stopPropagation();
-                              setMealOptionsMenuOpenType('');
-                            }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setMealFoodOptionsMenuOpenId(null);
-
-                              if (editingMealLogFoodId === mealLogFood.id) {
-                                setEditingMealLogFoodId(null);
-                                setFoodsMenuOpenMealType('');
-                                setMealFoodOptionsMenuOpenId(null);
-                                return;
-                              }
-
-                              if (!foodNutrients[mealLogFood.food_id]) {
-                                handleLoadFoodNutrients(mealLogFood.food_id);
-                              }
-                              if (!mealLogFood.num_servings) {
-                                setNumServings(1);
-                              }
-                              else {
-                                setNumServings(mealLogFood.num_servings);
-                              }
-                              if (!mealLogFood.serving_size) {
-                                setServingSize(brandedFoods[mealLogFood.food_id].serving_size || null);
-                              }
-                              else {
-                                setServingSize(mealLogFood.serving_size);
-                              }
-                              if (!mealLogFood.serving_unit) {
-                                setServingSizeUnit(brandedFoods[mealLogFood.food_id].serving_size_unit || '');
-                              }
-                              else {
-                                setServingSizeUnit(mealLogFood.serving_unit);
-                              }
-                              setEditingMealLogFoodId(mealLogFood.id);
-                              setFoodsMenuOpenMealType('snacks');
-                              setViewFoodMenuOpenId(mealLogFood.food_id);
-                            }}
-                          >
-                            <div className="meal-log-food-section">
-                              <p className="meal-log-food-text">{foods[mealLogFood.food_id]?.description ?? ''}</p>
-                              <p className="meal-log-food-serving-text">{mealLogFood.num_servings * mealLogFood.serving_size} {mealLogFood.serving_unit}</p>
-                            </div>
-
-                            <div className="meal-log-food-section">
-                              <div className="meal-options-button-container">
-                                <button
-                                  className="meal-log-food-options-button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setFoodsMenuOpenMealType('');
-                                    setViewFoodMenuOpenId(null);
-                                    setEditingMealLogFoodId(null);
-                                    setMealFoodOptionsMenuOpenId((prev) => (prev === mealLogFood.id ? null : mealLogFood.id));
-                                  }}
-                                >
-                                  <img className="button-link-image" src={dotsIcon} />
-                                </button>
-                              </div>
-                              <p className="meal-log-food-text">{mealLogFood.calories ? `${mealLogFood.calories} calories` : ''}</p>
-
-{/* ---------------------------------------------------------------------- */}
-{/* ---- Snacks Section Foods Options Menu ---- */}
-
-                              <div
-                                ref={el => { mealFoodOptionsMenuRefs.current[mealLogFood.id] = el }}
-                                className={`meal-options-menu meal-log-food-options-menu ${mealFoodOptionsMenuOpenId === mealLogFood.id && 'meal-options-menu-open'}`}
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <button
-                                  className="meal-options-menu-button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    // handleCopyMealFood('snacks', ...);
-                                  }}
-                                >
-                                  <img className="button-link-image" src={copyIcon} />
-                                  Copy to...
-                                </button>
-
-                                <button
-                                  className="meal-options-menu-button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    // handleMoveMealFood('snacks', ...);
-                                  }}
-                                >
-                                  <img className="button-link-image" src={moveIcon} />
-                                  Move to...
-                                </button>
-
-                                <button
-                                  className="meal-options-menu-button meal-options-delete-button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDeleteMealLogFood(mealLogFood.id);
-                                  }}
-                                >
-                                  <img className="button-link-image" src={deleteIcon} />
-                                  Delete Entry
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        )
-                      })
-                  }
-
-{/* ---------------------------------------------------------------------- */}
-
-                  <button
-                    className="add-food-button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setFoodSearch('');
-                      setFoodMenuInputFocused(false);
-                      if (!editingMealLogFoodId) {
-                        setFoodsMenuOpenMealType((prev) => (prev === 'snacks' ? '' : 'snacks'));
-                      }
-                      else {
-                        setEditingMealLogFoodId(null);
-                        setViewFoodMenuOpenId(null);
-                        setFoodsMenuOpenMealType('snacks');
-                      }
-                    }}
-                  >
-                    Add Food
-                  </button>
-                </section>
+                <MealSection
+                  mealType="breakfast"
+                  currentMealLogDate={currentMealLogDate}
+                  mealLogs={mealLogs}
+                  mealLogFoods={mealLogFoods}
+                  foods={foods}
+                  brandedFoods={brandedFoods}
+                  foodNutrients={foodNutrients}
+                  mealOptionsMenuOpenType={mealOptionsMenuOpenType}
+                  setMealOptionsMenuOpenType={setMealOptionsMenuOpenType}
+                  mealFoodOptionsMenuOpenId={mealFoodOptionsMenuOpenId}
+                  setMealFoodOptionsMenuOpenId={setMealFoodOptionsMenuOpenId}
+                  editingMealLogFoodId={editingMealLogFoodId}
+                  setEditingMealLogFoodId={setEditingMealLogFoodId}
+                  setFoodsMenuOpenMealType={setFoodsMenuOpenMealType}
+                  setViewFoodMenuOpenId={setViewFoodMenuOpenId}
+                  setNumServings={setNumServings}
+                  setServingSize={setServingSize}
+                  setServingSizeUnit={setServingSizeUnit}
+                  setFoodSearch={setFoodSearch}
+                  setFoodMenuInputFocused={setFoodMenuInputFocused}
+                  mealOptionsMenuRefs={mealOptionsMenuRefs}
+                  mealFoodOptionsMenuRefs={mealFoodOptionsMenuRefs}
+                  handleDeleteMeal={handleDeleteMeal}
+                  handleDeleteMealLogFood={handleDeleteMealLogFood}
+                  handleLoadFoodNutrients={handleLoadFoodNutrients}
+                />
+
+                <MealSection
+                  mealType="lunch"
+                  currentMealLogDate={currentMealLogDate}
+                  mealLogs={mealLogs}
+                  mealLogFoods={mealLogFoods}
+                  foods={foods}
+                  brandedFoods={brandedFoods}
+                  foodNutrients={foodNutrients}
+                  mealOptionsMenuOpenType={mealOptionsMenuOpenType}
+                  setMealOptionsMenuOpenType={setMealOptionsMenuOpenType}
+                  mealFoodOptionsMenuOpenId={mealFoodOptionsMenuOpenId}
+                  setMealFoodOptionsMenuOpenId={setMealFoodOptionsMenuOpenId}
+                  editingMealLogFoodId={editingMealLogFoodId}
+                  setEditingMealLogFoodId={setEditingMealLogFoodId}
+                  setFoodsMenuOpenMealType={setFoodsMenuOpenMealType}
+                  setViewFoodMenuOpenId={setViewFoodMenuOpenId}
+                  setNumServings={setNumServings}
+                  setServingSize={setServingSize}
+                  setServingSizeUnit={setServingSizeUnit}
+                  setFoodSearch={setFoodSearch}
+                  setFoodMenuInputFocused={setFoodMenuInputFocused}
+                  mealOptionsMenuRefs={mealOptionsMenuRefs}
+                  mealFoodOptionsMenuRefs={mealFoodOptionsMenuRefs}
+                  handleDeleteMeal={handleDeleteMeal}
+                  handleDeleteMealLogFood={handleDeleteMealLogFood}
+                  handleLoadFoodNutrients={handleLoadFoodNutrients}
+                />
+
+                <MealSection
+                  mealType="dinner"
+                  currentMealLogDate={currentMealLogDate}
+                  mealLogs={mealLogs}
+                  mealLogFoods={mealLogFoods}
+                  foods={foods}
+                  brandedFoods={brandedFoods}
+                  foodNutrients={foodNutrients}
+                  mealOptionsMenuOpenType={mealOptionsMenuOpenType}
+                  setMealOptionsMenuOpenType={setMealOptionsMenuOpenType}
+                  mealFoodOptionsMenuOpenId={mealFoodOptionsMenuOpenId}
+                  setMealFoodOptionsMenuOpenId={setMealFoodOptionsMenuOpenId}
+                  editingMealLogFoodId={editingMealLogFoodId}
+                  setEditingMealLogFoodId={setEditingMealLogFoodId}
+                  setFoodsMenuOpenMealType={setFoodsMenuOpenMealType}
+                  setViewFoodMenuOpenId={setViewFoodMenuOpenId}
+                  setNumServings={setNumServings}
+                  setServingSize={setServingSize}
+                  setServingSizeUnit={setServingSizeUnit}
+                  setFoodSearch={setFoodSearch}
+                  setFoodMenuInputFocused={setFoodMenuInputFocused}
+                  mealOptionsMenuRefs={mealOptionsMenuRefs}
+                  mealFoodOptionsMenuRefs={mealFoodOptionsMenuRefs}
+                  handleDeleteMeal={handleDeleteMeal}
+                  handleDeleteMealLogFood={handleDeleteMealLogFood}
+                  handleLoadFoodNutrients={handleLoadFoodNutrients}
+                />
+
+                <MealSection
+                  mealType="snacks"
+                  currentMealLogDate={currentMealLogDate}
+                  mealLogs={mealLogs}
+                  mealLogFoods={mealLogFoods}
+                  foods={foods}
+                  brandedFoods={brandedFoods}
+                  foodNutrients={foodNutrients}
+                  mealOptionsMenuOpenType={mealOptionsMenuOpenType}
+                  setMealOptionsMenuOpenType={setMealOptionsMenuOpenType}
+                  mealFoodOptionsMenuOpenId={mealFoodOptionsMenuOpenId}
+                  setMealFoodOptionsMenuOpenId={setMealFoodOptionsMenuOpenId}
+                  editingMealLogFoodId={editingMealLogFoodId}
+                  setEditingMealLogFoodId={setEditingMealLogFoodId}
+                  setFoodsMenuOpenMealType={setFoodsMenuOpenMealType}
+                  setViewFoodMenuOpenId={setViewFoodMenuOpenId}
+                  setNumServings={setNumServings}
+                  setServingSize={setServingSize}
+                  setServingSizeUnit={setServingSizeUnit}
+                  setFoodSearch={setFoodSearch}
+                  setFoodMenuInputFocused={setFoodMenuInputFocused}
+                  mealOptionsMenuRefs={mealOptionsMenuRefs}
+                  mealFoodOptionsMenuRefs={mealFoodOptionsMenuRefs}
+                  handleDeleteMeal={handleDeleteMeal}
+                  handleDeleteMealLogFood={handleDeleteMealLogFood}
+                  handleLoadFoodNutrients={handleLoadFoodNutrients}
+                />
               </div>
             </div>
           </main>
