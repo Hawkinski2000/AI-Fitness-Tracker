@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from "react";
-import { useNavigate } from 'react-router-dom';
 import {
   type MealLog,
   type MealLogFood,
@@ -8,16 +7,16 @@ import {
   type FoodNutrient,
   type Nutrient
 } from "../../types/meal-logs";
+import useInitializeMealLogsPage from "../../hooks/useInitializeMealLogsPage";
 import { useAuth } from "../../../../context/auth/useAuth";
-import { type UserType } from "../../../../types/app";
-import { refreshAccessToken, getUserFromToken, isTokenExpired } from "../../../../utils/auth";
-import { loadMealLogs,
-         createMealLog,
+import { refreshAccessToken, isTokenExpired } from "../../../../utils/auth";
+import { createMealLog,
          loadMealLogFoods,
          addMealLogFood,
          updateMealLogFood,
          deleteMealLogFood,
-         loadFood, getFoods,
+         loadFood,
+         getFoods,
          loadBrandedFood,
          loadFoodNutrients,
          loadNutrient } from "../../../../utils/meal-logs";
@@ -34,10 +33,6 @@ import './MealLogsPage.css';
 
 export default function MealLogsPage() {
   const { accessToken, setAccessToken } = useAuth();
-  const [userData, setUserData] = useState<UserType | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  const navigate = useNavigate();
 
   const [mealLogs, setMealLogs] = useState<Record<string, MealLog>>({});
   const [currentMealLogDate, setCurrentMealLogDate] = useState<string | null>(null);
@@ -97,60 +92,15 @@ export default function MealLogsPage() {
 
   const [tokensRemaining, setTokensRemaining] = useState<number>(0);
 
-// ---------------------------------------------------------------------------
-  
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const token = await refreshAccessToken();  
-  
-          if (!token) {
-            throw new Error("No access token");
-          }
-  
-          setAccessToken(token);
-  
-          const userData = await getUserFromToken(token);
-          setUserData(userData);
-          setTokensRemaining(Math.min(userData.input_tokens_remaining, userData.output_tokens_remaining))
-
-          const loadedMealLogs = await loadMealLogs(setMealLogs, token);
-
-          const today = new Date().toISOString().split('T')[0];
-          setToday(today);
-          setCurrentMealLogDate(today);
-
-          const currentMealLog = loadedMealLogs[today];
-
-          if (!currentMealLog) {
-            return;
-          }
-          
-          const currentMealLogId = currentMealLog.id;
-
-          const loadedMealLogFoods = await loadMealLogFoods(currentMealLogId, setMealLogFoods, token);
-
-          await Promise.all(
-            Object.values(loadedMealLogFoods).map(mealLogFood =>
-              mealLogFood.forEach((mealLogFoodObject: MealLogFood) => {
-                loadFood(mealLogFoodObject.food_id, setFoods, token);
-                loadBrandedFood(mealLogFoodObject.food_id, setBrandedFoods, token);
-              })
-            )
-          );
-
-        } catch (err) {
-          console.error(err);
-          setAccessToken(null);
-          navigate("/");
-  
-        } finally {
-          setLoading(false);
-        }
-      };
-  
-      fetchData();
-    }, [setAccessToken, navigate]);
+  const { userData, loading } = useInitializeMealLogsPage(
+    setTokensRemaining,
+    setMealLogs,
+    setToday,
+    setCurrentMealLogDate,
+    setMealLogFoods,
+    setFoods,
+    setBrandedFoods
+  );
 
 // ---------------------------------------------------------------------------
 
