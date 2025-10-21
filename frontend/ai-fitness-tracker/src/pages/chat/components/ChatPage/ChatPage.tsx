@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { type Chat, type ConversationItemType } from "../../types/chat"
+import { type Chat, type ConversationItemType } from "../../types/chat";
 import useChatScroll from "../../hooks/useChatScroll";
 import useChatActions from "../../hooks/useChatActions";
 import useChatClickOutside from "../../hooks/useChatClickOutside";

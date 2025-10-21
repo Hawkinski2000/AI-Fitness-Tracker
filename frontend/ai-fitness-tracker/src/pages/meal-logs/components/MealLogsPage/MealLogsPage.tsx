@@ -1,5 +1,14 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
+import { PropagateLoader } from 'react-spinners';
+import {
+  type MealLog,
+  type MealLogFood,
+  type Food,
+  type BrandedFood,
+  type FoodNutrient,
+  type Nutrient
+} from "../../types/meal-logs"
 import { useAuth } from "../../../../context/auth/useAuth";
 import { type UserType } from "../../../../types/app";
 import { refreshAccessToken, getUserFromToken, isTokenExpired } from "../../../../utils/auth";
@@ -13,67 +22,22 @@ import { loadMealLogs,
          loadBrandedFood,
          loadFoodNutrients,
          loadNutrient } from "../../../../utils/meal-logs";
-import { PropagateLoader } from 'react-spinners';
-import MacroDoughnutChart from "../MacroDoughnutChart/MacroDoughnutChart";
+import LoadingScreen from "../../../../components/LoadingScreen/LoadingScreen";
 import Header from "../../../../components/Header/Header";
 import Sidebar from "../../../../components/Sidebar/Sidebar";
-import arrowLeftIcon from '../../../../assets/arrow-left-icon.svg';
-import arrowRightIcon from '../../../../assets/arrow-right-icon.svg';
+import DateNav from "../DateNav/DateNav";
+import CaloriesHeader from "../CaloriesHeader/CaloriesHeader";
+import ViewFoodMenu from "../ViewFoodMenu/ViewFoodMenu";
 import closeIcon from '../../../../assets/close-icon.svg';
 import addIcon from '../../../../assets/add-icon.svg';
 import dotsIcon from '../../../../assets/dots-icon.svg';
 import copyIcon from '../../../../assets/copy-icon.svg';
 import moveIcon from '../../../../assets/move-icon.svg';
 import deleteIcon from '../../../../assets/delete-icon.svg';
-import backIcon from '../../../../assets/back-icon.svg';
-import checkIcon from '../../../../assets/check-icon.svg';
+import arrowLeftIcon from '../../../../assets/arrow-left-icon.svg';
+import arrowRightIcon from '../../../../assets/arrow-right-icon.svg';
 import './MealLogsPage.css';
 
-
-export interface MealLog {
-  id: number;
-  log_date: string;
-  total_calories: number | null;
-}
-export interface MealLogFood {
-  id: number;
-  meal_log_id: number;
-  food_id: number;
-  meal_type: string;
-  num_servings: number;
-  serving_size: number;
-  serving_unit: string;
-  created_at: string;
-  calories: number | null;
-}
-export interface Food {
-  id: number;
-  description: string;
-  calories: number | null;
-  user_id: number | null;
-  user_created_at: string | null;
-}
-export interface BrandedFood {
-  food_id: number;
-  brand_owner: string | null;
-  brand_name: string | null;
-  subbrand_name: string | null;
-  ingredients: string | null;
-  serving_size: number | null;
-  serving_size_unit: string | null;
-  food_category: string | null;
-}
-export interface FoodNutrient {
-  id: number;
-  food_id: number;
-  nutrient_id: number;
-  amount: number;
-}
-export interface Nutrient {
-  id: number;
-  name: string;
-  unit_name: string;
-}
 
 export default function MealLogsPage() {
   const { accessToken, setAccessToken } = useAuth();
@@ -652,21 +616,12 @@ export default function MealLogsPage() {
 // ---------------------------------------------------------------------------
 
   if (loading) {
-    return (
-      <div className='loading-screen'>
-        <PropagateLoader size={20} color="#00ffcc" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
-
-// ---------------------------------------------------------------------------
 
   return (
     <>
       <div className='meal-logs-page'>
-
-{/* ---------------------------------------------------------------------- */}
-
         <Header
           isRemovingTokens={null}
           tokensRemaining={tokensRemaining}
@@ -676,497 +631,53 @@ export default function MealLogsPage() {
           accountMenuRef={accountMenuRef}
         />
 
-{/* ---------------------------------------------------------------------- */}
-
         <div className="page-body">
           <Sidebar currentPage={'meal-logs'} />
 
-{/* ---------------------------------------------------------------------- */}
-{/* ---- Date Nav ---- */}
-
           <main className="meal-logs-page-main">
             <div className='meal-logs-page-content'>
-              <div className="date-nav-container">
-                <nav className="date-nav">
-                  <button
-                    className="date-nav-button"
-                    onClick={() => handleChangeDate('previous')}
-                  >
-                    <img className="button-link-image" src={arrowLeftIcon} />
-                  </button>
-                  <button
-                    className="date-nav-button"
-                  >
-                    {(currentMealLogDate && today) ? getDateLabel(currentMealLogDate, today) : ""}
-                  </button>
-                  <button
-                    className="date-nav-button"
-                    onClick={() => handleChangeDate('next')}
-                  >
-                    <img className="button-link-image" src={arrowRightIcon} />
-                  </button>
-                </nav>
-              </div>
+              <DateNav
+                currentMealLogDate={currentMealLogDate}
+                today={today}
+                handleChangeDate={handleChangeDate}
+                getDateLabel={getDateLabel}
+              />
 
-{/* ---------------------------------------------------------------------- */}
-{/* ---- Calories Remaining Header ---- */}
-
-              <header className="calories-header">
-                <p className="calories-remaining-text">Calories Remaining</p>
-
-                <div className="calories-remaining-calculation">
-                  <div className="calories-remaining-section">
-                    <p>3,500</p>
-                    <p className="calories-remaining-section-label">Goal</p>
-                  </div>
-
-                  <div className="calories-remaining-section">
-                    <p>-</p>
-                  </div>
-
-                  <div className="calories-remaining-section">
-                    <p>{foodCalories}</p>
-                    <p className="calories-remaining-section-label">Food</p>
-                  </div>
-
-                  <div className="calories-remaining-section">
-                    <p>+</p>
-                  </div>
-
-                  <div className="calories-remaining-section">
-                    <p>0</p>
-                    <p className="calories-remaining-section-label">Exercise</p>
-                  </div>
-
-                  <div className="calories-remaining-section">
-                    <p>=</p>
-                  </div>
-
-                  <div className="calories-remaining-section">
-                    <p>3,500</p>
-                    <p className="calories-remaining-section-label">Remaining</p>
-                  </div>
-                </div>
-              </header>
-
-{/* ---------------------------------------------------------------------- */}
-{/* ---- Foods Menu ---- */}
+              <CaloriesHeader foodCalories={foodCalories} />
 
               {viewFoodMenuOpenId ? (
-                <div
-                  className={`foods-menu ${foodsMenuOpenMealType && 'foods-menu-open'}`}
-                  ref={foodsMenuRef}
-                >
-                  <header className="view-food-menu-header">
-                    <div className="view-food-menu-section-content">
-                      <button
-                        className="view-food-menu-text-button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingMealLogFoodId(null);
-                          setViewFoodMenuOpenId(null);
-                        }}
-                      >
-                        <img className="button-link-image" src={backIcon} />
-                      </button>
-                      <p>
-                        {editingMealLogFoodId ? 'Edit Entry' : 'Add Food'}
-                      </p>
-                      <button
-                        className="view-food-menu-text-button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (editingMealLogFoodId && currentMealLogDate) {
-                            handleUpdateFood(editingMealLogFoodId,
-                                             mealLogs[currentMealLogDate].id,
-                                             numServings,
-                                             servingSize);
-                            setEditingMealLogFoodId(null);
-                            setViewFoodMenuOpenId(null);
-                            setFoodsMenuOpenMealType('');
-                          }
-                          else {
-                            handleAddFood(viewFoodMenuOpenId, numServings, servingSize);
-                          }
-                          setViewFoodMenuOpenId(null);
-                        }}
-                      >
-                        <img className="button-link-image" src={checkIcon} />
-                      </button>
-                    </div>
-                  </header>
-
-                  {(!foodCaloriesFromMacros[viewFoodMenuOpenId]) ? (
-                    <div className="food-menu-results-loading-container">
-                      <PropagateLoader size={20} color="#00ffcc" />
-                    </div>
-                  ) : (
-                    <div className="view-food-menu-content">
-                      <section className="view-food-menu-section">
-                        <div className="view-food-menu-section-content">
-                          <h3 className="view-food-menu-content-heading">
-                            {
-                              editingMealLogFoodId && currentMealLogDate
-                                ? (
-                                    foods[
-                                      mealLogFoods[mealLogs[currentMealLogDate].id]
-                                        ?.find((mealLogFood: MealLogFood) =>
-                                          mealLogFood.id === editingMealLogFoodId)
-                                        ?.food_id ?? -1
-                                    ]?.description ?? ''
-                                  )
-                                : (
-                                    foodSearchResults.find((food: Food) =>
-                                      food.id === viewFoodMenuOpenId)?.description || ''
-                                  )
-                            }
-                          </h3>
-                        </div>
-                      </section>
-
-                      <section className="view-food-menu-section">
-                        <div className="view-food-menu-section-content">
-                          <p className="view-food-menu-section-column-text">Meal</p>
-                          <div className="view-food-menu-section-column">
-                            <button
-                              className="view-food-menu-text-button select-meal-button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectMealMenuOpenType((prev) => (prev === foodsMenuOpenMealType ? '' : foodsMenuOpenMealType));
-                              }}
-                            >
-                              {foodsMenuOpenMealType}
-                            </button>
-
-                            <div
-                              ref={el => { selectMealMenuRef.current = el }}
-                              className={`meal-options-menu select-meal-menu ${selectMealMenuOpenType && 'meal-options-menu-open'}`}
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              {foodsMenuOpenMealType !== 'breakfast' && (
-                                <button
-                                  className="meal-options-menu-button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setFoodsMenuOpenMealType('breakfast')
-                                    setSelectMealMenuOpenType('');
-                                  }}
-                                >
-                                  Breakfast
-                                </button>
-                              )}
-
-                              {foodsMenuOpenMealType !== 'lunch' && (
-                                <button
-                                  className="meal-options-menu-button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setFoodsMenuOpenMealType('lunch');
-                                    setSelectMealMenuOpenType('');
-                                  }}
-                                >
-                                  Lunch
-                                </button>
-                              )}
-
-                              {foodsMenuOpenMealType !== 'dinner' && (
-                                <button
-                                  className="meal-options-menu-button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setFoodsMenuOpenMealType('dinner');
-                                    setSelectMealMenuOpenType('');
-                                  }}
-                                >
-                                  Dinner
-                                </button>
-                              )}
-
-                              {foodsMenuOpenMealType !== 'snacks' && (
-                                <button
-                                  className="meal-options-menu-button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setFoodsMenuOpenMealType('snacks');
-                                    setSelectMealMenuOpenType('');
-                                  }}
-                                >
-                                  Snacks
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </section>
-
-                      <section className="view-food-menu-section">
-                        <div className="view-food-menu-section-content">
-                          <p className="view-food-menu-section-column-text">Number of Servings</p>
-                            <input
-                              className="view-food-menu-input"
-                              type="number"
-                              value={numServings === null ? '' : numServings}
-                              onInput={(e) => {
-                                e.preventDefault();
-                                const value = e.currentTarget.value;
-                                const parsed = parseFloat(value);
-                                if (parsed < 0) {
-                                  setNumServings(1);
-                                }
-                                else {
-                                  setNumServings(parsed);
-                                }
-                              }}
-                              onBlur={() => {
-                                if (!numServings) {
-                                  setNumServings(1);
-                                }
-                              }}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                  e.currentTarget.blur();
-                                }
-                              }}
-                            />
-                        </div>
-                      </section>
-
-                      <section className="view-food-menu-section">
-                        <div className="view-food-menu-section-content">
-                          <p className="view-food-menu-section-column-text">Serving Size</p>
-                          <div className="view-food-menu-section-column">
-                            <button
-                              className="view-food-menu-text-button serving-size-button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectServingSizeMenuOpen((prev) => !prev);
-                              }}
-                            >
-                              {servingSize?.toFixed(1).replace(/\.0$/, '') || ''}{' '}
-                              {servingSizeUnit || ''}
-                            </button>
-
-                            <div
-                              ref={el => { selectServingSizeMenuRef.current = el }}
-                              className={`meal-options-menu select-serving-size-menu ${selectServingSizeMenuOpen && 'meal-options-menu-open'}`}
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              {(selectServingSizeMenuOpen && servingSize === 1) && (
-                                <button
-                                  className="meal-options-menu-button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setServingSize(brandedFoods[viewFoodMenuOpenId].serving_size || null);
-                                    setSelectServingSizeMenuOpen(false);
-                                  }}
-                                >
-                                  {(brandedFoods[viewFoodMenuOpenId].serving_size)?.toFixed(1).replace(/\.0$/, '') || ''}{' '}
-                                  {brandedFoods[viewFoodMenuOpenId].serving_size_unit || ''}
-                                </button>
-                              )}
-
-                              {(selectServingSizeMenuOpen && servingSize !== 1) && (
-                                <button
-                                  className="meal-options-menu-button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setServingSize(1);
-                                    setSelectServingSizeMenuOpen(false);
-                                  }}
-                                >
-                                  1 {brandedFoods[viewFoodMenuOpenId].serving_size_unit || ''}
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </section>
-
-                      {macroAmountsGrams[viewFoodMenuOpenId] && (
-                        <section className="view-food-menu-section">
-                          <div className="view-food-menu-section-content">
-                            <div className="view-food-menu-section-column">
-                              <MacroDoughnutChart
-                                calories={
-                                  Number(
-                                    (
-                                      (
-                                        editingMealLogFoodId && currentMealLogDate && mealLogFoods[mealLogs[currentMealLogDate].id]
-                                          ? (
-                                              foods[mealLogFoods[mealLogs[currentMealLogDate].id].find((mealLogFood: MealLogFood) =>
-                                                mealLogFood.id === editingMealLogFoodId
-                                              )?.food_id ?? -1]?.calories ?? foodCaloriesFromMacros[viewFoodMenuOpenId]
-                                            )
-                                          : (
-                                              foodSearchResults.find((food: Food) =>
-                                                food.id === viewFoodMenuOpenId
-                                              )?.calories ?? foodCaloriesFromMacros[viewFoodMenuOpenId]
-                                            )
-                                      )
-                                      * (numServings || 1)
-                                      * (
-                                          (servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
-                                          / (brandedFoods[viewFoodMenuOpenId].serving_size || 1)
-                                        )
-                                    ).toFixed(1)
-                                  )
-                                }
-                                carbsCalories={
-                                  (macroAmountsGrams[viewFoodMenuOpenId][1005] || 0) * 4
-                                  * (numServings || 1)
-                                  * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
-                                  / (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
-                                }
-                                fatCalories={
-                                  (macroAmountsGrams[viewFoodMenuOpenId][1004] || 0) * 9
-                                  * (numServings || 1)
-                                  * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
-                                  / (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
-                                }
-                                proteinCalories={
-                                  (macroAmountsGrams[viewFoodMenuOpenId][1003] || 0) * 4
-                                  * (numServings || 1)
-                                  * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
-                                  / (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
-                                }
-                              />
-                            </div>
-
-                            <div className="view-food-menu-section-column">
-                              <p className="view-food-menu-section-column-label" style={{color: '#00ffcc'}}>
-                                {
-                                  `${
-                                    (
-                                      ((macroAmountsGrams[viewFoodMenuOpenId][1005] || 0) * 4
-                                      * (numServings || 1)
-                                      * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
-                                      / (brandedFoods[viewFoodMenuOpenId].serving_size || 1)))
-                                      /
-                                      (foodCaloriesFromMacros[viewFoodMenuOpenId]
-                                      * (numServings || 1)
-                                      * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
-                                      / (brandedFoods[viewFoodMenuOpenId].serving_size || 1)))
-                                      * 100
-                                    ).toFixed(1).replace(/\.0$/, '')
-                                  } %`
-                                }
-                              </p>
-                              <p className="view-food-menu-section-column-text">
-                                {
-                                  `${
-                                    (macroAmountsGrams[viewFoodMenuOpenId][1005] || 0
-                                    * (numServings || 1)
-                                    * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
-                                    / (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
-                                    ).toFixed(1).replace(/\.0$/, '')
-                                  } g`
-                                }
-                              </p>
-                              <p className="view-food-menu-section-column-label">Carbs</p>
-                            </div>
-
-                            <div className="view-food-menu-section-column">
-                              <p className="view-food-menu-section-column-label" style={{color: '#ff00c8'}}>
-                                {
-                                  `${
-                                    (
-                                      ((macroAmountsGrams[viewFoodMenuOpenId][1004] || 0) * 9
-                                      * (numServings || 1)
-                                      * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
-                                      / (brandedFoods[viewFoodMenuOpenId].serving_size || 1)))
-                                      /
-                                      (foodCaloriesFromMacros[viewFoodMenuOpenId]
-                                      * (numServings || 1)
-                                      * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
-                                      / (brandedFoods[viewFoodMenuOpenId].serving_size || 1)))
-                                      * 100
-                                    ).toFixed(1).replace(/\.0$/, '')
-                                  } %`
-                                }
-                              </p>
-                              <p className="view-food-menu-section-column-text">
-                                {
-                                  `${
-                                    (macroAmountsGrams[viewFoodMenuOpenId][1004] || 0
-                                    * (numServings || 1)
-                                    * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
-                                    / (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
-                                    ).toFixed(1).replace(/\.0$/, '')
-                                  } g`
-                                }
-                              </p>
-                              <p className="view-food-menu-section-column-label">Fat</p>
-                            </div>
-
-                            <div className="view-food-menu-section-column">
-                              <p className="view-food-menu-section-column-label" style={{color: '#ffe600'}}>
-                                {
-                                  `${
-                                    (
-                                      ((macroAmountsGrams[viewFoodMenuOpenId][1003] || 0) * 4
-                                      * (numServings || 1)
-                                      * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
-                                      / (brandedFoods[viewFoodMenuOpenId].serving_size || 1)))
-                                      /
-                                      (foodCaloriesFromMacros[viewFoodMenuOpenId]
-                                      * (numServings || 1)
-                                      * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
-                                      / (brandedFoods[viewFoodMenuOpenId].serving_size || 1)))
-                                      * 100
-                                    ).toFixed(1).replace(/\.0$/, '')
-                                  } %`
-                                }
-                              </p>
-                              <p className="view-food-menu-section-column-text">
-                                {
-                                  `${
-                                    (macroAmountsGrams[viewFoodMenuOpenId][1003] || 0
-                                    * (numServings || 1)
-                                    * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
-                                    / (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
-                                    ).toFixed(1).replace(/\.0$/, '')
-                                  } g`
-                                }
-                              </p>
-                              <p className="view-food-menu-section-column-label">Protein</p>
-                            </div>
-                          </div>
-                        </section>
-                      )}
-
-                      {foodNutrients[viewFoodMenuOpenId] && foodNutrients[viewFoodMenuOpenId].map((foodNutrient: FoodNutrient) => {
-                        return (
-                          <section className="view-food-menu-section">
-                            <div key={foodNutrient.id} className="view-food-menu-section-content">
-                              <p className="view-food-menu-section-column-text">
-                                {nutrients[foodNutrient.nutrient_id]?.name}
-                              </p>
-
-                              <p className="view-food-menu-section-column-text">
-                                {(foodNutrient.amount
-                                * (numServings || 1)
-                                * ((servingSize || (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
-                                / (brandedFoods[viewFoodMenuOpenId].serving_size || 1))
-                                ).toFixed(1).replace(/\.0$/, '')}{' '}
-                                {nutrients[foodNutrient.nutrient_id]?.unit_name.toLowerCase()}
-                              </p>
-                            </div>
-                          </section>
-                        )
-                      })}
-
-                      <section className="view-food-menu-section">
-                        <div className="view-food-menu-section-content">
-                          <p className="view-food-menu-section-column-text">
-                            Ingredients: {brandedFoods[viewFoodMenuOpenId].ingredients}
-                          </p>
-                        </div>
-                      </section>
-                    </div>
-                    )}
-                </div>
-
-// ---------------------------------------------------------------------------
+                <ViewFoodMenu
+                  currentMealLogDate={currentMealLogDate}
+                  mealLogs={mealLogs}
+                  mealLogFoods={mealLogFoods}
+                  foods={foods}
+                  brandedFoods={brandedFoods}
+                  foodNutrients={foodNutrients}
+                  nutrients={nutrients}
+                  numServings={numServings}
+                  setNumServings={setNumServings}
+                  servingSize={servingSize}
+                  setServingSize={setServingSize}
+                  servingSizeUnit={servingSizeUnit}
+                  foodCaloriesFromMacros={foodCaloriesFromMacros}
+                  macroAmountsGrams={macroAmountsGrams}
+                  foodsMenuOpenMealType={foodsMenuOpenMealType}
+                  setFoodsMenuOpenMealType={setFoodsMenuOpenMealType}
+                  editingMealLogFoodId={editingMealLogFoodId}
+                  setEditingMealLogFoodId={setEditingMealLogFoodId}
+                  viewFoodMenuOpenId={viewFoodMenuOpenId}
+                  setViewFoodMenuOpenId={setViewFoodMenuOpenId}
+                  foodSearchResults={foodSearchResults}
+                  selectMealMenuOpenType={selectMealMenuOpenType}
+                  setSelectMealMenuOpenType={setSelectMealMenuOpenType}
+                  selectServingSizeMenuOpen={selectServingSizeMenuOpen}
+                  setSelectServingSizeMenuOpen={setSelectServingSizeMenuOpen}
+                  foodsMenuRef={foodsMenuRef}
+                  selectMealMenuRef={selectMealMenuRef}
+                  selectServingSizeMenuRef={selectServingSizeMenuRef}
+                  handleUpdateFood={handleUpdateFood}
+                  handleAddFood={handleAddFood}
+                />
 
               ) : (
                 <div
