@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import {
   type MealLog,
   type MealLogFood,
@@ -9,6 +9,7 @@ import {
 } from "../../types/meal-logs";
 import useInitializeMealLogsPage from "../../hooks/useInitializeMealLogsPage";
 import useMealLogsCaloriesHeader from "../../hooks/useMealLogsCaloriesHeader";
+import useMealLogsClickOutside from "../../hooks/useMealLogsClickOutside";
 import { useAuth } from "../../../../context/auth/useAuth";
 import { refreshAccessToken, isTokenExpired } from "../../../../utils/auth";
 import { createMealLog,
@@ -109,83 +110,30 @@ export default function MealLogsPage() {
     mealLogFoods,
     setFoodCalories
   );
-    
-// ---------------------------------------------------------------------------
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target;
-
-      if (
-        accountMenuRef.current &&
-        target instanceof Node &&
-        !accountMenuRef.current.contains(target) &&
-        !(target instanceof HTMLElement && target.classList.contains('account-image'))
-      ) {
-        setAccountMenuOpen(false);
-      }
-
-      if (
-        mealOptionsMenuOpenType &&
-        mealOptionsMenuRefs.current[mealOptionsMenuOpenType] &&
-        target instanceof Node &&
-        !mealOptionsMenuRefs.current[mealOptionsMenuOpenType].contains(target) &&
-        !(target instanceof HTMLElement && target.classList.contains('meal-options-button'))
-      ) {
-        setMealOptionsMenuOpenType('');
-      }
-
-      if (
-        mealFoodOptionsMenuOpenId &&
-        mealFoodOptionsMenuRefs.current[mealFoodOptionsMenuOpenId] &&
-        target instanceof Node &&
-        !mealFoodOptionsMenuRefs.current[mealFoodOptionsMenuOpenId].contains(target) &&
-        !(target instanceof HTMLElement && target.classList.contains('meal-log-food-options-button'))
-      ) {
-        setMealFoodOptionsMenuOpenId(null);
-      }
-
-      if (
-        foodsMenuOpenMealType &&
-        foodsMenuRef.current &&
-        target instanceof Node &&
-        !foodsMenuRef.current.contains(target) &&
-        !(target instanceof HTMLElement && target.classList.contains('add-food-button'))
-      ) {
-        setFoodsMenuOpenMealType('');
-        setFoodSearch('');
-        setFoodMenuInputFocused(false);
-        setEditingMealLogFoodId(null);
-      }
-
-      if (target instanceof HTMLElement && target.classList.contains('add-food-button')) {
-        setViewFoodMenuOpenId(null);
-      }
-
-      if (
-        selectMealMenuOpenType &&
-        selectMealMenuRef.current &&
-        target instanceof Node &&
-        !selectMealMenuRef.current.contains(target) &&
-        !(target instanceof HTMLElement && target.classList.contains('select-meal-button'))
-      ) {
-        setSelectMealMenuOpenType('');
-      }
-
-      if (
-        selectServingSizeMenuOpen &&
-        selectServingSizeMenuRef.current &&
-        target instanceof Node &&
-        !selectServingSizeMenuRef.current.contains(target) &&
-        !(target instanceof HTMLElement && target.classList.contains('serving-size-button'))
-      ) {
-        setSelectServingSizeMenuOpen(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [mealOptionsMenuOpenType, mealFoodOptionsMenuOpenId, foodsMenuOpenMealType, selectMealMenuOpenType, selectServingSizeMenuOpen]);
+  useMealLogsClickOutside(
+    setAccountMenuOpen,
+    mealOptionsMenuOpenType,
+    setMealOptionsMenuOpenType,
+    mealFoodOptionsMenuOpenId,
+    setMealFoodOptionsMenuOpenId,
+    foodsMenuOpenMealType,
+    setFoodsMenuOpenMealType,
+    setFoodSearch,
+    setFoodMenuInputFocused,
+    setEditingMealLogFoodId,
+    setViewFoodMenuOpenId,
+    selectMealMenuOpenType,
+    setSelectMealMenuOpenType,
+    selectServingSizeMenuOpen,
+    setSelectServingSizeMenuOpen,
+    accountMenuRef,
+    mealOptionsMenuRefs,
+    mealFoodOptionsMenuRefs,
+    foodsMenuRef,
+    selectMealMenuRef,
+    selectServingSizeMenuRef
+  );
 
 // ---------------------------------------------------------------------------
 
