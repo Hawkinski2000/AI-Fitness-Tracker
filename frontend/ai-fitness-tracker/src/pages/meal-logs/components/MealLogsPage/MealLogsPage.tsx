@@ -12,14 +12,7 @@ import useMealLogsCaloriesHeader from "../../hooks/useMealLogsCaloriesHeader";
 import useMealLogsClickOutside from "../../hooks/useMealLogsClickOutside";
 import useMealLogsDate from "../../hooks/useMealLogsDate";
 import useFoodSearch from "../../hooks/useFoodSearch";
-import { useAuth } from "../../../../context/auth/useAuth";
-import { refreshAccessToken, isTokenExpired } from "../../../../utils/auth";
-import { createMealLog,
-         addMealLogFood,
-         updateMealLogFood,
-         deleteMealLogFood,
-         loadFoodNutrients,
-         loadNutrient } from "../../../../utils/meal-logs";
+import useMealLogActions from "../../hooks/useMealLogActions";
 import LoadingScreen from "../../../../components/LoadingScreen/LoadingScreen";
 import Header from "../../../../components/Header/Header";
 import Sidebar from "../../../../components/Sidebar/Sidebar";
@@ -32,8 +25,6 @@ import './MealLogsPage.css';
 
 
 export default function MealLogsPage() {
-  const { accessToken, setAccessToken } = useAuth();
-
   const [mealLogs, setMealLogs] = useState<Record<string, MealLog>>({});
   const [currentMealLogDate, setCurrentMealLogDate] = useState<string | null>(null);
   const [today, setToday] = useState<string | null>(null);
@@ -157,194 +148,27 @@ export default function MealLogsPage() {
     searchTimeoutRef
   );
 
-// ---------------------------------------------------------------------------
-
-  const handleDeleteMeal = async (mealType: string) => {
-    try {
-      let token: string | null = accessToken;
-      if (!accessToken || isTokenExpired(accessToken)) {
-        token = await refreshAccessToken();  
-        setAccessToken(token);
-      }
-      if (!token) {
-        throw new Error("No access token");
-      }
-
-      if (!currentMealLogDate) {
-        return;
-      }
-
-      const currentMealLog = mealLogs[currentMealLogDate];
-
-      const currentMealLogId = currentMealLog.id;
-
-      const currentMealLogFoods = mealLogFoods[currentMealLogId];
-
-      const mealLogFoodsInMealType = currentMealLogFoods.filter((mealLogFood: MealLogFood) => mealLogFood.meal_type === mealType);
-
-      const mealLogFoodIdsInMealType = mealLogFoodsInMealType.map((mealLogFood: MealLogFood) => mealLogFood.id);
-
-      await Promise.all(
-        mealLogFoodIdsInMealType.map((mealLogFoodId: number) =>
-          deleteMealLogFood(mealLogFoodId, setMealLogFoods, token))
-      );
-
-      setMealOptionsMenuOpenType('');
-
-    } catch (err) {
-      console.error(err);
-      setAccessToken(null);
-
-    } finally {
-      setMealOptionsMenuOpenType('');
-    }
-  };
-
-// ---------------------------------------------------------------------------
-
-  const handleDeleteMealLogFood = async (mealLogFoodId: number) => {
-    try {
-      let token: string | null = accessToken;
-      if (!accessToken || isTokenExpired(accessToken)) {
-        token = await refreshAccessToken();
-        setAccessToken(token);
-      }
-      if (!token) {
-        throw new Error("No access token");
-      }
-
-      await deleteMealLogFood(mealLogFoodId, setMealLogFoods, token);
-
-      setMealFoodOptionsMenuOpenId(null);
-
-    } catch (err) {
-      console.error(err);
-      setAccessToken(null);
-    }
-  };
-
-// ---------------------------------------------------------------------------
-
-  const handleAddFood = async (foodId: number,
-                               numServings: number | null = null,
-                               servingSize: number | null = null) => {
-    try {
-      let token: string | null = accessToken;
-      if (!accessToken || isTokenExpired(accessToken)) {
-        token = await refreshAccessToken();  
-        setAccessToken(token);
-      }
-      if (!token) {
-        throw new Error("No access token");
-      }
-
-      if (!currentMealLogDate) {
-        return;
-      }
-
-      let mealLog;
-      if (!mealLogs[currentMealLogDate]) {
-        mealLog = await createMealLog(currentMealLogDate, setMealLogs, token);
-      }
-      else {
-        mealLog = mealLogs[currentMealLogDate];
-      }
-
-      const mealLogId = mealLog.id;
-
-      await addMealLogFood(mealLogId,
-                           foodId,
-                           numServings,
-                           servingSize,
-                           foodsMenuOpenMealType,
-                           setMealLogFoods,
-                           setFoods,
-                           token);
-
-    } catch (err) {
-      console.error(err);
-      setAccessToken(null);
-    }
-  };
-
-// ---------------------------------------------------------------------------
-
-  const handleUpdateFood = async (mealLogFoodId: number,
-                                  mealLogId: number | null,
-                                  numServings: number | null = null,
-                                  servingSize: number | null = null) => {
-    try {
-      let token: string | null = accessToken;
-      if (!accessToken || isTokenExpired(accessToken)) {
-        token = await refreshAccessToken();  
-        setAccessToken(token);
-      }
-      if (!token) {
-        throw new Error("No access token");
-      }
-
-      await updateMealLogFood(mealLogFoodId,
-                              mealLogId,
-                              numServings,
-                              servingSize,
-                              foodsMenuOpenMealType,
-                              setMealLogFoods,
-                              token);
-
-    } catch (err) {
-      console.error(err);
-      setAccessToken(null);
-    }
-  };
-
-// ---------------------------------------------------------------------------
-
-  const handleLoadFoodNutrients = async (foodId: number) => {
-    try {
-      let token: string | null = accessToken;
-      if (!accessToken || isTokenExpired(accessToken)) {
-        token = await refreshAccessToken();  
-        setAccessToken(token);
-      }
-      if (!token) {
-        throw new Error("No access token");
-      }
-
-      const newFoodNutrients = await loadFoodNutrients(foodId, setFoodNutrients, token);
-
-      await Promise.all(
-        newFoodNutrients.map((foodNutrient: FoodNutrient) =>
-          loadNutrient(foodNutrient.nutrient_id, setNutrients, token)
-        )
-      );
-
-      const macros = newFoodNutrients.filter((foodNutrient: FoodNutrient) =>
-        [1003, 1004, 1005].includes(foodNutrient.nutrient_id));
-
-      const caloriesFromMacros = macros.reduce((sum, macro) =>
-        sum + macro.amount * (macro.nutrient_id === 1004 ? 9 : 4)
-      , 1);
-
-      macros.forEach((macro: FoodNutrient) =>
-        setMacroAmountsGrams(prev => ({
-          ...prev,
-          [foodId]: {
-            ...(prev[foodId] || {}),
-            [macro.nutrient_id]: macro.amount
-          }
-        })
-      ));
-
-      setFoodCaloriesFromMacros(prev => ({
-        ...prev,
-        [foodId]: caloriesFromMacros
-      }));
-
-    } catch (err) {
-      console.error(err);
-      setAccessToken(null);
-    }
-  };
+  const {
+    handleAddFood,
+    handleLoadFoodNutrients,
+    handleUpdateFood,
+    handleDeleteMeal,
+    handleDeleteMealLogFood
+  } = useMealLogActions(
+    currentMealLogDate,
+    mealLogs,
+    setMealLogs,
+    foodsMenuOpenMealType,
+    setMealLogFoods,
+    setFoods,
+    setFoodNutrients,
+    setNutrients,
+    setMacroAmountsGrams,
+    setFoodCaloriesFromMacros,
+    mealLogFoods,
+    setMealOptionsMenuOpenType,
+    setMealFoodOptionsMenuOpenId
+  );
 
 // ---------------------------------------------------------------------------
 
