@@ -11,14 +11,13 @@ import useInitializeMealLogsPage from "../../hooks/useInitializeMealLogsPage";
 import useMealLogsCaloriesHeader from "../../hooks/useMealLogsCaloriesHeader";
 import useMealLogsClickOutside from "../../hooks/useMealLogsClickOutside";
 import useMealLogsDate from "../../hooks/useMealLogsDate";
+import useFoodSearch from "../../hooks/useFoodSearch";
 import { useAuth } from "../../../../context/auth/useAuth";
 import { refreshAccessToken, isTokenExpired } from "../../../../utils/auth";
 import { createMealLog,
          addMealLogFood,
          updateMealLogFood,
          deleteMealLogFood,
-         getFoods,
-         loadBrandedFood,
          loadFoodNutrients,
          loadNutrient } from "../../../../utils/meal-logs";
 import LoadingScreen from "../../../../components/LoadingScreen/LoadingScreen";
@@ -86,7 +85,6 @@ export default function MealLogsPage() {
 
   const [totalPages, setTotalPages] = useState<number | null>(null);
   const [currentPageNumber, setCurrentPageNumber] = useState<number | null>(null);
-  const MAX_RESULTS_PER_PAGE = 30;
 
   const [accountMenuOpen, setAccountMenuOpen] = useState<boolean>(false);
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
@@ -144,6 +142,19 @@ export default function MealLogsPage() {
     setMealLogFoods,
     setFoods,
     setBrandedFoods
+  );
+
+  const {
+    handleFoodSearch,
+    updateFoodSearch
+  } = useFoodSearch(
+    setFoodSearchResults,
+    setIsSearching,
+    setTotalPages,
+    setCurrentPageNumber,
+    setBrandedFoods,
+    setFoodSearch,
+    searchTimeoutRef
   );
 
 // ---------------------------------------------------------------------------
@@ -210,73 +221,6 @@ export default function MealLogsPage() {
       console.error(err);
       setAccessToken(null);
     }
-  };
-
-// ---------------------------------------------------------------------------
-
-  const updateFoodSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const search = event.target.value;
-
-    setFoodSearch(search);
-
-    if (search === '') {
-      return;
-    }
-
-    handleFoodSearch(search, 1);
-  };
-
-// ---------------------------------------------------------------------------
-
-  const handleFoodSearch = async (search: string, pageNumber: number) => {
-    setFoodSearch(search);
-
-    if (search === '') {
-      return;
-    }
-
-    setFoodSearchResults([]);
-    setIsSearching(true);
-
-    if (searchTimeoutRef.current) {
-      clearTimeout(searchTimeoutRef.current);
-    }
-
-    searchTimeoutRef.current = setTimeout(async () => {
-      try {
-        let token: string | null = accessToken;
-        if (!accessToken || isTokenExpired(accessToken)) {
-          token = await refreshAccessToken();  
-          setAccessToken(token);
-        }
-        if (!token) {
-          throw new Error("No access token");
-        }
-
-        const skip = (pageNumber - 1) * MAX_RESULTS_PER_PAGE;
-
-        const foodSearchObject = await getFoods(MAX_RESULTS_PER_PAGE, skip, search, setFoodSearchResults, token);
-        
-        const numPages = Math.ceil(foodSearchObject.total_count / MAX_RESULTS_PER_PAGE);
-        setTotalPages(numPages);
-        setCurrentPageNumber(pageNumber);
-
-        const foods = foodSearchObject.foods;
-
-        await Promise.all(
-          foods.map((food: Food) => 
-            loadBrandedFood(food.id, setBrandedFoods, token)
-          )
-        );
-
-      } catch (err) {
-        console.error(err);
-        setAccessToken(null);
-
-      } finally {
-        setIsSearching(false);
-      }
-    }, 1000);
   };
 
 // ---------------------------------------------------------------------------
