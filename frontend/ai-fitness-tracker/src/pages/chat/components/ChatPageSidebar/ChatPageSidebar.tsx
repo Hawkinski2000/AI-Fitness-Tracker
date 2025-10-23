@@ -1,9 +1,10 @@
-import { type Chat } from "../../types/chat"
-import ChatHistoryItem from "../ChatHistoryItem/ChatHistoryItem"
-import closePanelIcon from "./assets/close-panel-icon.svg"
-import openPanelIcon from "./assets/open-panel-icon.svg"
-import newChatIcon from "./assets/new-chat-icon.svg"
-import searchIcon from "./assets/search-icon.svg"
+import { type Chat } from "../../types/chat";
+import ChatHistoryItem from "../ChatHistoryItem/ChatHistoryItem";
+import closePanelIcon from "./assets/close-panel-icon.svg";
+import openPanelIcon from "./assets/open-panel-icon.svg";
+import newChatIcon from "./assets/new-chat-icon.svg";
+import searchIcon from "./assets/search-icon.svg";
+import './chatPageSidebar.css';
 
 
 type ChatPageSidebarProps = {

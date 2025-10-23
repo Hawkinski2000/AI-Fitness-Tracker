@@ -1,6 +1,7 @@
 import { type UserType } from '../../types/app'
 import AccountImage from '../AccountImage/AccountImage';
 import tokenIcon from './assets/token-icon.svg';
+import './Header.css';
 
 
 type HeaderProps = {

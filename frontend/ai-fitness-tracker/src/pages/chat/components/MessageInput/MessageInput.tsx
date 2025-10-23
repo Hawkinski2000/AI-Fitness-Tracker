@@ -1,5 +1,6 @@
 import { useState } from "react";
-import arrowUpIcon from "./assets/arrow-up-icon.svg"
+import arrowUpIcon from "./assets/arrow-up-icon.svg";
+import './MessageInput.css';
 
 
 type MessageInputProps = {

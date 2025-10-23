@@ -4,6 +4,7 @@ import { logOut } from "../../utils/auth";
 import accountIcon from './assets/account-icon.svg';
 import settingsIcon from './assets/settings-icon.svg';
 import logoutIcon from './assets/logout-icon.svg';
+import './AccountOptionsMenu.css';
 
 
 type AccountOptionsMenuProps = {

@@ -1,5 +1,6 @@
-import { type UserType } from '../../types/app'
+import { type UserType } from '../../types/app';
 import AccountOptionsMenu from '../AccountOptionsMenu/AccountOptionsMenu';
+import './AccountImage.css';
 
 
 type AccountImageProps = {

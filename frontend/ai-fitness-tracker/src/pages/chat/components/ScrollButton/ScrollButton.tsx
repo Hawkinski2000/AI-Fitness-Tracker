@@ -1,4 +1,5 @@
-import arrowDownIcon from "./assets/arrow-down-icon.svg"
+import arrowDownIcon from "./assets/arrow-down-icon.svg";
+import './ScrollButton.css';
 
 
 type ScrollButtonProps = {

@@ -1,0 +1,13 @@
+.token-count {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 30px;
+  padding: 0 0.5rem;
+  margin-right: 1rem;
+  gap: 0.25rem;
+  border-radius: 10px;
+  background-color: #2e2e5e;
+  user-select: none;
+  transition: all 0.25s;
+}

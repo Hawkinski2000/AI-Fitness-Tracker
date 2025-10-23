@@ -1,5 +1,6 @@
 import ConversationItem from "../ConversationItem/ConversationItem";
 import { type ConversationItemType, type ReasoningEvent } from "../../types/chat";
+import './Conversation.css';
 
 
 type ConversationProps = {
