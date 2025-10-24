@@ -170,7 +170,6 @@ export default function MealLogsPage() {
     setMealFoodOptionsMenuOpenId
   );
 
-// ---------------------------------------------------------------------------
 
   if (loading) {
     return <LoadingScreen />;
@@ -262,117 +261,37 @@ export default function MealLogsPage() {
               )}
 
               <div className="meals-container">
-                <MealSection
-                  mealType="breakfast"
-                  currentMealLogDate={currentMealLogDate}
-                  mealLogs={mealLogs}
-                  mealLogFoods={mealLogFoods}
-                  foods={foods}
-                  brandedFoods={brandedFoods}
-                  foodNutrients={foodNutrients}
-                  mealOptionsMenuOpenType={mealOptionsMenuOpenType}
-                  setMealOptionsMenuOpenType={setMealOptionsMenuOpenType}
-                  mealFoodOptionsMenuOpenId={mealFoodOptionsMenuOpenId}
-                  setMealFoodOptionsMenuOpenId={setMealFoodOptionsMenuOpenId}
-                  editingMealLogFoodId={editingMealLogFoodId}
-                  setEditingMealLogFoodId={setEditingMealLogFoodId}
-                  setFoodsMenuOpenMealType={setFoodsMenuOpenMealType}
-                  setViewFoodMenuOpenId={setViewFoodMenuOpenId}
-                  setNumServings={setNumServings}
-                  setServingSize={setServingSize}
-                  setServingSizeUnit={setServingSizeUnit}
-                  setFoodSearch={setFoodSearch}
-                  setFoodMenuInputFocused={setFoodMenuInputFocused}
-                  mealOptionsMenuRefs={mealOptionsMenuRefs}
-                  mealFoodOptionsMenuRefs={mealFoodOptionsMenuRefs}
-                  handleDeleteMeal={handleDeleteMeal}
-                  handleDeleteMealLogFood={handleDeleteMealLogFood}
-                  handleLoadFoodNutrients={handleLoadFoodNutrients}
-                />
-
-                <MealSection
-                  mealType="lunch"
-                  currentMealLogDate={currentMealLogDate}
-                  mealLogs={mealLogs}
-                  mealLogFoods={mealLogFoods}
-                  foods={foods}
-                  brandedFoods={brandedFoods}
-                  foodNutrients={foodNutrients}
-                  mealOptionsMenuOpenType={mealOptionsMenuOpenType}
-                  setMealOptionsMenuOpenType={setMealOptionsMenuOpenType}
-                  mealFoodOptionsMenuOpenId={mealFoodOptionsMenuOpenId}
-                  setMealFoodOptionsMenuOpenId={setMealFoodOptionsMenuOpenId}
-                  editingMealLogFoodId={editingMealLogFoodId}
-                  setEditingMealLogFoodId={setEditingMealLogFoodId}
-                  setFoodsMenuOpenMealType={setFoodsMenuOpenMealType}
-                  setViewFoodMenuOpenId={setViewFoodMenuOpenId}
-                  setNumServings={setNumServings}
-                  setServingSize={setServingSize}
-                  setServingSizeUnit={setServingSizeUnit}
-                  setFoodSearch={setFoodSearch}
-                  setFoodMenuInputFocused={setFoodMenuInputFocused}
-                  mealOptionsMenuRefs={mealOptionsMenuRefs}
-                  mealFoodOptionsMenuRefs={mealFoodOptionsMenuRefs}
-                  handleDeleteMeal={handleDeleteMeal}
-                  handleDeleteMealLogFood={handleDeleteMealLogFood}
-                  handleLoadFoodNutrients={handleLoadFoodNutrients}
-                />
-
-                <MealSection
-                  mealType="dinner"
-                  currentMealLogDate={currentMealLogDate}
-                  mealLogs={mealLogs}
-                  mealLogFoods={mealLogFoods}
-                  foods={foods}
-                  brandedFoods={brandedFoods}
-                  foodNutrients={foodNutrients}
-                  mealOptionsMenuOpenType={mealOptionsMenuOpenType}
-                  setMealOptionsMenuOpenType={setMealOptionsMenuOpenType}
-                  mealFoodOptionsMenuOpenId={mealFoodOptionsMenuOpenId}
-                  setMealFoodOptionsMenuOpenId={setMealFoodOptionsMenuOpenId}
-                  editingMealLogFoodId={editingMealLogFoodId}
-                  setEditingMealLogFoodId={setEditingMealLogFoodId}
-                  setFoodsMenuOpenMealType={setFoodsMenuOpenMealType}
-                  setViewFoodMenuOpenId={setViewFoodMenuOpenId}
-                  setNumServings={setNumServings}
-                  setServingSize={setServingSize}
-                  setServingSizeUnit={setServingSizeUnit}
-                  setFoodSearch={setFoodSearch}
-                  setFoodMenuInputFocused={setFoodMenuInputFocused}
-                  mealOptionsMenuRefs={mealOptionsMenuRefs}
-                  mealFoodOptionsMenuRefs={mealFoodOptionsMenuRefs}
-                  handleDeleteMeal={handleDeleteMeal}
-                  handleDeleteMealLogFood={handleDeleteMealLogFood}
-                  handleLoadFoodNutrients={handleLoadFoodNutrients}
-                />
-
-                <MealSection
-                  mealType="snacks"
-                  currentMealLogDate={currentMealLogDate}
-                  mealLogs={mealLogs}
-                  mealLogFoods={mealLogFoods}
-                  foods={foods}
-                  brandedFoods={brandedFoods}
-                  foodNutrients={foodNutrients}
-                  mealOptionsMenuOpenType={mealOptionsMenuOpenType}
-                  setMealOptionsMenuOpenType={setMealOptionsMenuOpenType}
-                  mealFoodOptionsMenuOpenId={mealFoodOptionsMenuOpenId}
-                  setMealFoodOptionsMenuOpenId={setMealFoodOptionsMenuOpenId}
-                  editingMealLogFoodId={editingMealLogFoodId}
-                  setEditingMealLogFoodId={setEditingMealLogFoodId}
-                  setFoodsMenuOpenMealType={setFoodsMenuOpenMealType}
-                  setViewFoodMenuOpenId={setViewFoodMenuOpenId}
-                  setNumServings={setNumServings}
-                  setServingSize={setServingSize}
-                  setServingSizeUnit={setServingSizeUnit}
-                  setFoodSearch={setFoodSearch}
-                  setFoodMenuInputFocused={setFoodMenuInputFocused}
-                  mealOptionsMenuRefs={mealOptionsMenuRefs}
-                  mealFoodOptionsMenuRefs={mealFoodOptionsMenuRefs}
-                  handleDeleteMeal={handleDeleteMeal}
-                  handleDeleteMealLogFood={handleDeleteMealLogFood}
-                  handleLoadFoodNutrients={handleLoadFoodNutrients}
-                />
+                {['breakfast', 'lunch', 'dinner', 'snacks'].map((mealType: string) => {
+                  return (
+                    <MealSection
+                      mealType={mealType}
+                      currentMealLogDate={currentMealLogDate}
+                      mealLogs={mealLogs}
+                      mealLogFoods={mealLogFoods}
+                      foods={foods}
+                      brandedFoods={brandedFoods}
+                      foodNutrients={foodNutrients}
+                      mealOptionsMenuOpenType={mealOptionsMenuOpenType}
+                      setMealOptionsMenuOpenType={setMealOptionsMenuOpenType}
+                      mealFoodOptionsMenuOpenId={mealFoodOptionsMenuOpenId}
+                      setMealFoodOptionsMenuOpenId={setMealFoodOptionsMenuOpenId}
+                      editingMealLogFoodId={editingMealLogFoodId}
+                      setEditingMealLogFoodId={setEditingMealLogFoodId}
+                      setFoodsMenuOpenMealType={setFoodsMenuOpenMealType}
+                      setViewFoodMenuOpenId={setViewFoodMenuOpenId}
+                      setNumServings={setNumServings}
+                      setServingSize={setServingSize}
+                      setServingSizeUnit={setServingSizeUnit}
+                      setFoodSearch={setFoodSearch}
+                      setFoodMenuInputFocused={setFoodMenuInputFocused}
+                      mealOptionsMenuRefs={mealOptionsMenuRefs}
+                      mealFoodOptionsMenuRefs={mealFoodOptionsMenuRefs}
+                      handleDeleteMeal={handleDeleteMeal}
+                      handleDeleteMealLogFood={handleDeleteMealLogFood}
+                      handleLoadFoodNutrients={handleLoadFoodNutrients}
+                    />
+                  )
+                })}
               </div>
             </div>
           </main>
