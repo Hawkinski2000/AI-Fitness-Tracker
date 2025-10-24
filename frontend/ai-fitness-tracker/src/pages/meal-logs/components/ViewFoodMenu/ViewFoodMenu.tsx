@@ -10,6 +10,7 @@ import {
 import MacroDoughnutChart from "../MacroDoughnutChart/MacroDoughnutChart";
 import backIcon from './assets/back-icon.svg';
 import checkIcon from './assets/check-icon.svg';
+import './ViewFoodMenu.css';
 
 
 type ViewFoodMenuProps = {

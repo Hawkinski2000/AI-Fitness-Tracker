@@ -1,0 +1,9 @@
+.meal-type-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  padding: 0 1rem;
+  border-bottom: 1px solid #2e2e5e;
+  user-select: none;
+}

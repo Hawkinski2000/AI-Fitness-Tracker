@@ -1,0 +1,53 @@
+.calories-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 75px;
+  width: calc(100vw - 100px);
+  padding: 1rem 0;
+  position: fixed;
+  top: 100px;
+  background-color: #0c0c1d;
+  border-bottom: 1px solid #2e2e5e;
+  box-shadow: 0 5px 10px 5px rgba(0, 0, 0, 0.25);
+  user-select: none;
+  z-index: 2;
+}
+
+.calories-remaining-text {
+  width: 50%;
+  text-align: left;
+  margin: 0 0 0.5rem 0;
+  font-weight: 700;
+}
+
+.calories-remaining-calculation {
+  display: flex;
+  justify-content: space-between;
+  width: 50%;
+}
+
+.calories-remaining-section p {
+  margin: 0;
+}
+
+.calories-remaining-section-label {
+  font-size: 12px;
+  color: #8085a6;
+}
+
+@media (max-width: 500px) {
+  .calories-header {
+    padding: 1rem;
+  }
+
+  .calories-remaining-text {
+    width: 100%;
+    padding: 0 1rem;
+  }
+
+  .calories-remaining-calculation {
+    width: 100%;
+  }
+}

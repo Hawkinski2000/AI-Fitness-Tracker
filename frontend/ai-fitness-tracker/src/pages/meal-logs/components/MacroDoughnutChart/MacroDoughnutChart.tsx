@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Chart, DoughnutController, ArcElement, Tooltip, Legend, type ChartConfiguration } from 'chart.js';
+import './MacroDoughnutChart.css';
 
 
 Chart.register(DoughnutController, ArcElement, Tooltip, Legend);

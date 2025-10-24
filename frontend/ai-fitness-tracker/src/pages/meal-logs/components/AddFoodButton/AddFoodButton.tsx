@@ -1,3 +1,6 @@
+import './AddFoodButton.css';
+
+
 type AddFoodButtonProps = {
   mealType: string;
   setFoodSearch: React.Dispatch<React.SetStateAction<string>>;

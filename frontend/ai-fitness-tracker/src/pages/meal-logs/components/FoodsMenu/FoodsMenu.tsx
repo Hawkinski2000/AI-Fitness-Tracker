@@ -4,6 +4,7 @@ import closeIcon from '../../../../assets/close-icon.svg';
 import addIcon from '../../../../assets/add-icon.svg';
 import arrowLeftIcon from '../../../../assets/arrow-left-icon.svg';
 import arrowRightIcon from '../../../../assets/arrow-right-icon.svg';
+import './FoodsMenu.css';
 
 
 type FoodsMenuProps = {

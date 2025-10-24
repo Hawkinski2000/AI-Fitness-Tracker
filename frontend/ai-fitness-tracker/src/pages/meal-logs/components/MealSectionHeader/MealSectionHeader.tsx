@@ -1,6 +1,7 @@
 import MealOptionsMenu from "../MealOptionsMenu/MealOptionsMenu";
 import { capitalizeFirstLetter } from "../../../../utils/app";
 import dotsIcon from '../../../../assets/dots-icon.svg';
+import './MealSectionHeader.css';
 
 
 type MealSectionHeaderProps = {

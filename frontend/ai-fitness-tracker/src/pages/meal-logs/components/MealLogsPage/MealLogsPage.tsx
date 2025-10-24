@@ -25,9 +25,19 @@ import './MealLogsPage.css';
 
 
 export default function MealLogsPage() {
-  const [mealLogs, setMealLogs] = useState<Record<string, MealLog>>({});
+  const [accountMenuOpen, setAccountMenuOpen] = useState<boolean>(false);
+  const accountMenuRef = useRef<HTMLDivElement | null>(null);
+
+  const [tokensRemaining, setTokensRemaining] = useState<number>(0);
+
+// ---------------------------------------------------------------------------
+
   const [currentMealLogDate, setCurrentMealLogDate] = useState<string | null>(null);
   const [today, setToday] = useState<string | null>(null);
+  
+// ---------------------------------------------------------------------------
+
+  const [mealLogs, setMealLogs] = useState<Record<string, MealLog>>({});
 
   const [mealLogFoods, setMealLogFoods] = useState<Record<number, MealLogFood[]>>({});
 
@@ -39,11 +49,15 @@ export default function MealLogsPage() {
 
   const [nutrients, setNutrients] = useState<Record<number, Nutrient>>({});
 
+// ---------------------------------------------------------------------------
+
   const [foodCalories, setFoodCalories] = useState<number>(0);
 
   const [foodCaloriesFromMacros, setFoodCaloriesFromMacros] = useState<Record<number, number>>({});
 
   const [macroAmountsGrams, setMacroAmountsGrams] = useState<Record<number, Record<number, number>>>({});
+
+// ---------------------------------------------------------------------------
 
   const [mealOptionsMenuOpenType, setMealOptionsMenuOpenType] = useState<string>('');
   const mealOptionsMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -51,22 +65,10 @@ export default function MealLogsPage() {
   const [mealFoodOptionsMenuOpenId, setMealFoodOptionsMenuOpenId] = useState<number | null>(null);
   const mealFoodOptionsMenuRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
+// ---------------------------------------------------------------------------
+
   const [foodsMenuOpenMealType, setFoodsMenuOpenMealType] = useState<string>('');
   const foodsMenuRef = useRef<HTMLDivElement | null>(null);
-
-  const [viewFoodMenuOpenId, setViewFoodMenuOpenId] = useState<number | null>(null);
-
-  const [selectMealMenuOpenType, setSelectMealMenuOpenType] = useState<string>('');
-  const selectMealMenuRef = useRef<HTMLDivElement | null>(null);
-
-  const [numServings, setNumServings] = useState<number | null>(1);
-
-  const [servingSize, setServingSize] = useState<number | null>(null);
-  const [servingSizeUnit, setServingSizeUnit] = useState<string>('');
-  const [selectServingSizeMenuOpen, setSelectServingSizeMenuOpen] = useState<boolean>(false);
-  const selectServingSizeMenuRef = useRef<HTMLDivElement | null>(null);
-
-  const [editingMealLogFoodId, setEditingMealLogFoodId] = useState<number | null>(null);
 
   const [foodSearch, setFoodSearch] = useState<string>('');
   const searchTimeoutRef = useRef<number | null>(null);
@@ -77,10 +79,24 @@ export default function MealLogsPage() {
   const [totalPages, setTotalPages] = useState<number | null>(null);
   const [currentPageNumber, setCurrentPageNumber] = useState<number | null>(null);
 
-  const [accountMenuOpen, setAccountMenuOpen] = useState<boolean>(false);
-  const accountMenuRef = useRef<HTMLDivElement | null>(null);
+// ---------------------------------------------------------------------------
 
-  const [tokensRemaining, setTokensRemaining] = useState<number>(0);
+  const [viewFoodMenuOpenId, setViewFoodMenuOpenId] = useState<number | null>(null);
+
+  const [editingMealLogFoodId, setEditingMealLogFoodId] = useState<number | null>(null);
+
+  const [selectMealMenuOpenType, setSelectMealMenuOpenType] = useState<string>('');
+  const selectMealMenuRef = useRef<HTMLDivElement | null>(null);
+
+  const [numServings, setNumServings] = useState<number | null>(1);
+
+  const [servingSize, setServingSize] = useState<number | null>(null);
+  const [selectServingSizeMenuOpen, setSelectServingSizeMenuOpen] = useState<boolean>(false);
+  const selectServingSizeMenuRef = useRef<HTMLDivElement | null>(null);
+
+  const [servingSizeUnit, setServingSizeUnit] = useState<string>('');
+
+// ---------------------------------------------------------------------------
 
   const { userData, loading } = useInitializeMealLogsPage(
     setTokensRemaining,

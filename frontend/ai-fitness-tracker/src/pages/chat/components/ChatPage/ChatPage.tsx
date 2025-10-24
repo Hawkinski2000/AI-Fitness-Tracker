@@ -23,6 +23,8 @@ export default function ChatPage() {
 
   const [tokensRemaining, setTokensRemaining] = useState<number>(0);
 
+// ---------------------------------------------------------------------------
+
   const [chats, setChats] = useState<Chat[]>([]);
   const [currentChatId, setCurrentChatId] = useState<number | null>(null);
   const chatsLoadedRef = useRef<Record<number, boolean>>({});
@@ -34,6 +36,8 @@ export default function ChatPage() {
 
   const [editingChatTitleId, setEditingChatTitleId] = useState<number | null>(null);
   const editingChatTitleRefs = useRef<Record<number, HTMLDivElement | null>>({});
+
+// ---------------------------------------------------------------------------
 
   const [conversations, setConversations] = useState<Record<number, ConversationItemType[]>>({});
   const conversationRefs = useRef<Record<number, HTMLDivElement | null>>({})

@@ -8,6 +8,7 @@ import {
 import MealSectionHeader from "../MealSectionHeader/MealSectionHeader";
 import MealSectionFoods from "../MealSectionFoods/MealSectionFoods";
 import AddFoodButton from "../AddFoodButton/AddFoodButton";
+import './MealSection.css';
 
 
 type MealSectionProps = {

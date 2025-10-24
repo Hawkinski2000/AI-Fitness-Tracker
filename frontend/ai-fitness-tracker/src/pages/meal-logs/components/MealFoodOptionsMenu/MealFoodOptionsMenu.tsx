@@ -2,6 +2,7 @@ import { type MealLogFood } from "../../types/meal-logs";
 import copyIcon from '../../../../assets/copy-icon.svg';
 import moveIcon from '../../../../assets/move-icon.svg';
 import deleteIcon from '../../../../assets/delete-icon.svg';
+import './MealFoodOptionsMenu.css';
 
 
 type MealFoodOptionsMenuProps = {
@@ -21,7 +22,10 @@ export default function MealFoodOptionsMenu({
   return (
     <div
       ref={el => { mealFoodOptionsMenuRefs.current[mealLogFood.id] = el }}
-      className={`meal-options-menu meal-log-food-options-menu ${mealFoodOptionsMenuOpenId === mealLogFood.id && 'meal-options-menu-open'}`}
+      className={
+        `meal-options-menu
+        meal-log-food-options-menu
+        ${mealFoodOptionsMenuOpenId === mealLogFood.id && 'meal-options-menu-open'}`}
       onClick={(e) => e.stopPropagation()}
     >
       <button

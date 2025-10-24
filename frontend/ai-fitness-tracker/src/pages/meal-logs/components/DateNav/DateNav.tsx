@@ -1,5 +1,6 @@
 import arrowLeftIcon from '../../../../assets/arrow-left-icon.svg';
 import arrowRightIcon from '../../../../assets/arrow-right-icon.svg';
+import './DateNav.css';
 
 
 type DateNavProps = {

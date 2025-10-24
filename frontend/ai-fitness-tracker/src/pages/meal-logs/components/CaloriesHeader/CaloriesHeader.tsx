@@ -1,3 +1,6 @@
+import './CaloriesHeader.css';
+
+
 type CaloriesHeaderProps = {
   foodCalories: number;
 };

@@ -6,6 +6,7 @@ import {
   type FoodNutrient,
 } from "../../types/meal-logs";
 import dotsIcon from '../../../../assets/dots-icon.svg';
+import './MealFood.css';
 
 
 type MealFoodProps = {
