@@ -67,7 +67,11 @@ export default function ChatHistoryItem({
       >
         <p
           className="chat-title"
-          style={chat.id === editingChatTitleId ? { width: '100%', textOverflow: 'clip' } : undefined}
+          style={
+            chat.id === editingChatTitleId
+              ? { width: '100%', textOverflow: 'clip' }
+              : undefined
+          }
         >
           {chat.title}
         </p>

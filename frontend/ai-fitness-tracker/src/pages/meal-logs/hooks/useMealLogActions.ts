@@ -203,9 +203,13 @@ const useMealLogActions = (
 
       const currentMealLogFoods = mealLogFoods[currentMealLogId];
 
-      const mealLogFoodsInMealType = currentMealLogFoods.filter((mealLogFood: MealLogFood) => mealLogFood.meal_type === mealType);
+      const mealLogFoodsInMealType = currentMealLogFoods.filter(
+        (mealLogFood: MealLogFood) => mealLogFood.meal_type === mealType
+      );
 
-      const mealLogFoodIdsInMealType = mealLogFoodsInMealType.map((mealLogFood: MealLogFood) => mealLogFood.id);
+      const mealLogFoodIdsInMealType = mealLogFoodsInMealType.map(
+        (mealLogFood: MealLogFood) => mealLogFood.id
+      );
 
       await Promise.all(
         mealLogFoodIdsInMealType.map((mealLogFoodId: number) =>

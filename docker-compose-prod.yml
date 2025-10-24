@@ -17,6 +17,9 @@ services:
       - ./.env
     ports:
       - "8000:8000"
+    volumes:
+      - /home/ec2-user/AI-Fitness-Tracker/backend/data/FoodData_Central_branded_food:/usr/src/app/data/FoodData_Central_branded_food
+      - /home/ec2-user/AI-Fitness-Tracker/backend/data/gym_exercise_dataset:/usr/src/app/data/gym_exercise_dataset
     restart: unless-stopped
 
   postgres:

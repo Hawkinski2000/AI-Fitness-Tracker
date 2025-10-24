@@ -47,7 +47,9 @@ const useInitializeMealLogsPage = (
 
         const userData = await getUserFromToken(token);
         setUserData(userData);
-        setTokensRemaining(Math.min(userData.input_tokens_remaining, userData.output_tokens_remaining))
+        setTokensRemaining(
+          Math.min(userData.input_tokens_remaining, userData.output_tokens_remaining)
+        )
 
         const loadedMealLogs = await loadMealLogs(setMealLogs, token);
 
@@ -63,7 +65,9 @@ const useInitializeMealLogsPage = (
         
         const currentMealLogId = currentMealLog.id;
 
-        const loadedMealLogFoods = await loadMealLogFoods(currentMealLogId, setMealLogFoods, token);
+        const loadedMealLogFoods = await loadMealLogFoods(
+          currentMealLogId, setMealLogFoods, token
+        );
 
         await Promise.all(
           Object.values(loadedMealLogFoods).map(mealLogFood =>

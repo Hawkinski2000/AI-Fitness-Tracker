@@ -52,7 +52,8 @@ const useMealLogsClickOutside = (
         mealFoodOptionsMenuRefs.current[mealFoodOptionsMenuOpenId] &&
         target instanceof Node &&
         !mealFoodOptionsMenuRefs.current[mealFoodOptionsMenuOpenId].contains(target) &&
-        !(target instanceof HTMLElement && target.classList.contains('meal-log-food-options-button'))
+        !(target instanceof HTMLElement &&
+          target.classList.contains('meal-log-food-options-button'))
       ) {
         setMealFoodOptionsMenuOpenId(null);
       }

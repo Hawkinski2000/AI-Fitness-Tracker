@@ -28,7 +28,11 @@ type FoodsMenuProps = {
   updateFoodSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleFoodSearch: (search: string, pageNumber: number) => Promise<void>;
   handleLoadFoodNutrients: (foodId: number) => Promise<void>;
-  handleAddFood: (foodId: number, numServings?: number | null, servingSize?: number | null) => Promise<void>;
+  handleAddFood: (
+    foodId: number,
+    numServings?: number | null,
+    servingSize?: number | null
+  ) => Promise<void>;
 };
 
 

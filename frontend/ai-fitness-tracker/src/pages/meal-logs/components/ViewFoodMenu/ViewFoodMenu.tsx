@@ -42,8 +42,17 @@ type ViewFoodMenuProps = {
   foodsMenuRef: React.RefObject<HTMLDivElement | null>;
   selectMealMenuRef: React.RefObject<HTMLDivElement | null>;
   selectServingSizeMenuRef: React.RefObject<HTMLDivElement | null>;
-  handleUpdateFood: (mealLogFoodId: number, mealLogId: number | null, numServings?: number | null, servingSize?: number | null) => Promise<void>;
-  handleAddFood: (foodId: number, numServings?: number | null, servingSize?: number | null) => Promise<void>;
+  handleUpdateFood: (
+    mealLogFoodId: number,
+    mealLogId: number | null,
+    numServings?: number | null,
+    servingSize?: number | null
+  ) => Promise<void>;
+  handleAddFood: (
+    foodId: number,
+    numServings?: number | null,
+    servingSize?: number | null
+  ) => Promise<void>;
 };
 
 
@@ -161,7 +170,8 @@ export default function ViewFoodMenu({
                   className="view-food-menu-text-button select-meal-button"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setSelectMealMenuOpenType((prev) => (prev === foodsMenuOpenMealType ? '' : foodsMenuOpenMealType));
+                    setSelectMealMenuOpenType((prev) =>
+                      prev === foodsMenuOpenMealType ? '' : foodsMenuOpenMealType);
                   }}
                 >
                   {foodsMenuOpenMealType}
@@ -169,7 +179,11 @@ export default function ViewFoodMenu({
 
                 <div
                   ref={el => { selectMealMenuRef.current = el }}
-                  className={`meal-options-menu select-meal-menu ${selectMealMenuOpenType && 'meal-options-menu-open'}`}
+                  className={
+                    `meal-options-menu
+                    select-meal-menu 
+                    ${selectMealMenuOpenType && 'meal-options-menu-open'}`
+                  }
                   onClick={(e) => e.stopPropagation()}
                 >
                   {foodsMenuOpenMealType !== 'breakfast' && (
@@ -277,7 +291,11 @@ export default function ViewFoodMenu({
 
                 <div
                   ref={el => { selectServingSizeMenuRef.current = el }}
-                  className={`meal-options-menu select-serving-size-menu ${selectServingSizeMenuOpen && 'meal-options-menu-open'}`}
+                  className={
+                    `meal-options-menu
+                    select-serving-size-menu
+                    ${selectServingSizeMenuOpen && 'meal-options-menu-open'}`
+                  }
                   onClick={(e) => e.stopPropagation()}
                 >
                   {(selectServingSizeMenuOpen && servingSize === 1) && (
@@ -291,8 +309,16 @@ export default function ViewFoodMenu({
                         setSelectServingSizeMenuOpen(false);
                       }}
                     >
-                      {viewFoodMenuOpenId && (brandedFoods[viewFoodMenuOpenId].serving_size)?.toFixed(1).replace(/\.0$/, '') || ''}{' '}
-                      {viewFoodMenuOpenId && brandedFoods[viewFoodMenuOpenId].serving_size_unit || ''}
+                      {
+                        viewFoodMenuOpenId &&
+                        (brandedFoods[viewFoodMenuOpenId].serving_size)
+                        ?.toFixed(1)
+                        .replace(/\.0$/, '') || ''
+                       }{' '}
+                      {
+                        viewFoodMenuOpenId &&
+                        brandedFoods[viewFoodMenuOpenId].serving_size_unit || ''
+                      }
                     </button>
                   )}
 
@@ -305,7 +331,11 @@ export default function ViewFoodMenu({
                         setSelectServingSizeMenuOpen(false);
                       }}
                     >
-                      1 {viewFoodMenuOpenId && brandedFoods[viewFoodMenuOpenId].serving_size_unit || ''}
+                      1{' '}
+                      {
+                        viewFoodMenuOpenId &&
+                        brandedFoods[viewFoodMenuOpenId].serving_size_unit || ''
+                      }
                     </button>
                   )}
                 </div>
@@ -322,11 +352,15 @@ export default function ViewFoodMenu({
                       Number(
                         (
                           (
-                            editingMealLogFoodId && currentMealLogDate && mealLogFoods[mealLogs[currentMealLogDate].id]
+                            editingMealLogFoodId &&
+                            currentMealLogDate &&
+                            mealLogFoods[mealLogs[currentMealLogDate].id]
                               ? (
-                                  foods[mealLogFoods[mealLogs[currentMealLogDate].id].find((mealLogFood: MealLogFood) =>
-                                    mealLogFood.id === editingMealLogFoodId
-                                  )?.food_id ?? -1]?.calories ?? foodCaloriesFromMacros[viewFoodMenuOpenId]
+                                  foods[mealLogFoods[mealLogs[currentMealLogDate].id]
+                                    .find((mealLogFood: MealLogFood) =>
+                                      mealLogFood.id === editingMealLogFoodId
+                                    )?.food_id ?? -1]
+                                    ?.calories ?? foodCaloriesFromMacros[viewFoodMenuOpenId]
                                 )
                               : (
                                   foodSearchResults.find((food: Food) =>

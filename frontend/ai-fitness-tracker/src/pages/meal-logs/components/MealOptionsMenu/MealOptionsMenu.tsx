@@ -20,7 +20,11 @@ export default function MealOptionsMenu({
   return (
     <div
       ref={el => { mealOptionsMenuRefs.current[mealType] = el }}
-      className={`meal-options-menu ${mealOptionsMenuOpenType === mealType && 'meal-options-menu-open'}`}
+      className={
+        `meal-options-menu
+        ${mealOptionsMenuOpenType === mealType &&
+        'meal-options-menu-open'}`
+      }
       onClick={(e) => e.stopPropagation()}
     >
       <button

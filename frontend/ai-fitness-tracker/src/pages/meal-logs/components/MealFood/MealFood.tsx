@@ -98,7 +98,9 @@ export default function MealFood({
       <div className="meal-log-food-section">
         <p className="meal-log-food-text">{foods[mealLogFood.food_id]?.description ?? ''}</p>
         <p className="meal-log-food-serving-text">
-          {(mealLogFood.num_servings * mealLogFood.serving_size).toFixed(1).replace(/\.0$/, '')}{' '}
+          {
+            (mealLogFood.num_servings * mealLogFood.serving_size).toFixed(1).replace(/\.0$/, '')
+          }{' '}
           {mealLogFood.serving_unit}
         </p>
       </div>
@@ -112,14 +114,18 @@ export default function MealFood({
               setFoodsMenuOpenMealType('');
               setViewFoodMenuOpenId(null);
               setEditingMealLogFoodId(null);
-              setMealFoodOptionsMenuOpenId((prev) => (prev === mealLogFood.id ? null : mealLogFood.id));
+              setMealFoodOptionsMenuOpenId(
+                (prev) => (prev === mealLogFood.id ? null : mealLogFood.id)
+              );
             }}
           >
             <img className="button-link-image" src={dotsIcon} />
           </button>
         </div>
         
-        <p className="meal-log-food-text">{mealLogFood.calories ? `${mealLogFood.calories} calories` : ''}</p>
+        <p className="meal-log-food-text">
+          {mealLogFood.calories ? `${mealLogFood.calories} calories` : ''}
+        </p>
 
         <MealFoodOptionsMenu
           mealLogFood={mealLogFood}

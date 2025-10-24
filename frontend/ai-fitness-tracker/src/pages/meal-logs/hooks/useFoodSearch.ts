@@ -46,7 +46,9 @@ const useFoodSearch = (
 
         const skip = (pageNumber - 1) * MAX_RESULTS_PER_PAGE;
 
-        const foodSearchObject = await getFoods(MAX_RESULTS_PER_PAGE, skip, search, setFoodSearchResults, token);
+        const foodSearchObject = await getFoods(
+          MAX_RESULTS_PER_PAGE, skip, search, setFoodSearchResults, token
+        );
         
         const numPages = Math.ceil(foodSearchObject.total_count / MAX_RESULTS_PER_PAGE);
         setTotalPages(numPages);

@@ -27,7 +27,9 @@ export default function ChatOptionsMenu({
   return (
     <div
       ref={el => { chatOptionsMenuRefs.current[chat.id] = el }}
-      className={`chat-options-menu ${chatOptionsMenuOpenId === chat.id && 'chat-options-menu-open'}`}
+      className={
+        `chat-options-menu ${chatOptionsMenuOpenId === chat.id && 'chat-options-menu-open'}`
+      }
       onClick={(e) => e.stopPropagation()}
     >
       <button
