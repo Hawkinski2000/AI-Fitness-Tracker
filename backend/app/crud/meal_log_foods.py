@@ -78,6 +78,25 @@ def create_meal_log_food(meal_log_food: meal_log_food.MealLogFoodCreate, user_id
     
     return new_meal_log_food
 
+def bulk_action_meal_log_foods(bulk_action: meal_log_food.MealLogFoodBulkAction, user_id: int, db: Session):
+    meal_log_food_rows = (
+        db.query(MealLogFood)
+        .join(MealLog, MealLogFood.meal_log_id == MealLog.id)
+        .filter(MealLogFood.id.in_(bulk_action.ids), MealLog.user_id == user_id)
+        .all()
+    )
+
+    meal_log_id = meal_log_food_rows[0].meal_log_id
+    
+    if bulk_action.action == "delete":
+        for row in meal_log_food_rows:
+            db.delete(row)
+    
+    db.commit()
+
+    crud_meal_logs.recalculate_meal_log_calories(meal_log_id=meal_log_id, db=db)
+    crud_meal_logs.recalculate_meal_log_nutrients(meal_log_id=meal_log_id, db=db)
+
 def get_meal_log_foods(meal_log_id: int, user_id: int, db: Session):
     meal_log_foods = (
         db.query(MealLogFood)

@@ -14,7 +14,7 @@ import {
   addMealLogFood,
   loadFoodNutrients,
   updateMealLogFood,
-  deleteMealLogFood
+  deleteMealLogFoods
 } from "../../../utils/meal-logs";
 
 
@@ -213,10 +213,7 @@ const useMealLogActions = (
         (mealLogFood: MealLogFood) => mealLogFood.id
       );
 
-      await Promise.all(
-        mealLogFoodIdsInMealType.map((mealLogFoodId: number) =>
-          deleteMealLogFood(mealLogFoodId, setMealLogFoods, token))
-      );
+      deleteMealLogFoods(mealLogFoodIdsInMealType, setMealLogFoods, token);
 
       setMealOptionsMenuOpenType('');
 
@@ -250,7 +247,7 @@ const useMealLogActions = (
         throw new Error("No access token");
       }
 
-      await deleteMealLogFood(mealLogFoodId, setMealLogFoods, token);
+      await deleteMealLogFoods([mealLogFoodId], setMealLogFoods, token);
 
       setMealFoodOptionsMenuOpenId(null);
 

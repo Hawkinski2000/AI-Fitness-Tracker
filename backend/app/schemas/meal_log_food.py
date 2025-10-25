@@ -30,3 +30,8 @@ class MealLogFoodResponse(MealLogFoodBase):
     calories: Optional[int] = None
 
     model_config = ConfigDict(from_attributes=True)
+
+class MealLogFoodBulkAction(BaseModel):
+    action: str
+    ids: list[int]
+    target_meal_log_id: Optional[int] = None

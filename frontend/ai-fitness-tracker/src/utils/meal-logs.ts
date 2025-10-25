@@ -228,10 +228,16 @@ export const updateMealLogFood = async (mealLogFoodId: number,
   });
 };
 
-export const deleteMealLogFood = async (mealLogFoodId: number,
-                                        setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
-                                        token: string) => {
-  await axios.delete(`${API_BASE_URL}/meal-log-foods/${mealLogFoodId}`,
+export const deleteMealLogFoods = async (
+  mealLogFoodIds: number[],
+  setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
+  token: string
+) => {
+  await axios.post(`${API_BASE_URL}/meal-log-foods/bulk`,
+    {
+      action: "delete",
+      ids: mealLogFoodIds,
+    },
     {
       headers: {
         Authorization: `Bearer ${token}`
@@ -243,7 +249,7 @@ export const deleteMealLogFood = async (mealLogFoodId: number,
     Object.fromEntries(
       Object.entries(prevMealLogFoods).map(([logId, mealLogFoodsArray]) => [
         logId,
-        mealLogFoodsArray.filter(mealLogFood => mealLogFood.id !== mealLogFoodId)
+        mealLogFoodsArray.filter(mealLogFood => !mealLogFoodIds.includes(mealLogFood.id))
       ])
     )
   );

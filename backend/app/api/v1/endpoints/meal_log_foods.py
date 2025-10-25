@@ -17,6 +17,13 @@ def create_meal_log_food(meal_log_food: meal_log_food.MealLogFoodCreate,
     new_meal_log_food = crud_meal_log_foods.create_meal_log_food(meal_log_food, current_user.user_id, db)
     return new_meal_log_food
 
+# Perform bulk action (copy, move, and delete) on meal log foods
+@router.post("/bulk", status_code=status.HTTP_204_NO_CONTENT)
+def bulk_action_meal_log_foods(bulk_action: meal_log_food.MealLogFoodBulkAction,
+                               current_user: token.TokenData = Depends(get_current_user),
+                               db: Session = Depends(get_db)):
+    crud_meal_log_foods.bulk_action_meal_log_foods(bulk_action, current_user.user_id, db)
+
 # Get all meal log foods
 @router.get("/{meal_log_id}", response_model=list[meal_log_food.MealLogFoodResponse])
 def get_meal_log_foods(meal_log_id: int,
