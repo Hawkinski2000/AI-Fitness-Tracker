@@ -1,5 +1,6 @@
-from fastapi import Response, status, APIRouter, Depends
+from fastapi import Response, status, APIRouter, Depends, Query
 from sqlalchemy.orm import Session
+from typing import Optional
 from app.core.db import get_db
 from app.schemas import food_nutrient, token
 from app.crud import food_nutrients as crud_food_nutrients
@@ -20,9 +21,10 @@ def create_food_nutrient(food_nutrient: food_nutrient.FoodNutrientCreate,
 # Get all food nutrients
 @router.get("/{food_id}", response_model=list[food_nutrient.FoodNutrientResponse])
 def get_food_nutrients(food_id: int,
+                       expand: Optional[list[str]] = Query(None),
                        current_user: token.TokenData = Depends(get_current_user),
                        db: Session = Depends(get_db)):
-    food_nutrients = crud_food_nutrients.get_food_nutrients(food_id, current_user.user_id, db)
+    food_nutrients = crud_food_nutrients.get_food_nutrients(food_id, expand, current_user.user_id, db)
     return food_nutrients
 
 # Get a food nutrient

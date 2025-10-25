@@ -1,4 +1,6 @@
 from pydantic import BaseModel, ConfigDict
+from typing import Optional
+from app.schemas.nutrient import NutrientResponse
 
 
 class FoodNutrientBase(BaseModel):
@@ -11,5 +13,6 @@ class FoodNutrientCreate(FoodNutrientBase):
 
 class FoodNutrientResponse(FoodNutrientBase):
     id: int
+    nutrient: Optional[NutrientResponse] = None
 
     model_config = ConfigDict(from_attributes=True)

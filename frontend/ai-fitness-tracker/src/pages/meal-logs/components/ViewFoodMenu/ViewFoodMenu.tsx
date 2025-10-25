@@ -502,8 +502,8 @@ export default function ViewFoodMenu({
           {viewFoodMenuOpenId && foodNutrients[viewFoodMenuOpenId] &&
           foodNutrients[viewFoodMenuOpenId].map((foodNutrient: FoodNutrient) => {
             return (
-              <section className="view-food-menu-section">
-                <div key={foodNutrient.id} className="view-food-menu-section-content">
+              <section key={foodNutrient.id} className="view-food-menu-section">
+                <div className="view-food-menu-section-content">
                   <p className="view-food-menu-section-column-text">
                     {nutrients[foodNutrient.nutrient_id]?.name}
                   </p>

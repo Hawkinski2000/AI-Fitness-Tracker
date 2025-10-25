@@ -4,6 +4,7 @@ import {
   type MealLogFood,
   type Food,
   type FoodNutrient,
+  type FoodNutrientResponse,
   type Nutrient
 } from "../types/meal-logs";
 import { useAuth } from "../../../context/auth/useAuth";
@@ -12,7 +13,6 @@ import {
   createMealLog,
   addMealLogFood,
   loadFoodNutrients,
-  loadNutrient,
   updateMealLogFood,
   deleteMealLogFood
 } from "../../../utils/meal-logs";
@@ -102,16 +102,18 @@ const useMealLogActions = (
         throw new Error("No access token");
       }
 
-      const newFoodNutrients = await loadFoodNutrients(foodId, setFoodNutrients, token);
-
-      await Promise.all(
-        newFoodNutrients.map((foodNutrient: FoodNutrient) =>
-          loadNutrient(foodNutrient.nutrient_id, setNutrients, token)
-        )
+      const foodNutrientsResponseArray = await loadFoodNutrients(
+        foodId,
+        setFoodNutrients,
+        setNutrients,
+        token,
+        ["nutrient"]
       );
 
-      const macros = newFoodNutrients.filter((foodNutrient: FoodNutrient) =>
-        [1003, 1004, 1005].includes(foodNutrient.nutrient_id));
+      const macros = foodNutrientsResponseArray.filter(
+        (foodNutrientResponse: FoodNutrientResponse) =>
+          [1003, 1004, 1005].includes(foodNutrientResponse.nutrient_id)
+      );
 
       const caloriesFromMacros = macros.reduce((sum, macro) =>
         sum + macro.amount * (macro.nutrient_id === 1004 ? 9 : 4)

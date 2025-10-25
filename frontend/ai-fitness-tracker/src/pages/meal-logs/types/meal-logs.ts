@@ -57,6 +57,15 @@ export interface FoodNutrient {
 }
 
 
+export interface FoodNutrientResponse {
+  id: number;
+  food_id: number;
+  nutrient_id: number;
+  amount: number;
+  nutrient: Nutrient
+}
+
+
 export interface Nutrient {
   id: number;
   name: string;

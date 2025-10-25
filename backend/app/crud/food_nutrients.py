@@ -1,5 +1,5 @@
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.schemas import food_nutrient
 from app.models.models import FoodNutrient, Food
 
@@ -25,16 +25,41 @@ def create_food_nutrient(food_nutrient: food_nutrient.FoodNutrientCreate, user_i
     return new_food_nutrient
 
 def get_food_nutrients(food_id: int,
+                       expand: list[str] | None,
                        user_id: int,
                        db: Session):
-    food_nutrients = (
+    query = (
         db.query(FoodNutrient)
         .join(Food, FoodNutrient.food_id == Food.id)
-        .filter((Food.user_id == None) | (Food.user_id == user_id),
-                Food.id == food_id)
-        .all()
+        .filter((Food.user_id == None) | (Food.user_id == user_id), Food.id == food_id)
     )
-    return food_nutrients
+
+    if expand:
+        if "nutrient" in expand:
+            query = query.options(joinedload(FoodNutrient.nutrient))
+
+    food_nutrients = query.all()
+
+    food_nutrient_responses = []
+
+    for food_nutrient_row in food_nutrients:
+        nutrient = None
+
+        if expand:
+            if "nutrient" in expand and food_nutrient_row.nutrient:
+                nutrient = food_nutrient_row.nutrient
+
+        food_nutrient_responses.append(
+            food_nutrient.FoodNutrientResponse(
+                id=food_nutrient_row.id,
+                food_id=food_nutrient_row.food_id,
+                nutrient_id=food_nutrient_row.nutrient_id,
+                amount=food_nutrient_row.amount,
+                nutrient=nutrient
+            )
+        )
+
+    return food_nutrient_responses
 
 def get_food_nutrient(id: int, user_id: int, db: Session):
     food_nutrient = (

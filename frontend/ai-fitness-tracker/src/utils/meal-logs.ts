@@ -6,6 +6,7 @@ import {
   type Food,
   type BrandedFood,
   type FoodNutrient,
+  type FoodNutrientResponse,
   type Nutrient
 } from "../pages/meal-logs/types/meal-logs";
 import { API_BASE_URL } from '../config/api';
@@ -347,34 +348,68 @@ export const loadBrandedFood = async (foodId: number,
 
 // ---------------------------------------------------------------------------
 
-export const loadFoodNutrients = async (foodId: number,
-                                        setFoodNutrients: React.Dispatch<React.SetStateAction<Record<number, FoodNutrient[]>>>,
-                                        token: string) => {
+export const loadFoodNutrients = async (
+  foodId: number,
+  setFoodNutrients: React.Dispatch<React.SetStateAction<Record<number, FoodNutrient[]>>>,
+  setNutrients: React.Dispatch<React.SetStateAction<Record<number, Nutrient>>>,
+  token: string,
+  expand?: string[]
+) => {
   const foodNutrientsResponse = await axios.get(`${API_BASE_URL}/food-nutrients/${foodId}`,
     {
+      params: {
+        expand
+      },
+      paramsSerializer: params => {
+        const searchParams = new URLSearchParams();
+        Object.entries(params).forEach(([key, value]) => {
+          if (Array.isArray(value)) {
+            value.forEach(v => searchParams.append(key, v));
+          } else if (value !== undefined) {
+            searchParams.append(key, value as string);
+          }
+        });
+        return searchParams.toString();
+      },
       headers: {
         Authorization: `Bearer ${token}`
       }
     }
   );
 
-  if (foodNutrientsResponse.data.length === 0) {
+  const foodNutrientsResponseArray: FoodNutrientResponse[] = foodNutrientsResponse.data;
+
+  if (foodNutrientsResponseArray.length === 0) {
     return [];
   }
   
-  const newFoodNutrients: FoodNutrient[] = foodNutrientsResponse.data.map((foodNutrient: FoodNutrient) => ({
-    id: foodNutrient.id,
-    food_id: foodNutrient.food_id,
-    nutrient_id: foodNutrient.nutrient_id,
-    amount: foodNutrient.amount,
-  }));
+  const newFoodNutrients: FoodNutrient[] = [];
+  const newNutrients: Record<number, Nutrient> = {};
+
+  foodNutrientsResponseArray.forEach((foodNutrientResponse: FoodNutrientResponse) => {
+    newFoodNutrients.push({
+      id: foodNutrientResponse.id,
+      food_id: foodNutrientResponse.food_id,
+      nutrient_id: foodNutrientResponse.nutrient_id,
+      amount: foodNutrientResponse.amount,
+    });
+
+    if (foodNutrientResponse.nutrient) {
+      newNutrients[foodNutrientResponse.nutrient.id] = foodNutrientResponse.nutrient;
+    }
+  });
 
   setFoodNutrients(prev => ({
     ...prev,
     [foodId]: newFoodNutrients
   }));
 
-  return newFoodNutrients;
+  setNutrients(prev => ({
+    ...prev,
+    ...newNutrients
+  }));
+
+  return foodNutrientsResponseArray;
 };
 
 // ---------------------------------------------------------------------------
