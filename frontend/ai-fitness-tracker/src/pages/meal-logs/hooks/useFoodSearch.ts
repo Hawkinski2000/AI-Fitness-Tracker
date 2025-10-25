@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { type Food, type BrandedFood } from "../types/meal-logs";
 import { useAuth } from "../../../context/auth/useAuth";
 import { refreshAccessToken, isTokenExpired } from "../../../utils/auth";
-import { getFoods, loadBrandedFood } from "../../../utils/meal-logs";
+import { getFoods } from "../../../utils/meal-logs";
 
 
 const useFoodSearch = (
@@ -47,20 +47,33 @@ const useFoodSearch = (
         const skip = (pageNumber - 1) * MAX_RESULTS_PER_PAGE;
 
         const foodSearchObject = await getFoods(
-          MAX_RESULTS_PER_PAGE, skip, search, setFoodSearchResults, token
+          MAX_RESULTS_PER_PAGE,
+          skip,
+          search,
+          setFoodSearchResults,
+          token,
+          ["brandedFood"]
         );
+
+        const brandedFoods = foodSearchObject.branded_foods;
+
+        if (brandedFoods) {
+          const brandedFoodsByFoodId = brandedFoods.reduce(
+            (brandedFoodsObject: Record<number, BrandedFood>, brandedFood: BrandedFood) => {
+              brandedFoodsObject[brandedFood.food_id] = brandedFood;
+              return brandedFoodsObject;
+            }, {} as Record<number, BrandedFood>
+          );
+
+          setBrandedFoods(prev => ({
+            ...prev,
+            ...brandedFoodsByFoodId
+          }));
+        }
         
         const numPages = Math.ceil(foodSearchObject.total_count / MAX_RESULTS_PER_PAGE);
         setTotalPages(numPages);
         setCurrentPageNumber(pageNumber);
-
-        const foods = foodSearchObject.foods;
-
-        await Promise.all(
-          foods.map((food: Food) => 
-            loadBrandedFood(food.id, setBrandedFoods, token)
-          )
-        );
 
       } catch (err) {
         console.error(err);

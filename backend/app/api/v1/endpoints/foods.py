@@ -1,4 +1,4 @@
-from fastapi import Response, status, APIRouter, Depends
+from fastapi import Response, status, APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from typing import Optional
 from app.core.db import get_db
@@ -23,12 +23,13 @@ def create_food(food: food.FoodCreate,
 def get_foods(limit: int = 10,
               skip: int = 0,
               search: Optional[str] = "",
+              expand: Optional[list[str]] = Query(None),
               current_user: token.TokenData = Depends(get_current_user),
               db: Session = Depends(get_db)):
     if search:
         search = "%".join(search.split())
 
-    food_search_results = crud_foods.get_foods(limit, skip, search, current_user.user_id, db)
+    food_search_results = crud_foods.get_foods(limit, skip, search, expand, current_user.user_id, db)
 
     return food_search_results
 

@@ -35,7 +35,7 @@ const useInitializeMealLogsPage = (
 
 
    useEffect(() => {
-    const fetchData = async () => {
+    const initializeMealLogsPage = async () => {
       try {
         const token = await refreshAccessToken();  
 
@@ -88,7 +88,7 @@ const useInitializeMealLogsPage = (
       }
     };
 
-    fetchData();
+    initializeMealLogsPage();
   }, [
     setAccessToken,
     navigate,

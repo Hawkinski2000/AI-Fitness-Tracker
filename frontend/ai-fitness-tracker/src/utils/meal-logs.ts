@@ -222,13 +222,27 @@ export const getFoods = async (limit: number,
                                skip: number,
                                search: string,
                                setFoodSearchResults: React.Dispatch<React.SetStateAction<Food[]>>,
-                               token: string) => {
+                               token: string,
+                               expand?: string[],
+                              ) => {
   const foodsResponse = await axios.get(`${API_BASE_URL}/foods`,
     {
       params: {
         limit,
         skip,
-        search
+        search,
+        expand
+      },
+      paramsSerializer: params => {
+        const searchParams = new URLSearchParams();
+        Object.entries(params).forEach(([key, value]) => {
+          if (Array.isArray(value)) {
+            value.forEach(v => searchParams.append(key, v));
+          } else if (value !== undefined) {
+            searchParams.append(key, value as string);
+          }
+        });
+        return searchParams.toString();
       },
       headers: {
         Authorization: `Bearer ${token}`

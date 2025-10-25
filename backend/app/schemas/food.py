@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from datetime import datetime
+from app.schemas import branded_food
 
 
 class FoodBase(BaseModel):
@@ -19,4 +20,5 @@ class FoodResponse(FoodBase):
 
 class FoodListResponse(BaseModel):
     foods: list[FoodResponse]
+    branded_foods: Optional[list[branded_food.BrandedFoodResponse]]
     total_count: int

@@ -280,6 +280,7 @@ export default function MealLogsPage() {
                 {['breakfast', 'lunch', 'dinner', 'snacks'].map((mealType: string) => {
                   return (
                     <MealSection
+                      key={mealType}
                       mealType={mealType}
                       currentMealLogDate={currentMealLogDate}
                       mealLogs={mealLogs}

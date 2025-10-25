@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.schemas import food
 from app.models.models import Food
 
@@ -13,26 +13,38 @@ def create_food(food: food.FoodCreate, user_id: int, db: Session):
 def get_foods(limit: int,
               skip: int,
               search: str,
+              expand: list[str] | None,
               user_id: int,
               db: Session):
-    all_foods_query = (
+    query = (
         db.query(Food)
         .filter((Food.user_id == None) | (Food.user_id == user_id),
                 Food.description.ilike(f"%{search}%"))
     )
 
-    total_count = all_foods_query.count()
+    if expand:
+        if "brandedFood" in expand:
+            query = query.options(joinedload(Food.branded_food))
+
+    total_count = query.count()
 
     foods = (
-        all_foods_query
+        query
         .order_by(Food.id)
         .limit(limit)
         .offset(skip)
         .all()
     )
 
+    branded_foods = None
+
+    if expand:
+        if "brandedFood" in expand:
+            branded_foods = [food.branded_food for food in foods if food.branded_food is not None]
+
     food_search_results = {
         "foods": foods,
+        "branded_foods": branded_foods,
         "total_count": total_count
     }
 
