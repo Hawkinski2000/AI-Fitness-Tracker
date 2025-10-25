@@ -1,5 +1,6 @@
-from fastapi import Response, status, APIRouter, Depends
+from fastapi import Response, status, APIRouter, Depends, Query
 from sqlalchemy.orm import Session
+from typing import Optional
 from app.core.db import get_db
 from app.schemas import meal_log, token
 from app.crud import meal_logs as crud_meal_logs
@@ -19,8 +20,11 @@ def create_meal_log(meal_log: meal_log.MealLogCreate,
 
 # Get all meal logs
 @router.get("", response_model=list[meal_log.MealLogResponse])
-def get_meal_logs(current_user: token.TokenData = Depends(get_current_user), db: Session = Depends(get_db)):
-    meal_logs = crud_meal_logs.get_meal_logs(current_user.user_id, db)
+def get_meal_logs(date: Optional[str] = None,
+                  expand: Optional[list[str]] = Query(None),
+                  current_user: token.TokenData = Depends(get_current_user),
+                  db: Session = Depends(get_db)):
+    meal_logs = crud_meal_logs.get_meal_logs(date, expand, current_user.user_id, db)
     return meal_logs
 
 # Get a meal log

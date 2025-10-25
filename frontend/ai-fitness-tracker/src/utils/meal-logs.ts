@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {
   type MealLog,
+  type MealLogResponse,
   type MealLogFood,
   type Food,
   type BrandedFood,
@@ -10,10 +11,32 @@ import {
 import { API_BASE_URL } from '../config/api';
 
 
-export const loadMealLogs = async (setMealLogs: React.Dispatch<React.SetStateAction<Record<string, MealLog>>>,
-                                   token: string) => {
+export const loadMealLog = async (
+  date: string,
+  setMealLogs: React.Dispatch<React.SetStateAction<Record<string, MealLog>>>,
+  setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
+  setFoods: React.Dispatch<React.SetStateAction<Record<number, Food>>>,
+  setBrandedFoods: React.Dispatch<React.SetStateAction<Record<number, BrandedFood>>>,
+  token: string,
+  expand?: string[]
+) => {
   const mealLogsResponse = await axios.get(`${API_BASE_URL}/meal-logs`,
     {
+      params: {
+        date,
+        expand
+      },
+      paramsSerializer: params => {
+        const searchParams = new URLSearchParams();
+        Object.entries(params).forEach(([key, value]) => {
+          if (Array.isArray(value)) {
+            value.forEach(v => searchParams.append(key, v));
+          } else if (value !== undefined) {
+            searchParams.append(key, value as string);
+          }
+        });
+        return searchParams.toString();
+      },
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -22,20 +45,54 @@ export const loadMealLogs = async (setMealLogs: React.Dispatch<React.SetStateAct
 
   if (mealLogsResponse.data.length === 0) {
     setMealLogs({});
-    return {};
+    return null;
   }
-  
-  const mealLogs: Record<string, MealLog> = {};
-  mealLogsResponse.data.forEach((mealLog: MealLog) => {
-    const logDate = mealLog.log_date.split('T')[0];
-    const mealLogObject = {id: mealLog.id, log_date: logDate, total_calories: mealLog.total_calories || null};
 
-    mealLogs[logDate] = mealLogObject;
-  });
+  const mealLogsResponseObject: MealLogResponse = mealLogsResponse.data[0];
 
-  setMealLogs(mealLogs);
+  setMealLogs(prev => ({
+    ...prev,
+    [date]: {
+        id: mealLogsResponseObject.id,
+        log_date: mealLogsResponseObject.log_date,
+        total_calories: mealLogsResponseObject.total_calories
+    }
+  }));
 
-  return mealLogs;
+  if (mealLogsResponseObject.meal_log_foods) {
+    setMealLogFoods(prev => ({
+      ...prev,
+      [mealLogsResponseObject.id]: mealLogsResponseObject.meal_log_foods
+    }));
+  }
+
+  if (mealLogsResponseObject.foods) {
+    const newFoods: Record<number, Food> = {};
+
+     mealLogsResponseObject.foods.forEach((food: Food) => {
+      newFoods[food.id] = food;
+    });
+
+    setFoods(prev => ({
+      ...prev,
+      ...newFoods
+    }));
+  }
+
+  if (mealLogsResponseObject.branded_foods) {
+    const newBrandedFoods: Record<number, BrandedFood> = {};
+
+     mealLogsResponseObject.branded_foods.forEach((brandedFood: BrandedFood) => {
+      newBrandedFoods[brandedFood.food_id] = brandedFood;
+    });
+
+    setBrandedFoods(prev => ({
+      ...prev,
+      ...newBrandedFoods
+    }));
+  }
+
+  return mealLogsResponseObject;
 };
 
 export const createMealLog = async (logDate: string,

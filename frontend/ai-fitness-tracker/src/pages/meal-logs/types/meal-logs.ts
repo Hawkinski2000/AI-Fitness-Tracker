@@ -5,6 +5,16 @@ export interface MealLog {
 }
 
 
+export interface MealLogResponse {
+  id: number;
+  log_date: string;
+  total_calories: number | null;
+  meal_log_foods: MealLogFood[];
+  foods: Food[];
+  branded_foods: BrandedFood[];
+}
+
+
 export interface MealLogFood {
   id: number;
   meal_log_id: number;

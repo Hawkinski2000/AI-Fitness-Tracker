@@ -146,6 +146,7 @@ export default function MealLogsPage() {
     currentMealLogDate,
     setCurrentMealLogDate,
     mealLogs,
+    setMealLogs,
     setMealLogFoods,
     setFoods,
     setBrandedFoods

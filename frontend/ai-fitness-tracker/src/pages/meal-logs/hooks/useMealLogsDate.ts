@@ -7,13 +7,14 @@ import {
 } from "../types/meal-logs";
 import { useAuth } from "../../../context/auth/useAuth";
 import { refreshAccessToken, isTokenExpired } from "../../../utils/auth";
-import { loadMealLogFoods, loadFood, loadBrandedFood } from "../../../utils/meal-logs";
+import { loadMealLog } from "../../../utils/meal-logs";
 
 
 const useMealLogsDate = (
   currentMealLogDate: string | null,
   setCurrentMealLogDate: React.Dispatch<React.SetStateAction<string | null>>,
   mealLogs: Record<string, MealLog>,
+  setMealLogs: React.Dispatch<React.SetStateAction<Record<string, MealLog>>>,
   setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
   setFoods: React.Dispatch<React.SetStateAction<Record<number, Food>>>,
   setBrandedFoods: React.Dispatch<React.SetStateAction<Record<number, BrandedFood>>>
@@ -73,23 +74,22 @@ const useMealLogsDate = (
       const newDate = prevDate.toISOString().split('T')[0];
       setCurrentMealLogDate(newDate);
 
-      const currentMealLog = mealLogs[newDate];
-
-      if (!currentMealLog) {
+      if (mealLogs[newDate]) {
         return;
       }
       
-      const currentMealLogId = currentMealLog.id;
-
-      const loadedMealLogFoods = await loadMealLogFoods(currentMealLogId, setMealLogFoods, token);
-
-      await Promise.all(
-        Object.values(loadedMealLogFoods).map((mealLogFoodArray: MealLogFood[]) =>
-          mealLogFoodArray.forEach((mealLogFoodItem: MealLogFood) => {
-            loadFood(mealLogFoodItem.food_id, setFoods, token);
-            loadBrandedFood(mealLogFoodItem.food_id, setBrandedFoods, token);
-          })
-        )
+      await loadMealLog(
+        newDate,
+        setMealLogs,
+        setMealLogFoods,
+        setFoods,
+        setBrandedFoods,
+        token,
+        [
+          "mealLogFoods",
+          "mealLogFoods.food",
+          "mealLogFoods.brandedFood"
+        ]
       );
     
     } catch (err) {
@@ -102,6 +102,7 @@ const useMealLogsDate = (
     currentMealLogDate,
     setCurrentMealLogDate,
     mealLogs,
+    setMealLogs,
     setMealLogFoods,
     setFoods,
     setBrandedFoods

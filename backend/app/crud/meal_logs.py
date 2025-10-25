@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 from collections import defaultdict
 import json
-from app.schemas import meal_log
-from app.models.models import MealLog, MealLogFood, MealLogNutrient, MealLogFoodNutrient
+from app.schemas import meal_log, meal_log_food, food, branded_food
+from app.models.models import MealLog, MealLogFood, Food, MealLogNutrient, MealLogFoodNutrient
 
 
 def create_meal_log(meal_log: meal_log.MealLogCreate, user_id: int, db: Session):
@@ -14,9 +14,73 @@ def create_meal_log(meal_log: meal_log.MealLogCreate, user_id: int, db: Session)
     db.refresh(new_meal_log)
     return new_meal_log
 
-def get_meal_logs(user_id: int, db: Session):
-    meal_logs = db.query(MealLog).filter(MealLog.user_id == user_id).all()
-    return meal_logs
+def get_meal_logs(date: str,
+                  expand: list[str] | None,
+                  user_id: int,
+                  db: Session):
+    query = db.query(MealLog).filter(MealLog.user_id == user_id)
+    
+    if date:
+        query = query.filter(func.date(MealLog.log_date) == date)
+
+    if expand:
+        if "mealLogFoods" in expand:
+            query = query.options(
+                joinedload(MealLog.meal_log_foods)
+            )
+        if "mealLogFoods.food" in expand:
+            query = query.options(
+                joinedload(MealLog.meal_log_foods)
+                .joinedload(MealLogFood.food)
+            )
+        if "mealLogFoods.brandedFood" in expand:
+            query = query.options(
+                joinedload(MealLog.meal_log_foods)
+                .joinedload(MealLogFood.food)
+                .joinedload(Food.branded_food)
+            )
+
+    meal_logs = query.all()
+
+    meal_log_responses = []
+
+    for meal_log_row in meal_logs:
+        meal_log_foods = None
+        foods = None
+        branded_foods = None
+
+        if expand:
+            if "mealLogFoods" in expand and meal_log_row.meal_log_foods:
+                meal_log_foods = [
+                    meal_log_food.MealLogFoodResponse.model_validate(mlf)
+                    for mlf in meal_log_row.meal_log_foods
+                ]
+            if "mealLogFoods.food" in expand and meal_log_foods:
+                foods = [
+                    food.FoodResponse.model_validate(meal_log_food.food)
+                    for meal_log_food in meal_log_row.meal_log_foods
+                    if meal_log_food.food is not None
+                ]
+            if "mealLogFoods.brandedFood" in expand and foods:
+                branded_foods = [
+                    branded_food.BrandedFoodResponse.model_validate(meal_log_food.food.branded_food)
+                    for meal_log_food in meal_log_row.meal_log_foods
+                    if meal_log_food.food.branded_food is not None
+                ]
+
+        meal_log_responses.append(
+            meal_log.MealLogResponse(
+                id=meal_log_row.id,
+                user_id=meal_log_row.user_id,
+                log_date=meal_log_row.log_date,
+                total_calories=meal_log_row.total_calories,
+                meal_log_foods=meal_log_foods,
+                foods=foods,
+                branded_foods=branded_foods
+            )
+        )
+
+    return meal_log_responses
 
 def get_meal_log(id: int, user_id: int, db: Session):
     meal_log = db.query(MealLog).filter(MealLog.id == id, MealLog.user_id == user_id).first()

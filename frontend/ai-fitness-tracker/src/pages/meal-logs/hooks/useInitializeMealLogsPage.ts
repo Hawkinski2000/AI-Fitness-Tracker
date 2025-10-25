@@ -9,12 +9,7 @@ import {
 } from "../types/meal-logs";
 import { useAuth } from "../../../context/auth/useAuth";
 import { refreshAccessToken, getUserFromToken } from "../../../utils/auth";
-import {
-  loadMealLogs,
-  loadMealLogFoods,
-  loadFood,
-  loadBrandedFood
-} from "../../../utils/meal-logs";
+import { loadMealLog } from "../../../utils/meal-logs";
 
 
 const useInitializeMealLogsPage = (
@@ -51,31 +46,22 @@ const useInitializeMealLogsPage = (
           Math.min(userData.input_tokens_remaining, userData.output_tokens_remaining)
         )
 
-        const loadedMealLogs = await loadMealLogs(setMealLogs, token);
-
         const today = new Date().toISOString().split('T')[0];
         setToday(today);
         setCurrentMealLogDate(today);
 
-        const currentMealLog = loadedMealLogs[today];
-
-        if (!currentMealLog) {
-          return;
-        }
-        
-        const currentMealLogId = currentMealLog.id;
-
-        const loadedMealLogFoods = await loadMealLogFoods(
-          currentMealLogId, setMealLogFoods, token
-        );
-
-        await Promise.all(
-          Object.values(loadedMealLogFoods).map(mealLogFood =>
-            mealLogFood.forEach((mealLogFoodObject: MealLogFood) => {
-              loadFood(mealLogFoodObject.food_id, setFoods, token);
-              loadBrandedFood(mealLogFoodObject.food_id, setBrandedFoods, token);
-            })
-          )
+        await loadMealLog(
+          today,
+          setMealLogs,
+          setMealLogFoods,
+          setFoods,
+          setBrandedFoods,
+          token,
+          [
+            "mealLogFoods",
+            "mealLogFoods.food",
+            "mealLogFoods.brandedFood"
+          ]
         );
 
       } catch (err) {
