@@ -154,7 +154,10 @@ export const loadMealLogFoods = async (mealLogId: number,
     mealLogFoods[mealLogId].push(mealLogFoodObject);
   });
 
-  setMealLogFoods(mealLogFoods);
+  setMealLogFoods(prev => ({
+    ...prev,
+    ...mealLogFoods
+  }));
 
   return mealLogFoods;
 };
@@ -191,13 +194,15 @@ export const addMealLogFood = async (mealLogId: number,
   loadFood(foodId, setFoods, token);
 };
 
-export const updateMealLogFood = async (mealLogFoodId: number,
-                                        mealLogId: number | null,
-                                        numServings: number | null = null,
-                                        servingSize: number | null = null,
-                                        foodsMenuOpenMealType: string,
-                                        setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
-                                        token: string) => {
+export const updateMealLogFood = async (
+  mealLogFoodId: number,
+  mealLogId: number | null,
+  numServings: number | null = null,
+  servingSize: number | null = null,
+  foodsMenuOpenMealType: string,
+  setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
+  token: string
+) => {
   const mealLogFoodResponse = await axios.patch(`${API_BASE_URL}/meal-log-foods/${mealLogFoodId}`,
     {
       ...(mealLogId !== null && { meal_log_id: mealLogId }),
@@ -227,6 +232,28 @@ export const updateMealLogFood = async (mealLogFoodId: number,
     };
   });
 };
+
+export const copyMealLogFoods = async (
+  mealLogFoodIds: number[],
+  targetMealLogId: number,
+  setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
+  token: string
+) => {
+  await axios.post(`${API_BASE_URL}/meal-log-foods/bulk`,
+    {
+      action: "copy",
+      ids: mealLogFoodIds,
+      target_meal_log_id: targetMealLogId
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  await loadMealLogFoods(targetMealLogId, setMealLogFoods, token);
+}
 
 export const deleteMealLogFoods = async (
   mealLogFoodIds: number[],

@@ -9,6 +9,7 @@ type MealSectionHeaderProps = {
   mealOptionsMenuOpenType: string;
   setMealOptionsMenuOpenType: React.Dispatch<React.SetStateAction<string>>;
   mealOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
+  handleCopyMeal: (mealType: string, targetMealLogId: number) => Promise<void>;
   handleDeleteMeal: (mealType: string) => Promise<void>;
 };
 
@@ -18,6 +19,7 @@ export default function MealSectionHeader({
   mealOptionsMenuOpenType,
   setMealOptionsMenuOpenType,
   mealOptionsMenuRefs,
+  handleCopyMeal,
   handleDeleteMeal
 }: MealSectionHeaderProps) {
   return (
@@ -40,6 +42,7 @@ export default function MealSectionHeader({
         mealType={mealType}
         mealOptionsMenuOpenType={mealOptionsMenuOpenType}
         mealOptionsMenuRefs={mealOptionsMenuRefs}
+        handleCopyMeal={handleCopyMeal}
         handleDeleteMeal={handleDeleteMeal}
       />
     </div>

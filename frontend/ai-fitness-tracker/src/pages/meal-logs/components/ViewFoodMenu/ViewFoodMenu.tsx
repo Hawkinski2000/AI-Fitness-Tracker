@@ -114,9 +114,9 @@ export default function ViewFoodMenu({
               e.stopPropagation();
               if (editingMealLogFoodId && currentMealLogDate) {
                 handleUpdateFood(editingMealLogFoodId,
-                                  mealLogs[currentMealLogDate].id,
-                                  numServings,
-                                  servingSize);
+                                 mealLogs[currentMealLogDate].id,
+                                 numServings,
+                                 servingSize);
                 setEditingMealLogFoodId(null);
                 setViewFoodMenuOpenId(null);
                 setFoodsMenuOpenMealType('');

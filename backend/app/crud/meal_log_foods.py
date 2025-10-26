@@ -83,14 +83,33 @@ def bulk_action_meal_log_foods(bulk_action: meal_log_food.MealLogFoodBulkAction,
         db.query(MealLogFood)
         .join(MealLog, MealLogFood.meal_log_id == MealLog.id)
         .filter(MealLogFood.id.in_(bulk_action.ids), MealLog.user_id == user_id)
+        .order_by(MealLogFood.created_at.asc())
         .all()
     )
 
-    meal_log_id = meal_log_food_rows[0].meal_log_id
+    meal_log_id = None
     
+    if bulk_action.action == "copy":
+        meal_log_id = bulk_action.target_meal_log_id
+        for row in meal_log_food_rows:
+            new_meal_log_food = meal_log_food.MealLogFoodCreate(
+                meal_log_id=meal_log_id,
+                food_id=row.food_id,
+                meal_type=row.meal_type,
+                num_servings=row.num_servings,
+                serving_size=row.serving_size,
+                serving_unit=row.serving_unit
+            )
+            create_meal_log_food(
+                new_meal_log_food,
+                user_id,
+                db
+            )
+
     if bulk_action.action == "delete":
         for row in meal_log_food_rows:
             db.delete(row)
+        meal_log_id = meal_log_food_rows[0].meal_log_id
     
     db.commit()
 
