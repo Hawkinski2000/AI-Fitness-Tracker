@@ -15,6 +15,7 @@ import {
   loadFoodNutrients,
   updateMealLogFood,
   copyMealLogFoods,
+  moveMealLogFoods,
   deleteMealLogFoods
 } from "../../../utils/meal-logs";
 
@@ -273,6 +274,95 @@ const handleCopyMealLogFood = useCallback(async (mealLogFoodId: number, targetMe
 
 // ---------------------------------------------------------------------------
 
+const handleMoveMeal = useCallback(async (mealType: string, targetMealLogId: number) => {
+    try {
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();  
+        setAccessToken(token);
+      }
+      if (!token) {
+        throw new Error("No access token");
+      }
+
+      if (!currentMealLogDate) {
+        return;
+      }
+
+      const currentMealLog = mealLogs[currentMealLogDate];
+
+      const currentMealLogId = currentMealLog.id;
+
+      const currentMealLogFoods = mealLogFoods[currentMealLogId];
+
+      const mealLogFoodsInMealType = currentMealLogFoods.filter(
+        (mealLogFood: MealLogFood) => mealLogFood.meal_type === mealType
+      );
+
+      const mealLogFoodIdsInMealType = mealLogFoodsInMealType.map(
+        (mealLogFood: MealLogFood) => mealLogFood.id
+      );
+
+      moveMealLogFoods(currentMealLogId, mealLogFoodIdsInMealType, targetMealLogId, setMealLogFoods, token);
+
+    } catch (err) {
+      console.error(err);
+      setAccessToken(null);
+
+    } finally {
+      setMealOptionsMenuOpenType('');
+    }
+  }, [
+    accessToken,
+    setAccessToken,
+    currentMealLogDate,
+    mealLogFoods,
+    setMealLogFoods,
+    mealLogs,
+    setMealOptionsMenuOpenType
+  ]);
+
+// ---------------------------------------------------------------------------
+
+const handleMoveMealLogFood = useCallback(async (mealLogFoodId: number, targetMealLogId: number) => {
+    try {
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();  
+        setAccessToken(token);
+      }
+      if (!token) {
+        throw new Error("No access token");
+      }
+
+      if (!currentMealLogDate) {
+        return;
+      }
+
+      const currentMealLog = mealLogs[currentMealLogDate];
+
+      const currentMealLogId = currentMealLog.id;
+
+      moveMealLogFoods(currentMealLogId, [mealLogFoodId], targetMealLogId, setMealLogFoods, token);
+
+    } catch (err) {
+      console.error(err);
+      setAccessToken(null);
+
+    } finally {
+      setMealFoodOptionsMenuOpenId(null);
+    }
+  }, [
+    accessToken,
+    setAccessToken,
+    currentMealLogDate,
+    setMealLogFoods,
+    mealLogs,
+    setMealFoodOptionsMenuOpenId
+  ]);
+
+// ---------------------------------------------------------------------------
+
   const handleDeleteMeal = useCallback(async (mealType: string) => {
     try {
       let token: string | null = accessToken;
@@ -357,6 +447,8 @@ const handleCopyMealLogFood = useCallback(async (mealLogFoodId: number, targetMe
     handleUpdateFood,
     handleCopyMeal,
     handleCopyMealLogFood,
+    handleMoveMeal,
+    handleMoveMealLogFood,
     handleDeleteMeal,
     handleDeleteMealLogFood
   }

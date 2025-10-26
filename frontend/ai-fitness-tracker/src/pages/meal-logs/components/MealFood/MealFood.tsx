@@ -28,6 +28,7 @@ type MealFoodProps = {
   mealFoodOptionsMenuRefs: React.RefObject<Record<number, HTMLDivElement | null>>;
   handleLoadFoodNutrients: (foodId: number) => Promise<void>;
   handleCopyMealLogFood: (mealLogFoodId: number, targetMealLogId: number) => Promise<void>;
+  handleMoveMealLogFood: (mealLogFoodId: number, targetMealLogId: number) => Promise<void>;
   handleDeleteMealLogFood: (mealLogFoodId: number) => Promise<void>;
 };
 
@@ -51,6 +52,7 @@ export default function MealFood({
   mealFoodOptionsMenuRefs,
   handleLoadFoodNutrients,
   handleCopyMealLogFood,
+  handleMoveMealLogFood,
   handleDeleteMealLogFood
 }: MealFoodProps) {
   return (
@@ -134,6 +136,7 @@ export default function MealFood({
           mealFoodOptionsMenuOpenId={mealFoodOptionsMenuOpenId}
           mealFoodOptionsMenuRefs={mealFoodOptionsMenuRefs}
           handleCopyMealLogFood={handleCopyMealLogFood}
+          handleMoveMealLogFood={handleMoveMealLogFood}
           handleDeleteMealLogFood={handleDeleteMealLogFood}
         />
       </div>

@@ -171,6 +171,8 @@ export default function MealLogsPage() {
     handleUpdateFood,
     handleCopyMeal,
     handleCopyMealLogFood,
+    handleMoveMeal,
+    handleMoveMealLogFood,
     handleDeleteMeal,
     handleDeleteMealLogFood
   } = useMealLogActions(
@@ -308,6 +310,8 @@ export default function MealLogsPage() {
                       mealFoodOptionsMenuRefs={mealFoodOptionsMenuRefs}
                       handleCopyMeal={handleCopyMeal}
                       handleCopyMealLogFood={handleCopyMealLogFood}
+                      handleMoveMeal={handleMoveMeal}
+                      handleMoveMealLogFood={handleMoveMealLogFood}
                       handleDeleteMeal={handleDeleteMeal}
                       handleDeleteMealLogFood={handleDeleteMealLogFood}
                       handleLoadFoodNutrients={handleLoadFoodNutrients}

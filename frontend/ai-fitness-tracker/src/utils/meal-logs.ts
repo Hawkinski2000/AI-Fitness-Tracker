@@ -255,6 +255,58 @@ export const copyMealLogFoods = async (
   await loadMealLogFoods(targetMealLogId, setMealLogFoods, token);
 }
 
+export const moveMealLogFoods = async (
+  currentMealLogId: number,
+  mealLogFoodIds: number[],
+  targetMealLogId: number,
+  setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
+  token: string
+) => {
+  await axios.post(`${API_BASE_URL}/meal-log-foods/bulk`,
+    {
+      action: "move",
+      ids: mealLogFoodIds,
+      target_meal_log_id: targetMealLogId
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  setMealLogFoods(prevMealLogFoods => {
+    const mealLogFoodEntries: [string, MealLogFood[]][] = [];
+    const targetMealLogFoodsArray: MealLogFood[] = [];
+
+    Object.entries(prevMealLogFoods).forEach(([logId, mealLogFoodsArray]) => {
+      if (Number(logId) === currentMealLogId) {
+        const sourceMealLogFoodsArray: MealLogFood[] = [];
+        mealLogFoodsArray.forEach(mealLogFood => {
+          if (mealLogFoodIds.includes(mealLogFood.id)) {
+            targetMealLogFoodsArray.push(mealLogFood);
+          } else {
+            sourceMealLogFoodsArray.push(mealLogFood);
+          }
+        });
+        mealLogFoodEntries.push([logId, sourceMealLogFoodsArray]);
+
+      } else if (Number(logId) === targetMealLogId) {
+        targetMealLogFoodsArray.push(...mealLogFoodsArray);
+        
+      } else {
+        mealLogFoodEntries.push([logId, mealLogFoodsArray]);
+      }
+    });
+
+    mealLogFoodEntries.push([String(targetMealLogId), targetMealLogFoodsArray]);
+
+    const updatedMealLogFoods = Object.fromEntries(mealLogFoodEntries);
+
+    return updatedMealLogFoods;
+  });
+}
+
 export const deleteMealLogFoods = async (
   mealLogFoodIds: number[],
   setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
