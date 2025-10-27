@@ -7,6 +7,7 @@ import {
   type FoodNutrientResponse,
   type Nutrient
 } from "../types/meal-logs";
+import { type Value } from "react-calendar/dist/shared/types.js";
 import { useAuth } from "../../../context/auth/useAuth";
 import { refreshAccessToken, isTokenExpired } from "../../../utils/auth";
 import {
@@ -22,6 +23,8 @@ import {
 
 const useMealLogActions = (
   currentMealLogDate: string | null,
+  setCurrentMealLogDate: React.Dispatch<React.SetStateAction<string | null>>,
+  calendarDate: Value,
   mealLogs: Record<string, MealLog>,
   setMealLogs: React.Dispatch<React.SetStateAction<Record<string, MealLog>>>,
   foodsMenuOpenMealType: string,
@@ -33,7 +36,9 @@ const useMealLogActions = (
   setFoodCaloriesFromMacros: React.Dispatch<React.SetStateAction<Record<number, number>>>,
   mealLogFoods: Record<number, MealLogFood[]>,
   setMealOptionsMenuOpenType: React.Dispatch<React.SetStateAction<string>>,
-  setMealFoodOptionsMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>
+  setMealFoodOptionsMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>,
+  selectedMealLogFoodIds: number[],
+  setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>,
 ) => {
   const { accessToken, setAccessToken } = useAuth();
 
@@ -190,7 +195,74 @@ const useMealLogActions = (
 
 // ---------------------------------------------------------------------------
 
-  const handleCopyMeal = useCallback(async (mealType: string, targetMealLogId: number) => {
+const handleCopyMealLogFoods = useCallback(async () => {
+    try {
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();  
+        setAccessToken(token);
+      }
+      if (!token) {
+        throw new Error("No access token");
+      }
+
+      if (!currentMealLogDate) {
+        return;
+      }
+
+      let selectedDate: Value;
+      
+      if (Array.isArray(calendarDate)) {
+        selectedDate = calendarDate[0];
+      } else {
+        selectedDate = calendarDate;
+      }
+
+      if (!selectedDate) {
+        return;
+      }
+
+      setCalendarOpenType('');
+
+      const targetDate = selectedDate.toISOString().split('T')[0];
+      setCurrentMealLogDate(targetDate);
+
+      let targetMealLog;
+      if (!mealLogs[targetDate]) {
+        targetMealLog = await createMealLog(targetDate, setMealLogs, token);
+      }
+      else {
+        targetMealLog = mealLogs[targetDate];
+      }
+
+      const targetMealLogId = targetMealLog.id;
+
+      copyMealLogFoods(selectedMealLogFoodIds, targetMealLogId, setMealLogFoods, token);
+
+    } catch (err) {
+      console.error(err);
+      setAccessToken(null);
+
+    } finally {
+      setMealFoodOptionsMenuOpenId(null);
+    }
+  }, [
+    accessToken,
+    setAccessToken,
+    mealLogs,
+    setMealLogs,
+    setCalendarOpenType,
+    currentMealLogDate,
+    calendarDate,
+    setCurrentMealLogDate,
+    setMealLogFoods,
+    setMealFoodOptionsMenuOpenId,
+    selectedMealLogFoodIds
+  ]);
+
+// ---------------------------------------------------------------------------
+
+const handleMoveMealLogFoods = useCallback(async () => {
     try {
       let token: string | null = accessToken;
       if (!accessToken || isTokenExpired(accessToken)) {
@@ -209,53 +281,34 @@ const useMealLogActions = (
 
       const currentMealLogId = currentMealLog.id;
 
-      const currentMealLogFoods = mealLogFoods[currentMealLogId];
-
-      const mealLogFoodsInMealType = currentMealLogFoods.filter(
-        (mealLogFood: MealLogFood) => mealLogFood.meal_type === mealType
-      );
-
-      const mealLogFoodIdsInMealType = mealLogFoodsInMealType.map(
-        (mealLogFood: MealLogFood) => mealLogFood.id
-      );
-
-      copyMealLogFoods(mealLogFoodIdsInMealType, targetMealLogId, setMealLogFoods, token);
-
-    } catch (err) {
-      console.error(err);
-      setAccessToken(null);
-
-    } finally {
-      setMealOptionsMenuOpenType('');
-    }
-  }, [
-    accessToken,
-    setAccessToken,
-    currentMealLogDate,
-    mealLogFoods,
-    setMealLogFoods,
-    mealLogs,
-    setMealOptionsMenuOpenType
-  ]);
-
-// ---------------------------------------------------------------------------
-
-const handleCopyMealLogFood = useCallback(async (mealLogFoodId: number, targetMealLogId: number) => {
-    try {
-      let token: string | null = accessToken;
-      if (!accessToken || isTokenExpired(accessToken)) {
-        token = await refreshAccessToken();  
-        setAccessToken(token);
-      }
-      if (!token) {
-        throw new Error("No access token");
+      let selectedDate: Value;
+      
+      if (Array.isArray(calendarDate)) {
+        selectedDate = calendarDate[0];
+      } else {
+        selectedDate = calendarDate;
       }
 
-      if (!currentMealLogDate) {
+      if (!selectedDate) {
         return;
       }
 
-      copyMealLogFoods([mealLogFoodId], targetMealLogId, setMealLogFoods, token);
+      setCalendarOpenType('');
+
+      const targetDate = selectedDate.toISOString().split('T')[0];
+      setCurrentMealLogDate(targetDate);
+
+      let targetMealLog;
+      if (!mealLogs[targetDate]) {
+        targetMealLog = await createMealLog(targetDate, setMealLogs, token);
+      }
+      else {
+        targetMealLog = mealLogs[targetDate];
+      }
+
+      const targetMealLogId = targetMealLog.id;
+
+      moveMealLogFoods(currentMealLogId, selectedMealLogFoodIds, targetMealLogId, setMealLogFoods, token);
 
     } catch (err) {
       console.error(err);
@@ -268,96 +321,13 @@ const handleCopyMealLogFood = useCallback(async (mealLogFoodId: number, targetMe
     accessToken,
     setAccessToken,
     currentMealLogDate,
-    setMealLogFoods,
-    setMealFoodOptionsMenuOpenId
-  ]);
-
-// ---------------------------------------------------------------------------
-
-const handleMoveMeal = useCallback(async (mealType: string, targetMealLogId: number) => {
-    try {
-      let token: string | null = accessToken;
-      if (!accessToken || isTokenExpired(accessToken)) {
-        token = await refreshAccessToken();  
-        setAccessToken(token);
-      }
-      if (!token) {
-        throw new Error("No access token");
-      }
-
-      if (!currentMealLogDate) {
-        return;
-      }
-
-      const currentMealLog = mealLogs[currentMealLogDate];
-
-      const currentMealLogId = currentMealLog.id;
-
-      const currentMealLogFoods = mealLogFoods[currentMealLogId];
-
-      const mealLogFoodsInMealType = currentMealLogFoods.filter(
-        (mealLogFood: MealLogFood) => mealLogFood.meal_type === mealType
-      );
-
-      const mealLogFoodIdsInMealType = mealLogFoodsInMealType.map(
-        (mealLogFood: MealLogFood) => mealLogFood.id
-      );
-
-      moveMealLogFoods(currentMealLogId, mealLogFoodIdsInMealType, targetMealLogId, setMealLogFoods, token);
-
-    } catch (err) {
-      console.error(err);
-      setAccessToken(null);
-
-    } finally {
-      setMealOptionsMenuOpenType('');
-    }
-  }, [
-    accessToken,
-    setAccessToken,
-    currentMealLogDate,
-    mealLogFoods,
+    setCurrentMealLogDate,
+    calendarDate,
+    setCalendarOpenType,
+    selectedMealLogFoodIds,
     setMealLogFoods,
     mealLogs,
-    setMealOptionsMenuOpenType
-  ]);
-
-// ---------------------------------------------------------------------------
-
-const handleMoveMealLogFood = useCallback(async (mealLogFoodId: number, targetMealLogId: number) => {
-    try {
-      let token: string | null = accessToken;
-      if (!accessToken || isTokenExpired(accessToken)) {
-        token = await refreshAccessToken();  
-        setAccessToken(token);
-      }
-      if (!token) {
-        throw new Error("No access token");
-      }
-
-      if (!currentMealLogDate) {
-        return;
-      }
-
-      const currentMealLog = mealLogs[currentMealLogDate];
-
-      const currentMealLogId = currentMealLog.id;
-
-      moveMealLogFoods(currentMealLogId, [mealLogFoodId], targetMealLogId, setMealLogFoods, token);
-
-    } catch (err) {
-      console.error(err);
-      setAccessToken(null);
-
-    } finally {
-      setMealFoodOptionsMenuOpenId(null);
-    }
-  }, [
-    accessToken,
-    setAccessToken,
-    currentMealLogDate,
-    setMealLogFoods,
-    mealLogs,
+    setMealLogs,
     setMealFoodOptionsMenuOpenId
   ]);
 
@@ -445,10 +415,8 @@ const handleMoveMealLogFood = useCallback(async (mealLogFoodId: number, targetMe
     handleAddFood,
     handleLoadFoodNutrients,
     handleUpdateFood,
-    handleCopyMeal,
-    handleCopyMealLogFood,
-    handleMoveMeal,
-    handleMoveMealLogFood,
+    handleCopyMealLogFoods,
+    handleMoveMealLogFoods,
     handleDeleteMeal,
     handleDeleteMealLogFood
   }

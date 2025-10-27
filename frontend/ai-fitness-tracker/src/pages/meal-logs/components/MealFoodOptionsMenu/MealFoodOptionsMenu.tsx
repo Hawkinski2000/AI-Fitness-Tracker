@@ -8,9 +8,9 @@ import './MealFoodOptionsMenu.css';
 type MealFoodOptionsMenuProps = {
   mealLogFood: MealLogFood;
   mealFoodOptionsMenuOpenId: number | null;
+  setSelectedMealLogFoodIds: React.Dispatch<React.SetStateAction<number[]>>;
+  setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>;
   mealFoodOptionsMenuRefs: React.RefObject<Record<number, HTMLDivElement | null>>;
-  handleCopyMealLogFood: (mealLogFoodId: number, targetMealLogId: number) => Promise<void>;
-  handleMoveMealLogFood: (mealLogFoodId: number, targetMealLogId: number) => Promise<void>;
   handleDeleteMealLogFood: (mealLogFoodId: number) => Promise<void>;
 };
 
@@ -18,9 +18,9 @@ type MealFoodOptionsMenuProps = {
 export default function MealFoodOptionsMenu({
   mealLogFood,
   mealFoodOptionsMenuOpenId,
+  setSelectedMealLogFoodIds,
+  setCalendarOpenType,
   mealFoodOptionsMenuRefs,
-  handleCopyMealLogFood,
-  handleMoveMealLogFood,
   handleDeleteMealLogFood
 }: MealFoodOptionsMenuProps) {
   return (
@@ -36,8 +36,8 @@ export default function MealFoodOptionsMenu({
         className="meal-options-menu-button"
         onClick={(e) => {
           e.stopPropagation();
-          const tomorrowMealLogId = 28;
-          handleCopyMealLogFood(mealLogFood.id, tomorrowMealLogId);
+          setSelectedMealLogFoodIds([mealLogFood.id]);
+          setCalendarOpenType('copyMealLogFoods');
         }}
       >
         <img className="button-link-image" src={copyIcon} />
@@ -48,8 +48,8 @@ export default function MealFoodOptionsMenu({
         className="meal-options-menu-button"
         onClick={(e) => {
           e.stopPropagation();
-          const tomorrowMealLogId = 28;
-          handleMoveMealLogFood(mealLogFood.id, tomorrowMealLogId);
+          setSelectedMealLogFoodIds([mealLogFood.id]);
+          setCalendarOpenType('moveMealLogFoods');
         }}
       >
         <img className="button-link-image" src={moveIcon} />

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { type Value } from "react-calendar/dist/shared/types.js";
 
 
 const useMealLogsClickOutside = (
@@ -17,8 +18,9 @@ const useMealLogsClickOutside = (
   setSelectMealMenuOpenType: React.Dispatch<React.SetStateAction<string>>,
   selectServingSizeMenuOpen: boolean,
   setSelectServingSizeMenuOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  calendarOpen: boolean,
-  setCalendarOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  calendarOpenType: string,
+  setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>,
+  setCalendarDate: React.Dispatch<React.SetStateAction<Value>>,
   accountMenuRef: React.RefObject<HTMLDivElement | null>,
   mealOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>,
   mealFoodOptionsMenuRefs: React.RefObject<Record<number, HTMLDivElement | null>>,
@@ -99,13 +101,14 @@ const useMealLogsClickOutside = (
       }
 
       if (
-        calendarOpen &&
+        calendarOpenType &&
         calendarRef.current &&
         target instanceof Node &&
         !calendarRef.current.contains(target) &&
         !(target instanceof HTMLElement && target.classList.contains('open-calendar-button'))
       ) {
-        setCalendarOpen(false);
+        setCalendarOpenType('');
+        setCalendarDate(new Date());
       }
     }
 
@@ -127,8 +130,9 @@ const useMealLogsClickOutside = (
     setSelectMealMenuOpenType,
     selectServingSizeMenuOpen,
     setSelectServingSizeMenuOpen,
-    calendarOpen,
-    setCalendarOpen,
+    calendarOpenType,
+    setCalendarOpenType,
+    setCalendarDate,
     accountMenuRef,
     mealOptionsMenuRefs,
     mealFoodOptionsMenuRefs,

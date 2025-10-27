@@ -21,6 +21,8 @@ type MealSectionFoodsProps = {
   setMealOptionsMenuOpenType: React.Dispatch<React.SetStateAction<string>>;
   mealFoodOptionsMenuOpenId: number | null;
   setMealFoodOptionsMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
+  setSelectedMealLogFoodIds: React.Dispatch<React.SetStateAction<number[]>>;
+  setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>;
   editingMealLogFoodId: number | null;
   setEditingMealLogFoodId: React.Dispatch<React.SetStateAction<number | null>>;
   setNumServings: React.Dispatch<React.SetStateAction<number | null>>;
@@ -28,8 +30,6 @@ type MealSectionFoodsProps = {
   setServingSizeUnit: React.Dispatch<React.SetStateAction<string>>;
   mealFoodOptionsMenuRefs: React.RefObject<Record<number, HTMLDivElement | null>>;
   handleLoadFoodNutrients: (foodId: number) => Promise<void>;
-  handleCopyMealLogFood: (mealLogFoodId: number, targetMealLogId: number) => Promise<void>;
-  handleMoveMealLogFood: (mealLogFoodId: number, targetMealLogId: number) => Promise<void>;
   handleDeleteMealLogFood: (mealLogFoodId: number) => Promise<void>;
 }
 
@@ -47,6 +47,8 @@ export default function MealSectionFoods({
   setMealOptionsMenuOpenType,
   mealFoodOptionsMenuOpenId,
   setMealFoodOptionsMenuOpenId,
+  setSelectedMealLogFoodIds,
+  setCalendarOpenType,
   editingMealLogFoodId,
   setEditingMealLogFoodId,
   setNumServings,
@@ -54,8 +56,6 @@ export default function MealSectionFoods({
   setServingSizeUnit,
   mealFoodOptionsMenuRefs,
   handleLoadFoodNutrients,
-  handleCopyMealLogFood,
-  handleMoveMealLogFood,
   handleDeleteMealLogFood
 }: MealSectionFoodsProps) {
   return (
@@ -80,14 +80,14 @@ export default function MealSectionFoods({
                 setMealOptionsMenuOpenType={setMealOptionsMenuOpenType}
                 mealFoodOptionsMenuOpenId={mealFoodOptionsMenuOpenId}
                 setMealFoodOptionsMenuOpenId={setMealFoodOptionsMenuOpenId}
+                setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
+                setCalendarOpenType={setCalendarOpenType}
                 editingMealLogFoodId={editingMealLogFoodId}
                 setEditingMealLogFoodId={setEditingMealLogFoodId}
                 setFoodsMenuOpenMealType={setFoodsMenuOpenMealType}
                 setViewFoodMenuOpenId={setViewFoodMenuOpenId}
                 mealFoodOptionsMenuRefs={mealFoodOptionsMenuRefs}
                 handleLoadFoodNutrients={handleLoadFoodNutrients}
-                handleCopyMealLogFood={handleCopyMealLogFood}
-                handleMoveMealLogFood={handleMoveMealLogFood}
                 handleDeleteMealLogFood={handleDeleteMealLogFood}
               />
             )

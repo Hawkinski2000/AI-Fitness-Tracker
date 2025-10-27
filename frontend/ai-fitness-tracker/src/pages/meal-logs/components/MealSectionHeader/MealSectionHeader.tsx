@@ -1,4 +1,5 @@
 import MealOptionsMenu from "../MealOptionsMenu/MealOptionsMenu";
+import { type MealLog, type MealLogFood } from '../../types/meal-logs';
 import { capitalizeFirstLetter } from "../../../../utils/app";
 import dotsIcon from '../../../../assets/dots-icon.svg';
 import './MealSectionHeader.css';
@@ -9,8 +10,11 @@ type MealSectionHeaderProps = {
   mealOptionsMenuOpenType: string;
   setMealOptionsMenuOpenType: React.Dispatch<React.SetStateAction<string>>;
   mealOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
-  handleCopyMeal: (mealType: string, targetMealLogId: number) => Promise<void>;
-  handleMoveMeal: (mealType: string, targetMealLogId: number) => Promise<void>;
+  mealLogs: Record<string, MealLog>;
+  mealLogFoods: Record<number, MealLogFood[]>;
+  currentMealLogDate: string | null;
+  setSelectedMealLogFoodIds: React.Dispatch<React.SetStateAction<number[]>>;
+  setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>;
   handleDeleteMeal: (mealType: string) => Promise<void>;
 };
 
@@ -20,8 +24,11 @@ export default function MealSectionHeader({
   mealOptionsMenuOpenType,
   setMealOptionsMenuOpenType,
   mealOptionsMenuRefs,
-  handleCopyMeal,
-  handleMoveMeal,
+  mealLogs,
+  mealLogFoods,
+  currentMealLogDate,
+  setSelectedMealLogFoodIds,
+  setCalendarOpenType,
   handleDeleteMeal
 }: MealSectionHeaderProps) {
   return (
@@ -44,8 +51,11 @@ export default function MealSectionHeader({
         mealType={mealType}
         mealOptionsMenuOpenType={mealOptionsMenuOpenType}
         mealOptionsMenuRefs={mealOptionsMenuRefs}
-        handleCopyMeal={handleCopyMeal}
-        handleMoveMeal={handleMoveMeal}
+        mealLogs={mealLogs}
+        mealLogFoods={mealLogFoods}
+        currentMealLogDate={currentMealLogDate}
+        setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
+        setCalendarOpenType={setCalendarOpenType}
         handleDeleteMeal={handleDeleteMeal}
       />
     </div>

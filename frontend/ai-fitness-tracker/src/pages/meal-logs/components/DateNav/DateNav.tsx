@@ -10,12 +10,14 @@ type DateNavProps = {
   today: string | null;
   handleChangeDate: (direction: string) => Promise<void>;
   getDateLabel: (currentMealLogDate: string | null, today: string | null) => string;
-  calendarOpen: boolean;
-  setCalendarOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  calendarOpenType: string;
+  setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>;
   calendarRef: React.RefObject<HTMLDivElement | null>;
   calendarDate: Value;
   setCalendarDate: React.Dispatch<React.SetStateAction<Value>>;
   handleSetCalendarDate: (value: Value) => Promise<void>;
+  handleCopyMealLogFoods: () => Promise<void>;
+  handleMoveMealLogFoods: () => Promise<void>;
 };
 
 
@@ -24,12 +26,14 @@ export default function DateNav({
   today,
   handleChangeDate,
   getDateLabel,
-  calendarOpen,
-  setCalendarOpen,
+  calendarOpenType,
+  setCalendarOpenType,
   calendarRef,
   calendarDate,
   setCalendarDate,
-  handleSetCalendarDate
+  handleSetCalendarDate,
+  handleCopyMealLogFoods,
+  handleMoveMealLogFoods
 }: DateNavProps) {
   return (
     <div className="date-nav-container">
@@ -42,7 +46,7 @@ export default function DateNav({
         </button>
         <button
           className="date-nav-button open-calendar-button"
-          onClick={() => setCalendarOpen(prev => !prev)}
+          onClick={() => setCalendarOpenType(prev => prev === 'changeMealLog' ? '' : 'changeMealLog')}
         >
           {(currentMealLogDate && today) ? getDateLabel(currentMealLogDate, today) : ""}
         </button>
@@ -54,12 +58,14 @@ export default function DateNav({
         </button>
 
         <CalendarWindow
-          calendarOpen={calendarOpen}
-          setCalendarOpen={setCalendarOpen}
+          calendarOpenType={calendarOpenType}
+          setCalendarOpenType={setCalendarOpenType}
           calendarRef={calendarRef}
           calendarDate={calendarDate}
           setCalendarDate={setCalendarDate}
           handleSetCalendarDate={handleSetCalendarDate}
+          handleCopyMealLogFoods={handleCopyMealLogFoods}
+          handleMoveMealLogFoods={handleMoveMealLogFoods}
         />
       </nav>
     </div>

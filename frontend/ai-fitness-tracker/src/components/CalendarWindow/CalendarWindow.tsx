@@ -9,25 +9,29 @@ import './CalendarWindow.css';
 
 
 type CalendarWindowProps = {
-  calendarOpen: boolean;
-  setCalendarOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  calendarOpenType: string;
+  setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>;
   calendarRef: React.RefObject<HTMLDivElement | null>;
   calendarDate: Value;
   setCalendarDate: React.Dispatch<React.SetStateAction<Value>>;
   handleSetCalendarDate: (value: Value) => Promise<void>;
+  handleCopyMealLogFoods: () => Promise<void>;
+  handleMoveMealLogFoods: () => Promise<void>;
 };
 
 
 export default function CalendarWindow({
-  calendarOpen,
-  setCalendarOpen,
+  calendarOpenType,
+  setCalendarOpenType,
   calendarRef,
   calendarDate,
   setCalendarDate,
-  handleSetCalendarDate
+  handleSetCalendarDate,
+  handleCopyMealLogFoods,
+  handleMoveMealLogFoods
 }: CalendarWindowProps) {  
   return (
-    <div ref={calendarRef} className={`calendar ${calendarOpen && 'calendar-open'}`}>
+    <div ref={calendarRef} className={`calendar ${calendarOpenType && 'calendar-open'}`}>
       <Calendar
         onChange={(value) => {
           setCalendarDate(value);
@@ -42,14 +46,26 @@ export default function CalendarWindow({
       <nav className='calendar-confirmation-nav'>
         <button
           className='react-calendar__tile calendar-confirmation-nav-button'
-          onClick={() => setCalendarOpen(false)}
+          onClick={() => {
+            setCalendarOpenType('');
+            setCalendarDate(new Date());
+          }}
         >
           Cancel
         </button>
 
         <button
           className='react-calendar__tile calendar-confirmation-nav-button'
-          onClick={() => handleSetCalendarDate(calendarDate)}
+          onClick={() => {
+            if (calendarOpenType === 'changeMealLog') {
+              handleSetCalendarDate(calendarDate);
+            } else if (calendarOpenType === 'copyMealLogFoods') {
+              handleCopyMealLogFoods();
+            } else if (calendarOpenType === 'moveMealLogFoods') {
+              handleMoveMealLogFoods();
+            }
+            setCalendarDate(new Date());
+          }}
         >
           Ok
         </button>

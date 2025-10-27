@@ -21,14 +21,14 @@ type MealFoodProps = {
   setMealOptionsMenuOpenType: React.Dispatch<React.SetStateAction<string>>;
   mealFoodOptionsMenuOpenId: number | null;
   setMealFoodOptionsMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
+  setSelectedMealLogFoodIds: React.Dispatch<React.SetStateAction<number[]>>;
+  setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>;
   editingMealLogFoodId: number | null;
   setEditingMealLogFoodId: React.Dispatch<React.SetStateAction<number | null>>;
   setFoodsMenuOpenMealType: React.Dispatch<React.SetStateAction<string>>;
   setViewFoodMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
   mealFoodOptionsMenuRefs: React.RefObject<Record<number, HTMLDivElement | null>>;
   handleLoadFoodNutrients: (foodId: number) => Promise<void>;
-  handleCopyMealLogFood: (mealLogFoodId: number, targetMealLogId: number) => Promise<void>;
-  handleMoveMealLogFood: (mealLogFoodId: number, targetMealLogId: number) => Promise<void>;
   handleDeleteMealLogFood: (mealLogFoodId: number) => Promise<void>;
 };
 
@@ -45,14 +45,14 @@ export default function MealFood({
   setMealOptionsMenuOpenType,
   mealFoodOptionsMenuOpenId,
   setMealFoodOptionsMenuOpenId,
+  setSelectedMealLogFoodIds,
+  setCalendarOpenType,
   editingMealLogFoodId,
   setEditingMealLogFoodId,
   setFoodsMenuOpenMealType,
   setViewFoodMenuOpenId,
   mealFoodOptionsMenuRefs,
   handleLoadFoodNutrients,
-  handleCopyMealLogFood,
-  handleMoveMealLogFood,
   handleDeleteMealLogFood
 }: MealFoodProps) {
   return (
@@ -134,9 +134,9 @@ export default function MealFood({
         <MealFoodOptionsMenu
           mealLogFood={mealLogFood}
           mealFoodOptionsMenuOpenId={mealFoodOptionsMenuOpenId}
+          setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
+          setCalendarOpenType={setCalendarOpenType}
           mealFoodOptionsMenuRefs={mealFoodOptionsMenuRefs}
-          handleCopyMealLogFood={handleCopyMealLogFood}
-          handleMoveMealLogFood={handleMoveMealLogFood}
           handleDeleteMealLogFood={handleDeleteMealLogFood}
         />
       </div>

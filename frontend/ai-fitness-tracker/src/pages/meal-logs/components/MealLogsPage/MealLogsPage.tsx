@@ -66,7 +66,8 @@ export default function MealLogsPage() {
   const [mealFoodOptionsMenuOpenId, setMealFoodOptionsMenuOpenId] = useState<number | null>(null);
   const mealFoodOptionsMenuRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
-  const [calendarOpen, setCalendarOpen] = useState<boolean>(false);
+  const [selectedMealLogFoodIds, setSelectedMealLogFoodIds] = useState<number[]>([]);
+  const [calendarOpenType, setCalendarOpenType] = useState<string>('');
   const calendarRef = useRef<HTMLDivElement | null>(null);
   const [calendarDate, setCalendarDate] = useState<Value>(new Date());
 
@@ -136,8 +137,9 @@ export default function MealLogsPage() {
     setSelectMealMenuOpenType,
     selectServingSizeMenuOpen,
     setSelectServingSizeMenuOpen,
-    calendarOpen,
-    setCalendarOpen,
+    calendarOpenType,
+    setCalendarOpenType,
+    setCalendarDate,
     accountMenuRef,
     mealOptionsMenuRefs,
     mealFoodOptionsMenuRefs,
@@ -159,7 +161,7 @@ export default function MealLogsPage() {
     setMealLogFoods,
     setFoods,
     setBrandedFoods,
-    setCalendarOpen,
+    setCalendarOpenType,
     setCalendarDate
   );
 
@@ -180,14 +182,14 @@ export default function MealLogsPage() {
     handleAddFood,
     handleLoadFoodNutrients,
     handleUpdateFood,
-    handleCopyMeal,
-    handleCopyMealLogFood,
-    handleMoveMeal,
-    handleMoveMealLogFood,
+    handleCopyMealLogFoods,
+    handleMoveMealLogFoods,
     handleDeleteMeal,
     handleDeleteMealLogFood
   } = useMealLogActions(
     currentMealLogDate,
+    setCurrentMealLogDate,
+    calendarDate,
     mealLogs,
     setMealLogs,
     foodsMenuOpenMealType,
@@ -199,7 +201,9 @@ export default function MealLogsPage() {
     setFoodCaloriesFromMacros,
     mealLogFoods,
     setMealOptionsMenuOpenType,
-    setMealFoodOptionsMenuOpenId
+    setMealFoodOptionsMenuOpenId,
+    selectedMealLogFoodIds,
+    setCalendarOpenType
   );
 
 
@@ -229,12 +233,14 @@ export default function MealLogsPage() {
                 today={today}
                 handleChangeDate={handleChangeDate}
                 getDateLabel={getDateLabel}
-                calendarOpen={calendarOpen}
-                setCalendarOpen={setCalendarOpen}
+                calendarOpenType={calendarOpenType}
+                setCalendarOpenType={setCalendarOpenType}
                 calendarRef={calendarRef}
                 calendarDate={calendarDate}
                 setCalendarDate={setCalendarDate}
                 handleSetCalendarDate={handleSetCalendarDate}
+                handleCopyMealLogFoods={handleCopyMealLogFoods}
+                handleMoveMealLogFoods={handleMoveMealLogFoods}
               />
 
               <CaloriesHeader foodCalories={foodCalories} />
@@ -314,6 +320,8 @@ export default function MealLogsPage() {
                       setMealOptionsMenuOpenType={setMealOptionsMenuOpenType}
                       mealFoodOptionsMenuOpenId={mealFoodOptionsMenuOpenId}
                       setMealFoodOptionsMenuOpenId={setMealFoodOptionsMenuOpenId}
+                      setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
+                      setCalendarOpenType={setCalendarOpenType}
                       editingMealLogFoodId={editingMealLogFoodId}
                       setEditingMealLogFoodId={setEditingMealLogFoodId}
                       setFoodsMenuOpenMealType={setFoodsMenuOpenMealType}
@@ -325,10 +333,6 @@ export default function MealLogsPage() {
                       setFoodMenuInputFocused={setFoodMenuInputFocused}
                       mealOptionsMenuRefs={mealOptionsMenuRefs}
                       mealFoodOptionsMenuRefs={mealFoodOptionsMenuRefs}
-                      handleCopyMeal={handleCopyMeal}
-                      handleCopyMealLogFood={handleCopyMealLogFood}
-                      handleMoveMeal={handleMoveMeal}
-                      handleMoveMealLogFood={handleMoveMealLogFood}
                       handleDeleteMeal={handleDeleteMeal}
                       handleDeleteMealLogFood={handleDeleteMealLogFood}
                       handleLoadFoodNutrients={handleLoadFoodNutrients}

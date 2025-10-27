@@ -1,3 +1,4 @@
+import { type MealLog, type MealLogFood } from '../../types/meal-logs';
 import copyIcon from '../../../../assets/copy-icon.svg';
 import moveIcon from '../../../../assets/move-icon.svg';
 import deleteIcon from '../../../../assets/delete-icon.svg';
@@ -7,8 +8,11 @@ type MealOptionsMenuProps = {
   mealType: string;
   mealOptionsMenuOpenType: string;
   mealOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
-  handleCopyMeal: (mealType: string, targetMealLogId: number) => Promise<void>;
-  handleMoveMeal: (mealType: string, targetMealLogId: number) => Promise<void>;
+  mealLogs: Record<string, MealLog>;
+  mealLogFoods: Record<number, MealLogFood[]>;
+  currentMealLogDate: string | null;
+  setSelectedMealLogFoodIds: React.Dispatch<React.SetStateAction<number[]>>;
+  setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>;
   handleDeleteMeal: (mealType: string) => Promise<void>;
 };
 
@@ -17,8 +21,11 @@ export default function MealOptionsMenu({
   mealType,
   mealOptionsMenuOpenType,
   mealOptionsMenuRefs,
-  handleCopyMeal,
-  handleMoveMeal,
+  mealLogs,
+  mealLogFoods,
+  currentMealLogDate,
+  setSelectedMealLogFoodIds,
+  setCalendarOpenType,
   handleDeleteMeal
 }: MealOptionsMenuProps) {
   return (
@@ -35,8 +42,19 @@ export default function MealOptionsMenu({
         className="meal-options-menu-button"
         onClick={(e) => {
           e.stopPropagation();
-          const tomorrowMealLogId = 28;
-          handleCopyMeal(mealType, tomorrowMealLogId);
+          if (!currentMealLogDate) {
+            return;
+          }
+          const currentMealLogId = mealLogs[currentMealLogDate].id;
+          const currentMealLogFoods = mealLogFoods[currentMealLogId];
+          const mealLogFoodsInMealType = currentMealLogFoods.filter(
+            (mealLogFood: MealLogFood) => mealLogFood.meal_type === mealType
+          );
+          const mealLogFoodIdsInMealType = mealLogFoodsInMealType.map(
+            (mealLogFood: MealLogFood) => mealLogFood.id
+          );
+          setSelectedMealLogFoodIds(mealLogFoodIdsInMealType);
+          setCalendarOpenType('copyMealLogFoods');
         }}
       >
         <img className="button-link-image" src={copyIcon} />
@@ -47,8 +65,19 @@ export default function MealOptionsMenu({
         className="meal-options-menu-button"
         onClick={(e) => {
           e.stopPropagation();
-          const tomorrowMealLogId = 28;
-          handleMoveMeal(mealType, tomorrowMealLogId);
+          if (!currentMealLogDate) {
+            return;
+          }
+          const currentMealLogId = mealLogs[currentMealLogDate].id;
+          const currentMealLogFoods = mealLogFoods[currentMealLogId];
+          const mealLogFoodsInMealType = currentMealLogFoods.filter(
+            (mealLogFood: MealLogFood) => mealLogFood.meal_type === mealType
+          );
+          const mealLogFoodIdsInMealType = mealLogFoodsInMealType.map(
+            (mealLogFood: MealLogFood) => mealLogFood.id
+          );
+          setSelectedMealLogFoodIds(mealLogFoodIdsInMealType);
+          setCalendarOpenType('moveMealLogFoods');
         }}
       >
         <img className="button-link-image" src={moveIcon} />

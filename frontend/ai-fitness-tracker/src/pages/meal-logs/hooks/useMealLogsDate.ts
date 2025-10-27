@@ -19,7 +19,7 @@ const useMealLogsDate = (
   setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
   setFoods: React.Dispatch<React.SetStateAction<Record<number, Food>>>,
   setBrandedFoods: React.Dispatch<React.SetStateAction<Record<number, BrandedFood>>>,
-  setCalendarOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>,
   setCalendarDate: React.Dispatch<React.SetStateAction<Value>>
 ) => {
   const { accessToken, setAccessToken } = useAuth();
@@ -142,7 +142,7 @@ const handleSetCalendarDate = useCallback(async (value: Value) => {
         return;
       }
 
-      setCalendarOpen(false);
+      setCalendarOpenType('');
 
       const newDate = selectedDate.toISOString().split('T')[0];
       setCurrentMealLogDate(newDate);
@@ -179,7 +179,7 @@ const handleSetCalendarDate = useCallback(async (value: Value) => {
     setMealLogFoods,
     setFoods,
     setBrandedFoods,
-    setCalendarOpen,
+    setCalendarOpenType,
     setCalendarDate
   ])
 
