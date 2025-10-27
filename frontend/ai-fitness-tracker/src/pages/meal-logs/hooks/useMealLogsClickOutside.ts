@@ -17,12 +17,15 @@ const useMealLogsClickOutside = (
   setSelectMealMenuOpenType: React.Dispatch<React.SetStateAction<string>>,
   selectServingSizeMenuOpen: boolean,
   setSelectServingSizeMenuOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  calendarOpen: boolean,
+  setCalendarOpen: React.Dispatch<React.SetStateAction<boolean>>,
   accountMenuRef: React.RefObject<HTMLDivElement | null>,
   mealOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>,
   mealFoodOptionsMenuRefs: React.RefObject<Record<number, HTMLDivElement | null>>,
   foodsMenuRef: React.RefObject<HTMLDivElement | null>,
   selectMealMenuRef: React.RefObject<HTMLDivElement | null>,
   selectServingSizeMenuRef: React.RefObject<HTMLDivElement | null>,
+  calendarRef: React.RefObject<HTMLDivElement | null>
 ) => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -94,6 +97,16 @@ const useMealLogsClickOutside = (
       ) {
         setSelectServingSizeMenuOpen(false);
       }
+
+      if (
+        calendarOpen &&
+        calendarRef.current &&
+        target instanceof Node &&
+        !calendarRef.current.contains(target) &&
+        !(target instanceof HTMLElement && target.classList.contains('open-calendar-button'))
+      ) {
+        setCalendarOpen(false);
+      }
     }
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -114,12 +127,15 @@ const useMealLogsClickOutside = (
     setSelectMealMenuOpenType,
     selectServingSizeMenuOpen,
     setSelectServingSizeMenuOpen,
+    calendarOpen,
+    setCalendarOpen,
     accountMenuRef,
     mealOptionsMenuRefs,
     mealFoodOptionsMenuRefs,
     foodsMenuRef,
     selectMealMenuRef,
-    selectServingSizeMenuRef
+    selectServingSizeMenuRef,
+    calendarRef
   ]);
 };
 

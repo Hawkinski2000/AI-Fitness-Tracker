@@ -39,6 +39,7 @@
 
 @media (max-width: 500px) {
   .calories-header {
+    width: calc(100vw - 50px - 2rem);
     padding: 1rem;
   }
 

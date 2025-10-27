@@ -41,3 +41,10 @@
 .meal-log-food-options-button:hover {
   background-color: #8085a6;
 }
+
+@media (max-width: 500px) {
+  .meal-log-food-text,
+  .meal-log-food-serving-text {
+    font-size: 14px;
+  }
+}

@@ -188,3 +188,23 @@
 .search-results-page-nav-button-active {
   background-color: #8085a6;
 }
+
+@media (max-width: 500px) {
+  .foods-menu {
+    width: calc(100vw - 50px);
+    left: 50px;
+  }
+
+  .foods-menu-open {
+    height: calc(100vh - 100px);
+  }
+
+  .food-menu-results {
+    width: 95%;
+  }
+
+  .foods-menu-close-button {
+    right: 0.5rem;
+    top: calc(100px + 0.5rem);
+  }
+}

@@ -7,6 +7,7 @@ import {
   type FoodNutrient,
   type Nutrient
 } from "../../types/meal-logs";
+import { type Value } from 'react-calendar/dist/shared/types.js';
 import useInitializeMealLogsPage from "../../hooks/useInitializeMealLogsPage";
 import useMealLogsCaloriesHeader from "../../hooks/useMealLogsCaloriesHeader";
 import useMealLogsClickOutside from "../../hooks/useMealLogsClickOutside";
@@ -64,6 +65,10 @@ export default function MealLogsPage() {
 
   const [mealFoodOptionsMenuOpenId, setMealFoodOptionsMenuOpenId] = useState<number | null>(null);
   const mealFoodOptionsMenuRefs = useRef<Record<number, HTMLDivElement | null>>({});
+
+  const [calendarOpen, setCalendarOpen] = useState<boolean>(false);
+  const calendarRef = useRef<HTMLDivElement | null>(null);
+  const [calendarDate, setCalendarDate] = useState<Value>(new Date());
 
 // ---------------------------------------------------------------------------
 
@@ -131,17 +136,21 @@ export default function MealLogsPage() {
     setSelectMealMenuOpenType,
     selectServingSizeMenuOpen,
     setSelectServingSizeMenuOpen,
+    calendarOpen,
+    setCalendarOpen,
     accountMenuRef,
     mealOptionsMenuRefs,
     mealFoodOptionsMenuRefs,
     foodsMenuRef,
     selectMealMenuRef,
-    selectServingSizeMenuRef
+    selectServingSizeMenuRef,
+    calendarRef
   );
 
   const {
     getDateLabel,
-    handleChangeDate
+    handleChangeDate,
+    handleSetCalendarDate
   } = useMealLogsDate(
     currentMealLogDate,
     setCurrentMealLogDate,
@@ -149,7 +158,9 @@ export default function MealLogsPage() {
     setMealLogs,
     setMealLogFoods,
     setFoods,
-    setBrandedFoods
+    setBrandedFoods,
+    setCalendarOpen,
+    setCalendarDate
   );
 
   const {
@@ -218,6 +229,12 @@ export default function MealLogsPage() {
                 today={today}
                 handleChangeDate={handleChangeDate}
                 getDateLabel={getDateLabel}
+                calendarOpen={calendarOpen}
+                setCalendarOpen={setCalendarOpen}
+                calendarRef={calendarRef}
+                calendarDate={calendarDate}
+                setCalendarDate={setCalendarDate}
+                handleSetCalendarDate={handleSetCalendarDate}
               />
 
               <CaloriesHeader foodCalories={foodCalories} />

@@ -5,6 +5,7 @@ import {
   type Food,
   type BrandedFood
 } from "../types/meal-logs";
+import { type Value } from 'react-calendar/dist/shared/types.js';
 import { useAuth } from "../../../context/auth/useAuth";
 import { refreshAccessToken, isTokenExpired } from "../../../utils/auth";
 import { loadMealLog } from "../../../utils/meal-logs";
@@ -17,7 +18,9 @@ const useMealLogsDate = (
   setMealLogs: React.Dispatch<React.SetStateAction<Record<string, MealLog>>>,
   setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
   setFoods: React.Dispatch<React.SetStateAction<Record<number, Food>>>,
-  setBrandedFoods: React.Dispatch<React.SetStateAction<Record<number, BrandedFood>>>
+  setBrandedFoods: React.Dispatch<React.SetStateAction<Record<number, BrandedFood>>>,
+  setCalendarOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  setCalendarDate: React.Dispatch<React.SetStateAction<Value>>
 ) => {
   const { accessToken, setAccessToken } = useAuth();
 
@@ -108,10 +111,83 @@ const useMealLogsDate = (
     setBrandedFoods
   ])
 
+// ---------------------------------------------------------------------------
+  
+const handleSetCalendarDate = useCallback(async (value: Value) => {
+    try {
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();  
+        setAccessToken(token);
+      }
+      if (!token) {
+        throw new Error("No access token");
+      }
+
+      if (!currentMealLogDate) {
+        return;
+      }
+
+      setCalendarDate(value);
+
+      let selectedDate: Value;
+
+      if (Array.isArray(value)) {
+        selectedDate = value[0];
+      } else {
+        selectedDate = value;
+      }
+
+      if (!selectedDate) {
+        return;
+      }
+
+      setCalendarOpen(false);
+
+      const newDate = selectedDate.toISOString().split('T')[0];
+      setCurrentMealLogDate(newDate);
+
+      if (mealLogs[newDate]) {
+        return;
+      }
+      
+      await loadMealLog(
+        newDate,
+        setMealLogs,
+        setMealLogFoods,
+        setFoods,
+        setBrandedFoods,
+        token,
+        [
+          "mealLogFoods",
+          "mealLogFoods.food",
+          "mealLogFoods.brandedFood"
+        ]
+      );
+    
+    } catch (err) {
+      console.error(err);
+      setAccessToken(null);
+    }
+  }, [
+    accessToken,
+    setAccessToken,
+    currentMealLogDate,
+    setCurrentMealLogDate,
+    mealLogs,
+    setMealLogs,
+    setMealLogFoods,
+    setFoods,
+    setBrandedFoods,
+    setCalendarOpen,
+    setCalendarDate
+  ])
+
 
   return {
     getDateLabel,
-    handleChangeDate
+    handleChangeDate,
+    handleSetCalendarDate
   }
 };
 

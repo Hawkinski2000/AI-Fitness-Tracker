@@ -107,3 +107,17 @@
   top: 2.5rem;
   right: 0;
 }
+
+@media (max-width: 500px) {
+  .view-food-menu-content {
+    font-size: 14px;
+  }
+
+  .view-food-menu-content-heading {
+    font-size: 16px;
+  }
+
+  .view-food-menu-input {
+    padding-left: 0.25rem;
+  }
+}

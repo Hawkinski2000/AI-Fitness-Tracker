@@ -29,7 +29,7 @@
 }
 
 .meals-container {
-  width: calc(100vw - 100px);;
+  width: calc(100vw - 100px);
   position: relative;
   top: calc(125px + 2rem);
   padding-bottom: 50px;
@@ -110,6 +110,10 @@
 @media (max-width: 500px) {
   .meal-logs-page-main {
     margin-left: 50px;
+    width: calc(100vw - 50px);
+  }
+
+  .meals-container {
     width: calc(100vw - 50px);
   }
 }
