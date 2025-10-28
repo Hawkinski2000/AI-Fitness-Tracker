@@ -5,6 +5,7 @@ import {
   type BrandedFood,
   type FoodNutrient,
 } from "../../types/meal-logs";
+import type { Value } from "react-calendar/dist/shared/types.js";
 import MealSectionHeader from "../MealSectionHeader/MealSectionHeader";
 import MealSectionFoods from "../MealSectionFoods/MealSectionFoods";
 import AddFoodButton from "../AddFoodButton/AddFoodButton";
@@ -13,7 +14,7 @@ import './MealSection.css';
 
 type MealSectionProps = {
   mealType: string;
-  currentMealLogDate: string | null;
+  currentMealLogDate: Value;
   mealLogs: Record<string, MealLog>;
   mealLogFoods: Record<number, MealLogFood[]>;
   foods: Record<number, Food>;

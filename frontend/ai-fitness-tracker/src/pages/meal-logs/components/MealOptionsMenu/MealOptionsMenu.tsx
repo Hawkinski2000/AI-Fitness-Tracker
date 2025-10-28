@@ -1,4 +1,6 @@
 import { type MealLog, type MealLogFood } from '../../types/meal-logs';
+import type { Value } from 'react-calendar/dist/shared/types.js';
+import { getDateKey } from '../../../../utils/dates';
 import copyIcon from '../../../../assets/copy-icon.svg';
 import moveIcon from '../../../../assets/move-icon.svg';
 import deleteIcon from '../../../../assets/delete-icon.svg';
@@ -10,7 +12,7 @@ type MealOptionsMenuProps = {
   mealOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
   mealLogs: Record<string, MealLog>;
   mealLogFoods: Record<number, MealLogFood[]>;
-  currentMealLogDate: string | null;
+  currentMealLogDate: Value;
   setSelectedMealLogFoodIds: React.Dispatch<React.SetStateAction<number[]>>;
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>;
   handleDeleteMeal: (mealType: string) => Promise<void>;
@@ -45,7 +47,11 @@ export default function MealOptionsMenu({
           if (!currentMealLogDate) {
             return;
           }
-          const currentMealLogId = mealLogs[currentMealLogDate].id;
+          const dateKey = getDateKey(currentMealLogDate);
+          if (!dateKey) {
+            return;
+          }
+          const currentMealLogId = mealLogs[dateKey].id;
           const currentMealLogFoods = mealLogFoods[currentMealLogId];
           const mealLogFoodsInMealType = currentMealLogFoods.filter(
             (mealLogFood: MealLogFood) => mealLogFood.meal_type === mealType
@@ -68,7 +74,11 @@ export default function MealOptionsMenu({
           if (!currentMealLogDate) {
             return;
           }
-          const currentMealLogId = mealLogs[currentMealLogDate].id;
+          const dateKey = getDateKey(currentMealLogDate);
+          if (!dateKey) {
+            return;
+          }
+          const currentMealLogId = mealLogs[dateKey].id;
           const currentMealLogFoods = mealLogFoods[currentMealLogId];
           const mealLogFoodsInMealType = currentMealLogFoods.filter(
             (mealLogFood: MealLogFood) => mealLogFood.meal_type === mealType

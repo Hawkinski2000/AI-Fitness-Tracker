@@ -9,11 +9,12 @@ import { type Value } from 'react-calendar/dist/shared/types.js';
 import { useAuth } from "../../../context/auth/useAuth";
 import { refreshAccessToken, isTokenExpired } from "../../../utils/auth";
 import { loadMealLog } from "../../../utils/meal-logs";
+import { getDateKey, normalizeDate } from "../../../utils/dates";
 
 
 const useMealLogsDate = (
-  currentMealLogDate: string | null,
-  setCurrentMealLogDate: React.Dispatch<React.SetStateAction<string | null>>,
+  currentMealLogDate: Value,
+  setCurrentMealLogDate: React.Dispatch<React.SetStateAction<Value>>,
   mealLogs: Record<string, MealLog>,
   setMealLogs: React.Dispatch<React.SetStateAction<Record<string, MealLog>>>,
   setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
@@ -25,18 +26,33 @@ const useMealLogsDate = (
   const { accessToken, setAccessToken } = useAuth();
 
 
-  const getDateLabel = useCallback((currentMealLogDate: string | null, today: string | null) => {
+  const getDateLabel = useCallback((currentMealLogDate: Value, today: Value) => {
     if (!currentMealLogDate || !today) {
       return "";
     }
+    
+    let mealLogDate: Value;
+    if (Array.isArray(currentMealLogDate)) {
+      mealLogDate = currentMealLogDate[0];
+    } else {
+      mealLogDate = currentMealLogDate;
+    }
+    if (!mealLogDate) {
+      return;
+    }
 
-    const mealLogDate = new Date(currentMealLogDate);
-    const todayDate = new Date(today);
-    mealLogDate.setHours(0, 0, 0, 0);
-    todayDate.setHours(0, 0, 0, 0);
+    let todayDate: Value;
+    if (Array.isArray(today)) {
+      todayDate = today[0];
+    } else {
+      todayDate = today;
+    }
+    if (!todayDate) {
+      return;
+    }
+
     const differenceTime = mealLogDate.getTime() - todayDate.getTime();
     const differenceInDays = Math.round(differenceTime / (1000 * 60 * 60 * 24));
-
     if (differenceInDays === 0) {
       return 'Today';
     } else if (differenceInDays === 1) {
@@ -44,7 +60,10 @@ const useMealLogsDate = (
     } else if (differenceInDays === -1) {
       return 'Yesterday';
     }
-    return currentMealLogDate.split("T")[0];
+    const year = mealLogDate.getFullYear();
+    const month = String(mealLogDate.getMonth() + 1).padStart(2, '0');
+    const day = String(mealLogDate.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }, []);
 
 // ---------------------------------------------------------------------------
@@ -72,17 +91,35 @@ const useMealLogsDate = (
         dayDifference += 1;
       }
 
-      const prevDate = new Date(currentMealLogDate);
-      prevDate.setDate(prevDate.getDate() + dayDifference);
-      const newDate = prevDate.toISOString().split('T')[0];
-      setCurrentMealLogDate(newDate);
+      let selectedDate: Value;
+      if (Array.isArray(currentMealLogDate)) {
+        selectedDate = currentMealLogDate[0];
+      } else {
+        selectedDate = currentMealLogDate;
+      }
+      if (!selectedDate) {
+        return;
+      }
 
-      if (mealLogs[newDate]) {
+      const newDate = new Date(selectedDate);
+      newDate.setDate(newDate.getDate() + dayDifference);
+      const normalizedDate = normalizeDate(newDate);
+      if (!normalizedDate) {
+        return;
+      }
+      setCurrentMealLogDate(normalizedDate);
+
+      const dateKey = getDateKey(normalizedDate);
+      if (!dateKey) {
+        return;
+      }
+
+      if (mealLogs[dateKey]) {
         return;
       }
       
       await loadMealLog(
-        newDate,
+        normalizedDate,
         setMealLogs,
         setMealLogFoods,
         setFoods,
@@ -124,35 +161,38 @@ const handleSetCalendarDate = useCallback(async (value: Value) => {
         throw new Error("No access token");
       }
 
-      if (!currentMealLogDate) {
-        return;
-      }
-
       setCalendarDate(value);
 
       let selectedDate: Value;
-
       if (Array.isArray(value)) {
         selectedDate = value[0];
       } else {
         selectedDate = value;
       }
-
       if (!selectedDate) {
         return;
       }
 
       setCalendarOpenType('');
 
-      const newDate = selectedDate.toISOString().split('T')[0];
-      setCurrentMealLogDate(newDate);
-
-      if (mealLogs[newDate]) {
+      const normalizedDate = normalizeDate(selectedDate);
+      if (!normalizedDate) {
         return;
       }
       
+      setCurrentMealLogDate(normalizedDate);
+
+      const dateKey = getDateKey(normalizedDate);
+      if (!dateKey) {
+        return;
+      }
+
+      if (mealLogs[dateKey]) {
+        return;
+      }
+
       await loadMealLog(
-        newDate,
+        normalizedDate,
         setMealLogs,
         setMealLogFoods,
         setFoods,
@@ -172,7 +212,6 @@ const handleSetCalendarDate = useCallback(async (value: Value) => {
   }, [
     accessToken,
     setAccessToken,
-    currentMealLogDate,
     setCurrentMealLogDate,
     mealLogs,
     setMealLogs,

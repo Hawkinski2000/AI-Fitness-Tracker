@@ -14,6 +14,7 @@ type CalendarWindowProps = {
   calendarRef: React.RefObject<HTMLDivElement | null>;
   calendarDate: Value;
   setCalendarDate: React.Dispatch<React.SetStateAction<Value>>;
+  currentMealLogDate: Value;
   handleSetCalendarDate: (value: Value) => Promise<void>;
   handleCopyMealLogFoods: () => Promise<void>;
   handleMoveMealLogFoods: () => Promise<void>;
@@ -26,6 +27,7 @@ export default function CalendarWindow({
   calendarRef,
   calendarDate,
   setCalendarDate,
+  currentMealLogDate,
   handleSetCalendarDate,
   handleCopyMealLogFoods,
   handleMoveMealLogFoods
@@ -48,7 +50,9 @@ export default function CalendarWindow({
           className='react-calendar__tile calendar-confirmation-nav-button'
           onClick={() => {
             setCalendarOpenType('');
-            setCalendarDate(new Date());
+            if (currentMealLogDate) {
+              setCalendarDate(currentMealLogDate);
+            }
           }}
         >
           Cancel
@@ -64,7 +68,9 @@ export default function CalendarWindow({
             } else if (calendarOpenType === 'moveMealLogFoods') {
               handleMoveMealLogFoods();
             }
-            setCalendarDate(new Date());
+            if (currentMealLogDate) {
+              setCalendarDate(currentMealLogDate);
+            }
           }}
         >
           Ok

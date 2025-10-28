@@ -6,10 +6,10 @@ import './DateNav.css';
 
 
 type DateNavProps = {
-  currentMealLogDate: string | null;
-  today: string | null;
+  currentMealLogDate: Value;
+  today: Value;
   handleChangeDate: (direction: string) => Promise<void>;
-  getDateLabel: (currentMealLogDate: string | null, today: string | null) => string;
+  getDateLabel: (currentMealLogDate: Value, today: Value) => string | undefined;
   calendarOpenType: string;
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>;
   calendarRef: React.RefObject<HTMLDivElement | null>;
@@ -46,7 +46,12 @@ export default function DateNav({
         </button>
         <button
           className="date-nav-button open-calendar-button"
-          onClick={() => setCalendarOpenType(prev => prev === 'changeMealLog' ? '' : 'changeMealLog')}
+          onClick={() => {
+            if (currentMealLogDate) {
+              setCalendarDate(currentMealLogDate);
+            }
+            setCalendarOpenType(prev => prev === 'changeMealLog' ? '' : 'changeMealLog');
+          }}
         >
           {(currentMealLogDate && today) ? getDateLabel(currentMealLogDate, today) : ""}
         </button>
@@ -63,6 +68,7 @@ export default function DateNav({
           calendarRef={calendarRef}
           calendarDate={calendarDate}
           setCalendarDate={setCalendarDate}
+          currentMealLogDate={currentMealLogDate}
           handleSetCalendarDate={handleSetCalendarDate}
           handleCopyMealLogFoods={handleCopyMealLogFoods}
           handleMoveMealLogFoods={handleMoveMealLogFoods}

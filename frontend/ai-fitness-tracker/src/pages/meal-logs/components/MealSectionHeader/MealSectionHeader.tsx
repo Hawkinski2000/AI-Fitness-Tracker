@@ -1,5 +1,6 @@
 import MealOptionsMenu from "../MealOptionsMenu/MealOptionsMenu";
 import { type MealLog, type MealLogFood } from '../../types/meal-logs';
+import type { Value } from "react-calendar/dist/shared/types.js";
 import { capitalizeFirstLetter } from "../../../../utils/app";
 import dotsIcon from '../../../../assets/dots-icon.svg';
 import './MealSectionHeader.css';
@@ -12,7 +13,7 @@ type MealSectionHeaderProps = {
   mealOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
   mealLogs: Record<string, MealLog>;
   mealLogFoods: Record<number, MealLogFood[]>;
-  currentMealLogDate: string | null;
+  currentMealLogDate: Value;
   setSelectedMealLogFoodIds: React.Dispatch<React.SetStateAction<number[]>>;
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>;
   handleDeleteMeal: (mealType: string) => Promise<void>;

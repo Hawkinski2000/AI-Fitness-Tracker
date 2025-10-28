@@ -21,6 +21,7 @@ const useMealLogsClickOutside = (
   calendarOpenType: string,
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>,
   setCalendarDate: React.Dispatch<React.SetStateAction<Value>>,
+  currentMealLogDate: Value,
   accountMenuRef: React.RefObject<HTMLDivElement | null>,
   mealOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>,
   mealFoodOptionsMenuRefs: React.RefObject<Record<number, HTMLDivElement | null>>,
@@ -108,7 +109,9 @@ const useMealLogsClickOutside = (
         !(target instanceof HTMLElement && target.classList.contains('open-calendar-button'))
       ) {
         setCalendarOpenType('');
-        setCalendarDate(new Date());
+        if (currentMealLogDate) {
+          setCalendarDate(currentMealLogDate);
+        }
       }
     }
 
@@ -133,6 +136,7 @@ const useMealLogsClickOutside = (
     calendarOpenType,
     setCalendarOpenType,
     setCalendarDate,
+    currentMealLogDate,
     accountMenuRef,
     mealOptionsMenuRefs,
     mealFoodOptionsMenuRefs,

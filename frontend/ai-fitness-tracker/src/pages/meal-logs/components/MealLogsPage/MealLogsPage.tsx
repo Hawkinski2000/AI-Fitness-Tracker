@@ -33,8 +33,8 @@ export default function MealLogsPage() {
 
 // ---------------------------------------------------------------------------
 
-  const [currentMealLogDate, setCurrentMealLogDate] = useState<string | null>(null);
-  const [today, setToday] = useState<string | null>(null);
+  const [currentMealLogDate, setCurrentMealLogDate] = useState<Value>(new Date());
+  const [today, setToday] = useState<Value>(new Date());
   
 // ---------------------------------------------------------------------------
 
@@ -140,6 +140,7 @@ export default function MealLogsPage() {
     calendarOpenType,
     setCalendarOpenType,
     setCalendarDate,
+    currentMealLogDate,
     accountMenuRef,
     mealOptionsMenuRefs,
     mealFoodOptionsMenuRefs,

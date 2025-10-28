@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
-import { type UserType } from "../../../types/app"
+import { type UserType } from "../../../types/app";
 import {
   type MealLog,
   type MealLogFood,
   type Food,
   type BrandedFood
 } from "../types/meal-logs";
+import { type Value } from "react-calendar/dist/shared/types.js";
 import { useAuth } from "../../../context/auth/useAuth";
 import { refreshAccessToken, getUserFromToken } from "../../../utils/auth";
 import { loadMealLog } from "../../../utils/meal-logs";
@@ -15,8 +16,8 @@ import { loadMealLog } from "../../../utils/meal-logs";
 const useInitializeMealLogsPage = (
   setTokensRemaining: React.Dispatch<React.SetStateAction<number>>,
   setMealLogs: React.Dispatch<React.SetStateAction<Record<string, MealLog>>>,
-  setToday: React.Dispatch<React.SetStateAction<string | null>>,
-  setCurrentMealLogDate: React.Dispatch<React.SetStateAction<string | null>>,
+  setToday: React.Dispatch<React.SetStateAction<Value>>,
+  setCurrentMealLogDate: React.Dispatch<React.SetStateAction<Value>>,
   setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
   setFoods: React.Dispatch<React.SetStateAction<Record<number, Food>>>,
   setBrandedFoods: React.Dispatch<React.SetStateAction<Record<number, BrandedFood>>>
@@ -46,12 +47,15 @@ const useInitializeMealLogsPage = (
           Math.min(userData.input_tokens_remaining, userData.output_tokens_remaining)
         )
 
-        const today = new Date().toISOString().split('T')[0];
-        setToday(today);
-        setCurrentMealLogDate(today);
+        const today = new Date();
+        const normalizedToday = new Date(
+          today.getFullYear(), today.getMonth(), today.getDate()
+        );
+        setToday(normalizedToday);
+        setCurrentMealLogDate(new Date(normalizedToday));
 
         await loadMealLog(
-          today,
+          normalizedToday,
           setMealLogs,
           setMealLogFoods,
           setFoods,

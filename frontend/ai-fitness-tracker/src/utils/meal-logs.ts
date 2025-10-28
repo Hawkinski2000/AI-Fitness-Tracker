@@ -9,11 +9,13 @@ import {
   type FoodNutrientResponse,
   type Nutrient
 } from "../pages/meal-logs/types/meal-logs";
+import { type Value } from "react-calendar/dist/shared/types.js";
 import { API_BASE_URL } from '../config/api';
+import { getDateKey } from "../utils/dates";
 
 
 export const loadMealLog = async (
-  date: string,
+  logDate: Value,
   setMealLogs: React.Dispatch<React.SetStateAction<Record<string, MealLog>>>,
   setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
   setFoods: React.Dispatch<React.SetStateAction<Record<number, Food>>>,
@@ -21,6 +23,11 @@ export const loadMealLog = async (
   token: string,
   expand?: string[]
 ) => {
+  const date = getDateKey(logDate);
+  if (!date) {
+    return;
+  }
+
   const mealLogsResponse = await axios.get(`${API_BASE_URL}/meal-logs`,
     {
       params: {
@@ -45,7 +52,14 @@ export const loadMealLog = async (
   );
 
   if (mealLogsResponse.data.length === 0) {
-    setMealLogs({});
+    setMealLogs(prev => ({
+      ...prev,
+      [date]: {
+        id: 0,
+        log_date: date,
+        total_calories: 0
+      }
+    }));
     return null;
   }
 
@@ -54,9 +68,9 @@ export const loadMealLog = async (
   setMealLogs(prev => ({
     ...prev,
     [date]: {
-        id: mealLogsResponseObject.id,
-        log_date: mealLogsResponseObject.log_date,
-        total_calories: mealLogsResponseObject.total_calories
+      id: mealLogsResponseObject.id,
+      log_date: mealLogsResponseObject.log_date,
+      total_calories: mealLogsResponseObject.total_calories
     }
   }));
 
@@ -96,12 +110,19 @@ export const loadMealLog = async (
   return mealLogsResponseObject;
 };
 
-export const createMealLog = async (logDate: string,
-                                    setMealLogs: React.Dispatch<React.SetStateAction<Record<string, MealLog>>>,
-                                    token: string) => {
+export const createMealLog = async (
+  logDate: Value,
+  setMealLogs: React.Dispatch<React.SetStateAction<Record<string, MealLog>>>,
+  token: string
+) => {
+  const date = getDateKey(logDate);
+  if (!date) {
+    return;
+  }
+
   const mealLogResponse = await axios.post(`${API_BASE_URL}/meal-logs`,
     {
-      log_date: logDate
+      log_date: date
     },
     {
       headers: {
@@ -113,7 +134,7 @@ export const createMealLog = async (logDate: string,
 
   setMealLogs(prev => ({
     ...prev,
-    [logDate]: mealLog
+    [date]: mealLog
   }));
 
   return mealLog;

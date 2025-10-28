@@ -7,14 +7,16 @@ import {
   type FoodNutrient,
   type Nutrient
 } from "../../types/meal-logs";
+import type { Value } from 'react-calendar/dist/shared/types.js';
 import MacroDoughnutChart from "../MacroDoughnutChart/MacroDoughnutChart";
+import { getDateKey } from '../../../../utils/dates';
 import backIcon from './assets/back-icon.svg';
 import checkIcon from './assets/check-icon.svg';
 import './ViewFoodMenu.css';
 
 
 type ViewFoodMenuProps = {
-  currentMealLogDate: string | null;
+  currentMealLogDate: Value;
   mealLogs: Record<string, MealLog>;
   mealLogFoods: Record<number, MealLogFood[]>;
   foods: Record<number, Food>;
@@ -88,6 +90,8 @@ export default function ViewFoodMenu({
   handleUpdateFood,
   handleAddFood
 }: ViewFoodMenuProps) {
+  const dateKey = getDateKey(currentMealLogDate);
+
   return (
     <div
       className={`foods-menu ${foodsMenuOpenMealType && 'foods-menu-open'}`}
@@ -112,9 +116,9 @@ export default function ViewFoodMenu({
             className="view-food-menu-text-button"
             onClick={(e) => {
               e.stopPropagation();
-              if (editingMealLogFoodId && currentMealLogDate) {
+              if (editingMealLogFoodId && currentMealLogDate && dateKey) {
                 handleUpdateFood(editingMealLogFoodId,
-                                 mealLogs[currentMealLogDate].id,
+                                 mealLogs[dateKey].id,
                                  numServings,
                                  servingSize);
                 setEditingMealLogFoodId(null);
@@ -144,10 +148,10 @@ export default function ViewFoodMenu({
             <div className="view-food-menu-section-content">
               <h3 className="view-food-menu-content-heading">
                 {
-                  editingMealLogFoodId && currentMealLogDate
+                  editingMealLogFoodId && currentMealLogDate && dateKey
                     ? (
                         foods[
-                          mealLogFoods[mealLogs[currentMealLogDate].id]
+                          mealLogFoods[mealLogs[dateKey].id]
                             ?.find((mealLogFood: MealLogFood) =>
                               mealLogFood.id === editingMealLogFoodId)
                             ?.food_id ?? -1
@@ -354,9 +358,10 @@ export default function ViewFoodMenu({
                           (
                             editingMealLogFoodId &&
                             currentMealLogDate &&
-                            mealLogFoods[mealLogs[currentMealLogDate].id]
+                            dateKey &&
+                            mealLogFoods[mealLogs[dateKey].id]
                               ? (
-                                  foods[mealLogFoods[mealLogs[currentMealLogDate].id]
+                                  foods[mealLogFoods[mealLogs[dateKey].id]
                                     .find((mealLogFood: MealLogFood) =>
                                       mealLogFood.id === editingMealLogFoodId
                                     )?.food_id ?? -1]

@@ -19,11 +19,12 @@ import {
   moveMealLogFoods,
   deleteMealLogFoods
 } from "../../../utils/meal-logs";
+import { getDateKey, normalizeDate } from "../../../utils/dates";
 
 
 const useMealLogActions = (
-  currentMealLogDate: string | null,
-  setCurrentMealLogDate: React.Dispatch<React.SetStateAction<string | null>>,
+  currentMealLogDate: Value,
+  setCurrentMealLogDate: React.Dispatch<React.SetStateAction<Value>>,
   calendarDate: Value,
   mealLogs: Record<string, MealLog>,
   setMealLogs: React.Dispatch<React.SetStateAction<Record<string, MealLog>>>,
@@ -62,12 +63,17 @@ const useMealLogActions = (
         return;
       }
 
+      const dateKey = getDateKey(currentMealLogDate);
+      if (!dateKey) {
+        return;
+      }
+
       let mealLog;
-      if (!mealLogs[currentMealLogDate]) {
+      if (!mealLogs[dateKey]) {
         mealLog = await createMealLog(currentMealLogDate, setMealLogs, token);
       }
       else {
-        mealLog = mealLogs[currentMealLogDate];
+        mealLog = mealLogs[dateKey];
       }
 
       const mealLogId = mealLog.id;
@@ -210,34 +216,43 @@ const handleCopyMealLogFoods = useCallback(async () => {
         return;
       }
 
-      let selectedDate: Value;
+      let targetDate: Value;
       
       if (Array.isArray(calendarDate)) {
-        selectedDate = calendarDate[0];
+        targetDate = calendarDate[0];
       } else {
-        selectedDate = calendarDate;
+        targetDate = calendarDate;
       }
 
-      if (!selectedDate) {
+      if (!targetDate) {
         return;
       }
 
       setCalendarOpenType('');
 
-      const targetDate = selectedDate.toISOString().split('T')[0];
-      setCurrentMealLogDate(targetDate);
+      const normalizedTargetDate = normalizeDate(targetDate);
+      if (!normalizedTargetDate) {
+        return;
+      }
+      
+      setCurrentMealLogDate(normalizedTargetDate);
+
+      const targetDateKey = getDateKey(normalizedTargetDate);
+      if (!targetDateKey) {
+        return;
+      }
 
       let targetMealLog;
-      if (!mealLogs[targetDate]) {
-        targetMealLog = await createMealLog(targetDate, setMealLogs, token);
+      if (!mealLogs[targetDateKey] || mealLogs[targetDateKey].id === 0) {
+        targetMealLog = await createMealLog(normalizedTargetDate, setMealLogs, token);
       }
       else {
-        targetMealLog = mealLogs[targetDate];
+        targetMealLog = mealLogs[targetDateKey];
       }
 
       const targetMealLogId = targetMealLog.id;
 
-      copyMealLogFoods(selectedMealLogFoodIds, targetMealLogId, setMealLogFoods, token);
+      await copyMealLogFoods(selectedMealLogFoodIds, targetMealLogId, setMealLogFoods, token);
 
     } catch (err) {
       console.error(err);
@@ -277,38 +292,50 @@ const handleMoveMealLogFoods = useCallback(async () => {
         return;
       }
 
-      const currentMealLog = mealLogs[currentMealLogDate];
+      const currentDateKey = getDateKey(currentMealLogDate);
+      if (!currentDateKey) {
+        return;
+      }
+
+      const currentMealLog = mealLogs[currentDateKey];
 
       const currentMealLogId = currentMealLog.id;
 
-      let selectedDate: Value;
-      
+      let targetDate: Value;
       if (Array.isArray(calendarDate)) {
-        selectedDate = calendarDate[0];
+        targetDate = calendarDate[0];
       } else {
-        selectedDate = calendarDate;
+        targetDate = calendarDate;
       }
-
-      if (!selectedDate) {
+      if (!targetDate) {
         return;
       }
 
       setCalendarOpenType('');
 
-      const targetDate = selectedDate.toISOString().split('T')[0];
-      setCurrentMealLogDate(targetDate);
+      const normalizedTargetDate = normalizeDate(targetDate);
+      if (!normalizedTargetDate) {
+        return;
+      }
+      
+      setCurrentMealLogDate(normalizedTargetDate);
+
+      const targetDateKey = getDateKey(normalizedTargetDate);
+      if (!targetDateKey) {
+        return;
+      }
 
       let targetMealLog;
-      if (!mealLogs[targetDate]) {
-        targetMealLog = await createMealLog(targetDate, setMealLogs, token);
+      if (!mealLogs[targetDateKey] || mealLogs[targetDateKey].id === 0) {
+        targetMealLog = await createMealLog(normalizedTargetDate, setMealLogs, token);
       }
       else {
-        targetMealLog = mealLogs[targetDate];
+        targetMealLog = mealLogs[targetDateKey];
       }
 
       const targetMealLogId = targetMealLog.id;
 
-      moveMealLogFoods(currentMealLogId, selectedMealLogFoodIds, targetMealLogId, setMealLogFoods, token);
+      await moveMealLogFoods(currentMealLogId, selectedMealLogFoodIds, targetMealLogId, setMealLogFoods, token);
 
     } catch (err) {
       console.error(err);
@@ -348,7 +375,12 @@ const handleMoveMealLogFoods = useCallback(async () => {
         return;
       }
 
-      const currentMealLog = mealLogs[currentMealLogDate];
+      const currentDateKey = getDateKey(currentMealLogDate);
+      if (!currentDateKey) {
+        return;
+      }
+
+      const currentMealLog = mealLogs[currentDateKey];
 
       const currentMealLogId = currentMealLog.id;
 

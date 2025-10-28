@@ -5,12 +5,14 @@ import {
   type BrandedFood,
   type FoodNutrient,
 } from "../../types/meal-logs";
+import type { Value } from "react-calendar/dist/shared/types.js";
 import MealFood from "../MealFood/MealFood";
+import { getDateKey } from "../../../../utils/dates";
 
 
 type MealSectionFoodsProps = {
   mealType: string;
-  currentMealLogDate: string | null;
+  currentMealLogDate: Value;
   mealLogs: Record<string, MealLog>;
   mealLogFoods: Record<number, MealLogFood[]>;
   foods: Record<number, Food>;
@@ -58,12 +60,15 @@ export default function MealSectionFoods({
   handleLoadFoodNutrients,
   handleDeleteMealLogFood
 }: MealSectionFoodsProps) {
+  const dateKey = getDateKey(currentMealLogDate);
+
   return (
     <>
       {
         currentMealLogDate &&
-        mealLogs[currentMealLogDate] &&
-        mealLogFoods[mealLogs[currentMealLogDate].id]
+        dateKey &&
+        mealLogs[dateKey] &&
+        mealLogFoods[mealLogs[dateKey].id]
           ?.filter(mealLogFoodItem => mealLogFoodItem.meal_type === mealType)
           .map((mealLogFood: MealLogFood) => {
             return (
