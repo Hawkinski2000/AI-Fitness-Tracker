@@ -131,7 +131,14 @@ export default function FoodsMenu({
 
         {isSearching ? (
           <div className="food-menu-results-loading-container">
-            <PropagateLoader size={20} color="#00ffcc" />
+            <PropagateLoader
+              size={20}
+              cssOverride={{
+                alignItems: "center",
+                justifyContent: "center"
+              }}
+              color="#00ffcc"
+            />
           </div>
         ) : (
           <div className="food-menu-results">

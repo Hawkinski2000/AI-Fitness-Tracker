@@ -52,14 +52,7 @@ export const loadMealLog = async (
   );
 
   if (mealLogsResponse.data.length === 0) {
-    setMealLogs(prev => ({
-      ...prev,
-      [date]: {
-        id: 0,
-        log_date: date,
-        total_calories: 0
-      }
-    }));
+    setMealLogs({});
     return null;
   }
 

@@ -207,4 +207,11 @@
     right: 0.5rem;
     top: calc(100px + 0.5rem);
   }
+
+  .food-menu-results-loading-container {
+    height: calc(100vh - 150px);
+    width: calc(100vw - 50px);
+    top: 100px;
+    left: 50px;
+  }
 }

@@ -140,7 +140,14 @@ export default function ViewFoodMenu({
 
       {(viewFoodMenuOpenId && !foodCaloriesFromMacros[viewFoodMenuOpenId]) ? (
         <div className="food-menu-results-loading-container">
-          <PropagateLoader size={20} color="#00ffcc" />
+          <PropagateLoader
+            size={20}
+            cssOverride={{
+              alignItems: "center",
+              justifyContent: "center"
+            }}
+            color="#00ffcc"
+          />
         </div>
       ) : (
         <div className="view-food-menu-content">
@@ -368,8 +375,10 @@ export default function ViewFoodMenu({
                                     ?.calories ?? foodCaloriesFromMacros[viewFoodMenuOpenId]
                                 )
                               : (
-                                  foodSearchResults.find((food: Food) =>
-                                    food.id === viewFoodMenuOpenId
+                                  foodSearchResults.find((food: Food) => {
+                                    console.log(`food.id: ${food.id}\nfood.calories: ${food.calories}`)
+                                    return food.id === viewFoodMenuOpenId
+                                  }
                                   )?.calories ?? foodCaloriesFromMacros[viewFoodMenuOpenId]
                                 )
                           )

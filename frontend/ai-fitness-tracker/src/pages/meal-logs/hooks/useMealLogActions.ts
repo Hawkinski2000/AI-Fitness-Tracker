@@ -243,7 +243,7 @@ const handleCopyMealLogFoods = useCallback(async () => {
       }
 
       let targetMealLog;
-      if (!mealLogs[targetDateKey] || mealLogs[targetDateKey].id === 0) {
+      if (!mealLogs[targetDateKey]) {
         targetMealLog = await createMealLog(normalizedTargetDate, setMealLogs, token);
       }
       else {
@@ -326,7 +326,7 @@ const handleMoveMealLogFoods = useCallback(async () => {
       }
 
       let targetMealLog;
-      if (!mealLogs[targetDateKey] || mealLogs[targetDateKey].id === 0) {
+      if (!mealLogs[targetDateKey]) {
         targetMealLog = await createMealLog(normalizedTargetDate, setMealLogs, token);
       }
       else {
