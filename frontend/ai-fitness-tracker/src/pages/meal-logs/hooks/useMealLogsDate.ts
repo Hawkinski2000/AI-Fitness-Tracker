@@ -60,10 +60,10 @@ const useMealLogsDate = (
     } else if (differenceInDays === -1) {
       return 'Yesterday';
     }
-    const year = mealLogDate.getFullYear();
-    const month = String(mealLogDate.getMonth() + 1).padStart(2, '0');
-    const day = String(mealLogDate.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    const weekday = mealLogDate.toLocaleDateString('en-US', { weekday: 'long' });
+    const month = mealLogDate.toLocaleDateString('en-US', { month: 'short' });
+    const day = mealLogDate.toLocaleDateString('en-US', { day: 'numeric' });
+    return `${weekday}, ${month} ${day}`;
   }, []);
 
 // ---------------------------------------------------------------------------
