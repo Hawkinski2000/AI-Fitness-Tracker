@@ -57,7 +57,14 @@ export default function ConversationItem({
         {isReasoning ? (
           <>
             {item.content as string}
-            <PulseLoader size={5} color="#00ffcc" />
+            <PulseLoader 
+              size={5}
+              cssOverride={{
+                alignItems: "center",
+                justifyContent: "center"
+              }}
+              color="#00ffcc"
+            />
           </>
         ) : (
           formatted

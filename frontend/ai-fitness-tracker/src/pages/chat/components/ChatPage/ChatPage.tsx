@@ -44,6 +44,8 @@ export default function ChatPage() {
 
   const generatingMessageRef = useRef(false);
 
+// ---------------------------------------------------------------------------
+
   const {
     distanceFromBottom,
     setDistanceFromBottom,

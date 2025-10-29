@@ -105,6 +105,8 @@ def bulk_action_meal_log_foods(bulk_action: meal_log_food.MealLogFoodBulkAction,
                 user_id,
                 db
             )
+            
+        db.commit()
 
     if bulk_action.action == "move":
         original_meal_log_id = meal_log_food_rows[0].meal_log_id
@@ -112,6 +114,8 @@ def bulk_action_meal_log_foods(bulk_action: meal_log_food.MealLogFoodBulkAction,
 
         for row in meal_log_food_rows:
             row.meal_log_id = meal_log_id
+
+        db.commit()
 
         crud_meal_logs.recalculate_meal_log_calories(meal_log_id=original_meal_log_id, db=db)
         crud_meal_logs.recalculate_meal_log_nutrients(meal_log_id=original_meal_log_id, db=db)
@@ -122,12 +126,13 @@ def bulk_action_meal_log_foods(bulk_action: meal_log_food.MealLogFoodBulkAction,
     if bulk_action.action == "delete":
         for row in meal_log_food_rows:
             db.delete(row)
-
+        
         meal_log_id = meal_log_food_rows[0].meal_log_id
+
+        db.commit()
+
         crud_meal_logs.recalculate_meal_log_calories(meal_log_id=meal_log_id, db=db)
         crud_meal_logs.recalculate_meal_log_nutrients(meal_log_id=meal_log_id, db=db)
-    
-    db.commit()
 
 def get_meal_log_foods(meal_log_id: int, user_id: int, db: Session):
     meal_log_foods = (
