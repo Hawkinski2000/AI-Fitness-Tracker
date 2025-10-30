@@ -9,6 +9,7 @@ import deleteIcon from '../../../../assets/delete-icon.svg';
 type MealOptionsMenuProps = {
   mealType: string;
   mealOptionsMenuOpenType: string;
+  setMealOptionsMenuOpenType: React.Dispatch<React.SetStateAction<string>>;
   mealOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
   mealLogs: Record<string, MealLog>;
   mealLogFoods: Record<number, MealLogFood[]>;
@@ -22,6 +23,7 @@ type MealOptionsMenuProps = {
 export default function MealOptionsMenu({
   mealType,
   mealOptionsMenuOpenType,
+  setMealOptionsMenuOpenType,
   mealOptionsMenuRefs,
   mealLogs,
   mealLogFoods,
@@ -61,6 +63,7 @@ export default function MealOptionsMenu({
           );
           setSelectedMealLogFoodIds(mealLogFoodIdsInMealType);
           setCalendarOpenType('copyMealLogFoods');
+          setMealOptionsMenuOpenType('');
         }}
       >
         <img className="button-link-image" src={copyIcon} />
@@ -88,6 +91,7 @@ export default function MealOptionsMenu({
           );
           setSelectedMealLogFoodIds(mealLogFoodIdsInMealType);
           setCalendarOpenType('moveMealLogFoods');
+          setMealOptionsMenuOpenType('');
         }}
       >
         <img className="button-link-image" src={moveIcon} />
@@ -99,6 +103,7 @@ export default function MealOptionsMenu({
         onClick={(e) => {
           e.stopPropagation();
           handleDeleteMeal(mealType);
+          setMealOptionsMenuOpenType('');
         }}
       >
         <img className="button-link-image" src={deleteIcon} />

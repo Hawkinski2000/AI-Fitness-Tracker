@@ -33,13 +33,18 @@
   background-color: #2e2e5e;
 }
 
+.meal-log-options-button {
+  position: absolute;
+  right: 1rem;
+  user-select: none;
+}
+
 @media (max-width: 500px) {
   .date-nav-container {
     width: calc(100vw - 50px);
   }
 
   .date-nav {
-    width: 100%;
-    padding: 0 1rem;
+    width: 70%;
   }
 }

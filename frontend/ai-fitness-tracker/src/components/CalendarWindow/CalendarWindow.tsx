@@ -15,6 +15,9 @@ type CalendarWindowProps = {
   calendarDate: Value;
   setCalendarDate: React.Dispatch<React.SetStateAction<Value>>;
   currentMealLogDate: Value;
+  setSelectingMealLogFoods: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedMealTypes: React.Dispatch<React.SetStateAction<string[]>>;
+  setSelectedMealLogFoodIds: React.Dispatch<React.SetStateAction<number[]>>;
   handleSetCalendarDate: (value: Value) => Promise<void>;
   handleCopyMealLogFoods: () => Promise<void>;
   handleMoveMealLogFoods: () => Promise<void>;
@@ -28,6 +31,9 @@ export default function CalendarWindow({
   calendarDate,
   setCalendarDate,
   currentMealLogDate,
+  setSelectingMealLogFoods,
+  setSelectedMealTypes,
+  setSelectedMealLogFoodIds,
   handleSetCalendarDate,
   handleCopyMealLogFoods,
   handleMoveMealLogFoods
@@ -53,6 +59,10 @@ export default function CalendarWindow({
             if (currentMealLogDate) {
               setCalendarDate(currentMealLogDate);
             }
+
+            setSelectingMealLogFoods(false);
+            setSelectedMealTypes([]);
+            setSelectedMealLogFoodIds([]);
           }}
         >
           Cancel
@@ -71,6 +81,10 @@ export default function CalendarWindow({
             if (currentMealLogDate) {
               setCalendarDate(currentMealLogDate);
             }
+
+            setSelectingMealLogFoods(false);
+            setSelectedMealTypes([]);
+            setSelectedMealLogFoodIds([]);
           }}
         >
           Ok

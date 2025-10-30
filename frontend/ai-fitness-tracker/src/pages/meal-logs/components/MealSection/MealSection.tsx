@@ -24,7 +24,11 @@ type MealSectionProps = {
   setMealOptionsMenuOpenType: React.Dispatch<React.SetStateAction<string>>;
   mealFoodOptionsMenuOpenId: number | null;
   setMealFoodOptionsMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
+  selectedMealTypes: string[];
+  setSelectedMealTypes: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedMealLogFoodIds: number[];
   setSelectedMealLogFoodIds: React.Dispatch<React.SetStateAction<number[]>>;
+  selectingMealLogFoods: boolean;
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>;
   editingMealLogFoodId: number | null;
   setEditingMealLogFoodId: React.Dispatch<React.SetStateAction<number | null>>;
@@ -55,7 +59,11 @@ export default function MealSection({
   setMealOptionsMenuOpenType,
   mealFoodOptionsMenuOpenId,
   setMealFoodOptionsMenuOpenId,
+  selectedMealTypes,
+  setSelectedMealTypes,
+  selectedMealLogFoodIds,
   setSelectedMealLogFoodIds,
+  selectingMealLogFoods,
   setCalendarOpenType,
   editingMealLogFoodId,
   setEditingMealLogFoodId,
@@ -82,7 +90,11 @@ export default function MealSection({
         mealLogs={mealLogs}
         mealLogFoods={mealLogFoods}
         currentMealLogDate={currentMealLogDate}
+        selectedMealTypes={selectedMealTypes}
+        setSelectedMealTypes={setSelectedMealTypes}
+        selectedMealLogFoodIds={selectedMealLogFoodIds}
         setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
+        selectingMealLogFoods={selectingMealLogFoods}
         setCalendarOpenType={setCalendarOpenType}
         handleDeleteMeal={handleDeleteMeal}
       />
@@ -100,7 +112,10 @@ export default function MealSection({
         setMealOptionsMenuOpenType={setMealOptionsMenuOpenType}
         mealFoodOptionsMenuOpenId={mealFoodOptionsMenuOpenId}
         setMealFoodOptionsMenuOpenId={setMealFoodOptionsMenuOpenId}
+        setSelectedMealTypes={setSelectedMealTypes}
+        selectedMealLogFoodIds={selectedMealLogFoodIds}
         setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
+        selectingMealLogFoods={selectingMealLogFoods}
         setCalendarOpenType={setCalendarOpenType}
         editingMealLogFoodId={editingMealLogFoodId}
         setEditingMealLogFoodId={setEditingMealLogFoodId}

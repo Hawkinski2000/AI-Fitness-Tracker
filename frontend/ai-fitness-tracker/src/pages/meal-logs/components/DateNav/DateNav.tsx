@@ -1,7 +1,10 @@
+import { type MealLog, type MealLogFood } from '../../types/meal-logs';
 import { type Value } from 'react-calendar/dist/shared/types.js';
 import CalendarWindow from '../../../../components/CalendarWindow/CalendarWindow';
+import MealLogOptionsMenu from '../MealLogOptionsMenu/MealLogOptionsMenu';
 import arrowLeftIcon from '../../../../assets/arrow-left-icon.svg';
 import arrowRightIcon from '../../../../assets/arrow-right-icon.svg';
+import dotsIcon from '../../../../assets/dots-icon.svg';
 import './DateNav.css';
 
 
@@ -15,6 +18,15 @@ type DateNavProps = {
   calendarRef: React.RefObject<HTMLDivElement | null>;
   calendarDate: Value;
   setCalendarDate: React.Dispatch<React.SetStateAction<Value>>;
+  mealLogOptionsMenuOpen: boolean;
+  setMealLogOptionsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  selectingMealLogFoods: boolean;
+  setSelectingMealLogFoods: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedMealTypes: React.Dispatch<React.SetStateAction<string[]>>;
+  setSelectedMealLogFoodIds: React.Dispatch<React.SetStateAction<number[]>>;
+  mealLogs: Record<string, MealLog>;
+  mealLogFoods: Record<number, MealLogFood[]>;
+  mealLogOptionsMenuRef: React.RefObject<HTMLDivElement | null>;
   handleSetCalendarDate: (value: Value) => Promise<void>;
   handleCopyMealLogFoods: () => Promise<void>;
   handleMoveMealLogFoods: () => Promise<void>;
@@ -31,6 +43,15 @@ export default function DateNav({
   calendarRef,
   calendarDate,
   setCalendarDate,
+  mealLogOptionsMenuOpen,
+  setMealLogOptionsMenuOpen,
+  selectingMealLogFoods,
+  setSelectingMealLogFoods,
+  setSelectedMealTypes,
+  setSelectedMealLogFoodIds,
+  mealLogs,
+  mealLogFoods,
+  mealLogOptionsMenuRef,
   handleSetCalendarDate,
   handleCopyMealLogFoods,
   handleMoveMealLogFoods
@@ -69,11 +90,38 @@ export default function DateNav({
           calendarDate={calendarDate}
           setCalendarDate={setCalendarDate}
           currentMealLogDate={currentMealLogDate}
+          setSelectingMealLogFoods={setSelectingMealLogFoods}
+          setSelectedMealTypes={setSelectedMealTypes}
+          setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
           handleSetCalendarDate={handleSetCalendarDate}
           handleCopyMealLogFoods={handleCopyMealLogFoods}
           handleMoveMealLogFoods={handleMoveMealLogFoods}
         />
       </nav>
+
+      <button
+        className="meal-options-button meal-log-options-button"
+        onClick={(e) => {
+          e.stopPropagation();
+          setMealLogOptionsMenuOpen(prev => !prev);
+        }}
+      >
+        <img className="button-link-image" src={dotsIcon} />
+      </button>
+
+      <MealLogOptionsMenu
+        mealLogOptionsMenuOpen={mealLogOptionsMenuOpen}
+        setMealLogOptionsMenuOpen={setMealLogOptionsMenuOpen}
+        selectingMealLogFoods={selectingMealLogFoods}
+        setSelectingMealLogFoods={setSelectingMealLogFoods}
+        mealLogs={mealLogs}
+        mealLogFoods={mealLogFoods}
+        currentMealLogDate={currentMealLogDate}
+        setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
+        setCalendarOpenType={setCalendarOpenType}
+        mealLogOptionsMenuRef={mealLogOptionsMenuRef}
+        // handleDeleteMeal={handleDeleteMeal}
+      />
     </div>
   );
 }

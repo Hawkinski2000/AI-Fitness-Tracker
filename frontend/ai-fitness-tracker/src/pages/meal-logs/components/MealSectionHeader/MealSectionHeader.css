@@ -7,3 +7,11 @@
   border-bottom: 1px solid #2e2e5e;
   user-select: none;
 }
+
+.selectable-meal-type-container {
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.selectable-meal-type-container:hover {
+  background-color: #2e2e5e;
+}

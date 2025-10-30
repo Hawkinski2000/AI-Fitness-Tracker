@@ -36,8 +36,6 @@ const useMealLogActions = (
   setMacroAmountsGrams: React.Dispatch<React.SetStateAction<Record<number, Record<number, number>>>>,
   setFoodCaloriesFromMacros: React.Dispatch<React.SetStateAction<Record<number, number>>>,
   mealLogFoods: Record<number, MealLogFood[]>,
-  setMealOptionsMenuOpenType: React.Dispatch<React.SetStateAction<string>>,
-  setMealFoodOptionsMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>,
   selectedMealLogFoodIds: number[],
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>,
 ) => {
@@ -257,9 +255,6 @@ const handleCopyMealLogFoods = useCallback(async () => {
     } catch (err) {
       console.error(err);
       setAccessToken(null);
-
-    } finally {
-      setMealFoodOptionsMenuOpenId(null);
     }
   }, [
     accessToken,
@@ -271,7 +266,6 @@ const handleCopyMealLogFoods = useCallback(async () => {
     calendarDate,
     setCurrentMealLogDate,
     setMealLogFoods,
-    setMealFoodOptionsMenuOpenId,
     selectedMealLogFoodIds
   ]);
 
@@ -340,9 +334,6 @@ const handleMoveMealLogFoods = useCallback(async () => {
     } catch (err) {
       console.error(err);
       setAccessToken(null);
-
-    } finally {
-      setMealFoodOptionsMenuOpenId(null);
     }
   }, [
     accessToken,
@@ -355,7 +346,6 @@ const handleMoveMealLogFoods = useCallback(async () => {
     setMealLogFoods,
     mealLogs,
     setMealLogs,
-    setMealFoodOptionsMenuOpenId
   ]);
 
 // ---------------------------------------------------------------------------
@@ -399,9 +389,6 @@ const handleMoveMealLogFoods = useCallback(async () => {
     } catch (err) {
       console.error(err);
       setAccessToken(null);
-
-    } finally {
-      setMealOptionsMenuOpenType('');
     }
   }, [
     accessToken,
@@ -410,7 +397,6 @@ const handleMoveMealLogFoods = useCallback(async () => {
     mealLogFoods,
     mealLogs,
     setMealLogFoods,
-    setMealOptionsMenuOpenType
   ]);
 
 // ---------------------------------------------------------------------------
@@ -431,14 +417,10 @@ const handleMoveMealLogFoods = useCallback(async () => {
     } catch (err) {
       console.error(err);
       setAccessToken(null);
-
-    } finally {
-      setMealFoodOptionsMenuOpenId(null);
     }
   }, [
     accessToken,
     setAccessToken,
-    setMealFoodOptionsMenuOpenId,
     setMealLogFoods
   ]);
 

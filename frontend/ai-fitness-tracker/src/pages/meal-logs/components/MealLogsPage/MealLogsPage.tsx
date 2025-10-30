@@ -60,13 +60,19 @@ export default function MealLogsPage() {
 
 // ---------------------------------------------------------------------------
 
+  const [mealLogOptionsMenuOpen, setMealLogOptionsMenuOpen] = useState<boolean>(false);
+  const mealLogOptionsMenuRef = useRef<HTMLDivElement | null>(null);
+
   const [mealOptionsMenuOpenType, setMealOptionsMenuOpenType] = useState<string>('');
   const mealOptionsMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const [mealFoodOptionsMenuOpenId, setMealFoodOptionsMenuOpenId] = useState<number | null>(null);
   const mealFoodOptionsMenuRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
+  const [selectingMealLogFoods, setSelectingMealLogFoods] = useState<boolean>(false);
   const [selectedMealLogFoodIds, setSelectedMealLogFoodIds] = useState<number[]>([]);
+  const [selectedMealTypes, setSelectedMealTypes] = useState<string[]>([]);
+  
   const [calendarOpenType, setCalendarOpenType] = useState<string>('');
   const calendarRef = useRef<HTMLDivElement | null>(null);
   const [calendarDate, setCalendarDate] = useState<Value>(new Date());
@@ -123,6 +129,8 @@ export default function MealLogsPage() {
 
   useMealLogsClickOutside(
     setAccountMenuOpen,
+    mealLogOptionsMenuOpen,
+    setMealLogOptionsMenuOpen,
     mealOptionsMenuOpenType,
     setMealOptionsMenuOpenType,
     mealFoodOptionsMenuOpenId,
@@ -142,6 +150,7 @@ export default function MealLogsPage() {
     setCalendarDate,
     currentMealLogDate,
     accountMenuRef,
+    mealLogOptionsMenuRef,
     mealOptionsMenuRefs,
     mealFoodOptionsMenuRefs,
     foodsMenuRef,
@@ -201,8 +210,6 @@ export default function MealLogsPage() {
     setMacroAmountsGrams,
     setFoodCaloriesFromMacros,
     mealLogFoods,
-    setMealOptionsMenuOpenType,
-    setMealFoodOptionsMenuOpenId,
     selectedMealLogFoodIds,
     setCalendarOpenType
   );
@@ -239,6 +246,15 @@ export default function MealLogsPage() {
                 calendarRef={calendarRef}
                 calendarDate={calendarDate}
                 setCalendarDate={setCalendarDate}
+                mealLogOptionsMenuOpen={mealLogOptionsMenuOpen}
+                setMealLogOptionsMenuOpen={setMealLogOptionsMenuOpen}
+                selectingMealLogFoods={selectingMealLogFoods}
+                setSelectingMealLogFoods={setSelectingMealLogFoods}
+                setSelectedMealTypes={setSelectedMealTypes}
+                setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
+                mealLogs={mealLogs}
+                mealLogFoods={mealLogFoods}
+                mealLogOptionsMenuRef={mealLogOptionsMenuRef}
                 handleSetCalendarDate={handleSetCalendarDate}
                 handleCopyMealLogFoods={handleCopyMealLogFoods}
                 handleMoveMealLogFoods={handleMoveMealLogFoods}
@@ -321,7 +337,11 @@ export default function MealLogsPage() {
                       setMealOptionsMenuOpenType={setMealOptionsMenuOpenType}
                       mealFoodOptionsMenuOpenId={mealFoodOptionsMenuOpenId}
                       setMealFoodOptionsMenuOpenId={setMealFoodOptionsMenuOpenId}
+                      selectedMealTypes={selectedMealTypes}
+                      setSelectedMealTypes={setSelectedMealTypes}
+                      selectedMealLogFoodIds={selectedMealLogFoodIds}
                       setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
+                      selectingMealLogFoods={selectingMealLogFoods}
                       setCalendarOpenType={setCalendarOpenType}
                       editingMealLogFoodId={editingMealLogFoodId}
                       setEditingMealLogFoodId={setEditingMealLogFoodId}

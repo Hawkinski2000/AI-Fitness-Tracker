@@ -4,6 +4,8 @@ import { type Value } from "react-calendar/dist/shared/types.js";
 
 const useMealLogsClickOutside = (
   setAccountMenuOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  mealLogOptionsMenuOpen: boolean,
+  setMealLogOptionsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>,
   mealOptionsMenuOpenType: string,
   setMealOptionsMenuOpenType: React.Dispatch<React.SetStateAction<string>>,
   mealFoodOptionsMenuOpenId: number | null,
@@ -23,6 +25,7 @@ const useMealLogsClickOutside = (
   setCalendarDate: React.Dispatch<React.SetStateAction<Value>>,
   currentMealLogDate: Value,
   accountMenuRef: React.RefObject<HTMLDivElement | null>,
+  mealLogOptionsMenuRef: React.RefObject<HTMLDivElement | null>,
   mealOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>,
   mealFoodOptionsMenuRefs: React.RefObject<Record<number, HTMLDivElement | null>>,
   foodsMenuRef: React.RefObject<HTMLDivElement | null>,
@@ -62,6 +65,17 @@ const useMealLogsClickOutside = (
           target.classList.contains('meal-log-food-options-button'))
       ) {
         setMealFoodOptionsMenuOpenId(null);
+      }
+
+      if (
+        mealLogOptionsMenuOpen &&
+        mealLogOptionsMenuRef.current &&
+        target instanceof Node &&
+        !mealLogOptionsMenuRef.current.contains(target) &&
+        !(target instanceof HTMLElement &&
+          target.classList.contains('meal-log-options-button'))
+      ) {
+        setMealLogOptionsMenuOpen(false);
       }
 
       if (
@@ -119,6 +133,8 @@ const useMealLogsClickOutside = (
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [
     setAccountMenuOpen,
+    mealLogOptionsMenuOpen,
+    setMealLogOptionsMenuOpen,
     mealOptionsMenuOpenType,
     setMealOptionsMenuOpenType,
     mealFoodOptionsMenuOpenId,
@@ -138,6 +154,7 @@ const useMealLogsClickOutside = (
     setCalendarDate,
     currentMealLogDate,
     accountMenuRef,
+    mealLogOptionsMenuRef,
     mealOptionsMenuRefs,
     mealFoodOptionsMenuRefs,
     foodsMenuRef,
