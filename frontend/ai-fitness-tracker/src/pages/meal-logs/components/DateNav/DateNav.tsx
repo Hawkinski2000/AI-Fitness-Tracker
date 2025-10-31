@@ -22,6 +22,7 @@ type DateNavProps = {
   setMealLogOptionsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   selectingMealLogFoods: boolean;
   setSelectingMealLogFoods: React.Dispatch<React.SetStateAction<boolean>>;
+  setAllItemsSelected: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedMealTypes: React.Dispatch<React.SetStateAction<string[]>>;
   setSelectedMealLogFoodIds: React.Dispatch<React.SetStateAction<number[]>>;
   mealLogs: Record<string, MealLog>;
@@ -47,6 +48,7 @@ export default function DateNav({
   setMealLogOptionsMenuOpen,
   selectingMealLogFoods,
   setSelectingMealLogFoods,
+  setAllItemsSelected,
   setSelectedMealTypes,
   setSelectedMealLogFoodIds,
   mealLogs,
@@ -61,7 +63,13 @@ export default function DateNav({
       <nav className="date-nav">
         <button
           className="date-nav-button"
-          onClick={() => handleChangeDate('previous')}
+          onClick={() => {
+            handleChangeDate('previous');
+            setSelectingMealLogFoods(false);
+            setAllItemsSelected(false);
+            setSelectedMealTypes([]);
+            setSelectedMealLogFoodIds([]);
+          }}
         >
           <img className="button-link-image" src={arrowLeftIcon} />
         </button>
@@ -72,13 +80,23 @@ export default function DateNav({
               setCalendarDate(currentMealLogDate);
             }
             setCalendarOpenType(prev => prev === 'changeMealLog' ? '' : 'changeMealLog');
+            setSelectingMealLogFoods(false);
+            setAllItemsSelected(false);
+            setSelectedMealTypes([]);
+            setSelectedMealLogFoodIds([]);
           }}
         >
           {(currentMealLogDate && today) ? getDateLabel(currentMealLogDate, today) : ""}
         </button>
         <button
           className="date-nav-button"
-          onClick={() => handleChangeDate('next')}
+          onClick={() => {
+            handleChangeDate('next');
+            setSelectingMealLogFoods(false);
+            setAllItemsSelected(false);
+            setSelectedMealTypes([]);
+            setSelectedMealLogFoodIds([]);
+          }}
         >
           <img className="button-link-image" src={arrowRightIcon} />
         </button>

@@ -25,6 +25,7 @@ type MealSectionProps = {
   mealFoodOptionsMenuOpenId: number | null;
   setMealFoodOptionsMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
   selectedMealTypes: string[];
+  setAllItemsSelected: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedMealTypes: React.Dispatch<React.SetStateAction<string[]>>;
   selectedMealLogFoodIds: number[];
   setSelectedMealLogFoodIds: React.Dispatch<React.SetStateAction<number[]>>;
@@ -60,6 +61,7 @@ export default function MealSection({
   mealFoodOptionsMenuOpenId,
   setMealFoodOptionsMenuOpenId,
   selectedMealTypes,
+  setAllItemsSelected,
   setSelectedMealTypes,
   selectedMealLogFoodIds,
   setSelectedMealLogFoodIds,
@@ -90,6 +92,7 @@ export default function MealSection({
         mealLogs={mealLogs}
         mealLogFoods={mealLogFoods}
         currentMealLogDate={currentMealLogDate}
+        setAllItemsSelected={setAllItemsSelected}
         selectedMealTypes={selectedMealTypes}
         setSelectedMealTypes={setSelectedMealTypes}
         selectedMealLogFoodIds={selectedMealLogFoodIds}
@@ -112,6 +115,7 @@ export default function MealSection({
         setMealOptionsMenuOpenType={setMealOptionsMenuOpenType}
         mealFoodOptionsMenuOpenId={mealFoodOptionsMenuOpenId}
         setMealFoodOptionsMenuOpenId={setMealFoodOptionsMenuOpenId}
+        setAllItemsSelected={setAllItemsSelected}
         setSelectedMealTypes={setSelectedMealTypes}
         selectedMealLogFoodIds={selectedMealLogFoodIds}
         setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
@@ -126,16 +130,18 @@ export default function MealSection({
         handleLoadFoodNutrients={handleLoadFoodNutrients}
         handleDeleteMealLogFood={handleDeleteMealLogFood}
       />
-    
-      <AddFoodButton
-        mealType={mealType}
-        setFoodSearch={setFoodSearch}
-        setFoodMenuInputFocused={setFoodMenuInputFocused}
-        editingMealLogFoodId={editingMealLogFoodId}
-        setEditingMealLogFoodId={setEditingMealLogFoodId}
-        setFoodsMenuOpenMealType={setFoodsMenuOpenMealType}
-        setViewFoodMenuOpenId={setViewFoodMenuOpenId}
-      />
+
+      {!selectingMealLogFoods &&
+        <AddFoodButton
+          mealType={mealType}
+          setFoodSearch={setFoodSearch}
+          setFoodMenuInputFocused={setFoodMenuInputFocused}
+          editingMealLogFoodId={editingMealLogFoodId}
+          setEditingMealLogFoodId={setEditingMealLogFoodId}
+          setFoodsMenuOpenMealType={setFoodsMenuOpenMealType}
+          setViewFoodMenuOpenId={setViewFoodMenuOpenId}
+        />
+      }
     </section>
   );
 }

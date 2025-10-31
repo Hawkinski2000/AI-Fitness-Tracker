@@ -18,6 +18,7 @@ type MealSectionHeaderProps = {
   mealLogs: Record<string, MealLog>;
   mealLogFoods: Record<number, MealLogFood[]>;
   currentMealLogDate: Value;
+  setAllItemsSelected: React.Dispatch<React.SetStateAction<boolean>>;
   selectedMealTypes: string[];
   setSelectedMealTypes: React.Dispatch<React.SetStateAction<string[]>>;
   selectedMealLogFoodIds: number[];
@@ -36,6 +37,7 @@ export default function MealSectionHeader({
   mealLogs,
   mealLogFoods,
   currentMealLogDate,
+  setAllItemsSelected,
   selectedMealTypes,
   setSelectedMealTypes,
   selectedMealLogFoodIds,
@@ -62,6 +64,8 @@ export default function MealSectionHeader({
     );
 
     if (selectedMealTypes.includes(mealType)) {
+      setAllItemsSelected(false);
+
       setSelectedMealTypes(prev =>
         prev.filter((type: string) => type !== mealType)
       )
@@ -81,6 +85,10 @@ export default function MealSectionHeader({
     )
     setSelectedMealLogFoodIds(prev => [...prev, ...newSelectedMealLogFoodIds])
 
+    if (selectedMealTypes.length === 3) {
+      setAllItemsSelected(true);
+    }
+
     setSelectedMealTypes(prev => [...prev, mealType]);
   }, [
     mealType,
@@ -89,6 +97,7 @@ export default function MealSectionHeader({
     mealLogFoods,
     selectedMealLogFoodIds,
     setSelectedMealLogFoodIds,
+    setAllItemsSelected,
     selectedMealTypes,
     setSelectedMealTypes
   ]);

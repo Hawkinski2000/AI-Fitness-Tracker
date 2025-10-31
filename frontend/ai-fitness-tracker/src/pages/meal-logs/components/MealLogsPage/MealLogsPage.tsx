@@ -19,6 +19,7 @@ import Header from "../../../../components/Header/Header";
 import Sidebar from "../../../../components/Sidebar/Sidebar";
 import DateNav from "../DateNav/DateNav";
 import CaloriesHeader from "../CaloriesHeader/CaloriesHeader";
+import SelectItemsHeader from "../SelectItemsHeader/SelectItemsHeader";
 import ViewFoodMenu from "../ViewFoodMenu/ViewFoodMenu";
 import FoodsMenu from "../FoodsMenu/FoodsMenu";
 import MealSection from "../MealSection/MealSection";
@@ -70,8 +71,9 @@ export default function MealLogsPage() {
   const mealFoodOptionsMenuRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
   const [selectingMealLogFoods, setSelectingMealLogFoods] = useState<boolean>(false);
-  const [selectedMealLogFoodIds, setSelectedMealLogFoodIds] = useState<number[]>([]);
+  const [allItemsSelected, setAllItemsSelected] = useState<boolean>(false);
   const [selectedMealTypes, setSelectedMealTypes] = useState<string[]>([]);
+  const [selectedMealLogFoodIds, setSelectedMealLogFoodIds] = useState<number[]>([]);
   
   const [calendarOpenType, setCalendarOpenType] = useState<string>('');
   const calendarRef = useRef<HTMLDivElement | null>(null);
@@ -250,6 +252,7 @@ export default function MealLogsPage() {
                 setMealLogOptionsMenuOpen={setMealLogOptionsMenuOpen}
                 selectingMealLogFoods={selectingMealLogFoods}
                 setSelectingMealLogFoods={setSelectingMealLogFoods}
+                setAllItemsSelected={setAllItemsSelected}
                 setSelectedMealTypes={setSelectedMealTypes}
                 setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
                 mealLogs={mealLogs}
@@ -261,6 +264,19 @@ export default function MealLogsPage() {
               />
 
               <CaloriesHeader foodCalories={foodCalories} />
+
+              <SelectItemsHeader
+                allItemsSelected={allItemsSelected}
+                setAllItemsSelected={setAllItemsSelected}
+                setSelectedMealTypes={setSelectedMealTypes}
+                selectingMealLogFoods={selectingMealLogFoods}
+                setSelectingMealLogFoods={setSelectingMealLogFoods}
+                selectedMealLogFoodIds={selectedMealLogFoodIds}
+                setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
+                currentMealLogDate={currentMealLogDate}
+                mealLogs={mealLogs}
+                mealLogFoods={mealLogFoods}
+              />
 
               {viewFoodMenuOpenId ? (
                 <ViewFoodMenu
@@ -321,7 +337,12 @@ export default function MealLogsPage() {
                 />
               )}
 
-              <div className="meals-container">
+              <div
+                className={
+                  `meals-container
+                  ${selectingMealLogFoods && 'meals-container-selecting-items'}`
+                }
+              >
                 {['breakfast', 'lunch', 'dinner', 'snacks'].map((mealType: string) => {
                   return (
                     <MealSection
@@ -337,6 +358,7 @@ export default function MealLogsPage() {
                       setMealOptionsMenuOpenType={setMealOptionsMenuOpenType}
                       mealFoodOptionsMenuOpenId={mealFoodOptionsMenuOpenId}
                       setMealFoodOptionsMenuOpenId={setMealFoodOptionsMenuOpenId}
+                      setAllItemsSelected={setAllItemsSelected}
                       selectedMealTypes={selectedMealTypes}
                       setSelectedMealTypes={setSelectedMealTypes}
                       selectedMealLogFoodIds={selectedMealLogFoodIds}

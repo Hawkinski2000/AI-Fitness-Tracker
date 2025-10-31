@@ -30,6 +30,7 @@ type MealFoodProps = {
   setMealOptionsMenuOpenType: React.Dispatch<React.SetStateAction<string>>;
   mealFoodOptionsMenuOpenId: number | null;
   setMealFoodOptionsMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
+  setAllItemsSelected: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedMealTypes: React.Dispatch<React.SetStateAction<string[]>>;
   selectedMealLogFoodIds: number[];
   setSelectedMealLogFoodIds: React.Dispatch<React.SetStateAction<number[]>>;
@@ -60,6 +61,7 @@ export default function MealFood({
   setMealOptionsMenuOpenType,
   mealFoodOptionsMenuOpenId,
   setMealFoodOptionsMenuOpenId,
+  setAllItemsSelected,
   selectedMealLogFoodIds,
   setSelectedMealLogFoodIds,
   setSelectedMealTypes,
@@ -75,11 +77,14 @@ export default function MealFood({
 }: MealFoodProps) {
   const handleSelectMealFood = useCallback(async () => {
     if (selectedMealLogFoodIds.includes(mealLogFood.id)) {
+      setAllItemsSelected(false);
+
       setSelectedMealLogFoodIds(prev =>
         prev.filter((mealLogFoodId: number) => mealLogFoodId !== mealLogFood.id)
       )
 
       setSelectedMealTypes(prev => prev.filter((type: string) => type !== mealType))
+      
 
       return;
     }
@@ -102,12 +107,18 @@ export default function MealFood({
     const selectedMealLogFoodIdsInMealType = mealLogFoodIdsInMealType.filter(
       (mealLogFoodId: number) => selectedMealLogFoodIds.includes(mealLogFoodId)
     );
+    
+    if (currentMealLogFoods.length === selectedMealLogFoodIds.length + 1) {
+      setAllItemsSelected(true);
+    }
+
     if (mealLogFoodIdsInMealType.length === selectedMealLogFoodIdsInMealType.length + 1) {
       setSelectedMealTypes(prev => [...prev, mealType]);
     }
 
     setSelectedMealLogFoodIds(prev => [...prev, mealLogFood.id]);
   }, [
+    setAllItemsSelected,
     mealType,
     mealLogFood,
     currentMealLogDate,

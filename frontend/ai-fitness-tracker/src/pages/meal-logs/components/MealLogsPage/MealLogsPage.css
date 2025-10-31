@@ -34,6 +34,11 @@
   top: calc(125px + 2rem);
   padding-bottom: 50px;
   z-index: 1;
+  transition: top 0.1s;
+}
+
+.meals-container-selecting-items {
+  top: calc(125px + 2rem + 20px + 2rem);
 }
 
 .meal-options-button-container {

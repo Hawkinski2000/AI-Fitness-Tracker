@@ -23,6 +23,7 @@ type MealSectionFoodsProps = {
   setMealOptionsMenuOpenType: React.Dispatch<React.SetStateAction<string>>;
   mealFoodOptionsMenuOpenId: number | null;
   setMealFoodOptionsMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
+  setAllItemsSelected: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedMealTypes: React.Dispatch<React.SetStateAction<string[]>>;
   selectedMealLogFoodIds: number[];
   setSelectedMealLogFoodIds: React.Dispatch<React.SetStateAction<number[]>>;
@@ -52,6 +53,7 @@ export default function MealSectionFoods({
   setMealOptionsMenuOpenType,
   mealFoodOptionsMenuOpenId,
   setMealFoodOptionsMenuOpenId,
+  setAllItemsSelected,
   setSelectedMealTypes,
   selectedMealLogFoodIds,
   setSelectedMealLogFoodIds,
@@ -94,6 +96,7 @@ export default function MealSectionFoods({
                 setSelectedMealTypes={setSelectedMealTypes}
                 setMealOptionsMenuOpenType={setMealOptionsMenuOpenType}
                 mealFoodOptionsMenuOpenId={mealFoodOptionsMenuOpenId}
+                setAllItemsSelected={setAllItemsSelected}
                 setMealFoodOptionsMenuOpenId={setMealFoodOptionsMenuOpenId}
                 selectedMealLogFoodIds={selectedMealLogFoodIds}
                 setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
