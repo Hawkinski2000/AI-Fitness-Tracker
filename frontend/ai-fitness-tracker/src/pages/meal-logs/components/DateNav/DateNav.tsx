@@ -31,6 +31,7 @@ type DateNavProps = {
   handleSetCalendarDate: (value: Value) => Promise<void>;
   handleCopyMealLogFoods: () => Promise<void>;
   handleMoveMealLogFoods: () => Promise<void>;
+  handleDeleteMealLogFoods: () => Promise<void>;
 };
 
 
@@ -56,7 +57,8 @@ export default function DateNav({
   mealLogOptionsMenuRef,
   handleSetCalendarDate,
   handleCopyMealLogFoods,
-  handleMoveMealLogFoods
+  handleMoveMealLogFoods,
+  handleDeleteMealLogFoods
 }: DateNavProps) {
   return (
     <div className="date-nav-container">
@@ -118,7 +120,7 @@ export default function DateNav({
       </nav>
 
       <button
-        className="meal-options-button meal-log-options-button"
+        className="meal-log-options-button"
         onClick={(e) => {
           e.stopPropagation();
           setMealLogOptionsMenuOpen(prev => !prev);
@@ -138,7 +140,7 @@ export default function DateNav({
         setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
         setCalendarOpenType={setCalendarOpenType}
         mealLogOptionsMenuRef={mealLogOptionsMenuRef}
-        // handleDeleteMeal={handleDeleteMeal}
+        handleDeleteMealLogFoods={handleDeleteMealLogFoods}
       />
     </div>
   );

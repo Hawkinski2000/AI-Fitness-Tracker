@@ -40,9 +40,10 @@ type MealFoodProps = {
   setEditingMealLogFoodId: React.Dispatch<React.SetStateAction<number | null>>;
   setFoodsMenuOpenMealType: React.Dispatch<React.SetStateAction<string>>;
   setViewFoodMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
+  viewFoodMenuOpenId: number | null;
   mealFoodOptionsMenuRefs: React.RefObject<Record<number, HTMLDivElement | null>>;
   handleLoadFoodNutrients: (foodId: number) => Promise<void>;
-  handleDeleteMealLogFood: (mealLogFoodId: number) => Promise<void>;
+  handleDeleteMealLogFoods: (mealLogFoodId: number) => Promise<void>;
 };
 
 
@@ -71,9 +72,10 @@ export default function MealFood({
   setEditingMealLogFoodId,
   setFoodsMenuOpenMealType,
   setViewFoodMenuOpenId,
+  viewFoodMenuOpenId,
   mealFoodOptionsMenuRefs,
   handleLoadFoodNutrients,
-  handleDeleteMealLogFood
+  handleDeleteMealLogFoods
 }: MealFoodProps) {
   const handleSelectMealFood = useCallback(async () => {
     if (selectedMealLogFoodIds.includes(mealLogFood.id)) {
@@ -133,12 +135,16 @@ export default function MealFood({
   return (
     <div
       className="meal-log-food"
-      onMouseDown={(e) => {
-        e.stopPropagation();
-        setMealOptionsMenuOpenType('');
-      }}
+      onMouseDown={() => setMealOptionsMenuOpenType('')}
       onClick={(e) => {
         e.stopPropagation();
+
+        if (viewFoodMenuOpenId === mealLogFood.food_id) {
+          setEditingMealLogFoodId(null);
+          setFoodsMenuOpenMealType('');
+          setViewFoodMenuOpenId(null);
+          return;
+        }
 
         if (selectingMealLogFoods) {
           handleSelectMealFood();
@@ -230,7 +236,7 @@ export default function MealFood({
             setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
             setCalendarOpenType={setCalendarOpenType}
             mealFoodOptionsMenuRefs={mealFoodOptionsMenuRefs}
-            handleDeleteMealLogFood={handleDeleteMealLogFood}
+            handleDeleteMealLogFoods={handleDeleteMealLogFoods}
           />
         </div>
       )}

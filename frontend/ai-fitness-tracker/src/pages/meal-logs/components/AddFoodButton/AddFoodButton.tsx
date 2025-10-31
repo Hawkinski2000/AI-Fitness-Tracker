@@ -23,7 +23,7 @@ export default function AddFoodButton({
 }: AddFoodButtonProps) {
   return (
     <button
-      className="add-food-button"
+      className='add-food-button'
       onClick={(e) => {
         e.stopPropagation();
         setFoodSearch('');

@@ -196,8 +196,7 @@ export default function MealLogsPage() {
     handleUpdateFood,
     handleCopyMealLogFoods,
     handleMoveMealLogFoods,
-    handleDeleteMeal,
-    handleDeleteMealLogFood
+    handleDeleteMealLogFoods
   } = useMealLogActions(
     currentMealLogDate,
     setCurrentMealLogDate,
@@ -211,7 +210,6 @@ export default function MealLogsPage() {
     setNutrients,
     setMacroAmountsGrams,
     setFoodCaloriesFromMacros,
-    mealLogFoods,
     selectedMealLogFoodIds,
     setCalendarOpenType
   );
@@ -261,6 +259,7 @@ export default function MealLogsPage() {
                 handleSetCalendarDate={handleSetCalendarDate}
                 handleCopyMealLogFoods={handleCopyMealLogFoods}
                 handleMoveMealLogFoods={handleMoveMealLogFoods}
+                handleDeleteMealLogFoods={handleDeleteMealLogFoods}
               />
 
               <CaloriesHeader foodCalories={foodCalories} />
@@ -368,6 +367,7 @@ export default function MealLogsPage() {
                       editingMealLogFoodId={editingMealLogFoodId}
                       setEditingMealLogFoodId={setEditingMealLogFoodId}
                       setFoodsMenuOpenMealType={setFoodsMenuOpenMealType}
+                      viewFoodMenuOpenId={viewFoodMenuOpenId}
                       setViewFoodMenuOpenId={setViewFoodMenuOpenId}
                       setNumServings={setNumServings}
                       setServingSize={setServingSize}
@@ -376,8 +376,7 @@ export default function MealLogsPage() {
                       setFoodMenuInputFocused={setFoodMenuInputFocused}
                       mealOptionsMenuRefs={mealOptionsMenuRefs}
                       mealFoodOptionsMenuRefs={mealFoodOptionsMenuRefs}
-                      handleDeleteMeal={handleDeleteMeal}
-                      handleDeleteMealLogFood={handleDeleteMealLogFood}
+                      handleDeleteMealLogFoods={handleDeleteMealLogFoods}
                       handleLoadFoodNutrients={handleLoadFoodNutrients}
                     />
                   )

@@ -35,6 +35,7 @@ type MealSectionProps = {
   setEditingMealLogFoodId: React.Dispatch<React.SetStateAction<number | null>>;
   setFoodsMenuOpenMealType: React.Dispatch<React.SetStateAction<string>>;
   setViewFoodMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
+  viewFoodMenuOpenId: number | null;
   setNumServings: React.Dispatch<React.SetStateAction<number | null>>;
   setServingSize: React.Dispatch<React.SetStateAction<number | null>>;
   setServingSizeUnit: React.Dispatch<React.SetStateAction<string>>;
@@ -42,8 +43,7 @@ type MealSectionProps = {
   setFoodMenuInputFocused: React.Dispatch<React.SetStateAction<boolean>>;
   mealOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
   mealFoodOptionsMenuRefs: React.RefObject<Record<number, HTMLDivElement | null>>;
-  handleDeleteMeal: (mealType: string) => Promise<void>;
-  handleDeleteMealLogFood: (mealLogFoodId: number) => Promise<void>;
+  handleDeleteMealLogFoods: () => Promise<void>;
   handleLoadFoodNutrients: (foodId: number) => Promise<void>;
 };
 
@@ -71,6 +71,7 @@ export default function MealSection({
   setEditingMealLogFoodId,
   setFoodsMenuOpenMealType,
   setViewFoodMenuOpenId,
+  viewFoodMenuOpenId,
   setNumServings,
   setServingSize,
   setServingSizeUnit,
@@ -78,8 +79,7 @@ export default function MealSection({
   setFoodMenuInputFocused,
   mealOptionsMenuRefs,
   mealFoodOptionsMenuRefs,
-  handleDeleteMeal,
-  handleDeleteMealLogFood,
+  handleDeleteMealLogFoods,
   handleLoadFoodNutrients
 }: MealSectionProps) {
   return (
@@ -99,7 +99,7 @@ export default function MealSection({
         setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
         selectingMealLogFoods={selectingMealLogFoods}
         setCalendarOpenType={setCalendarOpenType}
-        handleDeleteMeal={handleDeleteMeal}
+        handleDeleteMealLogFoods={handleDeleteMealLogFoods}
       />
 
       <MealSectionFoods
@@ -111,6 +111,7 @@ export default function MealSection({
         brandedFoods={brandedFoods}
         foodNutrients={foodNutrients}
         setFoodsMenuOpenMealType={setFoodsMenuOpenMealType}
+        viewFoodMenuOpenId={viewFoodMenuOpenId}
         setViewFoodMenuOpenId={setViewFoodMenuOpenId}
         setMealOptionsMenuOpenType={setMealOptionsMenuOpenType}
         mealFoodOptionsMenuOpenId={mealFoodOptionsMenuOpenId}
@@ -128,7 +129,7 @@ export default function MealSection({
         setServingSizeUnit={setServingSizeUnit}
         mealFoodOptionsMenuRefs={mealFoodOptionsMenuRefs}
         handleLoadFoodNutrients={handleLoadFoodNutrients}
-        handleDeleteMealLogFood={handleDeleteMealLogFood}
+        handleDeleteMealLogFoods={handleDeleteMealLogFoods}
       />
 
       {!selectingMealLogFoods &&

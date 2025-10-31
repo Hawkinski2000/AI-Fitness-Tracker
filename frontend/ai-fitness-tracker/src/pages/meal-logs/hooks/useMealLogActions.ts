@@ -35,7 +35,6 @@ const useMealLogActions = (
   setNutrients: React.Dispatch<React.SetStateAction<Record<number, Nutrient>>>,
   setMacroAmountsGrams: React.Dispatch<React.SetStateAction<Record<number, Record<number, number>>>>,
   setFoodCaloriesFromMacros: React.Dispatch<React.SetStateAction<Record<number, number>>>,
-  mealLogFoods: Record<number, MealLogFood[]>,
   selectedMealLogFoodIds: number[],
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>,
 ) => {
@@ -350,58 +349,7 @@ const handleMoveMealLogFoods = useCallback(async () => {
 
 // ---------------------------------------------------------------------------
 
-  const handleDeleteMeal = useCallback(async (mealType: string) => {
-    try {
-      let token: string | null = accessToken;
-      if (!accessToken || isTokenExpired(accessToken)) {
-        token = await refreshAccessToken();  
-        setAccessToken(token);
-      }
-      if (!token) {
-        throw new Error("No access token");
-      }
-
-      if (!currentMealLogDate) {
-        return;
-      }
-
-      const currentDateKey = getDateKey(currentMealLogDate);
-      if (!currentDateKey) {
-        return;
-      }
-
-      const currentMealLog = mealLogs[currentDateKey];
-
-      const currentMealLogId = currentMealLog.id;
-
-      const currentMealLogFoods = mealLogFoods[currentMealLogId];
-
-      const mealLogFoodsInMealType = currentMealLogFoods.filter(
-        (mealLogFood: MealLogFood) => mealLogFood.meal_type === mealType
-      );
-
-      const mealLogFoodIdsInMealType = mealLogFoodsInMealType.map(
-        (mealLogFood: MealLogFood) => mealLogFood.id
-      );
-
-      deleteMealLogFoods(mealLogFoodIdsInMealType, setMealLogFoods, token);
-
-    } catch (err) {
-      console.error(err);
-      setAccessToken(null);
-    }
-  }, [
-    accessToken,
-    setAccessToken,
-    currentMealLogDate,
-    mealLogFoods,
-    mealLogs,
-    setMealLogFoods,
-  ]);
-
-// ---------------------------------------------------------------------------
-
-  const handleDeleteMealLogFood = useCallback(async (mealLogFoodId: number) => {
+  const handleDeleteMealLogFoods = useCallback(async () => {
     try {
       let token: string | null = accessToken;
       if (!accessToken || isTokenExpired(accessToken)) {
@@ -412,7 +360,7 @@ const handleMoveMealLogFoods = useCallback(async () => {
         throw new Error("No access token");
       }
 
-      await deleteMealLogFoods([mealLogFoodId], setMealLogFoods, token);
+      await deleteMealLogFoods(selectedMealLogFoodIds, setMealLogFoods, token);
 
     } catch (err) {
       console.error(err);
@@ -421,7 +369,8 @@ const handleMoveMealLogFoods = useCallback(async () => {
   }, [
     accessToken,
     setAccessToken,
-    setMealLogFoods
+    setMealLogFoods,
+    selectedMealLogFoodIds
   ]);
 
   
@@ -431,8 +380,7 @@ const handleMoveMealLogFoods = useCallback(async () => {
     handleUpdateFood,
     handleCopyMealLogFoods,
     handleMoveMealLogFoods,
-    handleDeleteMeal,
-    handleDeleteMealLogFood
+    handleDeleteMealLogFoods
   }
 };
 

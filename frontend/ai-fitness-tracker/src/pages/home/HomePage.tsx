@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from "axios";
 import { useAuth } from "../../context/auth/useAuth";
 import { API_BASE_URL } from "../../config/api";
+import chatPageImage from '../../assets/chat-page.png';
 import './HomePage.css';
 
 
@@ -65,7 +66,11 @@ export default function HomePage() {
             </div>
           </div>
 
-          <img className="ai-fitness-tracker-image" src="/images/Chat.png" alt="ai-fitness-tracker-image" />
+          <img
+            className="ai-fitness-tracker-image"
+            src={chatPageImage}
+            alt="ai-fitness-tracker-image"
+          />
         </section>
       </div>
     </>

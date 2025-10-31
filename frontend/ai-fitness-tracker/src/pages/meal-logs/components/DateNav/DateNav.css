@@ -34,9 +34,17 @@
 }
 
 .meal-log-options-button {
+  display: flex;
   position: absolute;
   right: 1rem;
+  height: 2rem;
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
   user-select: none;
+  transition: all 0.25s;
 }
 
 @media (max-width: 500px) {

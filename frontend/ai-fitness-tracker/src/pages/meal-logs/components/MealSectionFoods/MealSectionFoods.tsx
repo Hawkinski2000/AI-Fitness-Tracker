@@ -20,6 +20,7 @@ type MealSectionFoodsProps = {
   foodNutrients: Record<number, FoodNutrient[]>;
   setFoodsMenuOpenMealType: React.Dispatch<React.SetStateAction<string>>;
   setViewFoodMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
+  viewFoodMenuOpenId: number | null;
   setMealOptionsMenuOpenType: React.Dispatch<React.SetStateAction<string>>;
   mealFoodOptionsMenuOpenId: number | null;
   setMealFoodOptionsMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
@@ -36,7 +37,7 @@ type MealSectionFoodsProps = {
   setServingSizeUnit: React.Dispatch<React.SetStateAction<string>>;
   mealFoodOptionsMenuRefs: React.RefObject<Record<number, HTMLDivElement | null>>;
   handleLoadFoodNutrients: (foodId: number) => Promise<void>;
-  handleDeleteMealLogFood: (mealLogFoodId: number) => Promise<void>;
+  handleDeleteMealLogFoods: (mealLogFoodId: number) => Promise<void>;
 }
 
 
@@ -50,6 +51,7 @@ export default function MealSectionFoods({
   foodNutrients,
   setFoodsMenuOpenMealType,
   setViewFoodMenuOpenId,
+  viewFoodMenuOpenId,
   setMealOptionsMenuOpenType,
   mealFoodOptionsMenuOpenId,
   setMealFoodOptionsMenuOpenId,
@@ -66,7 +68,7 @@ export default function MealSectionFoods({
   setServingSizeUnit,
   mealFoodOptionsMenuRefs,
   handleLoadFoodNutrients,
-  handleDeleteMealLogFood
+  handleDeleteMealLogFoods
 }: MealSectionFoodsProps) {
   const dateKey = getDateKey(currentMealLogDate);
 
@@ -105,10 +107,11 @@ export default function MealSectionFoods({
                 editingMealLogFoodId={editingMealLogFoodId}
                 setEditingMealLogFoodId={setEditingMealLogFoodId}
                 setFoodsMenuOpenMealType={setFoodsMenuOpenMealType}
+                viewFoodMenuOpenId={viewFoodMenuOpenId}
                 setViewFoodMenuOpenId={setViewFoodMenuOpenId}
                 mealFoodOptionsMenuRefs={mealFoodOptionsMenuRefs}
                 handleLoadFoodNutrients={handleLoadFoodNutrients}
-                handleDeleteMealLogFood={handleDeleteMealLogFood}
+                handleDeleteMealLogFoods={handleDeleteMealLogFoods}
               />
             )
           })

@@ -25,7 +25,7 @@ type MealSectionHeaderProps = {
   setSelectedMealLogFoodIds: React.Dispatch<React.SetStateAction<number[]>>;
   selectingMealLogFoods: boolean;
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>;
-  handleDeleteMeal: (mealType: string) => Promise<void>;
+  handleDeleteMealLogFoods: () => Promise<void>;
 };
 
 
@@ -44,7 +44,7 @@ export default function MealSectionHeader({
   setSelectedMealLogFoodIds,
   selectingMealLogFoods,
   setCalendarOpenType,
-  handleDeleteMeal
+  handleDeleteMealLogFoods
 }: MealSectionHeaderProps) {
   const handleSelectMeal = useCallback(async () => {
     if (!currentMealLogDate) {
@@ -142,7 +142,7 @@ export default function MealSectionHeader({
         currentMealLogDate={currentMealLogDate}
         setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
         setCalendarOpenType={setCalendarOpenType}
-        handleDeleteMeal={handleDeleteMeal}
+        handleDeleteMealLogFoods={handleDeleteMealLogFoods}
       />
     </div>
   );

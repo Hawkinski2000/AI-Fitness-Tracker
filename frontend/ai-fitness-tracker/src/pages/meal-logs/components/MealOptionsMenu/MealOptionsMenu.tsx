@@ -16,7 +16,7 @@ type MealOptionsMenuProps = {
   currentMealLogDate: Value;
   setSelectedMealLogFoodIds: React.Dispatch<React.SetStateAction<number[]>>;
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>;
-  handleDeleteMeal: (mealType: string) => Promise<void>;
+  handleDeleteMealLogFoods: () => Promise<void>;
 };
 
 
@@ -30,7 +30,7 @@ export default function MealOptionsMenu({
   currentMealLogDate,
   setSelectedMealLogFoodIds,
   setCalendarOpenType,
-  handleDeleteMeal
+  handleDeleteMealLogFoods
 }: MealOptionsMenuProps) {
   return (
     <div
@@ -102,7 +102,23 @@ export default function MealOptionsMenu({
         className="meal-options-menu-button meal-options-delete-button"
         onClick={(e) => {
           e.stopPropagation();
-          handleDeleteMeal(mealType);
+          if (!currentMealLogDate) {
+            return;
+          }
+          const dateKey = getDateKey(currentMealLogDate);
+          if (!dateKey) {
+            return;
+          }
+          const currentMealLogId = mealLogs[dateKey].id;
+          const currentMealLogFoods = mealLogFoods[currentMealLogId];
+          const mealLogFoodsInMealType = currentMealLogFoods.filter(
+            (mealLogFood: MealLogFood) => mealLogFood.meal_type === mealType
+          );
+          const mealLogFoodIdsInMealType = mealLogFoodsInMealType.map(
+            (mealLogFood: MealLogFood) => mealLogFood.id
+          );
+          setSelectedMealLogFoodIds(mealLogFoodIdsInMealType);
+          handleDeleteMealLogFoods();
           setMealOptionsMenuOpenType('');
         }}
       >
