@@ -1,9 +1,9 @@
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 import json
-from app.schemas import workout_log
-from app.models.models import WorkoutLog
+from app.schemas import workout_log, workout_log_exercise, exercise, exercise_set
+from app.models.models import WorkoutLog, WorkoutLogExercise, Exercise, ExerciseSet
 
 
 def create_workout_log(workout_log: workout_log.WorkoutLogCreate, user_id: int, db: Session):
@@ -13,9 +13,74 @@ def create_workout_log(workout_log: workout_log.WorkoutLogCreate, user_id: int, 
     db.refresh(new_workout_log)
     return new_workout_log
 
-def get_workout_logs(user_id: int, db: Session):
-    workout_logs = db.query(WorkoutLog).filter(WorkoutLog.user_id == user_id).all()
-    return workout_logs
+def get_workout_logs(date: str,
+                     expand: list[str] | None,
+                     user_id: int,
+                     db: Session):
+    query = db.query(WorkoutLog).filter(WorkoutLog.user_id == user_id)
+    
+    if date:
+        query = query.filter(func.date(WorkoutLog.log_date) == date)
+
+    if expand:
+        if "workoutLogExercises" in expand:
+            query = query.options(
+                joinedload(WorkoutLog.workout_log_exercises)
+            )
+        if "workoutLogExercises.exercise" in expand:
+            query = query.options(
+                joinedload(WorkoutLog.workout_log_exercises)
+                .joinedload(WorkoutLogExercise.exercise)
+            )
+        if "workoutLogExercises.exerciseSets" in expand:
+            query = query.options(
+                joinedload(WorkoutLog.workout_log_exercises)
+                .joinedload(WorkoutLogExercise.exercise_sets)
+            )
+
+    workout_logs = query.all()
+
+    workout_log_responses = []
+
+    for workout_log_row in workout_logs:
+        workout_log_exercises = None
+        exercises = None
+        exercise_sets = None
+
+        if expand:
+            if "workoutLogExercises" in expand and workout_log_row.workout_log_exercises:
+                workout_log_exercises = [
+                    workout_log_exercise.WorkoutLogExerciseResponse.model_validate(wle)
+                    for wle in workout_log_row.workout_log_exercises
+                ]
+            if "workoutLogExercises.exercise" in expand and workout_log_exercises:
+                exercises = [
+                    exercise.ExerciseResponse.model_validate(workout_log_exercise.exercise)
+                    for workout_log_exercise in workout_log_row.workout_log_exercises
+                    if workout_log_exercise.exercise is not None
+                ]
+            if "workoutLogExercises.exerciseSets" in expand and workout_log_exercises:
+                exercise_sets = [
+                    exercise_set.ExerciseSetResponse.model_validate(workout_log_exercise.exercise_sets)
+                    for workout_log_exercise in workout_log_row.workout_log_exercises
+                    if workout_log_exercise.exercise_sets is not None
+                ]
+
+        workout_log_responses.append(
+            workout_log.WorkoutLogResponse(
+                id=workout_log_row.id,
+                user_id=workout_log_row.user_id,
+                log_date=workout_log_row.log_date,
+                workout_type=workout_log_row.workout_type,
+                total_num_sets=workout_log_row.total_num_sets,
+                total_calories_burned=workout_log_row.total_calories_burned,
+                workout_log_exercises=workout_log_exercises,
+                exercises=exercises,
+                exercise_sets=exercise_sets
+            )
+        )
+
+    return workout_log_responses
 
 def get_workout_log(id: int, user_id: int, db: Session):
     workout_log = db.query(WorkoutLog).filter(WorkoutLog.id == id, WorkoutLog.user_id == user_id).first()

@@ -1,0 +1,123 @@
+.view-food-menu-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  background-color: #2e2e5e;
+  box-shadow: 0 5px 10px 5px rgba(0, 0, 0, 0.25);
+  border-radius: 20px 20px 0 0;
+  z-index: 1;
+}
+
+.view-food-menu-content {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.view-food-menu-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  border-bottom: 1px solid #8085a6;
+}
+
+.view-food-menu-section-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  width: 80%;
+}
+
+.view-food-menu-section-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.view-food-menu-section-column-text {
+  margin: 0;
+  text-align: left;
+  user-select: text;
+}
+
+.view-food-menu-section-column-label {
+  margin: 0;
+  font-size: 12px;
+  text-align: center;
+  user-select: text;
+}
+
+.view-food-menu-content-heading {
+  text-align: left;
+  user-select: text;
+}
+
+.view-food-menu-text-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: fit-content;
+  width: fit-content;
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  border-radius: 5px;
+  color: #00ffcc;
+  font-size: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.view-food-menu-text-button:hover {
+  background-color: #8085a6;
+}
+
+.select-meal-button {
+  width: 5rem;
+}
+
+.select-meal-menu {
+  position: absolute;
+  top: 2.5rem;
+  right: 0;
+}
+
+.view-food-menu-input {
+  width: 5rem;
+  padding: 0.25rem;
+  padding-left: 1rem;
+  text-align: center;
+}
+
+.serving-size-button {
+  width: 5rem;
+}
+
+.select-serving-size-menu {
+  position: absolute;
+  top: 2.5rem;
+  right: 0;
+}
+
+@media (max-width: 500px) {
+  .view-food-menu-content {
+    font-size: 14px;
+  }
+
+  .view-food-menu-content-heading {
+    font-size: 16px;
+  }
+
+  .view-food-menu-input {
+    padding-left: 0.25rem;
+  }
+}

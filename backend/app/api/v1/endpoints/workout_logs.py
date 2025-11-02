@@ -1,5 +1,6 @@
-from fastapi import Response, status, APIRouter, Depends
+from fastapi import Response, status, APIRouter, Depends, Query
 from sqlalchemy.orm import Session
+from typing import Optional
 from app.core.db import get_db
 from app.schemas import workout_log, token
 from app.crud import workout_logs as crud_workout_logs
@@ -19,8 +20,11 @@ def create_workout_log(workout_log: workout_log.WorkoutLogCreate,
 
 # Get all workout logs
 @router.get("", response_model=list[workout_log.WorkoutLogResponse])
-def get_workout_logs(current_user: token.TokenData = Depends(get_current_user), db: Session = Depends(get_db)):
-    workout_logs = crud_workout_logs.get_workout_logs(current_user.user_id, db)
+def get_workout_logs(date: Optional[str] = None,
+                     expand: Optional[list[str]] = Query(None),
+                     current_user: token.TokenData = Depends(get_current_user),
+                     db: Session = Depends(get_db)):
+    workout_logs = crud_workout_logs.get_workout_logs(date, expand, current_user.user_id, db)
     return workout_logs
 
 # Get a workout log
