@@ -110,6 +110,9 @@ export default function WorkoutLogsPage() {
   const { userData, loading } = useInitializeWorkoutLogsPage(
     setTokensRemaining,
     setWorkoutLogs,
+    setWorkoutLogExercises,
+    setExercises,
+    setExerciseSets,
     setToday,
     setCurrentWorkoutLogDate
   );
@@ -198,7 +201,6 @@ export default function WorkoutLogsPage() {
   //   selectedMealLogFoodIds,
   //   setCalendarOpenType
   // );
-
 
   if (loading) {
     return <LoadingScreen />;

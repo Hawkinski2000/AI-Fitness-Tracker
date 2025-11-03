@@ -61,9 +61,9 @@ def get_workout_logs(date: str,
                 ]
             if "workoutLogExercises.exerciseSets" in expand and workout_log_exercises:
                 exercise_sets = [
-                    exercise_set.ExerciseSetResponse.model_validate(workout_log_exercise.exercise_sets)
+                    exercise_set.ExerciseSetResponse.model_validate(es)
                     for workout_log_exercise in workout_log_row.workout_log_exercises
-                    if workout_log_exercise.exercise_sets is not None
+                    for es in (workout_log_exercise.exercise_sets or [])
                 ]
 
         workout_log_responses.append(

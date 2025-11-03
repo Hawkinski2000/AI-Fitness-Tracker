@@ -2,7 +2,9 @@ import axios from 'axios';
 import {
   type WorkoutLog,
   type WorkoutLogResponse,
-
+  type WorkoutLogExercise,
+  type Exercise,
+  type ExerciseSet
 } from "../pages/workout-logs/types/workout-logs";
 import { type Value } from "react-calendar/dist/shared/types.js";
 import { API_BASE_URL } from '../config/api';
@@ -12,6 +14,9 @@ import { getDateKey } from "./dates";
 export const loadWorkoutLog = async (
   logDate: Value,
   setWorkoutLogs: React.Dispatch<React.SetStateAction<Record<string, WorkoutLog>>>,
+  setWorkoutLogExercises: React.Dispatch<React.SetStateAction<Record<number, WorkoutLogExercise[]>>>,
+  setExercises: React.Dispatch<React.SetStateAction<Record<number, Exercise>>>,
+  setExerciseSets: React.Dispatch<React.SetStateAction<Record<number, ExerciseSet[]>>>,
   token: string,
   expand?: string[]
 ) => {
@@ -61,38 +66,42 @@ export const loadWorkoutLog = async (
     }
   }));
 
-  // if (mealLogsResponseObject.meal_log_foods) {
-  //   setMealLogFoods(prev => ({
-  //     ...prev,
-  //     [mealLogsResponseObject.id]: mealLogsResponseObject.meal_log_foods
-  //   }));
-  // }
+  if (workoutLogsResponseObject.workout_log_exercises) {
+    setWorkoutLogExercises(prev => ({
+      ...prev,
+      [workoutLogsResponseObject.id]: workoutLogsResponseObject.workout_log_exercises
+    }));
+  }
 
-  // if (mealLogsResponseObject.foods) {
-  //   const newFoods: Record<number, Food> = {};
+  if (workoutLogsResponseObject.exercises) {
+    const newExercises: Record<number, Exercise> = {};
 
-  //    mealLogsResponseObject.foods.forEach((food: Food) => {
-  //     newFoods[food.id] = food;
-  //   });
+     workoutLogsResponseObject.exercises.forEach((exercise: Exercise) => {
+      newExercises[exercise.id] = exercise;
+    });
 
-  //   setFoods(prev => ({
-  //     ...prev,
-  //     ...newFoods
-  //   }));
-  // }
+    setExercises(prev => ({
+      ...prev,
+      ...newExercises
+    }));
+  }
 
-  // if (mealLogsResponseObject.branded_foods) {
-  //   const newBrandedFoods: Record<number, BrandedFood> = {};
+  if (workoutLogsResponseObject.exercise_sets) {
+    const newExerciseSets: Record<number, ExerciseSet[]> = {};
 
-  //    mealLogsResponseObject.branded_foods.forEach((brandedFood: BrandedFood) => {
-  //     newBrandedFoods[brandedFood.food_id] = brandedFood;
-  //   });
+    workoutLogsResponseObject.exercise_sets.forEach((exerciseSet: ExerciseSet) => {
+      const wleId = exerciseSet.workout_log_exercise_id;
+      if (!newExerciseSets[wleId]) {
+        newExerciseSets[wleId] = [];
+      }
+      newExerciseSets[wleId].push(exerciseSet);
+    });
 
-  //   setBrandedFoods(prev => ({
-  //     ...prev,
-  //     ...newBrandedFoods
-  //   }));
-  // }
+    setExerciseSets(prev => ({
+      ...prev,
+      ...newExerciseSets
+    }));
+  }
 
   return workoutLogsResponseObject;
 };

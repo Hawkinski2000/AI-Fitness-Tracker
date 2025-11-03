@@ -65,78 +65,17 @@ export default function ExerciseSectionHeader({
     const currentExercise = currentWorkoutLogExercises.map(
       (workoutLogExercise: WorkoutLogExercise) => exercises[workoutLogExercise.exercise_id]
     );
-    const mealLogFoodIdsInMealType = mealLogFoodsInMealType.map(
-      (mealLogFood: MealLogFood) => mealLogFood.id
-    );
-
-    if (selectedMealTypes.includes(mealType)) {
-      setAllItemsSelected(false);
-
-      setSelectedMealTypes(prev =>
-        prev.filter((type: string) => type !== mealType)
-      )
-
-      const selectedMealLogFoodIdsInMealType = mealLogFoodIdsInMealType.filter(
-        (mealLogFoodId: number) => selectedMealLogFoodIds.includes(mealLogFoodId)
-      );
-      setSelectedMealLogFoodIds(prev => prev.filter(
-        (mealLogFoodId: number) => !selectedMealLogFoodIdsInMealType.includes(mealLogFoodId)
-      ))
-
-      return;
-    }
-
-    const newSelectedMealLogFoodIds = mealLogFoodIdsInMealType.filter(
-      (mealLogFoodId: number) => !selectedMealLogFoodIds.includes(mealLogFoodId)
-    )
-    setSelectedMealLogFoodIds(prev => [...prev, ...newSelectedMealLogFoodIds])
-
-    if (selectedMealTypes.length === 3) {
-      setAllItemsSelected(true);
-    }
-
-    setSelectedMealTypes(prev => [...prev, mealType]);
   }, [
-    mealType,
-    currentMealLogDate,
-    mealLogs,
-    mealLogFoods,
-    selectedMealLogFoodIds,
-    setSelectedMealLogFoodIds,
-    setAllItemsSelected,
-    selectedMealTypes,
-    setSelectedMealTypes
-  ]);
 
-  
+  ]);
   return (
     <div
       className={`meal-type-container ${selectingMealLogFoods && 'selectable-meal-type-container'}`}
       onClick={() => handleSelectMeal()}
     >
-      <h3 className="meal-type">
-        {capitalizeFirstLetter(mealType)}
+      <h3>
+        {workoutLogExercise && capitalizeFirstLetter(exercises[workoutLogExercise.exercise_id].name)}
       </h3>
-
-      {selectingMealLogFoods ? (
-        <div className="check-box">
-          {selectedMealTypes.includes(mealType) ? (
-            <img className="button-link-image" src={checkBoxIcon} />
-          ) : (
-            <img className="button-link-image" src={boxIcon} />
-          )}
-        </div>
-      ) : (
-        <button
-          className="meal-options-button"
-          onClick={(e) => {
-            e.stopPropagation();
-            setMealOptionsMenuOpenType((prev) => (prev === mealType ? '' : mealType));
-          }}
-        >
-          <img className="button-link-image" src={dotsIcon} />
-        </button>
-      )}
 
       {/* <MealOptionsMenu
         mealType={mealType}

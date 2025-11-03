@@ -77,7 +77,7 @@ export default function ExerciseSection({
   return (
     <section className="meal-section">
       <ExerciseSectionHeader
-        mealType={mealType}
+        workoutLogExercise={workoutLogExercise}
         mealOptionsMenuOpenType={mealOptionsMenuOpenType}
         setMealOptionsMenuOpenType={setMealOptionsMenuOpenType}
         mealOptionsMenuRefs={mealOptionsMenuRefs}
@@ -92,11 +92,10 @@ export default function ExerciseSection({
         setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
         selectingMealLogFoods={selectingMealLogFoods}
         setCalendarOpenType={setCalendarOpenType}
-        handleDeleteMealLogFoods={handleDeleteMealLogFoods}
+        // handleDeleteMealLogFoods={handleDeleteMealLogFoods}
       />
 
-      <MealSectionFoods
-        mealType={mealType}
+      {/* <MealSectionFoods
         currentMealLogDate={currentMealLogDate}
         mealLogs={mealLogs}
         mealLogFoods={mealLogFoods}
@@ -123,7 +122,7 @@ export default function ExerciseSection({
         mealFoodOptionsMenuRefs={mealFoodOptionsMenuRefs}
         handleLoadFoodNutrients={handleLoadFoodNutrients}
         handleDeleteMealLogFoods={handleDeleteMealLogFoods}
-      />
+      /> */}
     </section>
   );
 }

@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { type UserType } from "../../../types/app";
 import {
   type WorkoutLog,
-  
+  type WorkoutLogExercise,
+  type Exercise,
+  type ExerciseSet
 } from "../types/workout-logs";
 import { type Value } from "react-calendar/dist/shared/types.js";
 import { useAuth } from "../../../context/auth/useAuth";
@@ -14,6 +16,9 @@ import { loadWorkoutLog } from "../../../utils/workout-logs";
 const useInitializeWorkoutLogsPage = (
   setTokensRemaining: React.Dispatch<React.SetStateAction<number>>,
   setWorkoutLogs: React.Dispatch<React.SetStateAction<Record<string, WorkoutLog>>>,
+  setWorkoutLogExercises: React.Dispatch<React.SetStateAction<Record<number, WorkoutLogExercise[]>>>,
+  setExercises: React.Dispatch<React.SetStateAction<Record<number, Exercise>>>,
+  setExerciseSets: React.Dispatch<React.SetStateAction<Record<number, ExerciseSet[]>>>,
   setToday: React.Dispatch<React.SetStateAction<Value>>,
   setCurrentMealLogDate: React.Dispatch<React.SetStateAction<Value>>
 ) => {
@@ -52,6 +57,9 @@ const useInitializeWorkoutLogsPage = (
         await loadWorkoutLog(
           normalizedToday,
           setWorkoutLogs,
+          setWorkoutLogExercises,
+          setExercises,
+          setExerciseSets,
           token,
           [
             "workoutLogExercises",
@@ -76,6 +84,9 @@ const useInitializeWorkoutLogsPage = (
     navigate,
     setTokensRemaining,
     setWorkoutLogs,
+    setWorkoutLogExercises,
+    setExercises,
+    setExerciseSets,
     setToday,
     setCurrentMealLogDate,
   ]);
