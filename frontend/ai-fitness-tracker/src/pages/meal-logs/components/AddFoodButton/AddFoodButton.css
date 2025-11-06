@@ -10,7 +10,7 @@
   overflow-y: hidden;
   user-select: none;
   cursor: pointer;
-  transition: all 10s;
+  transition: all 0.25s;
 }
 .add-food-button:hover {
   background-color: #2e2e5e;

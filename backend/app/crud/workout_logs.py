@@ -20,7 +20,7 @@ def get_workout_logs(date: str,
     query = db.query(WorkoutLog).filter(WorkoutLog.user_id == user_id)
     
     if date:
-        query = query.filter(func.date(WorkoutLog.log_date) == date)
+        query = query.filter(WorkoutLog.log_date == date)
 
     if expand:
         if "workoutLogExercises" in expand:

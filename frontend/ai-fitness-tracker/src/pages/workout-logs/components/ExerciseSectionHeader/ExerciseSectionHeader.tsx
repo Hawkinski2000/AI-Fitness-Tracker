@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import MealOptionsMenu from "../MealOptionsMenu/MealOptionsMenu";
+import ExerciseOptionsMenu from "../ExerciseOptionsMenu/ExerciseOptionsMenu";
 import {
   type WorkoutLog,
   type WorkoutLogExercise,
@@ -16,9 +16,9 @@ import './ExerciseSectionHeader.css';
 
 type ExerciseSectionHeaderProps = {
   workoutLogExercise: WorkoutLogExercise;
-  mealOptionsMenuOpenType: string;
-  setMealOptionsMenuOpenType: React.Dispatch<React.SetStateAction<string>>;
-  mealOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
+  exerciseOptionsMenuOpenName: string;
+  setExerciseOptionsMenuOpenName: React.Dispatch<React.SetStateAction<string>>;
+  exerciseOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
   workoutLogs: Record<string, WorkoutLog>;
   workoutLogExercises: Record<number, WorkoutLogExercise[]>;
   exercises: Record<number, Exercise>;
@@ -28,17 +28,17 @@ type ExerciseSectionHeaderProps = {
   setSelectedMealTypes: React.Dispatch<React.SetStateAction<string[]>>;
   selectedMealLogFoodIds: number[];
   setSelectedMealLogFoodIds: React.Dispatch<React.SetStateAction<number[]>>;
-  selectingMealLogFoods: boolean;
+  selectingWorkoutLogExercises: boolean;
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>;
-  handleDeleteMealLogFoods: () => Promise<void>;
+  // handleDeleteMealLogFoods: () => Promise<void>;
 };
 
 
 export default function ExerciseSectionHeader({
   workoutLogExercise,
-  mealOptionsMenuOpenType,
-  setMealOptionsMenuOpenType,
-  mealOptionsMenuRefs,
+  exerciseOptionsMenuOpenName,
+  setExerciseOptionsMenuOpenName,
+  exerciseOptionsMenuRefs,
   workoutLogs,
   workoutLogExercises,
   exercises,
@@ -48,47 +48,56 @@ export default function ExerciseSectionHeader({
   setSelectedMealTypes,
   selectedMealLogFoodIds,
   setSelectedMealLogFoodIds,
-  selectingMealLogFoods,
+  selectingWorkoutLogExercises,
   setCalendarOpenType,
-  handleDeleteMealLogFoods
+  // handleDeleteMealLogFoods
 }: ExerciseSectionHeaderProps) {
-  const handleSelectMeal = useCallback(async () => {
-    if (!currentWorkoutLogDate) {
-        return;
-    }
-    const dateKey = getDateKey(currentWorkoutLogDate);
-    if (!dateKey) {
-      return;
-    }
-    const currentWorkoutLogId = workoutLogs[dateKey].id;
-    const currentWorkoutLogExercises = workoutLogExercises[currentWorkoutLogId];
-    const currentExercise = currentWorkoutLogExercises.map(
-      (workoutLogExercise: WorkoutLogExercise) => exercises[workoutLogExercise.exercise_id]
-    );
-  }, [
+  const exerciseName = workoutLogExercise && capitalizeFirstLetter(exercises[workoutLogExercise.exercise_id].name);
 
-  ]);
+  // const handleSelectExercise = useCallback(async () => {
+  //   if (!currentWorkoutLogDate) {
+  //       return;
+  //   }
+  //   const dateKey = getDateKey(currentWorkoutLogDate);
+  //   if (!dateKey) {
+  //     return;
+  //   }
+  //   const currentWorkoutLogId = workoutLogs[dateKey].id;
+
+  // }, [
+
+  // ]);
   return (
     <div
-      className={`meal-type-container ${selectingMealLogFoods && 'selectable-meal-type-container'}`}
-      onClick={() => handleSelectMeal()}
+      className={`exercise-container ${selectingWorkoutLogExercises && 'selectable-exercise-container'}`}
+      // onClick={() => handleSelectExercise()}
     >
       <h3>
-        {workoutLogExercise && capitalizeFirstLetter(exercises[workoutLogExercise.exercise_id].name)}
+        {exerciseName}
       </h3>
 
-      {/* <MealOptionsMenu
-        mealType={mealType}
-        mealOptionsMenuOpenType={mealOptionsMenuOpenType}
-        setMealOptionsMenuOpenType={setMealOptionsMenuOpenType}
-        mealOptionsMenuRefs={mealOptionsMenuRefs}
-        mealLogs={mealLogs}
-        mealLogFoods={mealLogFoods}
-        currentMealLogDate={currentMealLogDate}
+      <button
+        className="meal-options-button"
+        onClick={(e) => {
+          e.stopPropagation();
+          setExerciseOptionsMenuOpenName((prev) => (prev === exerciseName ? '' : exerciseName));
+        }}
+      >
+        <img className="button-link-image" src={dotsIcon} />
+      </button>
+
+      <ExerciseOptionsMenu
+        exerciseName={exerciseName}
+        exerciseOptionsMenuOpenName={exerciseOptionsMenuOpenName}
+        setExerciseOptionsMenuOpenName={setExerciseOptionsMenuOpenName}
+        exerciseOptionsMenuRefs={exerciseOptionsMenuRefs}
+        // mealLogs={mealLogs}
+        // mealLogFoods={mealLogFoods}
+        currentWorkoutLogDate={currentWorkoutLogDate}
         setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
         setCalendarOpenType={setCalendarOpenType}
-        handleDeleteMealLogFoods={handleDeleteMealLogFoods}
-      /> */}
+        // handleDeleteMealLogFoods={handleDeleteMealLogFoods}
+      />
     </div>
   );
 }

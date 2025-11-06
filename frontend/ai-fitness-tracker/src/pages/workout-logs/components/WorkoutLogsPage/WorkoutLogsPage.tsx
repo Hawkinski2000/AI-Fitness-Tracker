@@ -49,13 +49,13 @@ export default function WorkoutLogsPage() {
   const [mealLogOptionsMenuOpen, setMealLogOptionsMenuOpen] = useState<boolean>(false);
   const mealLogOptionsMenuRef = useRef<HTMLDivElement | null>(null);
 
-  const [mealOptionsMenuOpenType, setMealOptionsMenuOpenType] = useState<string>('');
-  const mealOptionsMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [exerciseOptionsMenuOpenName, setExerciseOptionsMenuOpenName] = useState<string>('');
+  const exerciseOptionsMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const [mealFoodOptionsMenuOpenId, setMealFoodOptionsMenuOpenId] = useState<number | null>(null);
   const mealFoodOptionsMenuRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
-  const [selectingMealLogFoods, setSelectingMealLogFoods] = useState<boolean>(false);
+  const [selectingWorkoutLogExercises, setSelectingWorkoutLogExercises] = useState<boolean>(false);
   const [allItemsSelected, setAllItemsSelected] = useState<boolean>(false);
   const [selectedMealTypes, setSelectedMealTypes] = useState<string[]>([]);
   const [selectedMealLogFoodIds, setSelectedMealLogFoodIds] = useState<number[]>([]);
@@ -121,8 +121,8 @@ export default function WorkoutLogsPage() {
     setAccountMenuOpen,
     mealLogOptionsMenuOpen,
     setMealLogOptionsMenuOpen,
-    mealOptionsMenuOpenType,
-    setMealOptionsMenuOpenType,
+    exerciseOptionsMenuOpenName,
+    setExerciseOptionsMenuOpenName,
     mealFoodOptionsMenuOpenId,
     setMealFoodOptionsMenuOpenId,
     foodsMenuOpenMealType,
@@ -141,7 +141,7 @@ export default function WorkoutLogsPage() {
     currentWorkoutLogDate,
     accountMenuRef,
     mealLogOptionsMenuRef,
-    mealOptionsMenuRefs,
+    exerciseOptionsMenuRefs,
     mealFoodOptionsMenuRefs,
     foodsMenuRef,
     selectMealMenuRef,
@@ -324,7 +324,7 @@ export default function WorkoutLogsPage() {
               <div
                 className={
                   `exercises-container
-                  ${selectingMealLogFoods && 'exercises-container-selecting-items'}`
+                  ${selectingWorkoutLogExercises && 'exercises-container-selecting-items'}`
                 }
               >
                 {currentWorkoutLogExercises.map((workoutLogExercise) => {
@@ -337,8 +337,8 @@ export default function WorkoutLogsPage() {
                       workoutLogExercises={workoutLogExercises}
                       exercises={exercises}
                       exerciseSets={exerciseSets}
-                      mealOptionsMenuOpenType={mealOptionsMenuOpenType}
-                      setMealOptionsMenuOpenType={setMealOptionsMenuOpenType}
+                      exerciseOptionsMenuOpenName={exerciseOptionsMenuOpenName}
+                      setExerciseOptionsMenuOpenName={setExerciseOptionsMenuOpenName}
                       mealFoodOptionsMenuOpenId={mealFoodOptionsMenuOpenId}
                       setMealFoodOptionsMenuOpenId={setMealFoodOptionsMenuOpenId}
                       setAllItemsSelected={setAllItemsSelected}
@@ -346,7 +346,7 @@ export default function WorkoutLogsPage() {
                       setSelectedMealTypes={setSelectedMealTypes}
                       selectedMealLogFoodIds={selectedMealLogFoodIds}
                       setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
-                      selectingMealLogFoods={selectingMealLogFoods}
+                      selectingWorkoutLogExercises={selectingWorkoutLogExercises}
                       setCalendarOpenType={setCalendarOpenType}
                       editingMealLogFoodId={editingMealLogFoodId}
                       setEditingMealLogFoodId={setEditingMealLogFoodId}
@@ -356,7 +356,7 @@ export default function WorkoutLogsPage() {
                       setNumServings={setNumServings}
                       setServingSize={setServingSize}
                       setServingSizeUnit={setServingSizeUnit}
-                      mealOptionsMenuRefs={mealOptionsMenuRefs}
+                      exerciseOptionsMenuRefs={exerciseOptionsMenuRefs}
                       mealFoodOptionsMenuRefs={mealFoodOptionsMenuRefs}
                       // handleDeleteMealLogFoods={handleDeleteMealLogFoods}
                       // handleLoadFoodNutrients={handleLoadFoodNutrients}

@@ -1,4 +1,4 @@
-.meal-type-container {
+.exercise-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -8,10 +8,10 @@
   user-select: none;
 }
 
-.selectable-meal-type-container {
+.selectable-exercise-container {
   cursor: pointer;
   transition: all 0.25s;
 }
-.selectable-meal-type-container:hover {
+.selectable-exercise-container:hover {
   background-color: #2e2e5e;
 }

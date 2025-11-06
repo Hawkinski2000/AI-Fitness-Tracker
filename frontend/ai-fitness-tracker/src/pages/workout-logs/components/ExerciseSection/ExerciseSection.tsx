@@ -6,7 +6,7 @@ import {
 } from "../../types/workout-logs";
 import type { Value } from "react-calendar/dist/shared/types.js";
 import ExerciseSectionHeader from "../ExerciseSectionHeader/ExerciseSectionHeader";
-import MealSectionFoods from "../MealSectionFoods/MealSectionFoods";
+import ExerciseSectionSets from "../ExerciseSectionSets/ExerciseSectionSets";
 import './ExerciseSection.css';
 
 
@@ -17,8 +17,8 @@ type ExerciseSectionProps = {
   workoutLogExercises: Record<number, WorkoutLogExercise[]>;
   exercises: Record<number, Exercise>;
   exerciseSets: Record<number, ExerciseSet[]>;
-  mealOptionsMenuOpenType: string;
-  setMealOptionsMenuOpenType: React.Dispatch<React.SetStateAction<string>>;
+  exerciseOptionsMenuOpenName: string;
+  setExerciseOptionsMenuOpenName: React.Dispatch<React.SetStateAction<string>>;
   mealFoodOptionsMenuOpenId: number | null;
   setMealFoodOptionsMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
   selectedMealTypes: string[];
@@ -26,7 +26,7 @@ type ExerciseSectionProps = {
   setSelectedMealTypes: React.Dispatch<React.SetStateAction<string[]>>;
   selectedMealLogFoodIds: number[];
   setSelectedMealLogFoodIds: React.Dispatch<React.SetStateAction<number[]>>;
-  selectingMealLogFoods: boolean;
+  selectingWorkoutLogExercises: boolean;
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>;
   editingMealLogFoodId: number | null;
   setEditingMealLogFoodId: React.Dispatch<React.SetStateAction<number | null>>;
@@ -36,7 +36,7 @@ type ExerciseSectionProps = {
   setNumServings: React.Dispatch<React.SetStateAction<number | null>>;
   setServingSize: React.Dispatch<React.SetStateAction<number | null>>;
   setServingSizeUnit: React.Dispatch<React.SetStateAction<string>>;
-  mealOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
+  exerciseOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
   mealFoodOptionsMenuRefs: React.RefObject<Record<number, HTMLDivElement | null>>;
   // handleDeleteMealLogFoods: () => Promise<void>;
   // handleLoadFoodNutrients: (foodId: number) => Promise<void>;
@@ -50,8 +50,8 @@ export default function ExerciseSection({
   workoutLogExercises,
   exercises,
   exerciseSets,
-  mealOptionsMenuOpenType,
-  setMealOptionsMenuOpenType,
+  exerciseOptionsMenuOpenName,
+  setExerciseOptionsMenuOpenName,
   mealFoodOptionsMenuOpenId,
   setMealFoodOptionsMenuOpenId,
   selectedMealTypes,
@@ -59,7 +59,7 @@ export default function ExerciseSection({
   setSelectedMealTypes,
   selectedMealLogFoodIds,
   setSelectedMealLogFoodIds,
-  selectingMealLogFoods,
+  selectingWorkoutLogExercises,
   setCalendarOpenType,
   editingMealLogFoodId,
   setEditingMealLogFoodId,
@@ -69,18 +69,18 @@ export default function ExerciseSection({
   setNumServings,
   setServingSize,
   setServingSizeUnit,
-  mealOptionsMenuRefs,
+  exerciseOptionsMenuRefs,
   mealFoodOptionsMenuRefs,
   // handleDeleteMealLogFoods,
   // handleLoadFoodNutrients
 }: ExerciseSectionProps) {
   return (
-    <section className="meal-section">
+    <section className="exercise-section">
       <ExerciseSectionHeader
         workoutLogExercise={workoutLogExercise}
-        mealOptionsMenuOpenType={mealOptionsMenuOpenType}
-        setMealOptionsMenuOpenType={setMealOptionsMenuOpenType}
-        mealOptionsMenuRefs={mealOptionsMenuRefs}
+        exerciseOptionsMenuOpenName={exerciseOptionsMenuOpenName}
+        setExerciseOptionsMenuOpenName={setExerciseOptionsMenuOpenName}
+        exerciseOptionsMenuRefs={exerciseOptionsMenuRefs}
         workoutLogs={workoutLogs}
         workoutLogExercises={workoutLogExercises}
         exercises={exercises}
@@ -90,29 +90,27 @@ export default function ExerciseSection({
         setSelectedMealTypes={setSelectedMealTypes}
         selectedMealLogFoodIds={selectedMealLogFoodIds}
         setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
-        selectingMealLogFoods={selectingMealLogFoods}
+        selectingWorkoutLogExercises={selectingWorkoutLogExercises}
         setCalendarOpenType={setCalendarOpenType}
         // handleDeleteMealLogFoods={handleDeleteMealLogFoods}
       />
 
-      {/* <MealSectionFoods
-        currentMealLogDate={currentMealLogDate}
-        mealLogs={mealLogs}
-        mealLogFoods={mealLogFoods}
-        foods={foods}
-        brandedFoods={brandedFoods}
-        foodNutrients={foodNutrients}
+      <ExerciseSectionSets
+        currentWorkoutLogDate={currentWorkoutLogDate}
+        workoutLogExercise={workoutLogExercise}
+        exercises={exercises}
+        exerciseSets={exerciseSets}
         setFoodsMenuOpenMealType={setFoodsMenuOpenMealType}
         viewFoodMenuOpenId={viewFoodMenuOpenId}
         setViewFoodMenuOpenId={setViewFoodMenuOpenId}
-        setMealOptionsMenuOpenType={setMealOptionsMenuOpenType}
+        setExerciseOptionsMenuOpenName={setExerciseOptionsMenuOpenName}
         mealFoodOptionsMenuOpenId={mealFoodOptionsMenuOpenId}
         setMealFoodOptionsMenuOpenId={setMealFoodOptionsMenuOpenId}
         setAllItemsSelected={setAllItemsSelected}
         setSelectedMealTypes={setSelectedMealTypes}
         selectedMealLogFoodIds={selectedMealLogFoodIds}
         setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
-        selectingMealLogFoods={selectingMealLogFoods}
+        selectingWorkoutLogExercises={selectingWorkoutLogExercises}
         setCalendarOpenType={setCalendarOpenType}
         editingMealLogFoodId={editingMealLogFoodId}
         setEditingMealLogFoodId={setEditingMealLogFoodId}
@@ -120,9 +118,9 @@ export default function ExerciseSection({
         setServingSize={setServingSize}
         setServingSizeUnit={setServingSizeUnit}
         mealFoodOptionsMenuRefs={mealFoodOptionsMenuRefs}
-        handleLoadFoodNutrients={handleLoadFoodNutrients}
-        handleDeleteMealLogFoods={handleDeleteMealLogFoods}
-      /> */}
+        // handleLoadFoodNutrients={handleLoadFoodNutrients}
+        // handleDeleteMealLogFoods={handleDeleteMealLogFoods}
+      />
     </section>
   );
 }

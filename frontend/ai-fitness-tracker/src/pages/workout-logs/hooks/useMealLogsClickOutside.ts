@@ -6,8 +6,8 @@ const useMealLogsClickOutside = (
   setAccountMenuOpen: React.Dispatch<React.SetStateAction<boolean>>,
   mealLogOptionsMenuOpen: boolean,
   setMealLogOptionsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  mealOptionsMenuOpenType: string,
-  setMealOptionsMenuOpenType: React.Dispatch<React.SetStateAction<string>>,
+  exerciseOptionsMenuOpenName: string,
+  setExerciseOptionsMenuOpenName: React.Dispatch<React.SetStateAction<string>>,
   mealFoodOptionsMenuOpenId: number | null,
   setMealFoodOptionsMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>,
   foodsMenuOpenMealType: string,
@@ -26,7 +26,7 @@ const useMealLogsClickOutside = (
   currentMealLogDate: Value,
   accountMenuRef: React.RefObject<HTMLDivElement | null>,
   mealLogOptionsMenuRef: React.RefObject<HTMLDivElement | null>,
-  mealOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>,
+  exerciseOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>,
   mealFoodOptionsMenuRefs: React.RefObject<Record<number, HTMLDivElement | null>>,
   foodsMenuRef: React.RefObject<HTMLDivElement | null>,
   selectMealMenuRef: React.RefObject<HTMLDivElement | null>,
@@ -47,13 +47,13 @@ const useMealLogsClickOutside = (
       }
 
       if (
-        mealOptionsMenuOpenType &&
-        mealOptionsMenuRefs.current[mealOptionsMenuOpenType] &&
+        exerciseOptionsMenuOpenName &&
+        exerciseOptionsMenuRefs.current[exerciseOptionsMenuOpenName] &&
         target instanceof Node &&
-        !mealOptionsMenuRefs.current[mealOptionsMenuOpenType].contains(target) &&
+        !exerciseOptionsMenuRefs.current[exerciseOptionsMenuOpenName].contains(target) &&
         !(target instanceof HTMLElement && target.classList.contains('meal-options-button'))
       ) {
-        setMealOptionsMenuOpenType('');
+        setExerciseOptionsMenuOpenName('');
       }
 
       if (
@@ -135,8 +135,8 @@ const useMealLogsClickOutside = (
     setAccountMenuOpen,
     mealLogOptionsMenuOpen,
     setMealLogOptionsMenuOpen,
-    mealOptionsMenuOpenType,
-    setMealOptionsMenuOpenType,
+    exerciseOptionsMenuOpenName,
+    setExerciseOptionsMenuOpenName,
     mealFoodOptionsMenuOpenId,
     setMealFoodOptionsMenuOpenId,
     foodsMenuOpenMealType,
@@ -155,7 +155,7 @@ const useMealLogsClickOutside = (
     currentMealLogDate,
     accountMenuRef,
     mealLogOptionsMenuRef,
-    mealOptionsMenuRefs,
+    exerciseOptionsMenuRefs,
     mealFoodOptionsMenuRefs,
     foodsMenuRef,
     selectMealMenuRef,
