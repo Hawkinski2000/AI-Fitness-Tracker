@@ -1,6 +1,5 @@
-import { type MealLog, type MealLogFood } from '../../types/workout-logs';
 import { type Value } from 'react-calendar/dist/shared/types.js';
-import CalendarWindow from '../../../../components/CalendarWindow/CalendarWindow';
+import CalendarWindow from '../CalendarWindow/CalendarWindow';
 import MealLogOptionsMenu from '../MealLogOptionsMenu/MealLogOptionsMenu';
 import arrowLeftIcon from '../../../../assets/arrow-left-icon.svg';
 import arrowRightIcon from '../../../../assets/arrow-right-icon.svg';
@@ -9,7 +8,7 @@ import './DateNav.css';
 
 
 type DateNavProps = {
-  currentMealLogDate: Value;
+  currentWorkoutLogDate: Value;
   today: Value;
   handleChangeDate: (direction: string) => Promise<void>;
   getDateLabel: (currentMealLogDate: Value, today: Value) => string | undefined;
@@ -20,23 +19,23 @@ type DateNavProps = {
   setCalendarDate: React.Dispatch<React.SetStateAction<Value>>;
   mealLogOptionsMenuOpen: boolean;
   setMealLogOptionsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  selectingMealLogFoods: boolean;
-  setSelectingMealLogFoods: React.Dispatch<React.SetStateAction<boolean>>;
+  selectingWorkoutLogExercises: boolean;
+  setSelectingWorkoutLogExercises: React.Dispatch<React.SetStateAction<boolean>>;
   setAllItemsSelected: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedMealTypes: React.Dispatch<React.SetStateAction<string[]>>;
-  setSelectedMealLogFoodIds: React.Dispatch<React.SetStateAction<number[]>>;
-  mealLogs: Record<string, MealLog>;
-  mealLogFoods: Record<number, MealLogFood[]>;
-  mealLogOptionsMenuRef: React.RefObject<HTMLDivElement | null>;
+  setSelectedWorkoutLogExerciseIds: React.Dispatch<React.SetStateAction<number[]>>;
+  // mealLogs: Record<string, MealLog>;
+  // mealLogFoods: Record<number, MealLogFood[]>;
+  // mealLogOptionsMenuRef: React.RefObject<HTMLDivElement | null>;
   handleSetCalendarDate: (value: Value) => Promise<void>;
-  handleCopyMealLogFoods: () => Promise<void>;
-  handleMoveMealLogFoods: () => Promise<void>;
-  handleDeleteMealLogFoods: () => Promise<void>;
+  // handleCopyMealLogFoods: () => Promise<void>;
+  // handleMoveMealLogFoods: () => Promise<void>;
+  // handleDeleteMealLogFoods: () => Promise<void>;
 };
 
 
 export default function DateNav({
-  currentMealLogDate,
+  currentWorkoutLogDate,
   today,
   handleChangeDate,
   getDateLabel,
@@ -47,18 +46,18 @@ export default function DateNav({
   setCalendarDate,
   mealLogOptionsMenuOpen,
   setMealLogOptionsMenuOpen,
-  selectingMealLogFoods,
-  setSelectingMealLogFoods,
+  selectingWorkoutLogExercises,
+  setSelectingWorkoutLogExercises,
   setAllItemsSelected,
   setSelectedMealTypes,
-  setSelectedMealLogFoodIds,
-  mealLogs,
-  mealLogFoods,
-  mealLogOptionsMenuRef,
+  setSelectedWorkoutLogExerciseIds,
+  // mealLogs,
+  // mealLogFoods,
+  // mealLogOptionsMenuRef,
   handleSetCalendarDate,
-  handleCopyMealLogFoods,
-  handleMoveMealLogFoods,
-  handleDeleteMealLogFoods
+  // handleCopyMealLogFoods,
+  // handleMoveMealLogFoods,
+  // handleDeleteMealLogFoods
 }: DateNavProps) {
   return (
     <div className="date-nav-container">
@@ -67,10 +66,10 @@ export default function DateNav({
           className="date-nav-button"
           onClick={() => {
             handleChangeDate('previous');
-            setSelectingMealLogFoods(false);
+            setSelectingWorkoutLogExercises(false);
             setAllItemsSelected(false);
             setSelectedMealTypes([]);
-            setSelectedMealLogFoodIds([]);
+            setSelectedWorkoutLogExerciseIds([]);
           }}
         >
           <img className="button-link-image" src={arrowLeftIcon} />
@@ -78,26 +77,26 @@ export default function DateNav({
         <button
           className="date-nav-button open-calendar-button"
           onClick={() => {
-            if (currentMealLogDate) {
-              setCalendarDate(currentMealLogDate);
+            if (currentWorkoutLogDate) {
+              setCalendarDate(currentWorkoutLogDate);
             }
             setCalendarOpenType(prev => prev === 'changeMealLog' ? '' : 'changeMealLog');
-            setSelectingMealLogFoods(false);
+            setSelectingWorkoutLogExercises(false);
             setAllItemsSelected(false);
             setSelectedMealTypes([]);
-            setSelectedMealLogFoodIds([]);
+            setSelectedWorkoutLogExerciseIds([]);
           }}
         >
-          {(currentMealLogDate && today) ? getDateLabel(currentMealLogDate, today) : ""}
+          {(currentWorkoutLogDate && today) ? getDateLabel(currentWorkoutLogDate, today) : ""}
         </button>
         <button
           className="date-nav-button"
           onClick={() => {
             handleChangeDate('next');
-            setSelectingMealLogFoods(false);
+            setSelectingWorkoutLogExercises(false);
             setAllItemsSelected(false);
             setSelectedMealTypes([]);
-            setSelectedMealLogFoodIds([]);
+            setSelectedWorkoutLogExerciseIds([]);
           }}
         >
           <img className="button-link-image" src={arrowRightIcon} />
@@ -109,13 +108,13 @@ export default function DateNav({
           calendarRef={calendarRef}
           calendarDate={calendarDate}
           setCalendarDate={setCalendarDate}
-          currentMealLogDate={currentMealLogDate}
-          setSelectingMealLogFoods={setSelectingMealLogFoods}
+          currentWorkoutLogDate={currentWorkoutLogDate}
+          setSelectingWorkoutLogExercises={setSelectingWorkoutLogExercises}
           setSelectedMealTypes={setSelectedMealTypes}
-          setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
+          setSelectedWorkoutLogExerciseIds={setSelectedWorkoutLogExerciseIds}
           handleSetCalendarDate={handleSetCalendarDate}
-          handleCopyMealLogFoods={handleCopyMealLogFoods}
-          handleMoveMealLogFoods={handleMoveMealLogFoods}
+          // handleCopyMealLogFoods={handleCopyMealLogFoods}
+          // handleMoveMealLogFoods={handleMoveMealLogFoods}
         />
       </nav>
 
@@ -129,7 +128,7 @@ export default function DateNav({
         <img className="button-link-image" src={dotsIcon} />
       </button>
 
-      <MealLogOptionsMenu
+      {/* <MealLogOptionsMenu
         mealLogOptionsMenuOpen={mealLogOptionsMenuOpen}
         setMealLogOptionsMenuOpen={setMealLogOptionsMenuOpen}
         selectingMealLogFoods={selectingMealLogFoods}
@@ -141,7 +140,7 @@ export default function DateNav({
         setCalendarOpenType={setCalendarOpenType}
         mealLogOptionsMenuRef={mealLogOptionsMenuRef}
         handleDeleteMealLogFoods={handleDeleteMealLogFoods}
-      />
+      /> */}
     </div>
   );
 }

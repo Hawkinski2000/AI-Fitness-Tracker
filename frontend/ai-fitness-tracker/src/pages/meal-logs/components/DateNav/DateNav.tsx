@@ -1,6 +1,6 @@
 import { type MealLog, type MealLogFood } from '../../types/meal-logs';
 import { type Value } from 'react-calendar/dist/shared/types.js';
-import CalendarWindow from '../../../../components/CalendarWindow/CalendarWindow';
+import CalendarWindow from '../CalendarWindow/CalendarWindow';
 import MealLogOptionsMenu from '../MealLogOptionsMenu/MealLogOptionsMenu';
 import arrowLeftIcon from '../../../../assets/arrow-left-icon.svg';
 import arrowRightIcon from '../../../../assets/arrow-right-icon.svg';

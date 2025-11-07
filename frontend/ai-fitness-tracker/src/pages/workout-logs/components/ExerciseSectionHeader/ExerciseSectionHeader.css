@@ -15,3 +15,17 @@
 .selectable-exercise-container:hover {
   background-color: #2e2e5e;
 }
+
+.exercise-options-button {
+  display: flex;
+  height: 2rem;
+  border-radius: 10px;
+  padding: 0.5rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.exercise-options-button:hover {
+  background-color: #8085a6;
+}

@@ -1,5 +1,5 @@
+import { type WorkoutLogExercise } from '../../types/workout-logs';
 import type { Value } from 'react-calendar/dist/shared/types.js';
-import { getDateKey } from '../../../../utils/dates';
 import copyIcon from '../../../../assets/copy-icon.svg';
 import moveIcon from '../../../../assets/move-icon.svg';
 import deleteIcon from '../../../../assets/delete-icon.svg';
@@ -7,28 +7,24 @@ import './ExerciseOptionsMenu.css';
 
 
 type ExerciseOptionsMenuProps = {
+  workoutLogExercise: WorkoutLogExercise;
   exerciseName: string;
   exerciseOptionsMenuOpenName: string;
   setExerciseOptionsMenuOpenName: React.Dispatch<React.SetStateAction<string>>;
   exerciseOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
-  // mealLogs: Record<string, MealLog>;
-  // mealLogFoods: Record<number, MealLogFood[]>;
-  currentWorkoutLogDate: Value;
-  setSelectedMealLogFoodIds: React.Dispatch<React.SetStateAction<number[]>>;
+  setSelectedWorkoutLogExerciseIds: React.Dispatch<React.SetStateAction<number[]>>;
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>;
-  // handleDeleteMealLogFoods: () => Promise<void>;
+  // handleDeleteMealLogFoods: 
 };
 
 
 export default function ExerciseOptionsMenu({
+  workoutLogExercise,
   exerciseName,
   exerciseOptionsMenuOpenName,
   setExerciseOptionsMenuOpenName,
   exerciseOptionsMenuRefs,
-  mealLogs,
-  mealLogFoods,
-  currentWorkoutLogDate,
-  setSelectedMealLogFoodIds,
+  setSelectedWorkoutLogExerciseIds,
   setCalendarOpenType,
   // handleDeleteMealLogFoods
 }: ExerciseOptionsMenuProps) {
@@ -44,27 +40,12 @@ export default function ExerciseOptionsMenu({
     >
       <button
         className="exercise-options-menu-button"
-        // onClick={(e) => {
-        //   e.stopPropagation();
-        //   if (!currentMealLogDate) {
-        //     return;
-        //   }
-        //   const dateKey = getDateKey(currentMealLogDate);
-        //   if (!dateKey) {
-        //     return;
-        //   }
-        //   const currentMealLogId = mealLogs[dateKey].id;
-        //   const currentMealLogFoods = mealLogFoods[currentMealLogId];
-        //   const mealLogFoodsInMealType = currentMealLogFoods.filter(
-        //     (mealLogFood: MealLogFood) => mealLogFood.meal_type === mealType
-        //   );
-        //   const mealLogFoodIdsInMealType = mealLogFoodsInMealType.map(
-        //     (mealLogFood: MealLogFood) => mealLogFood.id
-        //   );
-        //   setSelectedMealLogFoodIds(mealLogFoodIdsInMealType);
-        //   setCalendarOpenType('copyMealLogFoods');
-        //   setMealOptionsMenuOpenType('');
-        // }}
+        onClick={(e) => {
+          e.stopPropagation();
+          setSelectedWorkoutLogExerciseIds(prev => [...prev, workoutLogExercise.id]);
+          setCalendarOpenType('copyWorkoutLogExercises');
+          setExerciseOptionsMenuOpenName('');
+        }}
       >
         <img className="button-link-image" src={copyIcon} />
         Copy to...

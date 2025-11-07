@@ -8,8 +8,8 @@ import {
 import { type Value } from 'react-calendar/dist/shared/types.js';
 import { getDateKey } from '../../../../utils/dates';
 import useInitializeWorkoutLogsPage from "../../hooks/useInitializeWorkoutLogsPage";
-import useMealLogsClickOutside from "../../hooks/useMealLogsClickOutside";
-import useMealLogsDate from "../../hooks/useMealLogsDate";
+import useWorkoutLogsClickOutside from "../../hooks/useWorkoutLogsClickOutside";
+import useWorkoutLogsDate from "../../hooks/useWorkoutLogsDate";
 import useFoodSearch from "../../hooks/useFoodSearch";
 import useMealLogActions from "../../hooks/useMealLogActions";
 import LoadingScreen from "../../../../components/LoadingScreen/LoadingScreen";
@@ -58,7 +58,7 @@ export default function WorkoutLogsPage() {
   const [selectingWorkoutLogExercises, setSelectingWorkoutLogExercises] = useState<boolean>(false);
   const [allItemsSelected, setAllItemsSelected] = useState<boolean>(false);
   const [selectedMealTypes, setSelectedMealTypes] = useState<string[]>([]);
-  const [selectedMealLogFoodIds, setSelectedMealLogFoodIds] = useState<number[]>([]);
+  const [selectedWorkoutLogExerciseIds, setSelectedWorkoutLogExerciseIds] = useState<number[]>([]);
   
   const [calendarOpenType, setCalendarOpenType] = useState<string>('');
   const calendarRef = useRef<HTMLDivElement | null>(null);
@@ -87,13 +87,8 @@ export default function WorkoutLogsPage() {
   const [selectMealMenuOpenType, setSelectMealMenuOpenType] = useState<string>('');
   const selectMealMenuRef = useRef<HTMLDivElement | null>(null);
 
-  const [numServings, setNumServings] = useState<number | null>(1);
-
-  const [servingSize, setServingSize] = useState<number | null>(null);
   const [selectServingSizeMenuOpen, setSelectServingSizeMenuOpen] = useState<boolean>(false);
   const selectServingSizeMenuRef = useRef<HTMLDivElement | null>(null);
-
-  const [servingSizeUnit, setServingSizeUnit] = useState<string>('');
 
 // ---------------------------------------------------------------------------
 
@@ -117,7 +112,7 @@ export default function WorkoutLogsPage() {
     setCurrentWorkoutLogDate
   );
 
-  useMealLogsClickOutside(
+  useWorkoutLogsClickOutside(
     setAccountMenuOpen,
     mealLogOptionsMenuOpen,
     setMealLogOptionsMenuOpen,
@@ -149,21 +144,21 @@ export default function WorkoutLogsPage() {
     calendarRef
   );
 
-  // const {
-  //   getDateLabel,
-  //   handleChangeDate,
-  //   handleSetCalendarDate
-  // } = useMealLogsDate(
-  //   currentMealLogDate,
-  //   setCurrentMealLogDate,
-  //   workoutLogs,
-  //   setWorkoutLogs,
-  //   setMealLogFoods,
-  //   setFoods,
-  //   setBrandedFoods,
-  //   setCalendarOpenType,
-  //   setCalendarDate
-  // );
+  const {
+    getDateLabel,
+    handleChangeDate,
+    handleSetCalendarDate
+  } = useWorkoutLogsDate(
+    currentWorkoutLogDate,
+    setCurrentWorkoutLogDate,
+    workoutLogs,
+    setWorkoutLogs,
+    setWorkoutLogExercises,
+    setExercises,
+    setExerciseSets,
+    setCalendarOpenType,
+    setCalendarDate
+  );
 
   // const {
   //   handleFoodSearch,
@@ -223,8 +218,8 @@ export default function WorkoutLogsPage() {
 
           <main className="workout-logs-page-main">
             <div className='workout-logs-page-content'>
-              {/* <DateNav
-                currentMealLogDate={currentMealLogDate}
+              <DateNav
+                currentWorkoutLogDate={currentWorkoutLogDate}
                 today={today}
                 handleChangeDate={handleChangeDate}
                 getDateLabel={getDateLabel}
@@ -235,20 +230,21 @@ export default function WorkoutLogsPage() {
                 setCalendarDate={setCalendarDate}
                 mealLogOptionsMenuOpen={mealLogOptionsMenuOpen}
                 setMealLogOptionsMenuOpen={setMealLogOptionsMenuOpen}
-                selectingMealLogFoods={selectingMealLogFoods}
-                setSelectingMealLogFoods={setSelectingMealLogFoods}
+                selectingWorkoutLogExercises={selectingWorkoutLogExercises}
+                setSelectingWorkoutLogExercises={setSelectingWorkoutLogExercises}
                 setAllItemsSelected={setAllItemsSelected}
                 setSelectedMealTypes={setSelectedMealTypes}
-                setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
-                mealLogs={workoutLogs}
-                mealLogFoods={mealLogFoods}
-                mealLogOptionsMenuRef={mealLogOptionsMenuRef}
+                setSelectedWorkoutLogExerciseIds={setSelectedWorkoutLogExerciseIds}
+                // mealLogs={workoutLogs}
+                // mealLogFoods={mealLogFoods}
+                // mealLogOptionsMenuRef={mealLogOptionsMenuRef}
                 handleSetCalendarDate={handleSetCalendarDate}
-                handleCopyMealLogFoods={handleCopyMealLogFoods}
-                handleMoveMealLogFoods={handleMoveMealLogFoods}
-                handleDeleteMealLogFoods={handleDeleteMealLogFoods}
+                // handleCopyMealLogFoods={handleCopyMealLogFoods}
+                // handleMoveMealLogFoods={handleMoveMealLogFoods}
+                // handleDeleteMealLogFoods={handleDeleteMealLogFoods}
               />
 
+            {/* 
               <SelectItemsHeader
                 allItemsSelected={allItemsSelected}
                 setAllItemsSelected={setAllItemsSelected}
@@ -339,27 +335,18 @@ export default function WorkoutLogsPage() {
                       exerciseSets={exerciseSets}
                       exerciseOptionsMenuOpenName={exerciseOptionsMenuOpenName}
                       setExerciseOptionsMenuOpenName={setExerciseOptionsMenuOpenName}
-                      mealFoodOptionsMenuOpenId={mealFoodOptionsMenuOpenId}
-                      setMealFoodOptionsMenuOpenId={setMealFoodOptionsMenuOpenId}
                       setAllItemsSelected={setAllItemsSelected}
                       selectedMealTypes={selectedMealTypes}
                       setSelectedMealTypes={setSelectedMealTypes}
-                      selectedMealLogFoodIds={selectedMealLogFoodIds}
-                      setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
+                      selectedWorkoutLogExerciseIds={selectedWorkoutLogExerciseIds}
+                      setSelectedWorkoutLogExerciseIds={setSelectedWorkoutLogExerciseIds}
                       selectingWorkoutLogExercises={selectingWorkoutLogExercises}
                       setCalendarOpenType={setCalendarOpenType}
-                      editingMealLogFoodId={editingMealLogFoodId}
-                      setEditingMealLogFoodId={setEditingMealLogFoodId}
                       setFoodsMenuOpenMealType={setFoodsMenuOpenMealType}
                       viewFoodMenuOpenId={viewFoodMenuOpenId}
                       setViewFoodMenuOpenId={setViewFoodMenuOpenId}
-                      setNumServings={setNumServings}
-                      setServingSize={setServingSize}
-                      setServingSizeUnit={setServingSizeUnit}
                       exerciseOptionsMenuRefs={exerciseOptionsMenuRefs}
-                      mealFoodOptionsMenuRefs={mealFoodOptionsMenuRefs}
                       // handleDeleteMealLogFoods={handleDeleteMealLogFoods}
-                      // handleLoadFoodNutrients={handleLoadFoodNutrients}
                     />
                   )
                 })}

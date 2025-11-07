@@ -19,27 +19,18 @@ type ExerciseSectionProps = {
   exerciseSets: Record<number, ExerciseSet[]>;
   exerciseOptionsMenuOpenName: string;
   setExerciseOptionsMenuOpenName: React.Dispatch<React.SetStateAction<string>>;
-  mealFoodOptionsMenuOpenId: number | null;
-  setMealFoodOptionsMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
   selectedMealTypes: string[];
   setAllItemsSelected: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedMealTypes: React.Dispatch<React.SetStateAction<string[]>>;
-  selectedMealLogFoodIds: number[];
-  setSelectedMealLogFoodIds: React.Dispatch<React.SetStateAction<number[]>>;
+  selectedWorkoutLogExerciseIds: number[];
+  setSelectedWorkoutLogExerciseIds: React.Dispatch<React.SetStateAction<number[]>>;
   selectingWorkoutLogExercises: boolean;
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>;
-  editingMealLogFoodId: number | null;
-  setEditingMealLogFoodId: React.Dispatch<React.SetStateAction<number | null>>;
   setFoodsMenuOpenMealType: React.Dispatch<React.SetStateAction<string>>;
   setViewFoodMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
   viewFoodMenuOpenId: number | null;
-  setNumServings: React.Dispatch<React.SetStateAction<number | null>>;
-  setServingSize: React.Dispatch<React.SetStateAction<number | null>>;
-  setServingSizeUnit: React.Dispatch<React.SetStateAction<string>>;
   exerciseOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
-  mealFoodOptionsMenuRefs: React.RefObject<Record<number, HTMLDivElement | null>>;
   // handleDeleteMealLogFoods: () => Promise<void>;
-  // handleLoadFoodNutrients: (foodId: number) => Promise<void>;
 };
 
 
@@ -52,25 +43,14 @@ export default function ExerciseSection({
   exerciseSets,
   exerciseOptionsMenuOpenName,
   setExerciseOptionsMenuOpenName,
-  mealFoodOptionsMenuOpenId,
-  setMealFoodOptionsMenuOpenId,
   selectedMealTypes,
   setAllItemsSelected,
   setSelectedMealTypes,
-  selectedMealLogFoodIds,
-  setSelectedMealLogFoodIds,
+  selectedWorkoutLogExerciseIds,
+  setSelectedWorkoutLogExerciseIds,
   selectingWorkoutLogExercises,
   setCalendarOpenType,
-  editingMealLogFoodId,
-  setEditingMealLogFoodId,
-  setFoodsMenuOpenMealType,
-  setViewFoodMenuOpenId,
-  viewFoodMenuOpenId,
-  setNumServings,
-  setServingSize,
-  setServingSizeUnit,
   exerciseOptionsMenuRefs,
-  mealFoodOptionsMenuRefs,
   // handleDeleteMealLogFoods,
   // handleLoadFoodNutrients
 }: ExerciseSectionProps) {
@@ -88,38 +68,16 @@ export default function ExerciseSection({
         setAllItemsSelected={setAllItemsSelected}
         selectedMealTypes={selectedMealTypes}
         setSelectedMealTypes={setSelectedMealTypes}
-        selectedMealLogFoodIds={selectedMealLogFoodIds}
-        setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
+        selectedWorkoutLogExerciseIds={selectedWorkoutLogExerciseIds}
+        setSelectedWorkoutLogExerciseIds={setSelectedWorkoutLogExerciseIds}
         selectingWorkoutLogExercises={selectingWorkoutLogExercises}
         setCalendarOpenType={setCalendarOpenType}
         // handleDeleteMealLogFoods={handleDeleteMealLogFoods}
       />
 
       <ExerciseSectionSets
-        currentWorkoutLogDate={currentWorkoutLogDate}
         workoutLogExercise={workoutLogExercise}
-        exercises={exercises}
         exerciseSets={exerciseSets}
-        setFoodsMenuOpenMealType={setFoodsMenuOpenMealType}
-        viewFoodMenuOpenId={viewFoodMenuOpenId}
-        setViewFoodMenuOpenId={setViewFoodMenuOpenId}
-        setExerciseOptionsMenuOpenName={setExerciseOptionsMenuOpenName}
-        mealFoodOptionsMenuOpenId={mealFoodOptionsMenuOpenId}
-        setMealFoodOptionsMenuOpenId={setMealFoodOptionsMenuOpenId}
-        setAllItemsSelected={setAllItemsSelected}
-        setSelectedMealTypes={setSelectedMealTypes}
-        selectedMealLogFoodIds={selectedMealLogFoodIds}
-        setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
-        selectingWorkoutLogExercises={selectingWorkoutLogExercises}
-        setCalendarOpenType={setCalendarOpenType}
-        editingMealLogFoodId={editingMealLogFoodId}
-        setEditingMealLogFoodId={setEditingMealLogFoodId}
-        setNumServings={setNumServings}
-        setServingSize={setServingSize}
-        setServingSizeUnit={setServingSizeUnit}
-        mealFoodOptionsMenuRefs={mealFoodOptionsMenuRefs}
-        // handleLoadFoodNutrients={handleLoadFoodNutrients}
-        // handleDeleteMealLogFoods={handleDeleteMealLogFoods}
       />
     </section>
   );

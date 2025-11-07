@@ -26,8 +26,8 @@ type ExerciseSectionHeaderProps = {
   setAllItemsSelected: React.Dispatch<React.SetStateAction<boolean>>;
   selectedMealTypes: string[];
   setSelectedMealTypes: React.Dispatch<React.SetStateAction<string[]>>;
-  selectedMealLogFoodIds: number[];
-  setSelectedMealLogFoodIds: React.Dispatch<React.SetStateAction<number[]>>;
+  selectedWorkoutLogExerciseIds: number[];
+  setSelectedWorkoutLogExerciseIds: React.Dispatch<React.SetStateAction<number[]>>;
   selectingWorkoutLogExercises: boolean;
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>;
   // handleDeleteMealLogFoods: () => Promise<void>;
@@ -44,10 +44,8 @@ export default function ExerciseSectionHeader({
   exercises,
   currentWorkoutLogDate,
   setAllItemsSelected,
-  selectedMealTypes,
-  setSelectedMealTypes,
-  selectedMealLogFoodIds,
-  setSelectedMealLogFoodIds,
+  selectedWorkoutLogExerciseIds,
+  setSelectedWorkoutLogExerciseIds,
   selectingWorkoutLogExercises,
   setCalendarOpenType,
   // handleDeleteMealLogFoods
@@ -77,7 +75,7 @@ export default function ExerciseSectionHeader({
       </h3>
 
       <button
-        className="meal-options-button"
+        className="exercise-options-button"
         onClick={(e) => {
           e.stopPropagation();
           setExerciseOptionsMenuOpenName((prev) => (prev === exerciseName ? '' : exerciseName));
@@ -87,14 +85,12 @@ export default function ExerciseSectionHeader({
       </button>
 
       <ExerciseOptionsMenu
+        workoutLogExercise={workoutLogExercise}
         exerciseName={exerciseName}
         exerciseOptionsMenuOpenName={exerciseOptionsMenuOpenName}
         setExerciseOptionsMenuOpenName={setExerciseOptionsMenuOpenName}
         exerciseOptionsMenuRefs={exerciseOptionsMenuRefs}
-        // mealLogs={mealLogs}
-        // mealLogFoods={mealLogFoods}
-        currentWorkoutLogDate={currentWorkoutLogDate}
-        setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
+        setSelectedWorkoutLogExerciseIds={setSelectedWorkoutLogExerciseIds}
         setCalendarOpenType={setCalendarOpenType}
         // handleDeleteMealLogFoods={handleDeleteMealLogFoods}
       />

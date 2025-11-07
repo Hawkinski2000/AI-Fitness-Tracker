@@ -1,7 +1,7 @@
 import Calendar from 'react-calendar';
 import { type Value } from 'react-calendar/dist/shared/types.js';
-import arrowLeftIcon from '../../assets/arrow-left-icon.svg'
-import arrowRightIcon from '../../assets/arrow-right-icon.svg';
+import arrowLeftIcon from '../../../../assets/arrow-left-icon.svg'
+import arrowRightIcon from '../../../../assets/arrow-right-icon.svg';
 import doubleArrowLeftIcon from './assets/double-arrow-left-icon.svg'
 import doubleArrowRightIcon from './assets/double-arrow-right-icon.svg';
 import 'react-calendar/dist/Calendar.css';
@@ -14,13 +14,13 @@ type CalendarWindowProps = {
   calendarRef: React.RefObject<HTMLDivElement | null>;
   calendarDate: Value;
   setCalendarDate: React.Dispatch<React.SetStateAction<Value>>;
-  currentMealLogDate: Value;
-  setSelectingMealLogFoods: React.Dispatch<React.SetStateAction<boolean>>;
+  currentWorkoutLogDate: Value;
+  setSelectingWorkoutLogExercises: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedMealTypes: React.Dispatch<React.SetStateAction<string[]>>;
-  setSelectedMealLogFoodIds: React.Dispatch<React.SetStateAction<number[]>>;
+  setSelectedWorkoutLogExerciseIds: React.Dispatch<React.SetStateAction<number[]>>;
   handleSetCalendarDate: (value: Value) => Promise<void>;
-  handleCopyMealLogFoods: () => Promise<void>;
-  handleMoveMealLogFoods: () => Promise<void>;
+  // handleCopyMealLogFoods: () => Promise<void>;
+  // handleMoveMealLogFoods: () => Promise<void>;
 };
 
 
@@ -30,13 +30,13 @@ export default function CalendarWindow({
   calendarRef,
   calendarDate,
   setCalendarDate,
-  currentMealLogDate,
-  setSelectingMealLogFoods,
+  currentWorkoutLogDate,
+  setSelectingWorkoutLogExercises,
   setSelectedMealTypes,
-  setSelectedMealLogFoodIds,
+  setSelectedWorkoutLogExerciseIds,
   handleSetCalendarDate,
-  handleCopyMealLogFoods,
-  handleMoveMealLogFoods
+  // handleCopyMealLogFoods,
+  // handleMoveMealLogFoods
 }: CalendarWindowProps) {  
   return (
     <div ref={calendarRef} className={`calendar ${calendarOpenType && 'calendar-open'}`}>
@@ -56,13 +56,13 @@ export default function CalendarWindow({
           className='react-calendar__tile calendar-confirmation-nav-button'
           onClick={() => {
             setCalendarOpenType('');
-            if (currentMealLogDate) {
-              setCalendarDate(currentMealLogDate);
+            if (currentWorkoutLogDate) {
+              setCalendarDate(currentWorkoutLogDate);
             }
 
-            setSelectingMealLogFoods(false);
+            setSelectingWorkoutLogExercises(false);
             setSelectedMealTypes([]);
-            setSelectedMealLogFoodIds([]);
+            setSelectedWorkoutLogExerciseIds([]);
           }}
         >
           Cancel
@@ -74,17 +74,17 @@ export default function CalendarWindow({
             if (calendarOpenType === 'changeMealLog') {
               handleSetCalendarDate(calendarDate);
             } else if (calendarOpenType === 'copyMealLogFoods') {
-              handleCopyMealLogFoods();
+              // handleCopyMealLogFoods();
             } else if (calendarOpenType === 'moveMealLogFoods') {
-              handleMoveMealLogFoods();
+              // handleMoveMealLogFoods();
             }
-            if (currentMealLogDate) {
-              setCalendarDate(currentMealLogDate);
+            if (currentWorkoutLogDate) {
+              setCalendarDate(currentWorkoutLogDate);
             }
 
-            setSelectingMealLogFoods(false);
+            setSelectingWorkoutLogExercises(false);
             setSelectedMealTypes([]);
-            setSelectedMealLogFoodIds([]);
+            setSelectedWorkoutLogExerciseIds([]);
           }}
         >
           Ok

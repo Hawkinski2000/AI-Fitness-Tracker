@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { type Value } from "react-calendar/dist/shared/types.js";
 
 
-const useMealLogsClickOutside = (
+const useWorkoutLogsClickOutside = (
   setAccountMenuOpen: React.Dispatch<React.SetStateAction<boolean>>,
   mealLogOptionsMenuOpen: boolean,
   setMealLogOptionsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>,
@@ -51,7 +51,7 @@ const useMealLogsClickOutside = (
         exerciseOptionsMenuRefs.current[exerciseOptionsMenuOpenName] &&
         target instanceof Node &&
         !exerciseOptionsMenuRefs.current[exerciseOptionsMenuOpenName].contains(target) &&
-        !(target instanceof HTMLElement && target.classList.contains('meal-options-button'))
+        !(target instanceof HTMLElement && target.classList.contains('exercise-options-button'))
       ) {
         setExerciseOptionsMenuOpenName('');
       }
@@ -165,4 +165,4 @@ const useMealLogsClickOutside = (
 };
 
 
-export default useMealLogsClickOutside;
+export default useWorkoutLogsClickOutside;

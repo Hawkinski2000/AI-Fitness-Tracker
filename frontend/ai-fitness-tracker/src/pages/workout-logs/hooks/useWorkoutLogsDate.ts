@@ -1,9 +1,8 @@
 import { useCallback } from "react";
 import {
-  type MealLog,
-  type MealLogFood,
-  type Food,
-  type BrandedFood
+  type WorkoutLog,
+  type WorkoutLogExercise,
+  
 } from "../types/workout-logs";
 import { type Value } from 'react-calendar/dist/shared/types.js';
 import { useAuth } from "../../../context/auth/useAuth";
@@ -12,12 +11,12 @@ import { loadMealLog } from "../../../utils/meal-logs";
 import { getDateKey, normalizeDate } from "../../../utils/dates";
 
 
-const useMealLogsDate = (
-  currentMealLogDate: Value,
-  setCurrentMealLogDate: React.Dispatch<React.SetStateAction<Value>>,
-  mealLogs: Record<string, MealLog>,
-  setMealLogs: React.Dispatch<React.SetStateAction<Record<string, MealLog>>>,
-  setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
+const useWorkoutLogsDate = (
+  currentWorkoutLogDate: Value,
+  setCurrentWorkoutLogDate: React.Dispatch<React.SetStateAction<Value>>,
+  workoutLogs: Record<string, WorkoutLog>,
+  setWorkoutLogs: React.Dispatch<React.SetStateAction<Record<string, WorkoutLog>>>,
+  setWorkoutLogExercises: React.Dispatch<React.SetStateAction<Record<number, WorkoutLogExercise[]>>>,
   setFoods: React.Dispatch<React.SetStateAction<Record<number, Food>>>,
   setBrandedFoods: React.Dispatch<React.SetStateAction<Record<number, BrandedFood>>>,
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>,
@@ -79,7 +78,7 @@ const useMealLogsDate = (
         throw new Error("No access token");
       }
 
-      if (!currentMealLogDate) {
+      if (!currentWorkoutLogDate) {
         return;
       }
 
@@ -92,10 +91,10 @@ const useMealLogsDate = (
       }
 
       let selectedDate: Value;
-      if (Array.isArray(currentMealLogDate)) {
-        selectedDate = currentMealLogDate[0];
+      if (Array.isArray(currentWorkoutLogDate)) {
+        selectedDate = currentWorkoutLogDate[0];
       } else {
-        selectedDate = currentMealLogDate;
+        selectedDate = currentWorkoutLogDate;
       }
       if (!selectedDate) {
         return;
@@ -107,30 +106,30 @@ const useMealLogsDate = (
       if (!normalizedDate) {
         return;
       }
-      setCurrentMealLogDate(normalizedDate);
+      setCurrentWorkoutLogDate(normalizedDate);
 
       const dateKey = getDateKey(normalizedDate);
       if (!dateKey) {
         return;
       }
 
-      if (mealLogs[dateKey]) {
+      if (workoutLogs[dateKey]) {
         return;
       }
       
-      await loadMealLog(
-        normalizedDate,
-        setMealLogs,
-        setMealLogFoods,
-        setFoods,
-        setBrandedFoods,
-        token,
-        [
-          "mealLogFoods",
-          "mealLogFoods.food",
-          "mealLogFoods.brandedFood"
-        ]
-      );
+      // await loadMealLog(
+      //   normalizedDate,
+      //   setWorkoutLogs,
+      //   // setMealLogFoods,
+      //   // setFoods,
+      //   // setBrandedFoods,
+      //   token,
+      //   [
+      //     "mealLogFoods",
+      //     "mealLogFoods.food",
+      //     "mealLogFoods.brandedFood"
+      //   ]
+      // );
     
     } catch (err) {
       console.error(err);
@@ -139,13 +138,9 @@ const useMealLogsDate = (
   }, [
     accessToken,
     setAccessToken,
-    currentMealLogDate,
-    setCurrentMealLogDate,
-    mealLogs,
-    setMealLogs,
-    setMealLogFoods,
-    setFoods,
-    setBrandedFoods
+    currentWorkoutLogDate,
+    setCurrentWorkoutLogDate,
+    workoutLogs
   ])
 
 // ---------------------------------------------------------------------------
@@ -180,30 +175,30 @@ const handleSetCalendarDate = useCallback(async (value: Value) => {
         return;
       }
       
-      setCurrentMealLogDate(normalizedDate);
+      setCurrentWorkoutLogDate(normalizedDate);
 
       const dateKey = getDateKey(normalizedDate);
       if (!dateKey) {
         return;
       }
 
-      if (mealLogs[dateKey]) {
+      if (workoutLogs[dateKey]) {
         return;
       }
 
-      await loadMealLog(
-        normalizedDate,
-        setMealLogs,
-        setMealLogFoods,
-        setFoods,
-        setBrandedFoods,
-        token,
-        [
-          "mealLogFoods",
-          "mealLogFoods.food",
-          "mealLogFoods.brandedFood"
-        ]
-      );
+      // await loadMealLog(
+      //   normalizedDate,
+      //   setWorkoutLogs,
+      //   // setMealLogFoods,
+      //   // setFoods,
+      //   // setBrandedFoods,
+      //   token,
+      //   [
+      //     "mealLogFoods",
+      //     "mealLogFoods.food",
+      //     "mealLogFoods.brandedFood"
+      //   ]
+      // );
     
     } catch (err) {
       console.error(err);
@@ -212,12 +207,8 @@ const handleSetCalendarDate = useCallback(async (value: Value) => {
   }, [
     accessToken,
     setAccessToken,
-    setCurrentMealLogDate,
-    mealLogs,
-    setMealLogs,
-    setMealLogFoods,
-    setFoods,
-    setBrandedFoods,
+    setCurrentWorkoutLogDate,
+    workoutLogs,
     setCalendarOpenType,
     setCalendarDate
   ])
@@ -231,4 +222,4 @@ const handleSetCalendarDate = useCallback(async (value: Value) => {
 };
 
 
-export default useMealLogsDate;
+export default useWorkoutLogsDate;
