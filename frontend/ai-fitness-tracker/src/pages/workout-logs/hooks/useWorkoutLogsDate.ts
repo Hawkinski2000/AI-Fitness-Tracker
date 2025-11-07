@@ -2,12 +2,13 @@ import { useCallback } from "react";
 import {
   type WorkoutLog,
   type WorkoutLogExercise,
-  
+  type Exercise,
+  type ExerciseSet
 } from "../types/workout-logs";
 import { type Value } from 'react-calendar/dist/shared/types.js';
 import { useAuth } from "../../../context/auth/useAuth";
 import { refreshAccessToken, isTokenExpired } from "../../../utils/auth";
-import { loadMealLog } from "../../../utils/meal-logs";
+import { loadWorkoutLog } from "../../../utils/workout-logs";
 import { getDateKey, normalizeDate } from "../../../utils/dates";
 
 
@@ -17,8 +18,8 @@ const useWorkoutLogsDate = (
   workoutLogs: Record<string, WorkoutLog>,
   setWorkoutLogs: React.Dispatch<React.SetStateAction<Record<string, WorkoutLog>>>,
   setWorkoutLogExercises: React.Dispatch<React.SetStateAction<Record<number, WorkoutLogExercise[]>>>,
-  setFoods: React.Dispatch<React.SetStateAction<Record<number, Food>>>,
-  setBrandedFoods: React.Dispatch<React.SetStateAction<Record<number, BrandedFood>>>,
+  setExercises: React.Dispatch<React.SetStateAction<Record<number, Exercise>>>,
+  setExerciseSets: React.Dispatch<React.SetStateAction<Record<number, ExerciseSet[]>>>,
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>,
   setCalendarDate: React.Dispatch<React.SetStateAction<Value>>
 ) => {
@@ -117,19 +118,19 @@ const useWorkoutLogsDate = (
         return;
       }
       
-      // await loadMealLog(
-      //   normalizedDate,
-      //   setWorkoutLogs,
-      //   // setMealLogFoods,
-      //   // setFoods,
-      //   // setBrandedFoods,
-      //   token,
-      //   [
-      //     "mealLogFoods",
-      //     "mealLogFoods.food",
-      //     "mealLogFoods.brandedFood"
-      //   ]
-      // );
+      await loadWorkoutLog(
+        normalizedDate,
+        setWorkoutLogs,
+        setWorkoutLogExercises,
+        setExercises,
+        setExerciseSets,
+        token,
+        [
+          "workoutLogExercises",
+          "workoutLogExercises.exercise",
+          "workoutLogExercises.exerciseSets"
+        ]
+      );
     
     } catch (err) {
       console.error(err);
@@ -140,6 +141,10 @@ const useWorkoutLogsDate = (
     setAccessToken,
     currentWorkoutLogDate,
     setCurrentWorkoutLogDate,
+    setWorkoutLogs,
+    setWorkoutLogExercises,
+    setExercises,
+    setExerciseSets,
     workoutLogs
   ])
 
@@ -186,19 +191,19 @@ const handleSetCalendarDate = useCallback(async (value: Value) => {
         return;
       }
 
-      // await loadMealLog(
-      //   normalizedDate,
-      //   setWorkoutLogs,
-      //   // setMealLogFoods,
-      //   // setFoods,
-      //   // setBrandedFoods,
-      //   token,
-      //   [
-      //     "mealLogFoods",
-      //     "mealLogFoods.food",
-      //     "mealLogFoods.brandedFood"
-      //   ]
-      // );
+      await loadWorkoutLog(
+        normalizedDate,
+        setWorkoutLogs,
+        setWorkoutLogExercises,
+        setExercises,
+        setExerciseSets,
+        token,
+        [
+          "workoutLogExercises",
+          "workoutLogExercises.exercise",
+          "workoutLogExercises.exerciseSets"
+        ]
+    );
     
     } catch (err) {
       console.error(err);
@@ -209,6 +214,10 @@ const handleSetCalendarDate = useCallback(async (value: Value) => {
     setAccessToken,
     setCurrentWorkoutLogDate,
     workoutLogs,
+    setWorkoutLogs,
+    setWorkoutLogExercises,
+    setExercises,
+    setExerciseSets,
     setCalendarOpenType,
     setCalendarDate
   ])
