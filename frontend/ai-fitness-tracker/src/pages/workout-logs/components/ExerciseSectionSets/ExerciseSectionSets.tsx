@@ -15,21 +15,16 @@ export default function ExerciseSectionSets({
   workoutLogExercise,
   exerciseSets
 }: ExerciseSectionSetsProps) {
+  const setsForExercise: ExerciseSet[] = exerciseSets?.[workoutLogExercise.id] ?? [];
+
   return (
     <>
-      {
-        workoutLogExercise.id &&
-        exerciseSets &&
-        exerciseSets[workoutLogExercise.id]
-          .map((exerciseSet: ExerciseSet) => {
-            return (
-              <ExerciseSectionSet
-                key={exerciseSet.id}
-                exerciseSet={exerciseSet}
-              />
-            )
-          })
-      }
+      {setsForExercise.map((exerciseSet: ExerciseSet) => (
+        <ExerciseSectionSet
+          key={exerciseSet.id}
+          exerciseSet={exerciseSet}
+        />
+      ))}
     </>
   );
 }

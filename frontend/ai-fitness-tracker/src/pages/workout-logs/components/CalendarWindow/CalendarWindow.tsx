@@ -19,7 +19,7 @@ type CalendarWindowProps = {
   setSelectedMealTypes: React.Dispatch<React.SetStateAction<string[]>>;
   setSelectedWorkoutLogExerciseIds: React.Dispatch<React.SetStateAction<number[]>>;
   handleSetCalendarDate: (value: Value) => Promise<void>;
-  // handleCopyMealLogFoods: () => Promise<void>;
+  handleCopyWorkoutLogExercises: () => Promise<void>;
   // handleMoveMealLogFoods: () => Promise<void>;
 };
 
@@ -35,7 +35,7 @@ export default function CalendarWindow({
   setSelectedMealTypes,
   setSelectedWorkoutLogExerciseIds,
   handleSetCalendarDate,
-  // handleCopyMealLogFoods,
+  handleCopyWorkoutLogExercises,
   // handleMoveMealLogFoods
 }: CalendarWindowProps) {  
   return (
@@ -61,7 +61,6 @@ export default function CalendarWindow({
             }
 
             setSelectingWorkoutLogExercises(false);
-            setSelectedMealTypes([]);
             setSelectedWorkoutLogExerciseIds([]);
           }}
         >
@@ -71,19 +70,18 @@ export default function CalendarWindow({
         <button
           className='react-calendar__tile calendar-confirmation-nav-button'
           onClick={() => {
-            if (calendarOpenType === 'changeMealLog') {
+            if (calendarOpenType === 'changeWorkoutLog') {
               handleSetCalendarDate(calendarDate);
-            } else if (calendarOpenType === 'copyMealLogFoods') {
-              // handleCopyMealLogFoods();
-            } else if (calendarOpenType === 'moveMealLogFoods') {
-              // handleMoveMealLogFoods();
+            } else if (calendarOpenType === 'copyWorkoutLogExercises') {
+              handleCopyWorkoutLogExercises();
+            } else if (calendarOpenType === 'moveWorkoutLogExercises') {
+              // handleMoveWorkoutLogExercises();
             }
             if (currentWorkoutLogDate) {
               setCalendarDate(currentWorkoutLogDate);
             }
 
             setSelectingWorkoutLogExercises(false);
-            setSelectedMealTypes([]);
             setSelectedWorkoutLogExerciseIds([]);
           }}
         >

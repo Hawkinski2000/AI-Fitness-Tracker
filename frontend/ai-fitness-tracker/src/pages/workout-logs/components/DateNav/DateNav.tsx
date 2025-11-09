@@ -28,7 +28,7 @@ type DateNavProps = {
   // mealLogFoods: Record<number, MealLogFood[]>;
   // mealLogOptionsMenuRef: React.RefObject<HTMLDivElement | null>;
   handleSetCalendarDate: (value: Value) => Promise<void>;
-  // handleCopyMealLogFoods: () => Promise<void>;
+  handleCopyWorkoutLogExercises: () => Promise<void>;
   // handleMoveMealLogFoods: () => Promise<void>;
   // handleDeleteMealLogFoods: () => Promise<void>;
 };
@@ -55,7 +55,7 @@ export default function DateNav({
   // mealLogFoods,
   // mealLogOptionsMenuRef,
   handleSetCalendarDate,
-  // handleCopyMealLogFoods,
+  handleCopyWorkoutLogExercises,
   // handleMoveMealLogFoods,
   // handleDeleteMealLogFoods
 }: DateNavProps) {
@@ -80,10 +80,9 @@ export default function DateNav({
             if (currentWorkoutLogDate) {
               setCalendarDate(currentWorkoutLogDate);
             }
-            setCalendarOpenType(prev => prev === 'changeMealLog' ? '' : 'changeMealLog');
+            setCalendarOpenType(prev => prev === 'changeWorkoutLog' ? '' : 'changeWorkoutLog');
             setSelectingWorkoutLogExercises(false);
             setAllItemsSelected(false);
-            setSelectedMealTypes([]);
             setSelectedWorkoutLogExerciseIds([]);
           }}
         >
@@ -113,7 +112,7 @@ export default function DateNav({
           setSelectedMealTypes={setSelectedMealTypes}
           setSelectedWorkoutLogExerciseIds={setSelectedWorkoutLogExerciseIds}
           handleSetCalendarDate={handleSetCalendarDate}
-          // handleCopyMealLogFoods={handleCopyMealLogFoods}
+          handleCopyWorkoutLogExercises={handleCopyWorkoutLogExercises}
           // handleMoveMealLogFoods={handleMoveMealLogFoods}
         />
       </nav>

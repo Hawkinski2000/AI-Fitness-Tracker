@@ -151,64 +151,64 @@ const useWorkoutLogsDate = (
 // ---------------------------------------------------------------------------
   
 const handleSetCalendarDate = useCallback(async (value: Value) => {
-    try {
-      let token: string | null = accessToken;
-      if (!accessToken || isTokenExpired(accessToken)) {
-        token = await refreshAccessToken();  
-        setAccessToken(token);
-      }
-      if (!token) {
-        throw new Error("No access token");
-      }
+  try {
+    let token: string | null = accessToken;
+    if (!accessToken || isTokenExpired(accessToken)) {
+      token = await refreshAccessToken();  
+      setAccessToken(token);
+    }
+    if (!token) {
+      throw new Error("No access token");
+    }
 
-      setCalendarDate(value);
+    setCalendarDate(value);
 
-      let selectedDate: Value;
-      if (Array.isArray(value)) {
-        selectedDate = value[0];
-      } else {
-        selectedDate = value;
-      }
-      if (!selectedDate) {
-        return;
-      }
+    let selectedDate: Value;
+    if (Array.isArray(value)) {
+      selectedDate = value[0];
+    } else {
+      selectedDate = value;
+    }
+    if (!selectedDate) {
+      return;
+    }
 
-      setCalendarOpenType('');
+    setCalendarOpenType('');
 
-      const normalizedDate = normalizeDate(selectedDate);
-      if (!normalizedDate) {
-        return;
-      }
-      
-      setCurrentWorkoutLogDate(normalizedDate);
+    const normalizedDate = normalizeDate(selectedDate);
+    if (!normalizedDate) {
+      return;
+    }
+    
+    setCurrentWorkoutLogDate(normalizedDate);
 
-      const dateKey = getDateKey(normalizedDate);
-      if (!dateKey) {
-        return;
-      }
+    const dateKey = getDateKey(normalizedDate);
+    if (!dateKey) {
+      return;
+    }
 
-      if (workoutLogs[dateKey]) {
-        return;
-      }
+    if (workoutLogs[dateKey]) {
+      return;
+    }
 
-      await loadWorkoutLog(
-        normalizedDate,
-        setWorkoutLogs,
-        setWorkoutLogExercises,
-        setExercises,
-        setExerciseSets,
-        token,
-        [
-          "workoutLogExercises",
-          "workoutLogExercises.exercise",
-          "workoutLogExercises.exerciseSets"
-        ]
+    await loadWorkoutLog(
+      normalizedDate,
+      setWorkoutLogs,
+      setWorkoutLogExercises,
+      setExercises,
+      setExerciseSets,
+      token,
+      [
+        "workoutLogExercises",
+        "workoutLogExercises.exercise",
+        "workoutLogExercises.exerciseSets"
+      ]
     );
     
-    } catch (err) {
-      console.error(err);
-      setAccessToken(null);
-    }
+  } catch (err) {
+    console.error(err);
+    setAccessToken(null);
+  }
   }, [
     accessToken,
     setAccessToken,

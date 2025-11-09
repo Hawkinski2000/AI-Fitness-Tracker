@@ -17,10 +17,19 @@ def create_workout_log_exercise(workout_log_exercise: workout_log_exercise.Worko
     new_workout_log_exercise = crud_workout_log_exercises.create_workout_log_exercise(workout_log_exercise, current_user.user_id, db)
     return new_workout_log_exercise
 
+# Perform bulk action (copy, move, and delete) on workout log exercises
+@router.post("/bulk", status_code=status.HTTP_204_NO_CONTENT)
+def bulk_action_workout_log_exercises(bulk_action: workout_log_exercise.WorkoutLogExerciseBulkAction,
+                                      current_user: token.TokenData = Depends(get_current_user),
+                                      db: Session = Depends(get_db)):
+    crud_workout_log_exercises.bulk_action_workout_log_exercises(bulk_action, current_user.user_id, db)
+
 # Get all workout log exercises
-@router.get("", response_model=list[workout_log_exercise.WorkoutLogExerciseResponse])
-def get_workout_log_exercises(current_user: token.TokenData = Depends(get_current_user), db: Session = Depends(get_db)):
-    workout_log_exercises = crud_workout_log_exercises.get_workout_log_exercises(current_user.user_id, db)
+@router.get("/{workout_log_id}", response_model=list[workout_log_exercise.WorkoutLogExerciseResponse])
+def get_workout_log_exercises(workout_log_id: int,
+                              current_user: token.TokenData = Depends(get_current_user),
+                              db: Session = Depends(get_db)):
+    workout_log_exercises = crud_workout_log_exercises.get_workout_log_exercises(workout_log_id, current_user.user_id, db)
     return workout_log_exercises
 
 # Get a workout log exercise

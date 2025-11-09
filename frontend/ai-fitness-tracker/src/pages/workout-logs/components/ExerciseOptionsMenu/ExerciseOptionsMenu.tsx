@@ -1,5 +1,4 @@
 import { type WorkoutLogExercise } from '../../types/workout-logs';
-import type { Value } from 'react-calendar/dist/shared/types.js';
 import copyIcon from '../../../../assets/copy-icon.svg';
 import moveIcon from '../../../../assets/move-icon.svg';
 import deleteIcon from '../../../../assets/delete-icon.svg';
@@ -14,7 +13,7 @@ type ExerciseOptionsMenuProps = {
   exerciseOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
   setSelectedWorkoutLogExerciseIds: React.Dispatch<React.SetStateAction<number[]>>;
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>;
-  // handleDeleteMealLogFoods: 
+  // handleDeleteWorkoutLogExercises: 
 };
 
 
@@ -26,7 +25,7 @@ export default function ExerciseOptionsMenu({
   exerciseOptionsMenuRefs,
   setSelectedWorkoutLogExerciseIds,
   setCalendarOpenType,
-  // handleDeleteMealLogFoods
+  // handleDeleteWorkoutLogExercises
 }: ExerciseOptionsMenuProps) {
   return (
     <div
@@ -53,27 +52,12 @@ export default function ExerciseOptionsMenu({
 
       <button
         className="exercise-options-menu-button"
-        // onClick={(e) => {
-        //   e.stopPropagation();
-        //   if (!currentMealLogDate) {
-        //     return;
-        //   }
-        //   const dateKey = getDateKey(currentMealLogDate);
-        //   if (!dateKey) {
-        //     return;
-        //   }
-        //   const currentMealLogId = mealLogs[dateKey].id;
-        //   const currentMealLogFoods = mealLogFoods[currentMealLogId];
-        //   const mealLogFoodsInMealType = currentMealLogFoods.filter(
-        //     (mealLogFood: MealLogFood) => mealLogFood.meal_type === mealType
-        //   );
-        //   const mealLogFoodIdsInMealType = mealLogFoodsInMealType.map(
-        //     (mealLogFood: MealLogFood) => mealLogFood.id
-        //   );
-        //   setSelectedMealLogFoodIds(mealLogFoodIdsInMealType);
-        //   setCalendarOpenType('moveMealLogFoods');
-        //   setMealOptionsMenuOpenType('');
-        // }}
+        onClick={(e) => {
+          e.stopPropagation();
+          setSelectedWorkoutLogExerciseIds(prev => [...prev, workoutLogExercise.id]);
+          setCalendarOpenType('moveWorkoutLogExercises');
+          setExerciseOptionsMenuOpenName('');
+        }}
       >
         <img className="button-link-image" src={moveIcon} />
         Move to...
@@ -81,27 +65,12 @@ export default function ExerciseOptionsMenu({
 
       <button
         className="exercise-options-menu-button exercise-options-delete-button"
-        // onClick={(e) => {
-        //   e.stopPropagation();
-        //   if (!currentMealLogDate) {
-        //     return;
-        //   }
-        //   const dateKey = getDateKey(currentMealLogDate);
-        //   if (!dateKey) {
-        //     return;
-        //   }
-        //   const currentMealLogId = mealLogs[dateKey].id;
-        //   const currentMealLogFoods = mealLogFoods[currentMealLogId];
-        //   const mealLogFoodsInMealType = currentMealLogFoods.filter(
-        //     (mealLogFood: MealLogFood) => mealLogFood.meal_type === mealType
-        //   );
-        //   const mealLogFoodIdsInMealType = mealLogFoodsInMealType.map(
-        //     (mealLogFood: MealLogFood) => mealLogFood.id
-        //   );
-        //   setSelectedMealLogFoodIds(mealLogFoodIdsInMealType);
-        //   handleDeleteMealLogFoods();
-        //   setMealOptionsMenuOpenType('');
-        // }}
+        onClick={(e) => {
+          e.stopPropagation();
+          setSelectedWorkoutLogExerciseIds(prev => [...prev, workoutLogExercise.id]);
+          // handleDeleteWorkoutLogExercises();
+          setExerciseOptionsMenuOpenName('');
+        }}
       >
         <img className="button-link-image" src={deleteIcon} />
         Delete Exercise

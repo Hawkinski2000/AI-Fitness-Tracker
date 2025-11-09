@@ -20,7 +20,7 @@ const useInitializeWorkoutLogsPage = (
   setExercises: React.Dispatch<React.SetStateAction<Record<number, Exercise>>>,
   setExerciseSets: React.Dispatch<React.SetStateAction<Record<number, ExerciseSet[]>>>,
   setToday: React.Dispatch<React.SetStateAction<Value>>,
-  setCurrentMealLogDate: React.Dispatch<React.SetStateAction<Value>>
+  setCurrentWorkoutLogDate: React.Dispatch<React.SetStateAction<Value>>
 ) => {
   const { setAccessToken } = useAuth();
 
@@ -52,7 +52,7 @@ const useInitializeWorkoutLogsPage = (
           today.getFullYear(), today.getMonth(), today.getDate()
         );
         setToday(normalizedToday);
-        setCurrentMealLogDate(new Date(normalizedToday));
+        setCurrentWorkoutLogDate(new Date(normalizedToday));
 
         await loadWorkoutLog(
           normalizedToday,
@@ -88,7 +88,7 @@ const useInitializeWorkoutLogsPage = (
     setExercises,
     setExerciseSets,
     setToday,
-    setCurrentMealLogDate,
+    setCurrentWorkoutLogDate,
   ]);
 
 

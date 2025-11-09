@@ -11,7 +11,7 @@ import useInitializeWorkoutLogsPage from "../../hooks/useInitializeWorkoutLogsPa
 import useWorkoutLogsClickOutside from "../../hooks/useWorkoutLogsClickOutside";
 import useWorkoutLogsDate from "../../hooks/useWorkoutLogsDate";
 import useFoodSearch from "../../hooks/useFoodSearch";
-import useMealLogActions from "../../hooks/useMealLogActions";
+import useWorkoutLogActions from "../../hooks/useWorkoutLogActions";
 import LoadingScreen from "../../../../components/LoadingScreen/LoadingScreen";
 import Header from "../../../../components/Header/Header";
 import Sidebar from "../../../../components/Sidebar/Sidebar";
@@ -173,29 +173,29 @@ export default function WorkoutLogsPage() {
   //   searchTimeoutRef
   // );
 
-  // const {
-  //   handleAddFood,
-  //   handleLoadFoodNutrients,
-  //   handleUpdateFood,
-  //   handleCopyMealLogFoods,
-  //   handleMoveMealLogFoods,
-  //   handleDeleteMealLogFoods
-  // } = useMealLogActions(
-  //   currentMealLogDate,
-  //   setCurrentMealLogDate,
-  //   calendarDate,
-  //   workoutLogs,
-  //   setWorkoutLogs,
-  //   foodsMenuOpenMealType,
-  //   setMealLogFoods,
-  //   setFoods,
-  //   setFoodNutrients,
-  //   setNutrients,
-  //   setMacroAmountsGrams,
-  //   setFoodCaloriesFromMacros,
-  //   selectedMealLogFoodIds,
-  //   setCalendarOpenType
-  // );
+  const {
+    // handleAddFood,
+    // handleLoadFoodNutrients,
+    // handleUpdateFood,
+    handleCopyWorkoutLogExercises,
+    // handleMoveMealLogFoods,
+    // handleDeleteWorkoutLogExercises
+  } = useWorkoutLogActions(
+    currentWorkoutLogDate,
+    setCurrentWorkoutLogDate,
+    calendarDate,
+    // foodsMenuOpenMealType,
+    workoutLogs,
+    setWorkoutLogs,
+    setWorkoutLogExercises,
+    // setFoods,
+    // setFoodNutrients,
+    // setNutrients,
+    // setMacroAmountsGrams,
+    // setFoodCaloriesFromMacros,
+    selectedWorkoutLogExerciseIds,
+    setCalendarOpenType
+  );
 
   if (loading) {
     return <LoadingScreen />;
@@ -239,7 +239,7 @@ export default function WorkoutLogsPage() {
                 // mealLogFoods={mealLogFoods}
                 // mealLogOptionsMenuRef={mealLogOptionsMenuRef}
                 handleSetCalendarDate={handleSetCalendarDate}
-                // handleCopyMealLogFoods={handleCopyMealLogFoods}
+                handleCopyWorkoutLogExercises={handleCopyWorkoutLogExercises}
                 // handleMoveMealLogFoods={handleMoveMealLogFoods}
                 // handleDeleteMealLogFoods={handleDeleteMealLogFoods}
               />
@@ -346,7 +346,7 @@ export default function WorkoutLogsPage() {
                       viewFoodMenuOpenId={viewFoodMenuOpenId}
                       setViewFoodMenuOpenId={setViewFoodMenuOpenId}
                       exerciseOptionsMenuRefs={exerciseOptionsMenuRefs}
-                      // handleDeleteMealLogFoods={handleDeleteMealLogFoods}
+                      // handleDeleteWorkoutLogExercises={handleDeleteWorkoutLogExercises}
                     />
                   )
                 })}

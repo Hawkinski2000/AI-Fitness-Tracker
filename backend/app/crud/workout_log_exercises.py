@@ -1,10 +1,11 @@
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session, joinedload, selectinload
 from sqlalchemy import desc
 from typing import List
 import json
-from app.schemas import workout_log_exercise
+from app.schemas import workout_log_exercise, exercise_set
 from app.models.models import WorkoutLog, WorkoutLogExercise, Exercise, ExerciseSet
+from app.crud.exercise_sets import create_exercise_set
 
 
 def create_workout_log_exercise(workout_log_exercise: workout_log_exercise.WorkoutLogExerciseCreate, user_id: int, db: Session):
@@ -40,11 +41,75 @@ def create_workout_log_exercise(workout_log_exercise: workout_log_exercise.Worko
 
     return new_workout_log_exercise
 
-def get_workout_log_exercises(user_id: int, db: Session):
+def bulk_action_workout_log_exercises(bulk_action: workout_log_exercise.WorkoutLogExerciseBulkAction,
+                                      user_id: int,
+                                      db: Session):
+    workout_log_exercise_rows = (
+        db.query(WorkoutLogExercise)
+        .join(WorkoutLog, WorkoutLogExercise.workout_log_id == WorkoutLog.id)
+        .options(selectinload(WorkoutLogExercise.exercise_sets))
+        .filter(WorkoutLogExercise.id.in_(bulk_action.ids), WorkoutLog.user_id == user_id)
+        .order_by(WorkoutLogExercise.id.asc())
+        .all()
+    )
+
+    workout_log_id = None
+    
+    if bulk_action.action == "copy":
+        workout_log_id = bulk_action.target_workout_log_id
+        for row in workout_log_exercise_rows:
+            new_workout_log_exercise = workout_log_exercise.WorkoutLogExerciseCreate(
+                workout_log_id=workout_log_id,
+                exercise_id=row.exercise_id
+            )
+            new_workout_log_exercise_row = create_workout_log_exercise(
+                new_workout_log_exercise,
+                user_id,
+                db
+            )
+            db.commit()
+
+            for es in row.exercise_sets:
+                new_exercise_set = exercise_set.ExerciseSetCreate(
+                    workout_log_exercise_id=new_workout_log_exercise_row.id,
+                    weight=es.weight,
+                    reps=es.reps,
+                    unit=es.unit,
+                    rest_after_secs=es.rest_after_secs,
+                    duration_secs=es.duration_secs,
+                    calories_burned=es.calories_burned
+                )
+                create_exercise_set(
+                    new_exercise_set,
+                    user_id,
+                    db
+                )
+            db.commit()
+
+    # if bulk_action.action == "move":
+    #     original_meal_log_id = meal_log_food_rows[0].meal_log_id
+    #     meal_log_id = bulk_action.target_meal_log_id
+
+    #     for row in meal_log_food_rows:
+    #         row.meal_log_id = meal_log_id
+
+    #     db.commit()
+
+    # if bulk_action.action == "delete":
+    #     for row in meal_log_food_rows:
+    #         db.delete(row)
+        
+    #     meal_log_id = meal_log_food_rows[0].meal_log_id
+
+    #     db.commit()
+
+def get_workout_log_exercises(workout_log_id: int, user_id: int, db: Session):
     workout_log_exercises = (
         db.query(WorkoutLogExercise)
         .join(WorkoutLog, WorkoutLogExercise.workout_log_id == WorkoutLog.id)
-        .filter(WorkoutLog.user_id == user_id)
+        .filter(WorkoutLog.user_id == user_id,
+                WorkoutLogExercise.workout_log_id == workout_log_id)
+        .order_by(WorkoutLogExercise.id.asc())
         .all()
     )
     return workout_log_exercises

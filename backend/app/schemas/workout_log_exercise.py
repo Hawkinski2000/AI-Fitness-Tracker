@@ -16,3 +16,8 @@ class WorkoutLogExerciseResponse(WorkoutLogExerciseBase):
     unit: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
+
+class WorkoutLogExerciseBulkAction(BaseModel):
+    action: str
+    ids: list[int]
+    target_workout_log_id: Optional[int] = None

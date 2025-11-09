@@ -106,78 +106,77 @@ export const loadWorkoutLog = async (
   return workoutLogsResponseObject;
 };
 
-// export const createMealLog = async (
-//   logDate: Value,
-//   setMealLogs: React.Dispatch<React.SetStateAction<Record<string, WorkoutLog>>>,
-//   token: string
-// ) => {
-//   const date = getDateKey(logDate);
-//   if (!date) {
-//     return;
-//   }
+export const createWorkoutLog = async (
+  logDate: Value,
+  setWorkoutLogs: React.Dispatch<React.SetStateAction<Record<string, WorkoutLog>>>,
+  token: string
+) => {
+  const date = getDateKey(logDate);
+  if (!date) {
+    return;
+  }
 
-//   const mealLogResponse = await axios.post(`${API_BASE_URL}/meal-logs`,
-//     {
-//       log_date: date
-//     },
-//     {
-//       headers: {
-//         Authorization: `Bearer ${token}`
-//       }
-//     }
-//   );
-//   const mealLog = mealLogResponse.data;
+  const workoutLogResponse = await axios.post(`${API_BASE_URL}/workout-logs`,
+    {
+      log_date: date
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+  const workoutLog = workoutLogResponse.data;
 
-//   setMealLogs(prev => ({
-//     ...prev,
-//     [date]: mealLog
-//   }));
+  setWorkoutLogs(prev => ({
+    ...prev,
+    [date]: workoutLog
+  }));
 
-//   return mealLog;
-// };
+  return workoutLog;
+};
 
-// // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
-// export const loadMealLogFoods = async (mealLogId: number,
-//                                        setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
-//                                        token: string) => {
-//   const mealLogFoodsResponse = await axios.get(`${API_BASE_URL}/meal-log-foods/${mealLogId}`,
-//     {
-//       headers: {
-//         Authorization: `Bearer ${token}`
-//       }
-//     }
-//   );
+export const loadWorkoutLogExercises = async (
+  workoutLogId: number,
+  setWorkoutLogExercises: React.Dispatch<React.SetStateAction<Record<number, WorkoutLogExercise[]>>>,
+  token: string
+) => {
+  const workoutLogExercisesResponse = await axios.get(`${API_BASE_URL}/workout-log-exercises/${workoutLogId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
 
-//   if (mealLogFoodsResponse.data.length === 0) {
-//     return {};
-//   }
+  if (workoutLogExercisesResponse.data.length === 0) {
+    return {};
+  }
   
-//   const mealLogFoods: Record<number, MealLogFood[]> = {};
-//   mealLogFoodsResponse.data.forEach((mealLogFood: MealLogFood) => {
-//     const mealLogFoodObject = {
-//       id: mealLogFood.id,
-//       meal_log_id: mealLogFood.meal_log_id,
-//       food_id: mealLogFood.food_id,
-//       meal_type: mealLogFood.meal_type,
-//       num_servings: mealLogFood.num_servings,
-//       serving_size: mealLogFood.serving_size,
-//       serving_unit: mealLogFood.serving_unit,
-//       created_at: mealLogFood.created_at,
-//       calories: mealLogFood.calories || null
-//     };
+  const workoutLogExercises: Record<number, WorkoutLogExercise[]> = {};
+  workoutLogExercisesResponse.data.forEach((workoutLogExercise: WorkoutLogExercise) => {
+    const workoutLogExerciseObject = {
+      id: workoutLogExercise.id,
+      workout_log_id: workoutLogExercise.workout_log_id,
+      exercise_id: workoutLogExercise.exercise_id,
+      num_sets: workoutLogExercise.num_sets,
+      greatest_one_rep_max: workoutLogExercise.greatest_one_rep_max || null,
+      unit: workoutLogExercise.unit || null
+    };
 
-//     mealLogFoods[mealLogId] = mealLogFoods[mealLogId] || [];
-//     mealLogFoods[mealLogId].push(mealLogFoodObject);
-//   });
+    workoutLogExercises[workoutLogId] = workoutLogExercises[workoutLogId] || [];
+    workoutLogExercises[workoutLogId].push(workoutLogExerciseObject);
+  });
 
-//   setMealLogFoods(prev => ({
-//     ...prev,
-//     ...mealLogFoods
-//   }));
+  setWorkoutLogExercises(prev => ({
+    ...prev,
+    ...workoutLogExercises
+  }));
 
-//   return mealLogFoods;
-// };
+  return workoutLogExercises;
+};
 
 // export const addMealLogFood = async (mealLogId: number,
 //                                      foodId: number,
@@ -250,27 +249,29 @@ export const loadWorkoutLog = async (
 //   });
 // };
 
-// export const copyMealLogFoods = async (
-//   mealLogFoodIds: number[],
-//   targetMealLogId: number,
-//   setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
-//   token: string
-// ) => {
-//   await axios.post(`${API_BASE_URL}/meal-log-foods/bulk`,
-//     {
-//       action: "copy",
-//       ids: mealLogFoodIds,
-//       target_meal_log_id: targetMealLogId
-//     },
-//     {
-//       headers: {
-//         Authorization: `Bearer ${token}`
-//       }
-//     }
-//   );
+export const copyWorkoutLogExercises = async (
+  workoutLogExerciseIds: number[],
+  targetWorkoutLogId: number,
+  setWorkoutLogExercises: React.Dispatch<React.SetStateAction<Record<number, WorkoutLogExercise[]>>>,
+  token: string
+) => {
+  await axios.post(`${API_BASE_URL}/workout-log-exercises/bulk`,
+    {
+      action: "copy",
+      ids: workoutLogExerciseIds,
+      target_workout_log_id: targetWorkoutLogId
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
 
-//   await loadMealLogFoods(targetMealLogId, setMealLogFoods, token);
-// }
+  await loadWorkoutLogExercises(targetWorkoutLogId, setWorkoutLogExercises, token);
+
+  // await loadExerciseSets(...);
+}
 
 // export const moveMealLogFoods = async (
 //   currentMealLogId: number,

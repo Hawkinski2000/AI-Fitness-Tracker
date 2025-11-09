@@ -30,7 +30,7 @@ type ExerciseSectionProps = {
   setViewFoodMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
   viewFoodMenuOpenId: number | null;
   exerciseOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
-  // handleDeleteMealLogFoods: () => Promise<void>;
+  // handleDeleteWorkoutLogExercises: 
 };
 
 
@@ -51,7 +51,7 @@ export default function ExerciseSection({
   selectingWorkoutLogExercises,
   setCalendarOpenType,
   exerciseOptionsMenuRefs,
-  // handleDeleteMealLogFoods,
+  // handleDeleteWorkoutLogExercises,
   // handleLoadFoodNutrients
 }: ExerciseSectionProps) {
   return (
@@ -72,7 +72,7 @@ export default function ExerciseSection({
         setSelectedWorkoutLogExerciseIds={setSelectedWorkoutLogExerciseIds}
         selectingWorkoutLogExercises={selectingWorkoutLogExercises}
         setCalendarOpenType={setCalendarOpenType}
-        // handleDeleteMealLogFoods={handleDeleteMealLogFoods}
+        // handleDeleteWorkoutLogExercises={handleDeleteWorkoutLogExercises}
       />
 
       <ExerciseSectionSets
