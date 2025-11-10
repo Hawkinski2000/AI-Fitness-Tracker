@@ -40,12 +40,14 @@ def create_exercise_set(exercise_set: exercise_set.ExerciseSetCreate, user_id: i
 
     return new_exercise_set
 
-def get_exercise_sets(user_id: int, db: Session):
+def get_exercise_sets(workout_log_exercise_id: int, user_id: int, db: Session):
     exercise_sets = (
         db.query(ExerciseSet)
         .join(WorkoutLogExercise, ExerciseSet.workout_log_exercise_id == WorkoutLogExercise.id)
         .join(WorkoutLog, WorkoutLogExercise.workout_log_id == WorkoutLog.id)
-        .filter(WorkoutLog.user_id == user_id)
+        .filter(WorkoutLog.user_id == user_id,
+                ExerciseSet.workout_log_exercise_id == workout_log_exercise_id)
+        .order_by(ExerciseSet.created_at.asc())
         .all()
     )
     return exercise_sets

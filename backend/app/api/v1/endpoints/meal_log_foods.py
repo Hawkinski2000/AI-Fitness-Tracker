@@ -24,7 +24,7 @@ def bulk_action_meal_log_foods(bulk_action: meal_log_food.MealLogFoodBulkAction,
                                db: Session = Depends(get_db)):
     crud_meal_log_foods.bulk_action_meal_log_foods(bulk_action, current_user.user_id, db)
 
-# Get all meal log foods
+# Get all meal log foods in a meal log
 @router.get("/{meal_log_id}", response_model=list[meal_log_food.MealLogFoodResponse])
 def get_meal_log_foods(meal_log_id: int,
                        current_user: token.TokenData = Depends(get_current_user),

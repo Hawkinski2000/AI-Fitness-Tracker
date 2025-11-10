@@ -2,6 +2,8 @@ import { useCallback } from "react";
 import {
   type WorkoutLog,
   type WorkoutLogExercise,
+  type Exercise,
+  type ExerciseSet
 } from "../types/workout-logs";
 import { type Value } from "react-calendar/dist/shared/types.js";
 import { useAuth } from "../../../context/auth/useAuth";
@@ -21,6 +23,8 @@ const useMealLogActions = (
   workoutLogs: Record<string, WorkoutLog>,
   setWorkoutLogs: React.Dispatch<React.SetStateAction<Record<string, WorkoutLog>>>,
   setWorkoutLogExercises: React.Dispatch<React.SetStateAction<Record<number, WorkoutLogExercise[]>>>,
+  setExercises: React.Dispatch<React.SetStateAction<Record<number, Exercise>>>,
+  setExerciseSets: React.Dispatch<React.SetStateAction<Record<number, ExerciseSet[]>>>,
   // setFoods: React.Dispatch<React.SetStateAction<Record<number, Food>>>,
   // setFoodNutrients: React.Dispatch<React.SetStateAction<Record<number, FoodNutrient[]>>>,
   // setNutrients: React.Dispatch<React.SetStateAction<Record<number, Nutrient>>>,
@@ -239,7 +243,16 @@ const handleCopyWorkoutLogExercises = useCallback(async () => {
       }
 
       const targetWorkoutLogId = targetWorkoutLog.id;
-      await copyWorkoutLogExercises(selectedWorkoutLogExerciseIds, targetWorkoutLogId, setWorkoutLogExercises, token);
+      await copyWorkoutLogExercises(
+        targetWorkoutLogId,
+        normalizedTargetDate,
+        selectedWorkoutLogExerciseIds,
+        setWorkoutLogs,
+        setWorkoutLogExercises,
+        setExercises,
+        setExerciseSets,
+        token
+      );
 
     } catch (err) {
       console.error(err);
@@ -255,6 +268,8 @@ const handleCopyWorkoutLogExercises = useCallback(async () => {
     workoutLogs,
     setWorkoutLogs,
     setWorkoutLogExercises,
+    setExercises,
+    setExerciseSets,
     selectedWorkoutLogExerciseIds
   ]);
 

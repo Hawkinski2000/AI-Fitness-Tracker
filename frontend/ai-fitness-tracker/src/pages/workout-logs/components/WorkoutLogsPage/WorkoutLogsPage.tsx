@@ -188,6 +188,8 @@ export default function WorkoutLogsPage() {
     workoutLogs,
     setWorkoutLogs,
     setWorkoutLogExercises,
+    setExercises,
+    setExerciseSets,
     // setFoods,
     // setFoodNutrients,
     // setNutrients,

@@ -17,10 +17,12 @@ def create_exercise_set(exercise_set: exercise_set.ExerciseSetCreate,
     new_exercise_set = crud_exercise_sets.create_exercise_set(exercise_set, current_user.user_id, db)
     return new_exercise_set
 
-# Get all exercise sets
-@router.get("", response_model=list[exercise_set.ExerciseSetResponse])
-def get_exercise_sets(current_user: token.TokenData = Depends(get_current_user), db: Session = Depends(get_db)):
-    exercise_sets = crud_exercise_sets.get_exercise_sets(current_user.user_id, db)
+# Get all exercise sets in a workout log exercise
+@router.get("/{workout_log_exercise_id}", response_model=list[exercise_set.ExerciseSetResponse])
+def get_exercise_sets(workout_log_exercise_id: int,
+                      current_user: token.TokenData = Depends(get_current_user),
+                      db: Session = Depends(get_db)):
+    exercise_sets = crud_exercise_sets.get_exercise_sets(workout_log_exercise_id, current_user.user_id, db)
     return exercise_sets
 
 # Get an exercise set

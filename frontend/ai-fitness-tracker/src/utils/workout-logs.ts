@@ -250,9 +250,13 @@ export const loadWorkoutLogExercises = async (
 // };
 
 export const copyWorkoutLogExercises = async (
-  workoutLogExerciseIds: number[],
   targetWorkoutLogId: number,
+  targetWorkoutLogDate: Value,
+  workoutLogExerciseIds: number[],
+  setWorkoutLogs: React.Dispatch<React.SetStateAction<Record<string, WorkoutLog>>>,
   setWorkoutLogExercises: React.Dispatch<React.SetStateAction<Record<number, WorkoutLogExercise[]>>>,
+  setExercises: React.Dispatch<React.SetStateAction<Record<number, Exercise>>>,
+  setExerciseSets: React.Dispatch<React.SetStateAction<Record<number, ExerciseSet[]>>>,
   token: string
 ) => {
   await axios.post(`${API_BASE_URL}/workout-log-exercises/bulk`,
@@ -268,9 +272,19 @@ export const copyWorkoutLogExercises = async (
     }
   );
 
-  await loadWorkoutLogExercises(targetWorkoutLogId, setWorkoutLogExercises, token);
-
-  // await loadExerciseSets(...);
+  await loadWorkoutLog(
+    targetWorkoutLogDate,
+    setWorkoutLogs,
+    setWorkoutLogExercises,
+    setExercises,
+    setExerciseSets,
+    token,
+    [
+      "workoutLogExercises",
+      "workoutLogExercises.exercise",
+      "workoutLogExercises.exerciseSets"
+    ]
+  );
 }
 
 // export const moveMealLogFoods = async (

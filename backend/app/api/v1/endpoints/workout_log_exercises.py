@@ -24,7 +24,7 @@ def bulk_action_workout_log_exercises(bulk_action: workout_log_exercise.WorkoutL
                                       db: Session = Depends(get_db)):
     crud_workout_log_exercises.bulk_action_workout_log_exercises(bulk_action, current_user.user_id, db)
 
-# Get all workout log exercises
+# Get all workout log exercises in a workout log
 @router.get("/{workout_log_id}", response_model=list[workout_log_exercise.WorkoutLogExerciseResponse])
 def get_workout_log_exercises(workout_log_id: int,
                               current_user: token.TokenData = Depends(get_current_user),
