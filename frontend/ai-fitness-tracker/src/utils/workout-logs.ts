@@ -287,57 +287,57 @@ export const copyWorkoutLogExercises = async (
   );
 }
 
-// export const moveMealLogFoods = async (
-//   currentMealLogId: number,
-//   mealLogFoodIds: number[],
-//   targetMealLogId: number,
-//   setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
-//   token: string
-// ) => {
-//   await axios.post(`${API_BASE_URL}/meal-log-foods/bulk`,
-//     {
-//       action: "move",
-//       ids: mealLogFoodIds,
-//       target_meal_log_id: targetMealLogId
-//     },
-//     {
-//       headers: {
-//         Authorization: `Bearer ${token}`
-//       }
-//     }
-//   );
+export const moveWorkoutLogExercises = async (
+  currentWorkoutLogId: number,
+  workoutLogExerciseIds: number[],
+  targetWorkoutLogId: number,
+  setWorkoutLogExercises: React.Dispatch<React.SetStateAction<Record<number, WorkoutLogExercise[]>>>,
+  token: string
+) => {
+  await axios.post(`${API_BASE_URL}/workout-log-exercises/bulk`,
+    {
+      action: "move",
+      ids: workoutLogExerciseIds,
+      target_workout_log_id: targetWorkoutLogId
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
 
-//   setMealLogFoods(prevMealLogFoods => {
-//     const mealLogFoodEntries: [string, MealLogFood[]][] = [];
-//     const targetMealLogFoodsArray: MealLogFood[] = [];
+  setWorkoutLogExercises(prevWorkoutLogExercises => {
+    const workoutLogExerciseEntries: [string, WorkoutLogExercise[]][] = [];
+    const targetWorkoutLogExercisesArray: WorkoutLogExercise[] = [];
 
-//     Object.entries(prevMealLogFoods).forEach(([logId, mealLogFoodsArray]) => {
-//       if (Number(logId) === currentMealLogId) {
-//         const sourceMealLogFoodsArray: MealLogFood[] = [];
-//         mealLogFoodsArray.forEach(mealLogFood => {
-//           if (mealLogFoodIds.includes(mealLogFood.id)) {
-//             targetMealLogFoodsArray.push(mealLogFood);
-//           } else {
-//             sourceMealLogFoodsArray.push(mealLogFood);
-//           }
-//         });
-//         mealLogFoodEntries.push([logId, sourceMealLogFoodsArray]);
+    Object.entries(prevWorkoutLogExercises).forEach(([logId, workoutLogExercisesArray]) => {
+      if (Number(logId) === currentWorkoutLogId) {
+        const sourceWorkoutLogExercisesArray: WorkoutLogExercise[] = [];
+        workoutLogExercisesArray.forEach(workoutLogExercise => {
+          if (workoutLogExerciseIds.includes(workoutLogExercise.id)) {
+            targetWorkoutLogExercisesArray.push(workoutLogExercise);
+          } else {
+            sourceWorkoutLogExercisesArray.push(workoutLogExercise);
+          }
+        });
+        workoutLogExerciseEntries.push([logId, sourceWorkoutLogExercisesArray]);
 
-//       } else if (Number(logId) === targetMealLogId) {
-//         targetMealLogFoodsArray.push(...mealLogFoodsArray);
+      } else if (Number(logId) === targetWorkoutLogId) {
+        targetWorkoutLogExercisesArray.push(...workoutLogExercisesArray);
         
-//       } else {
-//         mealLogFoodEntries.push([logId, mealLogFoodsArray]);
-//       }
-//     });
+      } else {
+        workoutLogExerciseEntries.push([logId, workoutLogExercisesArray]);
+      }
+    });
 
-//     mealLogFoodEntries.push([String(targetMealLogId), targetMealLogFoodsArray]);
+    workoutLogExerciseEntries.push([String(targetWorkoutLogId), targetWorkoutLogExercisesArray]);
 
-//     const updatedMealLogFoods = Object.fromEntries(mealLogFoodEntries);
+    const updatedWorkoutLogExercises = Object.fromEntries(workoutLogExerciseEntries);
 
-//     return updatedMealLogFoods;
-//   });
-// }
+    return updatedWorkoutLogExercises;
+  });
+}
 
 // export const deleteMealLogFoods = async (
 //   mealLogFoodIds: number[],

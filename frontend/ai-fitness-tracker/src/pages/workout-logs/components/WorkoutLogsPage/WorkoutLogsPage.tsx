@@ -178,7 +178,7 @@ export default function WorkoutLogsPage() {
     // handleLoadFoodNutrients,
     // handleUpdateFood,
     handleCopyWorkoutLogExercises,
-    // handleMoveMealLogFoods,
+    handleMoveWorkoutLogExercises,
     // handleDeleteWorkoutLogExercises
   } = useWorkoutLogActions(
     currentWorkoutLogDate,
@@ -242,7 +242,7 @@ export default function WorkoutLogsPage() {
                 // mealLogOptionsMenuRef={mealLogOptionsMenuRef}
                 handleSetCalendarDate={handleSetCalendarDate}
                 handleCopyWorkoutLogExercises={handleCopyWorkoutLogExercises}
-                // handleMoveMealLogFoods={handleMoveMealLogFoods}
+                handleMoveWorkoutLogExercises={handleMoveWorkoutLogExercises}
                 // handleDeleteMealLogFoods={handleDeleteMealLogFoods}
               />
 

@@ -86,14 +86,16 @@ def bulk_action_workout_log_exercises(bulk_action: workout_log_exercise.WorkoutL
                 )
             db.commit()
 
-    # if bulk_action.action == "move":
-    #     original_meal_log_id = meal_log_food_rows[0].meal_log_id
-    #     meal_log_id = bulk_action.target_meal_log_id
+    if bulk_action.action == "move":
+        original_workout_log_id = workout_log_exercise_rows[0].workout_log_id
+        workout_log_id = bulk_action.target_workout_log_id
 
-    #     for row in meal_log_food_rows:
-    #         row.meal_log_id = meal_log_id
+        for row in workout_log_exercise_rows:
+            row.workout_log_id = workout_log_id
+            for es in row.exercise_sets:
+                es.workout_log_exercise_id = row.id
 
-    #     db.commit()
+        db.commit()
 
     # if bulk_action.action == "delete":
     #     for row in meal_log_food_rows:

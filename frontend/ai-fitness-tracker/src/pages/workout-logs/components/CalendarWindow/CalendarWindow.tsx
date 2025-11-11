@@ -20,7 +20,7 @@ type CalendarWindowProps = {
   setSelectedWorkoutLogExerciseIds: React.Dispatch<React.SetStateAction<number[]>>;
   handleSetCalendarDate: (value: Value) => Promise<void>;
   handleCopyWorkoutLogExercises: () => Promise<void>;
-  // handleMoveMealLogFoods: () => Promise<void>;
+  handleMoveWorkoutLogExercises: () => Promise<void>;
 };
 
 
@@ -36,7 +36,7 @@ export default function CalendarWindow({
   setSelectedWorkoutLogExerciseIds,
   handleSetCalendarDate,
   handleCopyWorkoutLogExercises,
-  // handleMoveMealLogFoods
+  handleMoveWorkoutLogExercises
 }: CalendarWindowProps) {  
   return (
     <div ref={calendarRef} className={`calendar ${calendarOpenType && 'calendar-open'}`}>
@@ -75,7 +75,7 @@ export default function CalendarWindow({
             } else if (calendarOpenType === 'copyWorkoutLogExercises') {
               handleCopyWorkoutLogExercises();
             } else if (calendarOpenType === 'moveWorkoutLogExercises') {
-              // handleMoveWorkoutLogExercises();
+              handleMoveWorkoutLogExercises();
             }
             if (currentWorkoutLogDate) {
               setCalendarDate(currentWorkoutLogDate);
