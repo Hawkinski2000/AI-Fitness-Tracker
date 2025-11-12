@@ -1,6 +1,10 @@
+import {
+  type WorkoutLog,
+  type WorkoutLogExercise
+} from "../../types/workout-logs";
 import { type Value } from 'react-calendar/dist/shared/types.js';
 import CalendarWindow from '../CalendarWindow/CalendarWindow';
-import MealLogOptionsMenu from '../MealLogOptionsMenu/MealLogOptionsMenu';
+import WorkoutLogOptionsMenu from '../WorkoutLogOptionsMenu/WorkoutLogOptionsMenu';
 import arrowLeftIcon from '../../../../assets/arrow-left-icon.svg';
 import arrowRightIcon from '../../../../assets/arrow-right-icon.svg';
 import dotsIcon from '../../../../assets/dots-icon.svg';
@@ -17,20 +21,21 @@ type DateNavProps = {
   calendarRef: React.RefObject<HTMLDivElement | null>;
   calendarDate: Value;
   setCalendarDate: React.Dispatch<React.SetStateAction<Value>>;
-  mealLogOptionsMenuOpen: boolean;
-  setMealLogOptionsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  workoutLogOptionsMenuOpen: boolean;
+  setWorkoutLogOptionsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   selectingWorkoutLogExercises: boolean;
   setSelectingWorkoutLogExercises: React.Dispatch<React.SetStateAction<boolean>>;
   setAllItemsSelected: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedMealTypes: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedWorkoutLogExerciseIds: number[];
   setSelectedWorkoutLogExerciseIds: React.Dispatch<React.SetStateAction<number[]>>;
-  // mealLogs: Record<string, MealLog>;
-  // mealLogFoods: Record<number, MealLogFood[]>;
-  // mealLogOptionsMenuRef: React.RefObject<HTMLDivElement | null>;
+  workoutLogs: Record<string, WorkoutLog>;
+  workoutLogExercises: Record<number, WorkoutLogExercise[]>;
+  workoutLogOptionsMenuRef: React.RefObject<HTMLDivElement | null>;
   handleSetCalendarDate: (value: Value) => Promise<void>;
   handleCopyWorkoutLogExercises: () => Promise<void>;
   handleMoveWorkoutLogExercises: () => Promise<void>;
-  // handleDeleteMealLogFoods: () => Promise<void>;
+  handleDeleteWorkoutLogExercises: (ids: number[]) => Promise<void>;
 };
 
 
@@ -44,20 +49,21 @@ export default function DateNav({
   calendarRef,
   calendarDate,
   setCalendarDate,
-  mealLogOptionsMenuOpen,
-  setMealLogOptionsMenuOpen,
+  workoutLogOptionsMenuOpen,
+  setWorkoutLogOptionsMenuOpen,
   selectingWorkoutLogExercises,
   setSelectingWorkoutLogExercises,
   setAllItemsSelected,
   setSelectedMealTypes,
+  selectedWorkoutLogExerciseIds,
   setSelectedWorkoutLogExerciseIds,
-  // mealLogs,
-  // mealLogFoods,
-  // mealLogOptionsMenuRef,
+  workoutLogs,
+  workoutLogExercises,
+  workoutLogOptionsMenuRef,
   handleSetCalendarDate,
   handleCopyWorkoutLogExercises,
   handleMoveWorkoutLogExercises,
-  // handleDeleteMealLogFoods
+  handleDeleteWorkoutLogExercises
 }: DateNavProps) {
   return (
     <div className="date-nav-container">
@@ -118,28 +124,29 @@ export default function DateNav({
       </nav>
 
       <button
-        className="meal-log-options-button"
+        className="workout-log-options-button"
         onClick={(e) => {
           e.stopPropagation();
-          setMealLogOptionsMenuOpen(prev => !prev);
+          setWorkoutLogOptionsMenuOpen(prev => !prev);
         }}
       >
         <img className="button-link-image" src={dotsIcon} />
       </button>
 
-      {/* <MealLogOptionsMenu
-        mealLogOptionsMenuOpen={mealLogOptionsMenuOpen}
-        setMealLogOptionsMenuOpen={setMealLogOptionsMenuOpen}
-        selectingMealLogFoods={selectingMealLogFoods}
-        setSelectingMealLogFoods={setSelectingMealLogFoods}
-        mealLogs={mealLogs}
-        mealLogFoods={mealLogFoods}
-        currentMealLogDate={currentMealLogDate}
-        setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
+      <WorkoutLogOptionsMenu
+        workoutLogOptionsMenuOpen={workoutLogOptionsMenuOpen}
+        setWorkoutLogOptionsMenuOpen={setWorkoutLogOptionsMenuOpen}
+        selectingWorkoutLogExercises={selectingWorkoutLogExercises}
+        setSelectingWorkoutLogExercises={setSelectingWorkoutLogExercises}
+        workoutLogs={workoutLogs}
+        workoutLogExercises={workoutLogExercises}
+        currentWorkoutLogDate={currentWorkoutLogDate}
+        selectedWorkoutLogExerciseIds={selectedWorkoutLogExerciseIds}
+        setSelectedWorkoutLogExerciseIds={setSelectedWorkoutLogExerciseIds}
         setCalendarOpenType={setCalendarOpenType}
-        mealLogOptionsMenuRef={mealLogOptionsMenuRef}
-        handleDeleteMealLogFoods={handleDeleteMealLogFoods}
-      /> */}
+        workoutLogOptionsMenuRef={workoutLogOptionsMenuRef}
+        handleDeleteWorkoutLogExercises={handleDeleteWorkoutLogExercises}
+      />
     </div>
   );
 }

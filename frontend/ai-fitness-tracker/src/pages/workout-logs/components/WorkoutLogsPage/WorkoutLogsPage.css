@@ -41,13 +41,13 @@
   top: calc(50px + 20px + 2rem);
 }
 
-.meal-options-button-container {
+.exercise-options-button-container {
   display: flex;
   justify-content: end;
   width: 100%;
 }
 
-.meal-options-button {
+.exercise-options-button {
   display: flex;
   height: 2rem;
   border-radius: 10px;
@@ -61,7 +61,7 @@
   background-color: #8085a6;
 }
 
-.meal-options-menu {
+.exercise-options-menu {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -81,13 +81,13 @@
   transition: all 0.1s;
 }
 
-.meal-options-menu-open {
+.exercise-options-menu-open {
   height: fit-content;
   padding: 0.5rem;
   box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
 }
 
-.meal-options-menu-button {
+.exercise-options-menu-button {
   display: flex;
   align-items: center;
   width: 100%;
@@ -101,14 +101,14 @@
   cursor: pointer;
   transition: all 0.25s;
 }
-.meal-options-menu-button:hover {
+.exercise-options-menu-button:hover {
   background-color: #8085a6;
 }
 
-.meal-options-delete-button {
+.exercise-options-delete-button {
  color: red;
 }
-.meal-options-delete-button:hover {
+.exercise-options-delete-button:hover {
   background-color: rgba(255, 0, 0, 0.25);
 }
 

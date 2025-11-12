@@ -52,37 +52,68 @@ export default function ExerciseSectionHeader({
 }: ExerciseSectionHeaderProps) {
   const exerciseName = workoutLogExercise && capitalizeFirstLetter(exercises[workoutLogExercise.exercise_id].name);
 
-  // const handleSelectExercise = useCallback(async () => {
-  //   if (!currentWorkoutLogDate) {
-  //       return;
-  //   }
-  //   const dateKey = getDateKey(currentWorkoutLogDate);
-  //   if (!dateKey) {
-  //     return;
-  //   }
-  //   const currentWorkoutLogId = workoutLogs[dateKey].id;
+  const handleSelectExercise = useCallback(async () => {
+    if (!currentWorkoutLogDate) {
+        return;
+    }
+    const dateKey = getDateKey(currentWorkoutLogDate);
+    if (!dateKey) {
+      return;
+    }
+    const currentWorkoutLogId = workoutLogs[dateKey].id;
+    const currentWorkoutLogExercises = workoutLogExercises[currentWorkoutLogId];
 
-  // }, [
-
-  // ]);
+    if (selectedWorkoutLogExerciseIds.includes(workoutLogExercise.id)) {
+      setAllItemsSelected(false);
+      setSelectedWorkoutLogExerciseIds(prev =>
+        prev.filter(workoutLogExerciseId => workoutLogExerciseId !== workoutLogExercise.id)
+      );
+    }
+    else {
+      if (selectedWorkoutLogExerciseIds.length + 1 === currentWorkoutLogExercises.length) {
+        setAllItemsSelected(true);
+      }
+      setSelectedWorkoutLogExerciseIds(prev =>
+        [...prev, workoutLogExercise.id]
+      );
+    }
+  }, [
+    workoutLogExercise,
+    currentWorkoutLogDate,
+    selectedWorkoutLogExerciseIds,
+    setSelectedWorkoutLogExerciseIds,
+    setAllItemsSelected,
+    workoutLogs,
+    workoutLogExercises
+  ]);
   return (
     <div
       className={`exercise-container ${selectingWorkoutLogExercises && 'selectable-exercise-container'}`}
-      // onClick={() => handleSelectExercise()}
+      onClick={() => handleSelectExercise()}
     >
       <h3>
         {exerciseName}
       </h3>
 
-      <button
-        className="exercise-options-button"
-        onClick={(e) => {
-          e.stopPropagation();
-          setExerciseOptionsMenuOpenName((prev) => (prev === exerciseName ? '' : exerciseName));
-        }}
-      >
-        <img className="button-link-image" src={dotsIcon} />
-      </button>
+      {selectingWorkoutLogExercises ? (
+        <div className="check-box">
+          {selectedWorkoutLogExerciseIds.includes(workoutLogExercise.id) ? (
+            <img className="button-link-image" src={checkBoxIcon} />
+          ) : (
+            <img className="button-link-image" src={boxIcon} />
+          )}
+        </div>
+      ) : (
+        <button
+          className="exercise-options-button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setExerciseOptionsMenuOpenName((prev) => (prev === exerciseName ? '' : exerciseName));
+          }}
+        >
+          <img className="button-link-image" src={dotsIcon} />
+        </button>
+      )}
 
       <ExerciseOptionsMenu
         workoutLogExercise={workoutLogExercise}

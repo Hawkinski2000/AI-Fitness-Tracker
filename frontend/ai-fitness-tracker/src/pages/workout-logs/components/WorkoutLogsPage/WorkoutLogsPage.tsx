@@ -46,8 +46,8 @@ export default function WorkoutLogsPage() {
 
 // ---------------------------------------------------------------------------
 
-  const [mealLogOptionsMenuOpen, setMealLogOptionsMenuOpen] = useState<boolean>(false);
-  const mealLogOptionsMenuRef = useRef<HTMLDivElement | null>(null);
+  const [workoutLogOptionsMenuOpen, setWorkoutLogOptionsMenuOpen] = useState<boolean>(false);
+  const workoutLogOptionsMenuRef = useRef<HTMLDivElement | null>(null);
 
   const [exerciseOptionsMenuOpenName, setExerciseOptionsMenuOpenName] = useState<string>(''); // Switch to workout log exercise id!
   const exerciseOptionsMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -114,8 +114,8 @@ export default function WorkoutLogsPage() {
 
   useWorkoutLogsClickOutside(
     setAccountMenuOpen,
-    mealLogOptionsMenuOpen,
-    setMealLogOptionsMenuOpen,
+    workoutLogOptionsMenuOpen,
+    setWorkoutLogOptionsMenuOpen,
     exerciseOptionsMenuOpenName,
     setExerciseOptionsMenuOpenName,
     mealFoodOptionsMenuOpenId,
@@ -135,7 +135,7 @@ export default function WorkoutLogsPage() {
     setCalendarDate,
     currentWorkoutLogDate,
     accountMenuRef,
-    mealLogOptionsMenuRef,
+    workoutLogOptionsMenuRef,
     exerciseOptionsMenuRefs,
     mealFoodOptionsMenuRefs,
     foodsMenuRef,
@@ -230,36 +230,36 @@ export default function WorkoutLogsPage() {
                 calendarRef={calendarRef}
                 calendarDate={calendarDate}
                 setCalendarDate={setCalendarDate}
-                mealLogOptionsMenuOpen={mealLogOptionsMenuOpen}
-                setMealLogOptionsMenuOpen={setMealLogOptionsMenuOpen}
+                workoutLogOptionsMenuOpen={workoutLogOptionsMenuOpen}
+                setWorkoutLogOptionsMenuOpen={setWorkoutLogOptionsMenuOpen}
                 selectingWorkoutLogExercises={selectingWorkoutLogExercises}
                 setSelectingWorkoutLogExercises={setSelectingWorkoutLogExercises}
                 setAllItemsSelected={setAllItemsSelected}
                 setSelectedMealTypes={setSelectedMealTypes}
+                selectedWorkoutLogExerciseIds={selectedWorkoutLogExerciseIds}
                 setSelectedWorkoutLogExerciseIds={setSelectedWorkoutLogExerciseIds}
-                // mealLogs={workoutLogs}
-                // mealLogFoods={mealLogFoods}
-                // mealLogOptionsMenuRef={mealLogOptionsMenuRef}
+                workoutLogs={workoutLogs}
+                workoutLogExercises={workoutLogExercises}
+                workoutLogOptionsMenuRef={workoutLogOptionsMenuRef}
                 handleSetCalendarDate={handleSetCalendarDate}
                 handleCopyWorkoutLogExercises={handleCopyWorkoutLogExercises}
                 handleMoveWorkoutLogExercises={handleMoveWorkoutLogExercises}
-                // handleDeleteMealLogFoods={handleDeleteMealLogFoods}
+                handleDeleteWorkoutLogExercises={handleDeleteWorkoutLogExercises}
               />
 
-            {/* 
               <SelectItemsHeader
                 allItemsSelected={allItemsSelected}
                 setAllItemsSelected={setAllItemsSelected}
-                setSelectedMealTypes={setSelectedMealTypes}
-                selectingMealLogFoods={selectingMealLogFoods}
-                setSelectingMealLogFoods={setSelectingMealLogFoods}
-                selectedMealLogFoodIds={selectedMealLogFoodIds}
-                setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
-                currentMealLogDate={currentMealLogDate}
-                mealLogs={workoutLogs}
-                mealLogFoods={mealLogFoods}
+                selectingWorkoutLogExercises={selectingWorkoutLogExercises}
+                setSelectingWorkoutLogExercises={setSelectingWorkoutLogExercises}
+                selectedWorkoutLogExerciseIds={selectedWorkoutLogExerciseIds}
+                setSelectedWorkoutLogExerciseIds={setSelectedWorkoutLogExerciseIds}
+                currentWorkoutLogDate={currentWorkoutLogDate}
+                workoutLogs={workoutLogs}
+                workoutLogExercises={workoutLogExercises}
               />
 
+              {/*
               {viewFoodMenuOpenId ? (
                 <ViewFoodMenu
                   currentMealLogDate={currentMealLogDate}

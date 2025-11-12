@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { type MealLog, type MealLogFood } from '../../types/workout-logs';
+import { type WorkoutLog, type WorkoutLogExercise } from '../../types/workout-logs';
 import { type Value } from 'react-calendar/dist/shared/types.js';
 import { getDateKey } from '../../../../utils/dates';
 import closeIcon from '../../../../assets/close-icon.svg';
@@ -11,57 +11,53 @@ import './SelectExercisesHeader.css';
 type SelectExercisesHeaderProps = {
   allItemsSelected: boolean;
   setAllItemsSelected: React.Dispatch<React.SetStateAction<boolean>>;
-  setSelectedMealTypes: React.Dispatch<React.SetStateAction<string[]>>;
-  selectingMealLogFoods: boolean;
-  setSelectingMealLogFoods: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedMealLogFoodIds: number[];
-  setSelectedMealLogFoodIds: React.Dispatch<React.SetStateAction<number[]>>;
-  currentMealLogDate: Value;
-  mealLogs: Record<string, MealLog>;
-  mealLogFoods: Record<number, MealLogFood[]>;
+  selectingWorkoutLogExercises: boolean;
+  setSelectingWorkoutLogExercises: React.Dispatch<React.SetStateAction<boolean>>;
+  selectedWorkoutLogExerciseIds: number[];
+  setSelectedWorkoutLogExerciseIds: React.Dispatch<React.SetStateAction<number[]>>;
+  currentWorkoutLogDate: Value;
+  workoutLogs: Record<string, WorkoutLog>;
+  workoutLogExercises: Record<number, WorkoutLogExercise[]>;
 };
 
 
 export default function SelectExercisesHeader({
   allItemsSelected,
   setAllItemsSelected,
-  setSelectedMealTypes,
-  selectingMealLogFoods,
-  setSelectingMealLogFoods,
-  selectedMealLogFoodIds,
-  setSelectedMealLogFoodIds,
-  currentMealLogDate,
-  mealLogs,
-  mealLogFoods
+  selectingWorkoutLogExercises,
+  setSelectingWorkoutLogExercises,
+  selectedWorkoutLogExerciseIds,
+  setSelectedWorkoutLogExerciseIds,
+  currentWorkoutLogDate,
+  workoutLogs,
+  workoutLogExercises
 }: SelectExercisesHeaderProps) {
   const handleSelectAll = useCallback(async () => {
       if (allItemsSelected) {
-        setSelectedMealTypes([]);
-        setSelectedMealLogFoodIds([]);
+        setSelectedWorkoutLogExerciseIds([]);
         return;
       }
     
-      if (!currentMealLogDate) {
+      if (!currentWorkoutLogDate) {
           return;
       }
-      const dateKey = getDateKey(currentMealLogDate);
+      const dateKey = getDateKey(currentWorkoutLogDate);
       if (!dateKey) {
         return;
       }
-      setSelectedMealTypes(['breakfast', 'lunch', 'dinner', 'snacks']);
-      const currentMealLogId = mealLogs[dateKey].id;
-      const currentMealLogFoods = mealLogFoods[currentMealLogId];
-      const mealLogFoodIds = currentMealLogFoods.map(
-        (mealLogFood: MealLogFood) => mealLogFood.id
+
+      const currentWorkoutLogId = workoutLogs[dateKey].id;
+      const currentWorkoutLogExercises = workoutLogExercises[currentWorkoutLogId];
+      const workoutLogExerciseIds = currentWorkoutLogExercises.map(
+        (workoutLogExercise: WorkoutLogExercise) => workoutLogExercise.id
       );
-      setSelectedMealLogFoodIds(mealLogFoodIds);
+      setSelectedWorkoutLogExerciseIds(workoutLogExerciseIds);
     }, [
       allItemsSelected,
-      setSelectedMealTypes,
-      currentMealLogDate,
-      mealLogs,
-      mealLogFoods,
-      setSelectedMealLogFoodIds,
+      currentWorkoutLogDate,
+      workoutLogs,
+      workoutLogExercises,
+      setSelectedWorkoutLogExerciseIds
     ]);
 
 
@@ -69,26 +65,25 @@ export default function SelectExercisesHeader({
     <header
       className={
         `select-exercises-header
-        ${selectingMealLogFoods && 'select-exercises-header-open'}`
+        ${selectingWorkoutLogExercises && 'select-exercises-header-open'}`
       }
     >
       <div className='select-items-header-section'>
         <button
           className='select-items-header-close-button'
           onClick={() => {
-            setSelectingMealLogFoods(false);
+            setSelectingWorkoutLogExercises(false);
             setAllItemsSelected(false);
-            setSelectedMealTypes([]);
-            setSelectedMealLogFoodIds([]);
+            setSelectedWorkoutLogExerciseIds([]);
           }}
         >
           <img className="button-link-image" src={closeIcon} />
         </button>
 
         <p className='select-items-header-text'>
-          {selectedMealLogFoodIds.length > 0
-            ? `Selected ${selectedMealLogFoodIds.length}
-              item${selectedMealLogFoodIds.length !== 1 ? 's' : ''}`
+          {selectedWorkoutLogExerciseIds.length > 0
+            ? `Selected ${selectedWorkoutLogExerciseIds.length}
+              item${selectedWorkoutLogExerciseIds.length !== 1 ? 's' : ''}`
             : 'Select items'
           }
         </p>
