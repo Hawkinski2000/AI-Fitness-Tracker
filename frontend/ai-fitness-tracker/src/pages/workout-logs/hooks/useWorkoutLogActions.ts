@@ -11,7 +11,8 @@ import { refreshAccessToken, isTokenExpired } from "../../../utils/auth";
 import {
   createWorkoutLog,
   copyWorkoutLogExercises,
-  moveWorkoutLogExercises
+  moveWorkoutLogExercises,
+  deleteWorkoutLogExercises
 } from "../../../utils/workout-logs";
 import { getDateKey, normalizeDate } from "../../../utils/dates";
 
@@ -355,29 +356,28 @@ const handleMoveWorkoutLogExercises = useCallback(async () => {
 
 // ---------------------------------------------------------------------------
 
-  // const handleDeleteMealLogFoods = useCallback(async () => {
-  //   try {
-  //     let token: string | null = accessToken;
-  //     if (!accessToken || isTokenExpired(accessToken)) {
-  //       token = await refreshAccessToken();
-  //       setAccessToken(token);
-  //     }
-  //     if (!token) {
-  //       throw new Error("No access token");
-  //     }
+  const handleDeleteWorkoutLogExercises = useCallback(async (ids: number[]) => {
+    try {
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();
+        setAccessToken(token);
+      }
+      if (!token) {
+        throw new Error("No access token");
+      }
 
-  //     await deleteMealLogFoods(selectedMealLogFoodIds, setMealLogFoods, token);
+      await deleteWorkoutLogExercises(ids, setWorkoutLogExercises, token);
 
-  //   } catch (err) {
-  //     console.error(err);
-  //     setAccessToken(null);
-  //   }
-  // }, [
-  //   accessToken,
-  //   setAccessToken,
-  //   setMealLogFoods,
-  //   selectedMealLogFoodIds
-  // ]);
+    } catch (err) {
+      console.error(err);
+      setAccessToken(null);
+    }
+  }, [
+    accessToken,
+    setAccessToken,
+    setWorkoutLogExercises
+  ]);
 
   
   return {
@@ -386,7 +386,7 @@ const handleMoveWorkoutLogExercises = useCallback(async () => {
     // handleUpdateFood,
     handleCopyWorkoutLogExercises,
     handleMoveWorkoutLogExercises,
-    // handleDeleteMealLogFoods
+    handleDeleteWorkoutLogExercises
   }
 };
 

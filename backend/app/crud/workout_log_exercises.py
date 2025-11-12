@@ -87,7 +87,6 @@ def bulk_action_workout_log_exercises(bulk_action: workout_log_exercise.WorkoutL
             db.commit()
 
     if bulk_action.action == "move":
-        original_workout_log_id = workout_log_exercise_rows[0].workout_log_id
         workout_log_id = bulk_action.target_workout_log_id
 
         for row in workout_log_exercise_rows:
@@ -97,13 +96,13 @@ def bulk_action_workout_log_exercises(bulk_action: workout_log_exercise.WorkoutL
 
         db.commit()
 
-    # if bulk_action.action == "delete":
-    #     for row in meal_log_food_rows:
-    #         db.delete(row)
+    if bulk_action.action == "delete":
+        for row in workout_log_exercise_rows:
+            for es in row.exercise_sets:
+                db.delete(es)
+            db.delete(row)
         
-    #     meal_log_id = meal_log_food_rows[0].meal_log_id
-
-    #     db.commit()
+        db.commit()
 
 def get_workout_log_exercises(workout_log_id: int, user_id: int, db: Session):
     workout_log_exercises = (

@@ -30,7 +30,7 @@ type ExerciseSectionHeaderProps = {
   setSelectedWorkoutLogExerciseIds: React.Dispatch<React.SetStateAction<number[]>>;
   selectingWorkoutLogExercises: boolean;
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>;
-  // handleDeleteWorkoutLogExercises: 
+  handleDeleteWorkoutLogExercises: (ids: number[]) => Promise<void>;
 };
 
 
@@ -48,7 +48,7 @@ export default function ExerciseSectionHeader({
   setSelectedWorkoutLogExerciseIds,
   selectingWorkoutLogExercises,
   setCalendarOpenType,
-  // handleDeleteWorkoutLogExercises
+  handleDeleteWorkoutLogExercises
 }: ExerciseSectionHeaderProps) {
   const exerciseName = workoutLogExercise && capitalizeFirstLetter(exercises[workoutLogExercise.exercise_id].name);
 
@@ -90,9 +90,10 @@ export default function ExerciseSectionHeader({
         exerciseOptionsMenuOpenName={exerciseOptionsMenuOpenName}
         setExerciseOptionsMenuOpenName={setExerciseOptionsMenuOpenName}
         exerciseOptionsMenuRefs={exerciseOptionsMenuRefs}
+        selectedWorkoutLogExerciseIds={selectedWorkoutLogExerciseIds}
         setSelectedWorkoutLogExerciseIds={setSelectedWorkoutLogExerciseIds}
         setCalendarOpenType={setCalendarOpenType}
-        // handleDeleteWorkoutLogExercises={handleDeleteWorkoutLogExercises}
+        handleDeleteWorkoutLogExercises={handleDeleteWorkoutLogExercises}
       />
     </div>
   );

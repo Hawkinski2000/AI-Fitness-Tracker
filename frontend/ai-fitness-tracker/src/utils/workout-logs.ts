@@ -339,34 +339,34 @@ export const moveWorkoutLogExercises = async (
   });
 }
 
-// export const deleteMealLogFoods = async (
-//   mealLogFoodIds: number[],
-//   setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
-//   token: string
-// ) => {
-//   await axios.post(`${API_BASE_URL}/meal-log-foods/bulk`,
-//     {
-//       action: "delete",
-//       ids: mealLogFoodIds,
-//     },
-//     {
-//       headers: {
-//         Authorization: `Bearer ${token}`
-//       }
-//     }
-//   );
+export const deleteWorkoutLogExercises = async (
+  workoutLogExerciseIds: number[],
+  setWorkoutLogExercises: React.Dispatch<React.SetStateAction<Record<number, WorkoutLogExercise[]>>>,
+  token: string
+) => {
+  await axios.post(`${API_BASE_URL}/workout-log-exercises/bulk`,
+    {
+      action: "delete",
+      ids: workoutLogExerciseIds,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
 
-//   setMealLogFoods(prevMealLogFoods =>
-//     Object.fromEntries(
-//       Object.entries(prevMealLogFoods).map(([logId, mealLogFoodsArray]) => [
-//         logId,
-//         mealLogFoodsArray.filter(mealLogFood => !mealLogFoodIds.includes(mealLogFood.id))
-//       ])
-//     )
-//   );
-// }
+  setWorkoutLogExercises(prevWorkoutLogExercises =>
+    Object.fromEntries(
+      Object.entries(prevWorkoutLogExercises).map(([logId, WorkoutLogExercisesArray]) => [
+        logId,
+        WorkoutLogExercisesArray.filter(WorkoutLogExercise => !workoutLogExerciseIds.includes(WorkoutLogExercise.id))
+      ])
+    )
+  );
+}
 
-// // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
 // export const loadFood = async (foodId: number,
 //                                setFoods: React.Dispatch<React.SetStateAction<Record<number, Food>>>,

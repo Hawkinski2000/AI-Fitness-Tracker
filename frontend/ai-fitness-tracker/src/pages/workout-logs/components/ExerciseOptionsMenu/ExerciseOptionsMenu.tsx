@@ -11,9 +11,10 @@ type ExerciseOptionsMenuProps = {
   exerciseOptionsMenuOpenName: string;
   setExerciseOptionsMenuOpenName: React.Dispatch<React.SetStateAction<string>>;
   exerciseOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
+  selectedWorkoutLogExerciseIds: number[];
   setSelectedWorkoutLogExerciseIds: React.Dispatch<React.SetStateAction<number[]>>;
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>;
-  // handleDeleteWorkoutLogExercises: 
+  handleDeleteWorkoutLogExercises: (ids: number[]) => Promise<void>;
 };
 
 
@@ -23,9 +24,10 @@ export default function ExerciseOptionsMenu({
   exerciseOptionsMenuOpenName,
   setExerciseOptionsMenuOpenName,
   exerciseOptionsMenuRefs,
+  selectedWorkoutLogExerciseIds,
   setSelectedWorkoutLogExerciseIds,
   setCalendarOpenType,
-  // handleDeleteWorkoutLogExercises
+  handleDeleteWorkoutLogExercises
 }: ExerciseOptionsMenuProps) {
   return (
     <div
@@ -67,8 +69,9 @@ export default function ExerciseOptionsMenu({
         className="exercise-options-menu-button exercise-options-delete-button"
         onClick={(e) => {
           e.stopPropagation();
-          setSelectedWorkoutLogExerciseIds(prev => [...prev, workoutLogExercise.id]);
-          // handleDeleteWorkoutLogExercises();
+          handleDeleteWorkoutLogExercises(
+            [...selectedWorkoutLogExerciseIds, workoutLogExercise.id]
+          );
           setExerciseOptionsMenuOpenName('');
         }}
       >

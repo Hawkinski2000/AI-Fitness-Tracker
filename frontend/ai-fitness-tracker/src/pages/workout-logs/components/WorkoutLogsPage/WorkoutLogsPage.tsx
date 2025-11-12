@@ -49,7 +49,7 @@ export default function WorkoutLogsPage() {
   const [mealLogOptionsMenuOpen, setMealLogOptionsMenuOpen] = useState<boolean>(false);
   const mealLogOptionsMenuRef = useRef<HTMLDivElement | null>(null);
 
-  const [exerciseOptionsMenuOpenName, setExerciseOptionsMenuOpenName] = useState<string>('');
+  const [exerciseOptionsMenuOpenName, setExerciseOptionsMenuOpenName] = useState<string>(''); // Switch to workout log exercise id!
   const exerciseOptionsMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const [mealFoodOptionsMenuOpenId, setMealFoodOptionsMenuOpenId] = useState<number | null>(null);
@@ -179,7 +179,7 @@ export default function WorkoutLogsPage() {
     // handleUpdateFood,
     handleCopyWorkoutLogExercises,
     handleMoveWorkoutLogExercises,
-    // handleDeleteWorkoutLogExercises
+    handleDeleteWorkoutLogExercises
   } = useWorkoutLogActions(
     currentWorkoutLogDate,
     setCurrentWorkoutLogDate,
@@ -348,7 +348,7 @@ export default function WorkoutLogsPage() {
                       viewFoodMenuOpenId={viewFoodMenuOpenId}
                       setViewFoodMenuOpenId={setViewFoodMenuOpenId}
                       exerciseOptionsMenuRefs={exerciseOptionsMenuRefs}
-                      // handleDeleteWorkoutLogExercises={handleDeleteWorkoutLogExercises}
+                      handleDeleteWorkoutLogExercises={handleDeleteWorkoutLogExercises}
                     />
                   )
                 })}
