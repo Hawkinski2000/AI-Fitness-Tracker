@@ -10,15 +10,15 @@ import { getDateKey } from '../../../../utils/dates';
 import useInitializeWorkoutLogsPage from "../../hooks/useInitializeWorkoutLogsPage";
 import useWorkoutLogsClickOutside from "../../hooks/useWorkoutLogsClickOutside";
 import useWorkoutLogsDate from "../../hooks/useWorkoutLogsDate";
-import useFoodSearch from "../../hooks/useFoodSearch";
+import useExerciseSearch from "../../hooks/useExerciseSearch";
 import useWorkoutLogActions from "../../hooks/useWorkoutLogActions";
 import LoadingScreen from "../../../../components/LoadingScreen/LoadingScreen";
 import Header from "../../../../components/Header/Header";
 import Sidebar from "../../../../components/Sidebar/Sidebar";
 import DateNav from "../DateNav/DateNav";
 import SelectItemsHeader from "../SelectExercisesHeader/SelectExercisesHeader";
-import ViewFoodMenu from "../ViewFoodMenu/ViewFoodMenu";
-import FoodsMenu from "../FoodsMenu/FoodsMenu";
+import ViewExerciseMenu from "../ViewExerciseMenu/ViewExerciseMenu";
+import ExercisesMenu from "../ExercisesMenu/ExercisesMenu";
 import ExerciseSection from "../ExerciseSection/ExerciseSection";
 import './WorkoutLogsPage.css';
 
@@ -69,20 +69,20 @@ export default function WorkoutLogsPage() {
   const [exercisesMenuOpen, setExercisesMenuOpen] = useState<boolean>(false);
   const foodsMenuRef = useRef<HTMLDivElement | null>(null);
 
-  const [foodSearch, setFoodSearch] = useState<string>('');
+  const [exerciseSearch, setExerciseSearch] = useState<string>('');
   const searchTimeoutRef = useRef<number | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [foodMenuInputFocused, setFoodMenuInputFocused] = useState<boolean>(false);
-  const [foodSearchResults, setFoodSearchResults] = useState<Food[]>([]);
+  const [exerciseSearchResults, setExerciseSearchResults] = useState<Exercise[]>([]);
 
   const [totalPages, setTotalPages] = useState<number | null>(null);
   const [currentPageNumber, setCurrentPageNumber] = useState<number | null>(null);
 
 // ---------------------------------------------------------------------------
 
-  const [viewFoodMenuOpenId, setViewFoodMenuOpenId] = useState<number | null>(null);
+  const [viewExerciseMenuOpenId, setViewExerciseMenuOpenId] = useState<number | null>(null);
 
-  const [editingMealLogFoodId, setEditingMealLogFoodId] = useState<number | null>(null);
+  const [editingWorkoutLogExerciseId, setEditingWorkoutLogExerciseId] = useState<number | null>(null);
 
   const [selectMealMenuOpenType, setSelectMealMenuOpenType] = useState<string>('');
   const selectMealMenuRef = useRef<HTMLDivElement | null>(null);
@@ -122,10 +122,10 @@ export default function WorkoutLogsPage() {
     setMealFoodOptionsMenuOpenId,
     exercisesMenuOpen,
     setExercisesMenuOpen,
-    setFoodSearch,
+    setExerciseSearch,
     setFoodMenuInputFocused,
-    setEditingMealLogFoodId,
-    setViewFoodMenuOpenId,
+    setEditingWorkoutLogExerciseId,
+    setViewExerciseMenuOpenId,
     selectMealMenuOpenType,
     setSelectMealMenuOpenType,
     selectServingSizeMenuOpen,
@@ -160,23 +160,21 @@ export default function WorkoutLogsPage() {
     setCalendarDate
   );
 
-  // const {
-  //   handleFoodSearch,
-  //   updateFoodSearch
-  // } = useFoodSearch(
-  //   setFoodSearchResults,
-  //   setIsSearching,
-  //   setTotalPages,
-  //   setCurrentPageNumber,
-  //   setBrandedFoods,
-  //   setFoodSearch,
-  //   searchTimeoutRef
-  // );
+  const {
+    handleExerciseSearch,
+    updateExerciseSearch
+  } = useExerciseSearch(
+    setExerciseSearchResults,
+    setIsSearching,
+    setTotalPages,
+    setCurrentPageNumber,
+    setExerciseSearch,
+    searchTimeoutRef
+  );
 
   const {
-    // handleAddFood,
-    // handleLoadFoodNutrients,
-    // handleUpdateFood,
+    // handleAddExercise,
+    // handleUpdateExercise,
     handleCopyWorkoutLogExercises,
     handleMoveWorkoutLogExercises,
     handleDeleteWorkoutLogExercises
@@ -260,65 +258,44 @@ export default function WorkoutLogsPage() {
                 workoutLogExercises={workoutLogExercises}
               />
 
-              {/*
-              {viewFoodMenuOpenId ? (
-                <ViewFoodMenu
-                  currentMealLogDate={currentMealLogDate}
-                  mealLogs={workoutLogs}
-                  mealLogFoods={mealLogFoods}
-                  foods={foods}
-                  brandedFoods={brandedFoods}
-                  foodNutrients={foodNutrients}
-                  nutrients={nutrients}
-                  numServings={numServings}
-                  setNumServings={setNumServings}
-                  servingSize={servingSize}
-                  setServingSize={setServingSize}
-                  servingSizeUnit={servingSizeUnit}
-                  foodCaloriesFromMacros={foodCaloriesFromMacros}
-                  macroAmountsGrams={macroAmountsGrams}
-                  foodsMenuOpenMealType={foodsMenuOpenMealType}
-                  setFoodsMenuOpenMealType={setFoodsMenuOpenMealType}
-                  editingMealLogFoodId={editingMealLogFoodId}
-                  setEditingMealLogFoodId={setEditingMealLogFoodId}
-                  viewFoodMenuOpenId={viewFoodMenuOpenId}
-                  setViewFoodMenuOpenId={setViewFoodMenuOpenId}
-                  foodSearchResults={foodSearchResults}
-                  selectMealMenuOpenType={selectMealMenuOpenType}
-                  setSelectMealMenuOpenType={setSelectMealMenuOpenType}
-                  selectServingSizeMenuOpen={selectServingSizeMenuOpen}
-                  setSelectServingSizeMenuOpen={setSelectServingSizeMenuOpen}
+              {viewExerciseMenuOpenId ? (
+                <ViewExerciseMenu
+                  currentWorkoutLogDate={currentWorkoutLogDate}
+                  workoutLogs={workoutLogs}
+                  workoutLogExercises={workoutLogExercises}
+                  exercises={exercises}
+                  // exerciseSets={exerciseSets}
+                  exercisesMenuOpen={exercisesMenuOpen}
+                  setExercisesMenuOpen={setExercisesMenuOpen}
+                  editingWorkoutLogExerciseId={editingWorkoutLogExerciseId}
+                  setEditingWorkoutLogExerciseId={setEditingWorkoutLogExerciseId}
+                  viewExerciseMenuOpenId={viewExerciseMenuOpenId}
+                  setViewExerciseMenuOpenId={setViewExerciseMenuOpenId}
+                  exerciseSearchResults={exerciseSearchResults}
                   foodsMenuRef={foodsMenuRef}
-                  selectMealMenuRef={selectMealMenuRef}
-                  selectServingSizeMenuRef={selectServingSizeMenuRef}
-                  handleUpdateFood={handleUpdateFood}
-                  handleAddFood={handleAddFood}
+                  // handleUpdateExercise={handleUpdateExercise}
+                  // handleAddExercise={handleAddExercise}
                 />
               ) : (
-                <FoodsMenu
-                  foodsMenuOpenMealType={foodsMenuOpenMealType}
-                  setFoodsMenuOpenMealType={setFoodsMenuOpenMealType}
-                  foodSearch={foodSearch}
+                <ExercisesMenu
+                  exercisesMenuOpen={exercisesMenuOpen}
+                  setExercisesMenuOpen={setExercisesMenuOpen}
+                  exerciseSearch={exerciseSearch}
                   foodMenuInputFocused={foodMenuInputFocused}
                   setFoodMenuInputFocused={setFoodMenuInputFocused}
                   isSearching={isSearching}
-                  foodSearchResults={foodSearchResults}
-                  setNumServings={setNumServings}
-                  setServingSize={setServingSize}
-                  setServingSizeUnit={setServingSizeUnit}
-                  brandedFoods={brandedFoods}
-                  setViewFoodMenuOpenId={setViewFoodMenuOpenId}
+                  exerciseSearchResults={exerciseSearchResults}
+                  setViewExerciseMenuOpenId={setViewExerciseMenuOpenId}
                   totalPages={totalPages}
                   currentPageNumber={currentPageNumber}
                   setCurrentPageNumber={setCurrentPageNumber}
                   foodsMenuRef={foodsMenuRef}
                   searchTimeoutRef={searchTimeoutRef}
-                  updateFoodSearch={updateFoodSearch}
-                  handleFoodSearch={handleFoodSearch}
-                  handleLoadFoodNutrients={handleLoadFoodNutrients}
-                  handleAddFood={handleAddFood}
+                  updateExerciseSearch={updateExerciseSearch}
+                  handleExerciseSearch={handleExerciseSearch}
+                  // handleAddExercise={handleAddExercise}
                 />
-              )} */}
+              )} 
 
               <div
                 className={
@@ -346,8 +323,8 @@ export default function WorkoutLogsPage() {
                       selectingWorkoutLogExercises={selectingWorkoutLogExercises}
                       setCalendarOpenType={setCalendarOpenType}
                       setExercisesMenuOpen={setExercisesMenuOpen}
-                      viewFoodMenuOpenId={viewFoodMenuOpenId}
-                      setViewFoodMenuOpenId={setViewFoodMenuOpenId}
+                      setViewExerciseMenuOpenId={setViewExerciseMenuOpenId}
+                      setEditingWorkoutLogExerciseId={setEditingWorkoutLogExerciseId}
                       exerciseOptionsMenuRefs={exerciseOptionsMenuRefs}
                       handleDeleteWorkoutLogExercises={handleDeleteWorkoutLogExercises}
                     />

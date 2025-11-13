@@ -19,14 +19,18 @@ def create_exercise(exercise: exercise.ExerciseCreate,
     return new_exercise
 
 # Get all exercises
-@router.get("", response_model=list[exercise.ExerciseResponse])
+@router.get("", response_model=exercise.ExerciseListResponse)
 def get_exercises(limit: int = 10,
                   skip: int = 0,
                   search: Optional[str] = "",
                   current_user: token.TokenData = Depends(get_current_user),
                   db: Session = Depends(get_db)):
-    exercises = crud_exercises.get_exercises(limit, skip, search, current_user.user_id, db)
-    return exercises
+    if search:
+        search = "%".join(search.split())
+    
+    exercise_search_results = crud_exercises.get_exercises(limit, skip, search, current_user.user_id, db)
+    
+    return exercise_search_results
 
 # Get an exercise
 @router.get("/{id}", response_model=exercise.ExerciseResponse)

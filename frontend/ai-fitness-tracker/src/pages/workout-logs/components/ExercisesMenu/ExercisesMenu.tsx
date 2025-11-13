@@ -1,64 +1,54 @@
 import { PropagateLoader } from 'react-spinners';
-import { type Food, type BrandedFood } from "../../types/workout-logs";
+import { type Exercise } from "../../types/workout-logs";
 import closeIcon from '../../../../assets/close-icon.svg';
 import addIcon from '../../../../assets/add-icon.svg';
 import arrowLeftIcon from '../../../../assets/arrow-left-icon.svg';
 import arrowRightIcon from '../../../../assets/arrow-right-icon.svg';
-import './FoodsMenu.css';
+import './ExercisesMenu.css';
 
 
-type FoodsMenuProps = {
-  foodsMenuOpenMealType: string;
-  setFoodsMenuOpenMealType: React.Dispatch<React.SetStateAction<string>>;
-  foodSearch: string;
+type ExercisesMenuProps = {
+  exercisesMenuOpen: boolean;
+  setExercisesMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  exerciseSearch: string;
   foodMenuInputFocused: boolean;
   setFoodMenuInputFocused: React.Dispatch<React.SetStateAction<boolean>>;
   isSearching: boolean;
-  foodSearchResults: Food[];
-  setNumServings: React.Dispatch<React.SetStateAction<number | null>>;
-  setServingSize: React.Dispatch<React.SetStateAction<number | null>>;
-  setServingSizeUnit: React.Dispatch<React.SetStateAction<string>>;
-  brandedFoods: Record<number, BrandedFood>;
-  setViewFoodMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
+  exerciseSearchResults: Exercise[];
+  setViewExerciseMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
   totalPages: number | null;
   currentPageNumber: number | null;
   setCurrentPageNumber: React.Dispatch<React.SetStateAction<number | null>>;
   foodsMenuRef: React.RefObject<HTMLDivElement | null>;
   searchTimeoutRef: React.RefObject<number | null>;
-  updateFoodSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleFoodSearch: (search: string, pageNumber: number) => Promise<void>;
-  handleLoadFoodNutrients: (foodId: number) => Promise<void>;
-  handleAddFood: (
-    foodId: number,
-    numServings?: number | null,
-    servingSize?: number | null
-  ) => Promise<void>;
+  updateExerciseSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleExerciseSearch: (search: string, pageNumber: number) => Promise<void>;
+  // handleAddFood: (
+  //   foodId: number,
+  //   numServings?: number | null,
+  //   servingSize?: number | null
+  // ) => Promise<void>;
 };
 
 
-export default function FoodsMenu({
-  foodsMenuOpenMealType,
-  setFoodsMenuOpenMealType,
-  foodSearch,
+export default function ExercisesMenu({
+  exercisesMenuOpen,
+  setExercisesMenuOpen,
+  exerciseSearch,
   foodMenuInputFocused,
   setFoodMenuInputFocused,
   isSearching,
-  foodSearchResults,
-  setNumServings,
-  setServingSize,
-  setServingSizeUnit,
-  brandedFoods,
-  setViewFoodMenuOpenId,
+  exerciseSearchResults,
+  setViewExerciseMenuOpenId,
   totalPages,
   currentPageNumber,
   setCurrentPageNumber,
   foodsMenuRef,
   searchTimeoutRef,
-  updateFoodSearch,
-  handleFoodSearch,
-  handleLoadFoodNutrients,
-  handleAddFood
-}: FoodsMenuProps) {
+  updateExerciseSearch,
+  handleExerciseSearch,
+  // handleAddFood
+}: ExercisesMenuProps) {
   const MAX_PAGE_BUTTONS = 10;
   let startPage = 1;
   let endPage = totalPages || 1;
@@ -82,7 +72,7 @@ export default function FoodsMenu({
 
   return (
     <div
-      className={`foods-menu ${foodsMenuOpenMealType && 'foods-menu-open'}`}
+      className={`foods-menu ${exercisesMenuOpen && 'foods-menu-open'}`}
       ref={foodsMenuRef}
     >
 
@@ -90,7 +80,7 @@ export default function FoodsMenu({
         className="foods-menu-close-button"
         onClick={(e) => {
           e.stopPropagation();
-          setFoodsMenuOpenMealType('');
+          setExercisesMenuOpen(false);
         }}
       >
         <img className="button-link-image" src={closeIcon} />
@@ -101,8 +91,8 @@ export default function FoodsMenu({
           <input
             className='foods-menu-input'
             type='text'
-            value={foodSearch}
-            onChange={updateFoodSearch}
+            value={exerciseSearch}
+            onChange={updateExerciseSearch}
             onFocus={() => setFoodMenuInputFocused(true)}
             onBlur={() => setFoodMenuInputFocused(false)}
             onKeyDown={(e) => {
@@ -110,7 +100,7 @@ export default function FoodsMenu({
                 if (searchTimeoutRef.current) {
                   clearTimeout(searchTimeoutRef.current);
                 }
-                handleFoodSearch(foodSearch, 1);
+                handleExerciseSearch(exerciseSearch, 1);
                 e.preventDefault();
               }
             }}
@@ -118,11 +108,11 @@ export default function FoodsMenu({
           <span
             className={
               `placeholder foods-menu-placeholder
-              ${foodSearch ? 'float' : ''}
+              ${exerciseSearch ? 'float' : ''}
               ${foodMenuInputFocused ? 'float focus' : ''}`
             }
           >
-            Search foods
+            Search exercises
           </span>
         </div>
       </div>
@@ -142,27 +132,18 @@ export default function FoodsMenu({
           </div>
         ) : (
           <div className="food-menu-results">
-            {foodSearchResults.map((food: Food) => {
+            {exerciseSearchResults.map((exercise: Exercise) => {
               return (
                 <div
-                  key={food.id}
+                  key={exercise.id}
                   className="foods-menu-results-food"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleLoadFoodNutrients(food.id);
-                    setNumServings(1);
-                    setServingSize(brandedFoods[food.id].serving_size || null);
-                    setServingSizeUnit(brandedFoods[food.id].serving_size_unit || '');
-                    setViewFoodMenuOpenId(food.id);
+                    setViewExerciseMenuOpenId(exercise.id);
                   }}
                 >
                   <div className="meal-log-food-section">
-                    <p className="meal-log-food-text">{food.description}</p>
-                    <p className="meal-log-food-serving-text">
-                      {food.calories ? `${food.calories} cal, ` : ''}
-                      {brandedFoods[food.id].serving_size?.toFixed(1).replace(/\.0$/, '') || 1}
-                      {brandedFoods[food.id].serving_size_unit || ''}
-                    </p>
+                    <p className="meal-log-food-text">{exercise.name}</p>
                   </div>
 
                   <div className="meal-log-food-section">
@@ -171,7 +152,7 @@ export default function FoodsMenu({
                         className="foods-menu-add-button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleAddFood(food.id);
+                          // handleAddFood(food.id);
                         }}
                       >
                         <img className="button-link-image" src={addIcon} />
@@ -182,7 +163,7 @@ export default function FoodsMenu({
               )
             })}
 
-            {foodSearchResults.length > 0 && totalPages && pageNumbers && (
+            {exerciseSearchResults.length > 0 && totalPages && pageNumbers && (
               <nav className="search-results-page-nav">
                 {currentPageNumber !== 1 && (
                   <button
@@ -190,7 +171,7 @@ export default function FoodsMenu({
                     onClick={() => {
                       if (currentPageNumber) {
                         setCurrentPageNumber(currentPageNumber - 1);
-                        handleFoodSearch(foodSearch, currentPageNumber - 1);
+                        handleExerciseSearch(exerciseSearch, currentPageNumber - 1);
                       }
                     }}
                   >
@@ -206,7 +187,7 @@ export default function FoodsMenu({
                       onClick={() => {
                         if (currentPageNumber) {
                           setCurrentPageNumber(1);
-                          handleFoodSearch(foodSearch, 1);
+                          handleExerciseSearch(exerciseSearch, 1);
                         }
                       }}
                     >
@@ -229,7 +210,7 @@ export default function FoodsMenu({
                     onClick={() => {
                       if (currentPageNumber) {
                         setCurrentPageNumber(pageNumber);
-                        handleFoodSearch(foodSearch, pageNumber);
+                        handleExerciseSearch(exerciseSearch, pageNumber);
                       }
                     }}
                   >
@@ -246,7 +227,7 @@ export default function FoodsMenu({
                       onClick={() => {
                         if (currentPageNumber) {
                           setCurrentPageNumber(totalPages);
-                          handleFoodSearch(foodSearch, totalPages);
+                          handleExerciseSearch(exerciseSearch, totalPages);
                         }
                       }}
                     >
@@ -261,7 +242,7 @@ export default function FoodsMenu({
                     onClick={() => {
                       if (currentPageNumber) {
                         setCurrentPageNumber(currentPageNumber + 1);
-                        handleFoodSearch(foodSearch, currentPageNumber + 1);
+                        handleExerciseSearch(exerciseSearch, currentPageNumber + 1);
                       }
                     }}
                   >

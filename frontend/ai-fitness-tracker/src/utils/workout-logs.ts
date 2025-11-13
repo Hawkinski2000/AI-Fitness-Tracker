@@ -393,48 +393,35 @@ export const deleteWorkoutLogExercises = async (
 //   return food;
 // };
 
-// export const getFoods = async (limit: number,
-//                                skip: number,
-//                                search: string,
-//                                setFoodSearchResults: React.Dispatch<React.SetStateAction<Food[]>>,
-//                                token: string,
-//                                expand?: string[],
-//                               ) => {
-//   const foodsResponse = await axios.get(`${API_BASE_URL}/foods`,
-//     {
-//       params: {
-//         limit,
-//         skip,
-//         search,
-//         expand
-//       },
-//       paramsSerializer: params => {
-//         const searchParams = new URLSearchParams();
-//         Object.entries(params).forEach(([key, value]) => {
-//           if (Array.isArray(value)) {
-//             value.forEach(v => searchParams.append(key, v));
-//           } else if (value !== undefined) {
-//             searchParams.append(key, value as string);
-//           }
-//         });
-//         return searchParams.toString();
-//       },
-//       headers: {
-//         Authorization: `Bearer ${token}`
-//       }
-//     }
-//   );
+export const getExercises = async (limit: number,
+                               skip: number,
+                               search: string,
+                               setExerciseSearchResults: React.Dispatch<React.SetStateAction<Exercise[]>>,
+                               token: string
+                              ) => {
+  const exercisesResponse = await axios.get(`${API_BASE_URL}/exercises`,
+    {
+      params: {
+        limit,
+        skip,
+        search
+      },
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
 
-//   if (foodsResponse.data.foods.length === 0) {
-//     return [];
-//   }
+  if (exercisesResponse.data.exercises.length === 0) {
+    return [];
+  }
 
-//   const foodSearchObject = foodsResponse.data;
+  const exerciseSearchObject = exercisesResponse.data;
 
-//   setFoodSearchResults(foodsResponse.data.foods);
+  setExerciseSearchResults(exercisesResponse.data.exercises);
 
-//   return foodSearchObject;
-// };
+  return exerciseSearchObject;
+};
 
 // // ---------------------------------------------------------------------------
 

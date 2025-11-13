@@ -22,3 +22,7 @@ class ExerciseResponse(ExerciseBase):
     user_created_at: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)
+
+class ExerciseListResponse(BaseModel):
+    exercises: list[ExerciseResponse]
+    total_count: int

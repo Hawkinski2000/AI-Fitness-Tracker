@@ -15,15 +15,28 @@ def get_exercises(limit: int,
                   search: str,
                   user_id: int,
                   db: Session,):
-    exercises = (
+    query = (
         db.query(Exercise)
         .filter((Exercise.user_id == None) | (Exercise.user_id == user_id),
                 Exercise.name.ilike(f"%{search}%"))
+    )
+    
+    total_count = query.count()
+
+    exercises = (
+        query
+        .order_by(Exercise.id)
         .limit(limit)
         .offset(skip)
         .all()
     )
-    return exercises
+
+    exercise_search_results = {
+        "exercises": exercises,
+        "total_count": total_count
+    }
+
+    return exercise_search_results
 
 def get_exercise(id: int, user_id: int, db: Session):
     exercise = (

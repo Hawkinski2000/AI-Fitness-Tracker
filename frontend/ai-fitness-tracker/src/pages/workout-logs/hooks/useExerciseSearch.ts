@@ -1,17 +1,16 @@
 import { useCallback } from "react";
-import { type Food, type BrandedFood } from "../types/workout-logs";
+import { type Exercise } from "../types/workout-logs";
 import { useAuth } from "../../../context/auth/useAuth";
 import { refreshAccessToken, isTokenExpired } from "../../../utils/auth";
-import { getFoods } from "../../../utils/meal-logs";
+import { getExercises } from "../../../utils/workout-logs";
 
 
-const useFoodSearch = (
-  setFoodSearchResults: React.Dispatch<React.SetStateAction<Food[]>>,
+const useExerciseSearch = (
+  setExerciseSearchResults: React.Dispatch<React.SetStateAction<Exercise[]>>,
   setIsSearching: React.Dispatch<React.SetStateAction<boolean>>,
   setTotalPages: React.Dispatch<React.SetStateAction<number | null>>,
   setCurrentPageNumber: React.Dispatch<React.SetStateAction<number | null>>,
-  setBrandedFoods: React.Dispatch<React.SetStateAction<Record<number, BrandedFood>>>,
-  setFoodSearch: React.Dispatch<React.SetStateAction<string>>,
+  setExerciseSearch: React.Dispatch<React.SetStateAction<string>>,
   searchTimeoutRef: React.RefObject<number | null>
 ) => {
   const { accessToken, setAccessToken } = useAuth();
@@ -19,14 +18,14 @@ const useFoodSearch = (
   const MAX_RESULTS_PER_PAGE = 30;
 
 
-  const handleFoodSearch = useCallback(async (search: string, pageNumber: number) => {
-    setFoodSearch(search);
+  const handleExerciseSearch = useCallback(async (search: string, pageNumber: number) => {
+    setExerciseSearch(search);
 
     if (search === '') {
       return;
     }
 
-    setFoodSearchResults([]);
+    setExerciseSearchResults([]);
     setIsSearching(true);
 
     if (searchTimeoutRef.current) {
@@ -46,31 +45,14 @@ const useFoodSearch = (
 
         const skip = (pageNumber - 1) * MAX_RESULTS_PER_PAGE;
 
-        const foodSearchObject = await getFoods(
+        const foodSearchObject = await getExercises(
           MAX_RESULTS_PER_PAGE,
           skip,
           search,
-          setFoodSearchResults,
-          token,
-          ["brandedFood"]
+          setExerciseSearchResults,
+          token
         );
 
-        const brandedFoods = foodSearchObject.branded_foods;
-
-        if (brandedFoods) {
-          const brandedFoodsByFoodId = brandedFoods.reduce(
-            (brandedFoodsObject: Record<number, BrandedFood>, brandedFood: BrandedFood) => {
-              brandedFoodsObject[brandedFood.food_id] = brandedFood;
-              return brandedFoodsObject;
-            }, {} as Record<number, BrandedFood>
-          );
-
-          setBrandedFoods(prev => ({
-            ...prev,
-            ...brandedFoodsByFoodId
-          }));
-        }
-        
         const numPages = Math.ceil(foodSearchObject.total_count / MAX_RESULTS_PER_PAGE);
         setTotalPages(numPages);
         setCurrentPageNumber(pageNumber);
@@ -86,38 +68,37 @@ const useFoodSearch = (
   }, [
     accessToken,
     setAccessToken,
-    setFoodSearchResults,
+    setExerciseSearchResults,
     setIsSearching,
     setTotalPages,
     setCurrentPageNumber,
-    setBrandedFoods,
-    setFoodSearch,
+    setExerciseSearch,
     searchTimeoutRef
   ]);
   
 // ---------------------------------------------------------------------------
 
-  const updateFoodSearch = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+  const updateExerciseSearch = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const search = event.target.value;
 
-    setFoodSearch(search);
+    setExerciseSearch(search);
 
     if (search === '') {
       return;
     }
 
-    handleFoodSearch(search, 1);
+    handleExerciseSearch(search, 1);
   }, [
-    setFoodSearch,
-    handleFoodSearch
+    setExerciseSearch,
+    handleExerciseSearch
   ]);
 
 
   return {
-    handleFoodSearch,
-    updateFoodSearch
+    handleExerciseSearch,
+    updateExerciseSearch
   }
 };
 
 
-export default useFoodSearch;
+export default useExerciseSearch;

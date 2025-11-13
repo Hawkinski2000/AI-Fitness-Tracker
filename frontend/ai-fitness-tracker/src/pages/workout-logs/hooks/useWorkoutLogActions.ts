@@ -98,64 +98,6 @@ const useMealLogActions = (
 
 // ---------------------------------------------------------------------------
 
-  // const handleLoadFoodNutrients = useCallback(async (foodId: number) => {
-  //   try {
-  //     let token: string | null = accessToken;
-  //     if (!accessToken || isTokenExpired(accessToken)) {
-  //       token = await refreshAccessToken();  
-  //       setAccessToken(token);
-  //     }
-  //     if (!token) {
-  //       throw new Error("No access token");
-  //     }
-
-  //     const foodNutrientsResponseArray = await loadFoodNutrients(
-  //       foodId,
-  //       setFoodNutrients,
-  //       setNutrients,
-  //       token,
-  //       ["nutrient"]
-  //     );
-
-  //     const macros = foodNutrientsResponseArray.filter(
-  //       (foodNutrientResponse: FoodNutrientResponse) =>
-  //         [1003, 1004, 1005].includes(foodNutrientResponse.nutrient_id)
-  //     );
-
-  //     const caloriesFromMacros = macros.reduce((sum, macro) =>
-  //       sum + macro.amount * (macro.nutrient_id === 1004 ? 9 : 4)
-  //     , 1);
-
-  //     macros.forEach((macro: FoodNutrient) =>
-  //       setMacroAmountsGrams(prev => ({
-  //         ...prev,
-  //         [foodId]: {
-  //           ...(prev[foodId] || {}),
-  //           [macro.nutrient_id]: macro.amount
-  //         }
-  //       })
-  //     ));
-
-  //     setFoodCaloriesFromMacros(prev => ({
-  //       ...prev,
-  //       [foodId]: caloriesFromMacros
-  //     }));
-
-  //   } catch (err) {
-  //     console.error(err);
-  //     setAccessToken(null);
-  //   }
-  // }, [
-  //   accessToken,
-  //   setAccessToken,
-  //   setFoodNutrients,
-  //   setNutrients,
-  //   setMacroAmountsGrams,
-  //   setFoodCaloriesFromMacros
-  // ]);
-
-// ---------------------------------------------------------------------------
-
   // const handleUpdateFood = useCallback(async (
   //   mealLogFoodId: number,
   //   mealLogId: number | null,
