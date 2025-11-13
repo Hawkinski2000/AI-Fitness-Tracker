@@ -66,7 +66,7 @@ export default function WorkoutLogsPage() {
 
 // ---------------------------------------------------------------------------
 
-  const [foodsMenuOpenMealType, setFoodsMenuOpenMealType] = useState<string>('');
+  const [exercisesMenuOpen, setExercisesMenuOpen] = useState<boolean>(false);
   const foodsMenuRef = useRef<HTMLDivElement | null>(null);
 
   const [foodSearch, setFoodSearch] = useState<string>('');
@@ -120,8 +120,8 @@ export default function WorkoutLogsPage() {
     setExerciseOptionsMenuOpenName,
     mealFoodOptionsMenuOpenId,
     setMealFoodOptionsMenuOpenId,
-    foodsMenuOpenMealType,
-    setFoodsMenuOpenMealType,
+    exercisesMenuOpen,
+    setExercisesMenuOpen,
     setFoodSearch,
     setFoodMenuInputFocused,
     setEditingMealLogFoodId,
@@ -230,6 +230,7 @@ export default function WorkoutLogsPage() {
                 calendarRef={calendarRef}
                 calendarDate={calendarDate}
                 setCalendarDate={setCalendarDate}
+                setExercisesMenuOpen={setExercisesMenuOpen}
                 workoutLogOptionsMenuOpen={workoutLogOptionsMenuOpen}
                 setWorkoutLogOptionsMenuOpen={setWorkoutLogOptionsMenuOpen}
                 selectingWorkoutLogExercises={selectingWorkoutLogExercises}
@@ -344,7 +345,7 @@ export default function WorkoutLogsPage() {
                       setSelectedWorkoutLogExerciseIds={setSelectedWorkoutLogExerciseIds}
                       selectingWorkoutLogExercises={selectingWorkoutLogExercises}
                       setCalendarOpenType={setCalendarOpenType}
-                      setFoodsMenuOpenMealType={setFoodsMenuOpenMealType}
+                      setExercisesMenuOpen={setExercisesMenuOpen}
                       viewFoodMenuOpenId={viewFoodMenuOpenId}
                       setViewFoodMenuOpenId={setViewFoodMenuOpenId}
                       exerciseOptionsMenuRefs={exerciseOptionsMenuRefs}

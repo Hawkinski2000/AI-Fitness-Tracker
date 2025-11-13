@@ -46,6 +46,26 @@
   user-select: none;
   transition: all 0.25s;
 }
+.workout-log-options-button:hover {
+  background-color: #2e2e5e;
+}
+
+.workout-log-add-button {
+  display: flex;
+  position: absolute;
+  right: 4rem;
+  height: 2rem;
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.25s;
+}
+.workout-log-add-button:hover {
+  background-color: #2e2e5e;
+}
 
 @media (max-width: 500px) {
   .date-nav-container {

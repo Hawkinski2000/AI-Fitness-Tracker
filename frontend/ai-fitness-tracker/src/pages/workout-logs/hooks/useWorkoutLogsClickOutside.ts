@@ -10,8 +10,8 @@ const useWorkoutLogsClickOutside = (
   setExerciseOptionsMenuOpenName: React.Dispatch<React.SetStateAction<string>>,
   mealFoodOptionsMenuOpenId: number | null,
   setMealFoodOptionsMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>,
-  foodsMenuOpenMealType: string,
-  setFoodsMenuOpenMealType: React.Dispatch<React.SetStateAction<string>>,
+  exercisesMenuOpen: boolean,
+  setExercisesMenuOpen: React.Dispatch<React.SetStateAction<boolean>>,
   setFoodSearch: React.Dispatch<React.SetStateAction<string>>,
   setFoodMenuInputFocused: React.Dispatch<React.SetStateAction<boolean>>,
   setEditingMealLogFoodId: React.Dispatch<React.SetStateAction<number | null>>,
@@ -79,13 +79,13 @@ const useWorkoutLogsClickOutside = (
       }
 
       if (
-        foodsMenuOpenMealType &&
+        exercisesMenuOpen &&
         foodsMenuRef.current &&
         target instanceof Node &&
         !foodsMenuRef.current.contains(target) &&
         !(target instanceof HTMLElement && target.classList.contains('add-food-button'))
       ) {
-        setFoodsMenuOpenMealType('');
+        setExercisesMenuOpen(false);
         setFoodSearch('');
         setFoodMenuInputFocused(false);
         setEditingMealLogFoodId(null);
@@ -139,8 +139,8 @@ const useWorkoutLogsClickOutside = (
     setExerciseOptionsMenuOpenName,
     mealFoodOptionsMenuOpenId,
     setMealFoodOptionsMenuOpenId,
-    foodsMenuOpenMealType,
-    setFoodsMenuOpenMealType,
+    exercisesMenuOpen,
+    setExercisesMenuOpen,
     setFoodSearch,
     setFoodMenuInputFocused,
     setEditingMealLogFoodId,

@@ -8,6 +8,7 @@ import WorkoutLogOptionsMenu from '../WorkoutLogOptionsMenu/WorkoutLogOptionsMen
 import arrowLeftIcon from '../../../../assets/arrow-left-icon.svg';
 import arrowRightIcon from '../../../../assets/arrow-right-icon.svg';
 import dotsIcon from '../../../../assets/dots-icon.svg';
+import plusIcon from '../../../../assets/plus-icon.svg';
 import './DateNav.css';
 
 
@@ -21,6 +22,7 @@ type DateNavProps = {
   calendarRef: React.RefObject<HTMLDivElement | null>;
   calendarDate: Value;
   setCalendarDate: React.Dispatch<React.SetStateAction<Value>>;
+  setExercisesMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   workoutLogOptionsMenuOpen: boolean;
   setWorkoutLogOptionsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   selectingWorkoutLogExercises: boolean;
@@ -49,6 +51,7 @@ export default function DateNav({
   calendarRef,
   calendarDate,
   setCalendarDate,
+  setExercisesMenuOpen,
   workoutLogOptionsMenuOpen,
   setWorkoutLogOptionsMenuOpen,
   selectingWorkoutLogExercises,
@@ -122,6 +125,16 @@ export default function DateNav({
           handleMoveWorkoutLogExercises={handleMoveWorkoutLogExercises}
         />
       </nav>
+
+      <button
+        className="workout-log-add-button"
+        onClick={(e) => {
+          e.stopPropagation();
+          setExercisesMenuOpen(true);
+        }}
+      >
+        <img className="button-link-image" src={plusIcon} />
+      </button>
 
       <button
         className="workout-log-options-button"

@@ -58,8 +58,9 @@
   transition: all 0.25s;
 }
 .meal-options-button:hover {
-  background-color: #8085a6;
+  background-color: #2e2e5e;
 }
+
 
 .meal-options-menu {
   display: flex;

@@ -46,6 +46,9 @@
   user-select: none;
   transition: all 0.25s;
 }
+.meal-log-options-button:hover {
+  background-color: #2e2e5e;
+}
 
 @media (max-width: 500px) {
   .date-nav-container {
