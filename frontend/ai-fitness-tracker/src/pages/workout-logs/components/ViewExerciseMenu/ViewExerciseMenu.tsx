@@ -9,7 +9,7 @@ import type { Value } from 'react-calendar/dist/shared/types.js';
 import { getDateKey } from '../../../../utils/dates';
 import backIcon from './assets/back-icon.svg';
 import checkIcon from './assets/check-icon.svg';
-import './ViewFoodMenu.css';
+import './ViewExerciseMenu.css';
 
 
 type ViewExerciseMenuProps = {
@@ -63,10 +63,10 @@ export default function ViewExerciseMenu({
       className={`foods-menu ${exercisesMenuOpen && 'foods-menu-open'}`}
       ref={foodsMenuRef}
     >
-      <header className="view-food-menu-header">
-        <div className="view-food-menu-section-content">
+      <header className="view-exercise-menu-header">
+        <div className="view-exercise-menu-section-content">
           <button
-            className="view-food-menu-text-button"
+            className="view-exercise-menu-text-button"
             onClick={(e) => {
               e.stopPropagation();
               setEditingWorkoutLogExerciseId(null);
@@ -79,7 +79,7 @@ export default function ViewExerciseMenu({
             {editingWorkoutLogExerciseId ? 'Edit Entry' : 'Add Exercise'}
           </p>
           <button
-            className="view-food-menu-text-button"
+            className="view-exercise-menu-text-button"
             onClick={(e) => {
               e.stopPropagation();
               if (editingWorkoutLogExerciseId && currentWorkoutLogDate && dateKey) {
@@ -116,10 +116,10 @@ export default function ViewExerciseMenu({
           />
         </div>
       ) : ( */}
-        <div className="view-food-menu-content">
-          <section className="view-food-menu-section">
-            <div className="view-food-menu-section-content">
-              <h3 className="view-food-menu-content-heading">
+        <div className="view-exercise-menu-content">
+          <section className="view-exercise-menu-section">
+            <div className="view-exercise-menu-section-content">
+              <h3 className="view-exercise-menu-content-heading">
                 {
                   editingWorkoutLogExerciseId && currentWorkoutLogDate && dateKey
                     ? (

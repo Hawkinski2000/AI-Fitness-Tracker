@@ -27,7 +27,9 @@ type ExerciseSectionProps = {
   selectingWorkoutLogExercises: boolean;
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>;
   setExercisesMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  viewExerciseMenuOpenId: number | null;
   setViewExerciseMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
+  editingWorkoutLogExerciseId: number | null;
   setEditingWorkoutLogExerciseId: React.Dispatch<React.SetStateAction<number | null>>;
   exerciseOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
   handleDeleteWorkoutLogExercises: (ids: number[]) => Promise<void>;
@@ -51,7 +53,9 @@ export default function ExerciseSection({
   selectingWorkoutLogExercises,
   setCalendarOpenType,
   setExercisesMenuOpen,
+  viewExerciseMenuOpenId,
   setViewExerciseMenuOpenId,
+  editingWorkoutLogExerciseId,
   setEditingWorkoutLogExerciseId,
   exerciseOptionsMenuRefs,
   handleDeleteWorkoutLogExercises,
@@ -60,8 +64,21 @@ export default function ExerciseSection({
     <section
       className="exercise-section"
       onClick={() => {
-        setExercisesMenuOpen(true);
+        if (viewExerciseMenuOpenId === workoutLogExercise.exercise_id) {
+          setEditingWorkoutLogExerciseId(null);
+          setExercisesMenuOpen(false);
+          setViewExerciseMenuOpenId(null);
+          return;
+        }
+
+        if (editingWorkoutLogExerciseId === workoutLogExercise.id) {
+          setEditingWorkoutLogExerciseId(null);
+          setExercisesMenuOpen(false);
+          return;
+        }
+
         setEditingWorkoutLogExerciseId(workoutLogExercise.id);
+        setExercisesMenuOpen(true);
         setViewExerciseMenuOpenId(workoutLogExercise.exercise_id);
       }}
     >
