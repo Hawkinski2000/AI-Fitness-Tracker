@@ -229,6 +229,8 @@ export default function WorkoutLogsPage() {
                 calendarDate={calendarDate}
                 setCalendarDate={setCalendarDate}
                 setExercisesMenuOpen={setExercisesMenuOpen}
+                setViewExerciseMenuOpenId={setViewExerciseMenuOpenId}
+                setEditingWorkoutLogExerciseId={setEditingWorkoutLogExerciseId}
                 workoutLogOptionsMenuOpen={workoutLogOptionsMenuOpen}
                 setWorkoutLogOptionsMenuOpen={setWorkoutLogOptionsMenuOpen}
                 selectingWorkoutLogExercises={selectingWorkoutLogExercises}

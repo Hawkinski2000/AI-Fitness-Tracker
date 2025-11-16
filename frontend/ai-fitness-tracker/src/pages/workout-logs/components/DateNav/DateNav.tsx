@@ -23,6 +23,8 @@ type DateNavProps = {
   calendarDate: Value;
   setCalendarDate: React.Dispatch<React.SetStateAction<Value>>;
   setExercisesMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setViewExerciseMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
+  setEditingWorkoutLogExerciseId: React.Dispatch<React.SetStateAction<number | null>>;
   workoutLogOptionsMenuOpen: boolean;
   setWorkoutLogOptionsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   selectingWorkoutLogExercises: boolean;
@@ -52,6 +54,8 @@ export default function DateNav({
   calendarDate,
   setCalendarDate,
   setExercisesMenuOpen,
+  setViewExerciseMenuOpenId,
+  setEditingWorkoutLogExerciseId,
   workoutLogOptionsMenuOpen,
   setWorkoutLogOptionsMenuOpen,
   selectingWorkoutLogExercises,
@@ -130,6 +134,8 @@ export default function DateNav({
         className="workout-log-add-button"
         onClick={(e) => {
           e.stopPropagation();
+          setEditingWorkoutLogExerciseId(null);
+          setViewExerciseMenuOpenId(null);
           setExercisesMenuOpen(true);
         }}
       >
