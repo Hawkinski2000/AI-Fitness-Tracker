@@ -50,7 +50,11 @@ export default function ExerciseSectionHeader({
   setCalendarOpenType,
   handleDeleteWorkoutLogExercises
 }: ExerciseSectionHeaderProps) {
-  const exerciseName = workoutLogExercise && capitalizeFirstLetter(exercises[workoutLogExercise.exercise_id].name);
+  const exerciseName = (
+    workoutLogExercise &&
+    exercises[workoutLogExercise.exercise_id] &&
+    capitalizeFirstLetter(exercises[workoutLogExercise.exercise_id].name)
+  );
 
   const handleSelectExercise = useCallback(async () => {
     if (!currentWorkoutLogDate) {

@@ -173,7 +173,7 @@ export default function WorkoutLogsPage() {
   );
 
   const {
-    // handleAddExercise,
+    handleAddExercise,
     // handleUpdateExercise,
     handleCopyWorkoutLogExercises,
     handleMoveWorkoutLogExercises,
@@ -276,7 +276,7 @@ export default function WorkoutLogsPage() {
                   exerciseSearchResults={exerciseSearchResults}
                   foodsMenuRef={foodsMenuRef}
                   // handleUpdateExercise={handleUpdateExercise}
-                  // handleAddExercise={handleAddExercise}
+                  handleAddExercise={handleAddExercise}
                 />
               ) : (
                 <ExercisesMenu

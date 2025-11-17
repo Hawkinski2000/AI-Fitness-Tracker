@@ -12,7 +12,8 @@ import {
   createWorkoutLog,
   copyWorkoutLogExercises,
   moveWorkoutLogExercises,
-  deleteWorkoutLogExercises
+  deleteWorkoutLogExercises,
+  addWorkoutLogExercise
 } from "../../../utils/workout-logs";
 import { getDateKey, normalizeDate } from "../../../utils/dates";
 
@@ -38,63 +39,57 @@ const useMealLogActions = (
   const { accessToken, setAccessToken } = useAuth();
 
 
-  // const handleAddFood = useCallback(async (
-  //   foodId: number,
-  //   numServings: number | null = null,
-  //   servingSize: number | null = null
-  // ) => {
-  //   try {
-  //     let token: string | null = accessToken;
-  //     if (!accessToken || isTokenExpired(accessToken)) {
-  //       token = await refreshAccessToken();  
-  //       setAccessToken(token);
-  //     }
-  //     if (!token) {
-  //       throw new Error("No access token");
-  //     }
+  const handleAddExercise = useCallback(async (exerciseId: number) => {
+    try {
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();  
+        setAccessToken(token);
+      }
+      if (!token) {
+        throw new Error("No access token");
+      }
 
-  //     if (!currentMealLogDate) {
-  //       return;
-  //     }
+      if (!currentWorkoutLogDate) {
+        return;
+      }
 
-  //     const dateKey = getDateKey(currentMealLogDate);
-  //     if (!dateKey) {
-  //       return;
-  //     }
+      const dateKey = getDateKey(currentWorkoutLogDate);
+      if (!dateKey) {
+        return;
+      }
 
-  //     let mealLog;
-  //     if (!mealLogs[dateKey]) {
-  //       mealLog = await createMealLog(currentMealLogDate, setMealLogs, token);
-  //     }
-  //     else {
-  //       mealLog = mealLogs[dateKey];
-  //     }
+      let workoutLog;
+      if (!workoutLogs[dateKey]) {
+        workoutLog = await createWorkoutLog(currentWorkoutLogDate, setWorkoutLogs, token);
+      }
+      else {
+        workoutLog = workoutLogs[dateKey];
+      }
 
-  //     const mealLogId = mealLog.id;
+      const workoutLogId = workoutLog.id;
 
-  //     await addMealLogFood(mealLogId,
-  //                           foodId,
-  //                           numServings,
-  //                           servingSize,
-  //                           foodsMenuOpenMealType,
-  //                           setMealLogFoods,
-  //                           setFoods,
-  //                           token);
+      await addWorkoutLogExercise(
+        workoutLogId,
+        exerciseId,
+        setWorkoutLogExercises,
+        setExercises,
+        token
+      );
 
-  //   } catch (err) {
-  //     console.error(err);
-  //     setAccessToken(null);
-  //   }
-  // }, [
-  //   accessToken,
-  //   setAccessToken,
-  //   currentMealLogDate,
-  //   mealLogs,
-  //   setMealLogs,
-  //   foodsMenuOpenMealType,
-  //   setMealLogFoods,
-  //   setFoods
-  // ]);
+    } catch (err) {
+      console.error(err);
+      setAccessToken(null);
+    }
+  }, [
+    accessToken,
+    setAccessToken,
+    currentWorkoutLogDate,
+    workoutLogs,
+    setWorkoutLogs,
+    setWorkoutLogExercises,
+    setExercises
+  ]);
 
 // ---------------------------------------------------------------------------
 
@@ -323,7 +318,7 @@ const handleMoveWorkoutLogExercises = useCallback(async () => {
 
   
   return {
-    // handleAddFood,
+    handleAddExercise,
     // handleLoadFoodNutrients,
     // handleUpdateFood,
     handleCopyWorkoutLogExercises,

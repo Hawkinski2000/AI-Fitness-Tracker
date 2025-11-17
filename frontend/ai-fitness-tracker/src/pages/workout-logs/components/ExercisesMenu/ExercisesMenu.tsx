@@ -145,20 +145,6 @@ export default function ExercisesMenu({
                   <div className="meal-log-food-section">
                     <p className="meal-log-food-text">{exercise.name}</p>
                   </div>
-
-                  <div className="meal-log-food-section">
-                    <div className="meal-options-button-container">
-                      <button
-                        className="foods-menu-add-button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          // handleAddFood(food.id);
-                        }}
-                      >
-                        <img className="button-link-image" src={addIcon} />
-                      </button>
-                    </div>
-                  </div>
                 </div>
               )
             })}

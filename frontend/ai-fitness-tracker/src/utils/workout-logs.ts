@@ -178,37 +178,33 @@ export const loadWorkoutLogExercises = async (
   return workoutLogExercises;
 };
 
-// export const addMealLogFood = async (mealLogId: number,
-//                                      foodId: number,
-//                                      numServings: number | null = null,
-//                                      servingSize: number | null = null,
-//                                      foodsMenuOpenMealType: string,
-//                                      setMealLogFoods: React.Dispatch<React.SetStateAction<Record<number, MealLogFood[]>>>,
-//                                      setFoods: React.Dispatch<React.SetStateAction<Record<number, Food>>>,
-//                                      token: string) => {
-//   const mealLogFoodResponse = await axios.post(`${API_BASE_URL}/meal-log-foods`,
-//     {
-//       meal_log_id: mealLogId,
-//       food_id: foodId,
-//       meal_type: foodsMenuOpenMealType,
-//       ...(numServings !== null && { num_servings: numServings }),
-//       ...(servingSize !== null && { serving_size: servingSize })
-//     },
-//     {
-//       headers: {
-//         Authorization: `Bearer ${token}`
-//       }
-//     }
-//   );
-//   const mealLogFood = mealLogFoodResponse.data;
+export const addWorkoutLogExercise = async (
+  workoutLogId: number,
+  exerciseId: number,
+  setWorkoutLogExercises: React.Dispatch<React.SetStateAction<Record<number, WorkoutLogExercise[]>>>,
+  setExercises: React.Dispatch<React.SetStateAction<Record<number, Exercise>>>,
+  token: string
+) => {
+  const workoutLogExerciseResponse = await axios.post(`${API_BASE_URL}/workout-log-exercises`,
+    {
+      workout_log_id: workoutLogId,
+      exercise_id: exerciseId
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+  const workoutLogExercise = workoutLogExerciseResponse.data;
 
-//   setMealLogFoods(prev => ({
-//     ...prev,
-//     [mealLogId]: [...(prev[mealLogId] || []), mealLogFood]
-//   }));
+  setWorkoutLogExercises(prev => ({
+    ...prev,
+    [workoutLogId]: [...(prev[workoutLogId] || []), workoutLogExercise]
+  }));
 
-//   loadFood(foodId, setFoods, token);
-// };
+  loadExercise(exerciseId, setExercises, token);
+};
 
 // export const updateMealLogFood = async (
 //   mealLogFoodId: number,
@@ -368,30 +364,32 @@ export const deleteWorkoutLogExercises = async (
 
 // ---------------------------------------------------------------------------
 
-// export const loadFood = async (foodId: number,
-//                                setFoods: React.Dispatch<React.SetStateAction<Record<number, Food>>>,
-//                                token: string) => {
-//   const foodResponse = await axios.get(`${API_BASE_URL}/foods/${foodId}`,
-//     {
-//       headers: {
-//         Authorization: `Bearer ${token}`
-//       }
-//     }
-//   );
+export const loadExercise = async (
+  exerciseId: number,
+  setExercises: React.Dispatch<React.SetStateAction<Record<number, Exercise>>>,
+  token: string
+) => {
+  const exerciseResponse = await axios.get(`${API_BASE_URL}/exercises/${exerciseId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
 
-//   if (foodResponse.data.length === 0) {
-//     return {};
-//   }
+  if (exerciseResponse.data.length === 0) {
+    return {};
+  }
 
-//   const food = foodResponse.data;
+  const exercise = exerciseResponse.data;
 
-//   setFoods(prev => ({
-//     ...prev,
-//     [foodId]: food
-//   }));
+  setExercises(prev => ({
+    ...prev,
+    [exerciseId]: exercise
+  }));
 
-//   return food;
-// };
+  return exercise;
+};
 
 export const getExercises = async (limit: number,
                                skip: number,

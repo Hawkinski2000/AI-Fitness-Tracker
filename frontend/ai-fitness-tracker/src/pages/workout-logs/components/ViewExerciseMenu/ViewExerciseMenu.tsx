@@ -32,11 +32,7 @@ type ViewExerciseMenuProps = {
   //   numServings?: number | null,
   //   servingSize?: number | null
   // ) => Promise<void>;
-  // handleAddFood: (
-  //   foodId: number,
-  //   numServings?: number | null,
-  //   servingSize?: number | null
-  // ) => Promise<void>;
+  handleAddExercise: (exerciseId: number) => Promise<void>
 };
 
 
@@ -53,9 +49,24 @@ export default function ViewExerciseMenu({
   viewExerciseMenuOpenId,
   setViewExerciseMenuOpenId,
   exerciseSearchResults,
-  foodsMenuRef
+  foodsMenuRef,
+  handleAddExercise
 }: ViewExerciseMenuProps) {
   const dateKey = getDateKey(currentWorkoutLogDate);
+
+  const currentExercise = editingWorkoutLogExerciseId && currentWorkoutLogDate && dateKey
+    ? (
+        exercises[
+          workoutLogExercises[workoutLogs[dateKey].id]
+            ?.find((workoutLogExercise: WorkoutLogExercise) =>
+              workoutLogExercise.id === editingWorkoutLogExerciseId)
+                ?.exercise_id ?? -1
+        ]
+      )
+    : (
+        exerciseSearchResults.find((exercise: Exercise) =>
+          exercise.id === viewExerciseMenuOpenId)
+      )
 
   
   return (
@@ -93,7 +104,7 @@ export default function ViewExerciseMenu({
               }
               else {
                 if (viewExerciseMenuOpenId) {
-                  // handleAddFood(viewFoodMenuOpenId, numServings, servingSize);
+                  handleAddExercise(viewExerciseMenuOpenId);
                 }
               }
               setViewExerciseMenuOpenId(null);
@@ -120,22 +131,49 @@ export default function ViewExerciseMenu({
           <section className="view-exercise-menu-section">
             <div className="view-exercise-menu-section-content">
               <h3 className="view-exercise-menu-content-heading">
-                {
-                  editingWorkoutLogExerciseId && currentWorkoutLogDate && dateKey
-                    ? (
-                        exercises[
-                          workoutLogExercises[workoutLogs[dateKey].id]
-                            ?.find((workoutLogExercise: WorkoutLogExercise) =>
-                              workoutLogExercise.id === editingWorkoutLogExerciseId)
-                            ?.exercise_id ?? -1
-                        ]?.name ?? ''
-                      )
-                    : (
-                        exerciseSearchResults.find((exercise: Exercise) =>
-                          exercise.id === viewExerciseMenuOpenId)?.name || ''
-                      )
-                }
+                {currentExercise?.name}
               </h3>
+            </div>
+          </section>
+
+          <section className="view-exercise-menu-section">
+            <div className="view-exercise-menu-section-content">
+              <p className="view-exercise-menu-section-column-text">
+                Description: {currentExercise?.description}
+              </p>
+            </div>
+          </section>
+
+          <section className="view-exercise-menu-section">
+            <div className="view-exercise-menu-section-content">
+              <p className="view-exercise-menu-section-column-text">
+                Type: {currentExercise?.exercise_type}
+              </p>
+            </div>
+          </section>
+
+          <section className="view-exercise-menu-section">
+            <div className="view-exercise-menu-section-content">
+              <p className="view-exercise-menu-section-column-text">
+                Body Part: {currentExercise?.body_part}
+              </p>
+            </div>
+          </section>
+
+          <section className="view-exercise-menu-section">
+            <div className="view-exercise-menu-section-content">
+              <p className="view-exercise-menu-section-column-text">
+                Equipment: {currentExercise?.equipment}
+              </p>
+            </div>
+          </section>
+
+          
+          <section className="view-exercise-menu-section">
+            <div className="view-exercise-menu-section-content">
+              <p className="view-exercise-menu-section-column-text">
+                Level: {currentExercise?.level}
+              </p>
             </div>
           </section>
 
