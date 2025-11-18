@@ -3,7 +3,7 @@ import {
   type WorkoutLog,
   type WorkoutLogExercise,
   type Exercise,
-  // type ExerciseSet
+  type ExerciseSet
 } from "../../types/workout-logs";
 import type { Value } from 'react-calendar/dist/shared/types.js';
 import { getDateKey } from '../../../../utils/dates';
@@ -17,7 +17,7 @@ type ViewExerciseMenuProps = {
   workoutLogs: Record<string, WorkoutLog>;
   workoutLogExercises: Record<number, WorkoutLogExercise[]>;
   exercises: Record<number, Exercise>;
-  // exerciseSets: Record<number, ExerciseSet[]>;
+  exerciseSets: Record<number, ExerciseSet[]>;
   exercisesMenuOpen: boolean;
   setExercisesMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   editingWorkoutLogExerciseId: number | null;
@@ -41,7 +41,7 @@ export default function ViewExerciseMenu({
   workoutLogs,
   workoutLogExercises,
   exercises,
-  // exerciseSets,
+  exerciseSets,
   exercisesMenuOpen,
   setExercisesMenuOpen,
   editingWorkoutLogExerciseId,
@@ -135,6 +135,26 @@ export default function ViewExerciseMenu({
               </h3>
             </div>
           </section>
+
+          {
+            editingWorkoutLogExerciseId &&
+            exerciseSets[editingWorkoutLogExerciseId].map((exerciseSet: ExerciseSet) => {
+              return (
+                <section className="view-exercise-menu-section">
+                  <div className="view-exercise-menu-section-content">
+                    <p className="view-exercise-menu-section-column-text">
+                      {exerciseSet.weight}{" "}
+                      {exerciseSet.unit}{" "}
+                    </p>
+                    
+                    <p className="view-exercise-menu-section-column-text">
+                      {exerciseSet.reps} reps
+                    </p>
+                  </div>
+                </section>
+              );
+            })
+          }
 
           <section className="view-exercise-menu-section">
             <div className="view-exercise-menu-section-content">

@@ -266,7 +266,7 @@ export default function WorkoutLogsPage() {
                   workoutLogs={workoutLogs}
                   workoutLogExercises={workoutLogExercises}
                   exercises={exercises}
-                  // exerciseSets={exerciseSets}
+                  exerciseSets={exerciseSets}
                   exercisesMenuOpen={exercisesMenuOpen}
                   setExercisesMenuOpen={setExercisesMenuOpen}
                   editingWorkoutLogExerciseId={editingWorkoutLogExerciseId}
