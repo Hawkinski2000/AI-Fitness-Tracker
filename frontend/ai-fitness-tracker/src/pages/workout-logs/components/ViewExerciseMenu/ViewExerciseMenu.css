@@ -94,7 +94,6 @@
 .view-exercise-menu-input {
   width: 5rem;
   padding: 0.25rem;
-  padding-left: 1rem;
   text-align: center;
 }
 
@@ -106,6 +105,31 @@
   position: absolute;
   top: 2.5rem;
   right: 0;
+}
+
+.view-exercise-menu-section-container {
+  width: 100%;
+}
+
+.view-exercise-menu-buttons-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.view-exercise-menu-set {
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.25s;
+}
+.view-exercise-menu-set:hover {
+  background-color: #8085a6;
+}
+
+.view-exercise-menu-set-selected {
+  background-color: #8085a6;
 }
 
 @media (max-width: 500px) {

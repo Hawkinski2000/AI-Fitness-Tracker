@@ -1,3 +1,4 @@
+import { useState } from "react";
 // import { PropagateLoader } from 'react-spinners';
 import {
   type WorkoutLog,
@@ -53,6 +54,9 @@ export default function ViewExerciseMenu({
   handleAddExercise
 }: ViewExerciseMenuProps) {
   const dateKey = getDateKey(currentWorkoutLogDate);
+
+  const [selectedExerciseSetId, setSelectedExerciseSetId] = useState<number | null>(null);
+
 
   const currentExercise = editingWorkoutLogExerciseId && currentWorkoutLogDate && dateKey
     ? (
@@ -136,12 +140,75 @@ export default function ViewExerciseMenu({
             </div>
           </section>
 
+          <section className="view-exercise-menu-section">
+            <div className="view-exercise-menu-section-content">
+              <div className="view-exercise-menu-section-container">
+                <p className="view-exercise-menu-section-column-text">
+                  Weight ({currentExercise?.base_unit || 'lbs'})
+                </p>
+
+                <div className="view-exercise-menu-buttons-container">
+                  <button className="view-exercise-menu-text-button">
+                    -
+                  </button>
+                  
+                  <input
+                    className="view-exercise-menu-input"
+                  />
+
+                  <button className="view-exercise-menu-text-button">
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="view-exercise-menu-section">
+            <div className="view-exercise-menu-section-content">
+              <div className="view-exercise-menu-section-container">
+                <p className="view-exercise-menu-section-column-text">
+                  Reps
+                </p>
+
+                <div className="view-exercise-menu-buttons-container">
+                  <button className="view-exercise-menu-text-button">
+                    -
+                  </button>
+                  
+                  <input
+                    className="view-exercise-menu-input"
+                  />
+
+                  <button className="view-exercise-menu-text-button">
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div className="view-exercise-menu-section-content">
+            <p className="view-exercise-menu-section-column-text">
+              Sets
+            </p>
+          </div>
           {
             editingWorkoutLogExerciseId &&
-            exerciseSets[editingWorkoutLogExerciseId].map((exerciseSet: ExerciseSet) => {
+            exerciseSets[editingWorkoutLogExerciseId].map((exerciseSet: ExerciseSet, index: number) => {
               return (
-                <section className="view-exercise-menu-section">
+                <section
+                  className={`
+                    view-exercise-menu-set
+                    view-exercise-menu-section
+                    ${index === 0 && 'view-exercise-menu-set-selected'}
+                  `}
+                >
                   <div className="view-exercise-menu-section-content">
+                    <p className="view-exercise-menu-section-column-text">
+                      {index + 1}
+                    </p>
+
                     <p className="view-exercise-menu-section-column-text">
                       {exerciseSet.weight}{" "}
                       {exerciseSet.unit}{" "}
@@ -155,48 +222,6 @@ export default function ViewExerciseMenu({
               );
             })
           }
-
-          <section className="view-exercise-menu-section">
-            <div className="view-exercise-menu-section-content">
-              <p className="view-exercise-menu-section-column-text">
-                Description: {currentExercise?.description}
-              </p>
-            </div>
-          </section>
-
-          <section className="view-exercise-menu-section">
-            <div className="view-exercise-menu-section-content">
-              <p className="view-exercise-menu-section-column-text">
-                Type: {currentExercise?.exercise_type}
-              </p>
-            </div>
-          </section>
-
-          <section className="view-exercise-menu-section">
-            <div className="view-exercise-menu-section-content">
-              <p className="view-exercise-menu-section-column-text">
-                Body Part: {currentExercise?.body_part}
-              </p>
-            </div>
-          </section>
-
-          <section className="view-exercise-menu-section">
-            <div className="view-exercise-menu-section-content">
-              <p className="view-exercise-menu-section-column-text">
-                Equipment: {currentExercise?.equipment}
-              </p>
-            </div>
-          </section>
-
-          
-          <section className="view-exercise-menu-section">
-            <div className="view-exercise-menu-section-content">
-              <p className="view-exercise-menu-section-column-text">
-                Level: {currentExercise?.level}
-              </p>
-            </div>
-          </section>
-
         </div>
         {/* )} */}
     </div>
