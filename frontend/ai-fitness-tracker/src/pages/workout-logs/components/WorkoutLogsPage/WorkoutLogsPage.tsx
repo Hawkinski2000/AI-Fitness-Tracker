@@ -275,8 +275,9 @@ export default function WorkoutLogsPage() {
                   setViewExerciseMenuOpenId={setViewExerciseMenuOpenId}
                   exerciseSearchResults={exerciseSearchResults}
                   foodsMenuRef={foodsMenuRef}
-                  // handleUpdateExercise={handleUpdateExercise}
                   handleAddExercise={handleAddExercise}
+                  // handleUpdateExerciseSet={handleUpdateExerciseSet}
+                  // handleAddExerciseSet={handleAddExerciseSet}
                 />
               ) : (
                 <ExercisesMenu

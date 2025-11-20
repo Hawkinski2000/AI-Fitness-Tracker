@@ -27,13 +27,9 @@ type ViewExerciseMenuProps = {
   setViewExerciseMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
   exerciseSearchResults: Exercise[];
   foodsMenuRef: React.RefObject<HTMLDivElement | null>;
-  // handleUpdateFood: (
-  //   mealLogFoodId: number,
-  //   mealLogId: number | null,
-  //   numServings?: number | null,
-  //   servingSize?: number | null
-  // ) => Promise<void>;
-  handleAddExercise: (exerciseId: number) => Promise<void>
+  handleAddExercise: (exerciseId: number) => Promise<void>;
+  handleAddExerciseSet: (workoutLogExerciseId: number) => Promise<void>
+  handleUpdateExerciseSet: (exerciseSetId: number) => Promise<void>
 };
 
 
@@ -51,12 +47,17 @@ export default function ViewExerciseMenu({
   setViewExerciseMenuOpenId,
   exerciseSearchResults,
   foodsMenuRef,
-  handleAddExercise
+  handleAddExercise,
+  // handleAddExerciseSet,
+  // handleUpdateExerciseSet
 }: ViewExerciseMenuProps) {
-  const dateKey = getDateKey(currentWorkoutLogDate);
-
   const [selectedExerciseSetId, setSelectedExerciseSetId] = useState<number | null>(null);
+  const [selectedSetWeight, setSelectedSetWeight] = useState<number | null>(null);
+  const [selectedSetReps, setSelectedSetReps] = useState<number | null>(null);
 
+  const [updatedExerciseSets, setUpdatedExerciseSets] = useState<ExerciseSet[]>([]);
+
+  const dateKey = getDateKey(currentWorkoutLogDate);
 
   const currentExercise = editingWorkoutLogExerciseId && currentWorkoutLogDate && dateKey
     ? (
@@ -66,11 +67,11 @@ export default function ViewExerciseMenu({
               workoutLogExercise.id === editingWorkoutLogExerciseId)
                 ?.exercise_id ?? -1
         ]
-      )
+    )
     : (
         exerciseSearchResults.find((exercise: Exercise) =>
           exercise.id === viewExerciseMenuOpenId)
-      )
+    );
 
   
   return (
@@ -148,40 +149,86 @@ export default function ViewExerciseMenu({
                 </p>
 
                 <div className="view-exercise-menu-buttons-container">
-                  <button className="view-exercise-menu-text-button">
+                  <button
+                    className="view-exercise-menu-text-button"
+                    onClick={() => {
+                      setSelectedSetWeight(prev => Math.max((prev || 0) - 5, 0));
+                    }}
+                  >
                     -
                   </button>
                   
                   <input
                     className="view-exercise-menu-input"
+                    value={selectedSetWeight ?? ''}
+                    onInput={(e) => {
+                      const value = e.currentTarget.value;
+                      setSelectedSetWeight(value === '' ? null : parseFloat(value));
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.currentTarget.blur();
+                      }
+                    }}
                   />
 
-                  <button className="view-exercise-menu-text-button">
+                  <button
+                    className="view-exercise-menu-text-button"
+                    onClick={() => {
+                      setSelectedSetWeight(prev => (prev || 0) + 5);
+                    }}
+                  >
                     +
                   </button>
                 </div>
-              </div>
-            </div>
-          </section>
 
-          <section className="view-exercise-menu-section">
-            <div className="view-exercise-menu-section-content">
-              <div className="view-exercise-menu-section-container">
                 <p className="view-exercise-menu-section-column-text">
                   Reps
                 </p>
 
                 <div className="view-exercise-menu-buttons-container">
-                  <button className="view-exercise-menu-text-button">
+                  <button
+                    className="view-exercise-menu-text-button"
+                    onClick={() => {
+                      setSelectedSetReps(prev => Math.max((prev || 0) - 1, 0));
+                    }}
+                  >
                     -
                   </button>
                   
                   <input
                     className="view-exercise-menu-input"
+                    value={selectedSetReps ?? ''}
+                    onInput={(e) => {
+                      const value = e.currentTarget.value;
+                      setSelectedSetReps(value === '' ? null : parseFloat(value));
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.currentTarget.blur();
+                      }
+                    }}
                   />
 
-                  <button className="view-exercise-menu-text-button">
+                  <button
+                    className="view-exercise-menu-text-button"
+                    onClick={() => {
+                      setSelectedSetReps(prev => Math.max((prev || 0) + 1, 0));
+                    }}
+                  >
                     +
+                  </button>
+                </div>
+
+                <div className="view-exercise-menu-buttons-container">
+                  <button
+                    className="view-exercise-menu-text-button"
+                  >
+                    {selectedExerciseSetId ? 'Update' : 'Save'}
+                  </button>
+
+                  <button className="view-exercise-menu-text-button">
+                    {selectedExerciseSetId ? 'Delete' : 'Clear'}
                   </button>
                 </div>
               </div>
@@ -201,8 +248,21 @@ export default function ViewExerciseMenu({
                   className={`
                     view-exercise-menu-set
                     view-exercise-menu-section
-                    ${index === 0 && 'view-exercise-menu-set-selected'}
+                    ${exerciseSet.id === selectedExerciseSetId && 'view-exercise-menu-set-selected'}
                   `}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (selectedExerciseSetId === exerciseSet.id) {
+                      setSelectedExerciseSetId(null);
+                      setSelectedSetWeight(null);
+                      setSelectedSetReps(null);
+                      return;
+                    }
+
+                    setSelectedExerciseSetId(exerciseSet.id);
+                    setSelectedSetWeight(exerciseSet.weight);
+                    setSelectedSetReps(exerciseSet.reps);
+                  }}
                 >
                   <div className="view-exercise-menu-section-content">
                     <p className="view-exercise-menu-section-column-text">
