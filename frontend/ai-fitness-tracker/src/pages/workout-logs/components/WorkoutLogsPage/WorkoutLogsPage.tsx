@@ -177,7 +177,9 @@ export default function WorkoutLogsPage() {
     // handleUpdateExercise,
     handleCopyWorkoutLogExercises,
     handleMoveWorkoutLogExercises,
-    handleDeleteWorkoutLogExercises
+    handleDeleteWorkoutLogExercises,
+    handleAddExerciseSet,
+    handleDeleteExerciseSet
   } = useWorkoutLogActions(
     currentWorkoutLogDate,
     setCurrentWorkoutLogDate,
@@ -276,8 +278,9 @@ export default function WorkoutLogsPage() {
                   exerciseSearchResults={exerciseSearchResults}
                   foodsMenuRef={foodsMenuRef}
                   handleAddExercise={handleAddExercise}
+                  handleAddExerciseSet={handleAddExerciseSet}
                   // handleUpdateExerciseSet={handleUpdateExerciseSet}
-                  // handleAddExerciseSet={handleAddExerciseSet}
+                  handleDeleteExerciseSet={handleDeleteExerciseSet}
                 />
               ) : (
                 <ExercisesMenu

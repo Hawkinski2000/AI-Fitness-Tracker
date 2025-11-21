@@ -3,7 +3,8 @@ import {
   type WorkoutLog,
   type WorkoutLogExercise,
   type Exercise,
-  type ExerciseSet
+  type ExerciseSet,
+  type ExerciseSetCreate
 } from "../types/workout-logs";
 import { type Value } from "react-calendar/dist/shared/types.js";
 import { useAuth } from "../../../context/auth/useAuth";
@@ -13,12 +14,14 @@ import {
   copyWorkoutLogExercises,
   moveWorkoutLogExercises,
   deleteWorkoutLogExercises,
-  addWorkoutLogExercise
+  addWorkoutLogExercise,
+  addExerciseSet,
+  deleteExerciseSet
 } from "../../../utils/workout-logs";
 import { getDateKey, normalizeDate } from "../../../utils/dates";
 
 
-const useMealLogActions = (
+const useWorkoutLogActions = (
   currentWorkoutLogDate: Value,
   setCurrentWorkoutLogDate: React.Dispatch<React.SetStateAction<Value>>,
   calendarDate: Value,
@@ -316,6 +319,74 @@ const handleMoveWorkoutLogExercises = useCallback(async () => {
     setWorkoutLogExercises
   ]);
 
+// ---------------------------------------------------------------------------
+
+    const handleAddExerciseSet = useCallback(async (exerciseSet: ExerciseSetCreate) => {
+    try {
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();  
+        setAccessToken(token);
+      }
+      if (!token) {
+        throw new Error("No access token");
+      }
+
+      if (!currentWorkoutLogDate) {
+        return;
+      }
+
+      await addExerciseSet(
+        exerciseSet,
+        setExerciseSets,
+        token
+      );
+
+    } catch (err) {
+      console.error(err);
+      setAccessToken(null);
+    }
+  }, [
+    accessToken,
+    setAccessToken,
+    currentWorkoutLogDate,
+    setExerciseSets
+  ]);
+
+// ---------------------------------------------------------------------------
+
+    const handleDeleteExerciseSet = useCallback(async (exerciseSetId: number) => {
+    try {
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();  
+        setAccessToken(token);
+      }
+      if (!token) {
+        throw new Error("No access token");
+      }
+
+      if (!currentWorkoutLogDate) {
+        return;
+      }
+
+      await deleteExerciseSet(
+        exerciseSetId,
+        setExerciseSets,
+        token
+      );
+
+    } catch (err) {
+      console.error(err);
+      setAccessToken(null);
+    }
+  }, [
+    accessToken,
+    setAccessToken,
+    currentWorkoutLogDate,
+    setExerciseSets
+  ]);
+
   
   return {
     handleAddExercise,
@@ -323,9 +394,11 @@ const handleMoveWorkoutLogExercises = useCallback(async () => {
     // handleUpdateFood,
     handleCopyWorkoutLogExercises,
     handleMoveWorkoutLogExercises,
-    handleDeleteWorkoutLogExercises
+    handleDeleteWorkoutLogExercises,
+    handleAddExerciseSet,
+    handleDeleteExerciseSet
   }
 };
 
 
-export default useMealLogActions;
+export default useWorkoutLogActions;

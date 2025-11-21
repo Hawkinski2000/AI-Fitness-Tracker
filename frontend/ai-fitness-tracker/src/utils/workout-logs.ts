@@ -4,7 +4,8 @@ import {
   type WorkoutLogResponse,
   type WorkoutLogExercise,
   type Exercise,
-  type ExerciseSet
+  type ExerciseSet,
+  type ExerciseSetCreate
 } from "../pages/workout-logs/types/workout-logs";
 import { type Value } from "react-calendar/dist/shared/types.js";
 import { API_BASE_URL } from '../config/api';
@@ -421,122 +422,46 @@ export const getExercises = async (limit: number,
   return exerciseSearchObject;
 };
 
-// // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
-// export const loadBrandedFood = async (foodId: number,
-//                                       setBrandedFoods: React.Dispatch<React.SetStateAction<Record<number, BrandedFood>>>,
-//                                       token: string) => {
-//   const brandedFoodResponse = await axios.get(`${API_BASE_URL}/branded-foods/${foodId}`,
-//     {
-//       headers: {
-//         Authorization: `Bearer ${token}`
-//       }
-//     }
-//   );
+export const addExerciseSet = async (
+  exerciseSet: ExerciseSetCreate,
+  setExerciseSets: React.Dispatch<React.SetStateAction<Record<number, ExerciseSet[]>>>,
+  token: string
+) => {
+  const exerciseSetResponse = await axios.post(`${API_BASE_URL}/exercise-sets`,
+    exerciseSet,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+  const newExerciseSet = exerciseSetResponse.data;
 
-//   if (brandedFoodResponse.data.length === 0) {
-//     return {};
-//   }
+  setExerciseSets(prev => ({
+    ...prev,
+    [exerciseSet.workout_log_exercise_id]: [...(prev[exerciseSet.workout_log_exercise_id] || []), newExerciseSet]
+  }));
+};
 
-//   const brandedFood = brandedFoodResponse.data;
+export const deleteExerciseSet = async (
+  exerciseSetId: number,
+  setExerciseSets: React.Dispatch<React.SetStateAction<Record<number, ExerciseSet[]>>>,
+  token: string
+) => {
+  await axios.delete(`${API_BASE_URL}/exercise-sets/${exerciseSetId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
 
-//   setBrandedFoods(prev => ({
-//     ...prev,
-//     [foodId]: brandedFood
-//   }));
-
-//   return brandedFood;
-// };
-
-// // ---------------------------------------------------------------------------
-
-// export const loadFoodNutrients = async (
-//   foodId: number,
-//   setFoodNutrients: React.Dispatch<React.SetStateAction<Record<number, FoodNutrient[]>>>,
-//   setNutrients: React.Dispatch<React.SetStateAction<Record<number, Nutrient>>>,
-//   token: string,
-//   expand?: string[]
-// ) => {
-//   const foodNutrientsResponse = await axios.get(`${API_BASE_URL}/food-nutrients/${foodId}`,
-//     {
-//       params: {
-//         expand
-//       },
-//       paramsSerializer: params => {
-//         const searchParams = new URLSearchParams();
-//         Object.entries(params).forEach(([key, value]) => {
-//           if (Array.isArray(value)) {
-//             value.forEach(v => searchParams.append(key, v));
-//           } else if (value !== undefined) {
-//             searchParams.append(key, value as string);
-//           }
-//         });
-//         return searchParams.toString();
-//       },
-//       headers: {
-//         Authorization: `Bearer ${token}`
-//       }
-//     }
-//   );
-
-//   const foodNutrientsResponseArray: FoodNutrientResponse[] = foodNutrientsResponse.data;
-
-//   if (foodNutrientsResponseArray.length === 0) {
-//     return [];
-//   }
-  
-//   const newFoodNutrients: FoodNutrient[] = [];
-//   const newNutrients: Record<number, Nutrient> = {};
-
-//   foodNutrientsResponseArray.forEach((foodNutrientResponse: FoodNutrientResponse) => {
-//     newFoodNutrients.push({
-//       id: foodNutrientResponse.id,
-//       food_id: foodNutrientResponse.food_id,
-//       nutrient_id: foodNutrientResponse.nutrient_id,
-//       amount: foodNutrientResponse.amount,
-//     });
-
-//     if (foodNutrientResponse.nutrient) {
-//       newNutrients[foodNutrientResponse.nutrient.id] = foodNutrientResponse.nutrient;
-//     }
-//   });
-
-//   setFoodNutrients(prev => ({
-//     ...prev,
-//     [foodId]: newFoodNutrients
-//   }));
-
-//   setNutrients(prev => ({
-//     ...prev,
-//     ...newNutrients
-//   }));
-
-//   return foodNutrientsResponseArray;
-// };
-
-// // ---------------------------------------------------------------------------
-
-// export const loadNutrient = async (nutrient_id: number,
-//                                    setNutrients: React.Dispatch<React.SetStateAction<Record<number, Nutrient>>>,
-//                                    token: string) => {
-//   const nutrientResponse = await axios.get(`${API_BASE_URL}/nutrients/${nutrient_id}`,
-//     {
-//       headers: {
-//         Authorization: `Bearer ${token}`
-//       }
-//     }
-//   );
-
-//   if (nutrientResponse.data.length === 0) {
-//     return;
-//   }
-
-//   const nutrient = nutrientResponse.data;
-
-//   setNutrients(prev => ({
-//     ...prev,
-//     [nutrient_id]: nutrient
-//   }));
-
-//   return nutrient;
-// };
+  setExerciseSets(prev =>
+    Object.fromEntries(Object.entries(prev).map(([workoutLogExerciseId, exerciseSetsArray]) => [
+      workoutLogExerciseId,
+      exerciseSetsArray.filter(exerciseSet => exerciseSet.id !== exerciseSetId)
+    ]))
+  )
+};

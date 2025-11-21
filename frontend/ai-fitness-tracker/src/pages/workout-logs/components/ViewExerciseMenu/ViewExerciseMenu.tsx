@@ -4,7 +4,8 @@ import {
   type WorkoutLog,
   type WorkoutLogExercise,
   type Exercise,
-  type ExerciseSet
+  type ExerciseSet,
+  type ExerciseSetCreate
 } from "../../types/workout-logs";
 import type { Value } from 'react-calendar/dist/shared/types.js';
 import { getDateKey } from '../../../../utils/dates';
@@ -28,8 +29,9 @@ type ViewExerciseMenuProps = {
   exerciseSearchResults: Exercise[];
   foodsMenuRef: React.RefObject<HTMLDivElement | null>;
   handleAddExercise: (exerciseId: number) => Promise<void>;
-  handleAddExerciseSet: (workoutLogExerciseId: number) => Promise<void>
-  handleUpdateExerciseSet: (exerciseSetId: number) => Promise<void>
+  handleAddExerciseSet: (exerciseSet: ExerciseSetCreate) => Promise<void>;
+  // handleUpdateExerciseSet: (exerciseSetId: number) => Promise<void>;
+  handleDeleteExerciseSet: (exerciseSetId: number) => Promise<void>;
 };
 
 
@@ -48,14 +50,13 @@ export default function ViewExerciseMenu({
   exerciseSearchResults,
   foodsMenuRef,
   handleAddExercise,
-  // handleAddExerciseSet,
+  handleAddExerciseSet,
   // handleUpdateExerciseSet
+  handleDeleteExerciseSet
 }: ViewExerciseMenuProps) {
   const [selectedExerciseSetId, setSelectedExerciseSetId] = useState<number | null>(null);
   const [selectedSetWeight, setSelectedSetWeight] = useState<number | null>(null);
   const [selectedSetReps, setSelectedSetReps] = useState<number | null>(null);
-
-  const [updatedExerciseSets, setUpdatedExerciseSets] = useState<ExerciseSet[]>([]);
 
   const dateKey = getDateKey(currentWorkoutLogDate);
 
@@ -223,11 +224,36 @@ export default function ViewExerciseMenu({
                 <div className="view-exercise-menu-buttons-container">
                   <button
                     className="view-exercise-menu-text-button"
+                    onClick={() => {
+                      if (!editingWorkoutLogExerciseId || !selectedSetWeight || !selectedSetReps) {
+                        return;
+                      }
+
+                      const exerciseSet = {
+                        workout_log_exercise_id: editingWorkoutLogExerciseId,
+                        weight: selectedSetWeight,
+                        reps: selectedSetReps,
+                        unit: 'lbs',
+                        rest_after_secs: null,
+                        duration_secs: null,
+                        calories_burned: null
+                      };
+                      handleAddExerciseSet(exerciseSet);
+                    }}
                   >
                     {selectedExerciseSetId ? 'Update' : 'Save'}
                   </button>
 
-                  <button className="view-exercise-menu-text-button">
+                  <button
+                    className="view-exercise-menu-text-button"
+                    onClick={() => {
+                      if (!selectedExerciseSetId) {
+                        return;
+                      }
+
+                      handleDeleteExerciseSet(selectedExerciseSetId);
+                    }}
+                  >
                     {selectedExerciseSetId ? 'Delete' : 'Clear'}
                   </button>
                 </div>
@@ -242,7 +268,7 @@ export default function ViewExerciseMenu({
           </div>
           {
             editingWorkoutLogExerciseId &&
-            exerciseSets[editingWorkoutLogExerciseId].map((exerciseSet: ExerciseSet, index: number) => {
+            exerciseSets[editingWorkoutLogExerciseId]?.map((exerciseSet: ExerciseSet, index: number) => {
               return (
                 <section
                   className={`

@@ -55,3 +55,13 @@ export interface ExerciseSet {
   created_at: string;
   one_rep_max: number | null;
 }
+
+export interface ExerciseSetCreate {
+  workout_log_exercise_id: number;
+  weight: number | null;
+  reps: number | null;
+  unit: string | null;
+  rest_after_secs: number | null;
+  duration_secs: number | null;
+  calories_burned: number | null;
+}
