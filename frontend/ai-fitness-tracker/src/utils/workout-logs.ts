@@ -445,6 +445,36 @@ export const addExerciseSet = async (
   }));
 };
 
+export const updateExerciseSet = async (
+  exerciseSetId: number,
+  exerciseSet: ExerciseSetCreate,
+  setExerciseSets: React.Dispatch<React.SetStateAction<Record<number, ExerciseSet[]>>>,
+  token: string
+) => {
+  const exerciseSetResponse = await axios.put(`${API_BASE_URL}/exercise-sets/${exerciseSetId}`,
+    exerciseSet,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+  const updatedExerciseSet = exerciseSetResponse.data;
+
+  setExerciseSets(prev => {
+    const currentExerciseSets = prev[updatedExerciseSet.workout_log_exercise_id];
+
+    const updatedExerciseSets = currentExerciseSets.map((set: ExerciseSet) =>
+      set.id === exerciseSetId ? updatedExerciseSet : set
+    );
+
+    return {
+      ...prev,
+      [updatedExerciseSet.workout_log_exercise_id]: updatedExerciseSets
+    }
+  });
+};
+
 export const deleteExerciseSet = async (
   exerciseSetId: number,
   setExerciseSets: React.Dispatch<React.SetStateAction<Record<number, ExerciseSet[]>>>,

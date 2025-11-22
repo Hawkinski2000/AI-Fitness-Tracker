@@ -30,7 +30,7 @@ type ViewExerciseMenuProps = {
   foodsMenuRef: React.RefObject<HTMLDivElement | null>;
   handleAddExercise: (exerciseId: number) => Promise<void>;
   handleAddExerciseSet: (exerciseSet: ExerciseSetCreate) => Promise<void>;
-  // handleUpdateExerciseSet: (exerciseSetId: number) => Promise<void>;
+  handleUpdateExerciseSet: (exerciseSetId: number, exerciseSet: ExerciseSetCreate) => Promise<void>;
   handleDeleteExerciseSet: (exerciseSetId: number) => Promise<void>;
 };
 
@@ -51,7 +51,7 @@ export default function ViewExerciseMenu({
   foodsMenuRef,
   handleAddExercise,
   handleAddExerciseSet,
-  // handleUpdateExerciseSet
+  handleUpdateExerciseSet,
   handleDeleteExerciseSet
 }: ViewExerciseMenuProps) {
   const [selectedExerciseSetId, setSelectedExerciseSetId] = useState<number | null>(null);
@@ -225,7 +225,21 @@ export default function ViewExerciseMenu({
                   <button
                     className="view-exercise-menu-text-button"
                     onClick={() => {
-                      if (selectedExerciseSetId || !editingWorkoutLogExerciseId || !selectedSetWeight || !selectedSetReps) {
+                      if (!editingWorkoutLogExerciseId) {
+                        return;
+                      }
+
+                      if (selectedExerciseSetId && selectedSetWeight && selectedSetReps) {
+                        const exerciseSet = {
+                          workout_log_exercise_id: editingWorkoutLogExerciseId,
+                          weight: selectedSetWeight,
+                          reps: selectedSetReps,
+                          unit: 'lbs',
+                          rest_after_secs: null,
+                          duration_secs: null,
+                          calories_burned: null
+                        };
+                        handleUpdateExerciseSet(selectedExerciseSetId, exerciseSet);
                         return;
                       }
 

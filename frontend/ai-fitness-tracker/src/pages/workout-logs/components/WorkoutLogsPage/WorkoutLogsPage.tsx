@@ -174,12 +174,12 @@ export default function WorkoutLogsPage() {
 
   const {
     handleAddExercise,
-    // handleUpdateExercise,
     handleCopyWorkoutLogExercises,
     handleMoveWorkoutLogExercises,
     handleDeleteWorkoutLogExercises,
     handleAddExerciseSet,
-    handleDeleteExerciseSet
+    handleDeleteExerciseSet,
+    handleUpdateExerciseSet,
   } = useWorkoutLogActions(
     currentWorkoutLogDate,
     setCurrentWorkoutLogDate,
@@ -279,7 +279,7 @@ export default function WorkoutLogsPage() {
                   foodsMenuRef={foodsMenuRef}
                   handleAddExercise={handleAddExercise}
                   handleAddExerciseSet={handleAddExerciseSet}
-                  // handleUpdateExerciseSet={handleUpdateExerciseSet}
+                  handleUpdateExerciseSet={handleUpdateExerciseSet}
                   handleDeleteExerciseSet={handleDeleteExerciseSet}
                 />
               ) : (

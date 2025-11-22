@@ -16,6 +16,7 @@ import {
   deleteWorkoutLogExercises,
   addWorkoutLogExercise,
   addExerciseSet,
+  updateExerciseSet,
   deleteExerciseSet
 } from "../../../utils/workout-logs";
 import { getDateKey, normalizeDate } from "../../../utils/dates";
@@ -25,17 +26,11 @@ const useWorkoutLogActions = (
   currentWorkoutLogDate: Value,
   setCurrentWorkoutLogDate: React.Dispatch<React.SetStateAction<Value>>,
   calendarDate: Value,
-  // foodsMenuOpenMealType: string,
   workoutLogs: Record<string, WorkoutLog>,
   setWorkoutLogs: React.Dispatch<React.SetStateAction<Record<string, WorkoutLog>>>,
   setWorkoutLogExercises: React.Dispatch<React.SetStateAction<Record<number, WorkoutLogExercise[]>>>,
   setExercises: React.Dispatch<React.SetStateAction<Record<number, Exercise>>>,
   setExerciseSets: React.Dispatch<React.SetStateAction<Record<number, ExerciseSet[]>>>,
-  // setFoods: React.Dispatch<React.SetStateAction<Record<number, Food>>>,
-  // setFoodNutrients: React.Dispatch<React.SetStateAction<Record<number, FoodNutrient[]>>>,
-  // setNutrients: React.Dispatch<React.SetStateAction<Record<number, Nutrient>>>,
-  // setMacroAmountsGrams: React.Dispatch<React.SetStateAction<Record<number, Record<number, number>>>>,
-  // setFoodCaloriesFromMacros: React.Dispatch<React.SetStateAction<Record<number, number>>>,
   selectedWorkoutLogExerciseIds: number[],
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>,
 ) => {
@@ -93,45 +88,6 @@ const useWorkoutLogActions = (
     setWorkoutLogExercises,
     setExercises
   ]);
-
-// ---------------------------------------------------------------------------
-
-  // const handleUpdateFood = useCallback(async (
-  //   mealLogFoodId: number,
-  //   mealLogId: number | null,
-  //   numServings: number | null = null,
-  //   servingSize: number | null = null
-  // ) => {
-  //   try {
-  //     let token: string | null = accessToken;
-  //     if (!accessToken || isTokenExpired(accessToken)) {
-  //       token = await refreshAccessToken();  
-  //       setAccessToken(token);
-  //     }
-  //     if (!token) {
-  //       throw new Error("No access token");
-  //     }
-
-  //     await updateMealLogFood(
-  //       mealLogFoodId,
-  //       mealLogId,
-  //       numServings,
-  //       servingSize,
-  //       foodsMenuOpenMealType,
-  //       setMealLogFoods,
-  //       token
-  //     );
-
-  //   } catch (err) {
-  //     console.error(err);
-  //     setAccessToken(null);
-  //   }
-  // }, [
-  //   accessToken,
-  //   setAccessToken,
-  //   foodsMenuOpenMealType,
-  //   setMealLogFoods
-  // ]);
 
 // ---------------------------------------------------------------------------
 
@@ -355,6 +311,41 @@ const handleMoveWorkoutLogExercises = useCallback(async () => {
 
 // ---------------------------------------------------------------------------
 
+  const handleUpdateExerciseSet = useCallback(async (exerciseSetId: number, exerciseSet: ExerciseSetCreate) => {
+    try {
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();  
+        setAccessToken(token);
+      }
+      if (!token) {
+        throw new Error("No access token");
+      }
+
+      if (!currentWorkoutLogDate) {
+        return;
+      }
+
+      await updateExerciseSet(
+        exerciseSetId,
+        exerciseSet,
+        setExerciseSets,
+        token
+      );
+
+    } catch (err) {
+      console.error(err);
+      setAccessToken(null);
+    }
+  }, [
+    accessToken,
+    setAccessToken,
+    currentWorkoutLogDate,
+    setExerciseSets
+  ]);
+
+// ---------------------------------------------------------------------------
+
     const handleDeleteExerciseSet = useCallback(async (exerciseSetId: number) => {
     try {
       let token: string | null = accessToken;
@@ -390,12 +381,11 @@ const handleMoveWorkoutLogExercises = useCallback(async () => {
   
   return {
     handleAddExercise,
-    // handleLoadFoodNutrients,
-    // handleUpdateFood,
     handleCopyWorkoutLogExercises,
     handleMoveWorkoutLogExercises,
     handleDeleteWorkoutLogExercises,
     handleAddExerciseSet,
+    handleUpdateExerciseSet,
     handleDeleteExerciseSet
   }
 };
