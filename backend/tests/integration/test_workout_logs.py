@@ -54,7 +54,7 @@ def test_create_workout_log_unauthorized(client):
 def test_get_workout_logs(authorized_client, workout_logs, user):
     res = authorized_client.get("/api/workout-logs")
     assert res.status_code == 200
-    workout_logs_list = [WorkoutLog(**workout_log) for workout_log in res.json()]
+    workout_logs_list = res.json()
     user_workout_logs = [workout_log for workout_log in workout_logs if workout_log.user_id == user["id"]]
     assert len(workout_logs_list) == len(user_workout_logs)
 

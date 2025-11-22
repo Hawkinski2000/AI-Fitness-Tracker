@@ -74,9 +74,9 @@ def get_workout_logs(date: str,
                 workout_type=workout_log_row.workout_type,
                 total_num_sets=workout_log_row.total_num_sets,
                 total_calories_burned=workout_log_row.total_calories_burned,
-                workout_log_exercises=workout_log_exercises,
-                exercises=exercises,
-                exercise_sets=exercise_sets
+                workout_log_exercises=workout_log_exercises or [],
+                exercises=exercises or [],
+                exercise_sets=exercise_sets or []
             )
         )
 

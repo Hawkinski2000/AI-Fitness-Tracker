@@ -225,7 +225,7 @@ export default function ViewExerciseMenu({
                   <button
                     className="view-exercise-menu-text-button"
                     onClick={() => {
-                      if (!editingWorkoutLogExerciseId || !selectedSetWeight || !selectedSetReps) {
+                      if (selectedExerciseSetId || !editingWorkoutLogExerciseId || !selectedSetWeight || !selectedSetReps) {
                         return;
                       }
 
@@ -252,6 +252,7 @@ export default function ViewExerciseMenu({
                       }
 
                       handleDeleteExerciseSet(selectedExerciseSetId);
+                      setSelectedExerciseSetId(null);
                     }}
                   >
                     {selectedExerciseSetId ? 'Delete' : 'Clear'}

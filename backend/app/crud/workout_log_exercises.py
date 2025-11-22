@@ -232,7 +232,7 @@ def get_workout_log_exercise_summaries(workout_log_ids: List[int], view_sets: bo
         exercise_entry = {
             "workout_log_id": wle.workout_log_id,
             "num_sets": wle.num_sets,
-            "greatest_one_rep_max": f"{wle.greatest_one_rep_max:.1f}",
+            "greatest_one_rep_max": wle.greatest_one_rep_max,
             "unit": wle.unit,
             "name": wle.exercise.name,
             "description": wle.exercise.description,
