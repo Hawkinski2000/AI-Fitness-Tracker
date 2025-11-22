@@ -16,7 +16,6 @@ type CalendarWindowProps = {
   setCalendarDate: React.Dispatch<React.SetStateAction<Value>>;
   currentWorkoutLogDate: Value;
   setSelectingWorkoutLogExercises: React.Dispatch<React.SetStateAction<boolean>>;
-  setSelectedMealTypes: React.Dispatch<React.SetStateAction<string[]>>;
   setSelectedWorkoutLogExerciseIds: React.Dispatch<React.SetStateAction<number[]>>;
   handleSetCalendarDate: (value: Value) => Promise<void>;
   handleCopyWorkoutLogExercises: () => Promise<void>;
@@ -32,7 +31,6 @@ export default function CalendarWindow({
   setCalendarDate,
   currentWorkoutLogDate,
   setSelectingWorkoutLogExercises,
-  setSelectedMealTypes,
   setSelectedWorkoutLogExerciseIds,
   handleSetCalendarDate,
   handleCopyWorkoutLogExercises,

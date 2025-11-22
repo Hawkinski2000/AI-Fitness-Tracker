@@ -122,7 +122,6 @@ export default function DateNav({
           setCalendarDate={setCalendarDate}
           currentWorkoutLogDate={currentWorkoutLogDate}
           setSelectingWorkoutLogExercises={setSelectingWorkoutLogExercises}
-          setSelectedMealTypes={setSelectedMealTypes}
           setSelectedWorkoutLogExerciseIds={setSelectedWorkoutLogExerciseIds}
           handleSetCalendarDate={handleSetCalendarDate}
           handleCopyWorkoutLogExercises={handleCopyWorkoutLogExercises}
