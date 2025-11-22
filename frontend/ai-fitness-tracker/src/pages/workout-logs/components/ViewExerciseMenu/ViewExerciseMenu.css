@@ -127,6 +127,19 @@
   gap: 1rem;
 }
 
+.view-exercise-menu-sets-container {
+  overflow-y: auto;
+  width: 100%;
+}
+
+.view-exercise-menu-sets-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.25);
+}
+
 .view-exercise-menu-set {
   cursor: pointer;
   user-select: none;

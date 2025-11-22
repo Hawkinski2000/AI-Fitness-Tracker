@@ -89,6 +89,7 @@ const useWorkoutLogsClickOutside = (
         setFoodSearch('');
         setFoodMenuInputFocused(false);
         setEditingWorkoutLogExerciseId(null);
+        setViewExerciseMenuOpenId(null);
       }
 
       if (target instanceof HTMLElement && target.classList.contains('add-food-button')) {

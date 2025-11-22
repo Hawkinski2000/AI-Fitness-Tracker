@@ -65,12 +65,14 @@ export default function ExerciseSection({
       className="exercise-section"
       onClick={(e) => {
         e.stopPropagation();
+
         if (viewExerciseMenuOpenId === workoutLogExercise.exercise_id) {
           setEditingWorkoutLogExerciseId(null);
           setExercisesMenuOpen(false);
           setViewExerciseMenuOpenId(null);
           return;
         }
+
         if (editingWorkoutLogExerciseId === workoutLogExercise.id) {
           setEditingWorkoutLogExerciseId(null);
           setExercisesMenuOpen(false);

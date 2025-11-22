@@ -111,6 +111,7 @@ export default function ViewExerciseMenu({
               }
               setViewExerciseMenuOpenId(null);
               setExercisesMenuOpen(false);
+              setEditingWorkoutLogExerciseId(null);
             }}
           >
             <img className="button-link-image" src={checkIcon} />
@@ -293,53 +294,57 @@ export default function ViewExerciseMenu({
             </div>
           </section>
 
-          <div className="view-exercise-menu-section-content">
-            <p className="view-exercise-menu-section-column-text">
-              Sets
-            </p>
+        
+          <header className="view-exercise-menu-sets-header">
+            <div className="view-exercise-menu-section-content">
+              <p className="view-exercise-menu-section-column-text">Sets</p>
+            </div>
+          </header>
+
+          <div className="view-exercise-menu-sets-container">
+            {
+              editingWorkoutLogExerciseId &&
+              exerciseSets[editingWorkoutLogExerciseId]?.map((exerciseSet: ExerciseSet, index: number) => {
+                return (
+                  <section
+                    className={`
+                      view-exercise-menu-set
+                      view-exercise-menu-section
+                      ${exerciseSet.id === selectedExerciseSetId && 'view-exercise-menu-set-selected'}
+                    `}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (selectedExerciseSetId === exerciseSet.id) {
+                        setSelectedExerciseSetId(null);
+                        setSelectedSetWeight(null);
+                        setSelectedSetReps(null);
+                        return;
+                      }
+
+                      setSelectedExerciseSetId(exerciseSet.id);
+                      setSelectedSetWeight(exerciseSet.weight);
+                      setSelectedSetReps(exerciseSet.reps);
+                    }}
+                  >
+                    <div className="view-exercise-menu-section-content">
+                      <p className="view-exercise-menu-section-column-text">
+                        {index + 1}
+                      </p>
+
+                      <p className="view-exercise-menu-section-column-text">
+                        {exerciseSet.weight}{" "}
+                        {exerciseSet.unit}{" "}
+                      </p>
+                      
+                      <p className="view-exercise-menu-section-column-text">
+                        {exerciseSet.reps} reps
+                      </p>
+                    </div>
+                  </section>
+                );
+              })
+            }
           </div>
-          {
-            editingWorkoutLogExerciseId &&
-            exerciseSets[editingWorkoutLogExerciseId]?.map((exerciseSet: ExerciseSet, index: number) => {
-              return (
-                <section
-                  className={`
-                    view-exercise-menu-set
-                    view-exercise-menu-section
-                    ${exerciseSet.id === selectedExerciseSetId && 'view-exercise-menu-set-selected'}
-                  `}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (selectedExerciseSetId === exerciseSet.id) {
-                      setSelectedExerciseSetId(null);
-                      setSelectedSetWeight(null);
-                      setSelectedSetReps(null);
-                      return;
-                    }
-
-                    setSelectedExerciseSetId(exerciseSet.id);
-                    setSelectedSetWeight(exerciseSet.weight);
-                    setSelectedSetReps(exerciseSet.reps);
-                  }}
-                >
-                  <div className="view-exercise-menu-section-content">
-                    <p className="view-exercise-menu-section-column-text">
-                      {index + 1}
-                    </p>
-
-                    <p className="view-exercise-menu-section-column-text">
-                      {exerciseSet.weight}{" "}
-                      {exerciseSet.unit}{" "}
-                    </p>
-                    
-                    <p className="view-exercise-menu-section-column-text">
-                      {exerciseSet.reps} reps
-                    </p>
-                  </div>
-                </section>
-              );
-            })
-          }
         </div>
         {/* )} */}
     </div>
