@@ -28,7 +28,7 @@ type ViewExerciseMenuProps = {
   setViewExerciseMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
   exerciseSearchResults: Exercise[];
   foodsMenuRef: React.RefObject<HTMLDivElement | null>;
-  handleAddExercise: (exerciseId: number) => Promise<void>;
+  handleAddExercise: (exerciseId: number) => Promise<WorkoutLogExercise | undefined>;
   handleAddExerciseSet: (exerciseSet: ExerciseSetCreate) => Promise<void>;
   handleUpdateExerciseSet: (exerciseSetId: number, exerciseSet: ExerciseSetCreate) => Promise<void>;
   handleDeleteExerciseSet: (exerciseSetId: number) => Promise<void>;
@@ -100,10 +100,6 @@ export default function ViewExerciseMenu({
             onClick={(e) => {
               e.stopPropagation();
               if (editingWorkoutLogExerciseId && currentWorkoutLogDate && dateKey) {
-                // handleUpdateFood(editingWorkoutLogExerciseId,
-                //                  mealLogs[dateKey].id,
-                //                  numServings,
-                //                  servingSize);
                 setViewExerciseMenuOpenId(null);
                 setViewExerciseMenuOpenId(null);
                 setExercisesMenuOpen(false);
@@ -114,6 +110,7 @@ export default function ViewExerciseMenu({
                 }
               }
               setViewExerciseMenuOpenId(null);
+              setExercisesMenuOpen(false);
             }}
           >
             <img className="button-link-image" src={checkIcon} />
@@ -223,15 +220,28 @@ export default function ViewExerciseMenu({
 
                 <div className="view-exercise-menu-buttons-container">
                   <button
-                    className="view-exercise-menu-text-button"
-                    onClick={() => {
-                      if (!editingWorkoutLogExerciseId) {
+                    className={`
+                      view-exercise-menu-text-button
+                      ${(!selectedSetWeight || !selectedSetReps) && 'view-exercise-menu-text-button-disabled'}
+                    `}
+                    onClick={async () => {
+                      let workoutLogExerciseId = editingWorkoutLogExerciseId;
+                      if (!editingWorkoutLogExerciseId && viewExerciseMenuOpenId) {
+                        const newWorkoutLogExercise = await handleAddExercise(viewExerciseMenuOpenId);
+                        if (!newWorkoutLogExercise) {
+                          return;
+                        }
+                        workoutLogExerciseId = newWorkoutLogExercise.id;
+                        setEditingWorkoutLogExerciseId(workoutLogExerciseId)
+                      }
+
+                      if (!workoutLogExerciseId) {
                         return;
                       }
 
                       if (selectedExerciseSetId && selectedSetWeight && selectedSetReps) {
                         const exerciseSet = {
-                          workout_log_exercise_id: editingWorkoutLogExerciseId,
+                          workout_log_exercise_id: workoutLogExerciseId,
                           weight: selectedSetWeight,
                           reps: selectedSetReps,
                           unit: 'lbs',
@@ -242,9 +252,9 @@ export default function ViewExerciseMenu({
                         handleUpdateExerciseSet(selectedExerciseSetId, exerciseSet);
                         return;
                       }
-
+                    
                       const exerciseSet = {
-                        workout_log_exercise_id: editingWorkoutLogExerciseId,
+                        workout_log_exercise_id: workoutLogExerciseId,
                         weight: selectedSetWeight,
                         reps: selectedSetReps,
                         unit: 'lbs',
@@ -254,20 +264,27 @@ export default function ViewExerciseMenu({
                       };
                       handleAddExerciseSet(exerciseSet);
                     }}
+                    disabled={!selectedSetWeight || !selectedSetReps}
                   >
                     {selectedExerciseSetId ? 'Update' : 'Save'}
                   </button>
 
                   <button
-                    className="view-exercise-menu-text-button"
+                    className={`
+                        view-exercise-menu-text-button
+                        ${(!selectedSetWeight && !selectedSetReps) && 'view-exercise-menu-text-button-disabled'}
+                      `}
                     onClick={() => {
                       if (!selectedExerciseSetId) {
+                        setSelectedSetWeight(null);
+                        setSelectedSetReps(null);
                         return;
                       }
 
                       handleDeleteExerciseSet(selectedExerciseSetId);
                       setSelectedExerciseSetId(null);
                     }}
+                    disabled={!selectedSetWeight && !selectedSetReps}
                   >
                     {selectedExerciseSetId ? 'Delete' : 'Clear'}
                   </button>

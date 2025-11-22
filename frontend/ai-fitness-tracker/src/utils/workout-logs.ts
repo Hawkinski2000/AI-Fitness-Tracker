@@ -197,7 +197,7 @@ export const addWorkoutLogExercise = async (
       }
     }
   );
-  const workoutLogExercise = workoutLogExerciseResponse.data;
+  const workoutLogExercise: WorkoutLogExercise = workoutLogExerciseResponse.data;
 
   setWorkoutLogExercises(prev => ({
     ...prev,
@@ -205,6 +205,8 @@ export const addWorkoutLogExercise = async (
   }));
 
   loadExercise(exerciseId, setExercises, token);
+
+  return workoutLogExercise;
 };
 
 // export const updateMealLogFood = async (

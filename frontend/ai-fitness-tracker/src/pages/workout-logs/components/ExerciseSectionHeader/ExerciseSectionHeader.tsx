@@ -93,7 +93,12 @@ export default function ExerciseSectionHeader({
   return (
     <div
       className={`exercise-container ${selectingWorkoutLogExercises && 'selectable-exercise-container'}`}
-      onClick={() => handleSelectExercise()}
+      onClick={(e) => {
+        if (selectingWorkoutLogExercises) {
+          e.stopPropagation();
+        }
+        handleSelectExercise();
+      }}
     >
       <h3>
         {exerciseName}

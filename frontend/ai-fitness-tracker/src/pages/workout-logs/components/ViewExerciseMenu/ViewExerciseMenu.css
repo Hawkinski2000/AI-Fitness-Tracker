@@ -81,6 +81,12 @@
   background-color: #8085a6;
 }
 
+.view-exercise-menu-text-button-disabled {
+  cursor: default;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
 .select-meal-button {
   width: 5rem;
 }

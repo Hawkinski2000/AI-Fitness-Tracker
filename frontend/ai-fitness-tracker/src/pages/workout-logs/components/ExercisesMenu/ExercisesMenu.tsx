@@ -22,11 +22,6 @@ type ExercisesMenuProps = {
   searchTimeoutRef: React.RefObject<number | null>;
   updateExerciseSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleExerciseSearch: (search: string, pageNumber: number) => Promise<void>;
-  // handleAddFood: (
-  //   foodId: number,
-  //   numServings?: number | null,
-  //   servingSize?: number | null
-  // ) => Promise<void>;
 };
 
 
@@ -46,7 +41,6 @@ export default function ExercisesMenu({
   searchTimeoutRef,
   updateExerciseSearch,
   handleExerciseSearch,
-  // handleAddFood
 }: ExercisesMenuProps) {
   const MAX_PAGE_BUTTONS = 10;
   let startPage = 1;

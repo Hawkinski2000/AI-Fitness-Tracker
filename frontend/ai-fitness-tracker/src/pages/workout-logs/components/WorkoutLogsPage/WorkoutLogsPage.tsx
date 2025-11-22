@@ -184,17 +184,11 @@ export default function WorkoutLogsPage() {
     currentWorkoutLogDate,
     setCurrentWorkoutLogDate,
     calendarDate,
-    // foodsMenuOpenMealType,
     workoutLogs,
     setWorkoutLogs,
     setWorkoutLogExercises,
     setExercises,
     setExerciseSets,
-    // setFoods,
-    // setFoodNutrients,
-    // setNutrients,
-    // setMacroAmountsGrams,
-    // setFoodCaloriesFromMacros,
     selectedWorkoutLogExerciseIds,
     setCalendarOpenType
   );
@@ -299,7 +293,6 @@ export default function WorkoutLogsPage() {
                   searchTimeoutRef={searchTimeoutRef}
                   updateExerciseSearch={updateExerciseSearch}
                   handleExerciseSearch={handleExerciseSearch}
-                  // handleAddExercise={handleAddExercise}
                 />
               )} 
 

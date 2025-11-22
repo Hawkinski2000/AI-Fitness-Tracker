@@ -67,13 +67,15 @@ const useWorkoutLogActions = (
 
       const workoutLogId = workoutLog.id;
 
-      await addWorkoutLogExercise(
+      const workoutLogExercise = await addWorkoutLogExercise(
         workoutLogId,
         exerciseId,
         setWorkoutLogExercises,
         setExercises,
         token
       );
+
+      return workoutLogExercise;
 
     } catch (err) {
       console.error(err);
