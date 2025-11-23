@@ -113,6 +113,7 @@ export default function DateNav({
           setSelectingMealLogFoods={setSelectingMealLogFoods}
           setSelectedMealTypes={setSelectedMealTypes}
           setSelectedMealLogFoodIds={setSelectedMealLogFoodIds}
+          setAllItemsSelected={setAllItemsSelected}
           handleSetCalendarDate={handleSetCalendarDate}
           handleCopyMealLogFoods={handleCopyMealLogFoods}
           handleMoveMealLogFoods={handleMoveMealLogFoods}

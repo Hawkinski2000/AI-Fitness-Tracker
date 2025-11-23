@@ -1,5 +1,4 @@
 import { useState } from "react";
-// import { PropagateLoader } from 'react-spinners';
 import {
   type WorkoutLog,
   type WorkoutLogExercise,
@@ -11,6 +10,8 @@ import type { Value } from 'react-calendar/dist/shared/types.js';
 import { getDateKey } from '../../../../utils/dates';
 import backIcon from './assets/back-icon.svg';
 import checkIcon from './assets/check-icon.svg';
+import addIcon from '../../../../assets/add-icon.svg';
+import removeIcon from '../../../../assets/remove-icon.svg';
 import './ViewExerciseMenu.css';
 
 
@@ -120,141 +121,117 @@ export default function ViewExerciseMenu({
         </div>
       </header>
 
-      {/* {(viewExerciseMenuOpenId) ? (
-        <div className="food-menu-results-loading-container">
-          <PropagateLoader
-            size={20}
-            cssOverride={{
-              alignItems: "center",
-              justifyContent: "center"
-            }}
-            color="#00ffcc"
-          />
-        </div>
-      ) : ( */}
-        <div className="view-exercise-menu-content">
-          <section className="view-exercise-menu-section">
-            <div className="view-exercise-menu-section-content">
-              <h3 className="view-exercise-menu-content-heading">
-                {currentExercise?.name}
-              </h3>
-            </div>
-          </section>
+      <div className="view-exercise-menu-content">
+        <section className="view-exercise-menu-section">
+          <div className="view-exercise-menu-section-content">
+            <h3 className="view-exercise-menu-content-heading">
+              {currentExercise?.name}
+            </h3>
+          </div>
+        </section>
 
-          <section className="view-exercise-menu-section">
-            <div className="view-exercise-menu-section-content">
-              <div className="view-exercise-menu-section-container">
-                <p className="view-exercise-menu-section-column-text">
-                  Weight ({currentExercise?.base_unit || 'lbs'})
-                </p>
+        <section className="view-exercise-menu-section">
+          <div className="view-exercise-menu-section-content">
+            <div className="view-exercise-menu-section-container">
+              <p className="view-exercise-menu-section-column-text">
+                Weight ({currentExercise?.base_unit || 'lbs'})
+              </p>
 
-                <div className="view-exercise-menu-buttons-container">
-                  <button
-                    className="view-exercise-menu-text-button"
-                    onClick={() => {
-                      setSelectedSetWeight(prev => Math.max((prev || 0) - 5, 0));
-                    }}
-                  >
-                    -
-                  </button>
-                  
-                  <input
-                    className="view-exercise-menu-input"
-                    value={selectedSetWeight ?? ''}
-                    onInput={(e) => {
-                      const value = e.currentTarget.value;
-                      setSelectedSetWeight(value === '' ? null : parseFloat(value));
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.currentTarget.blur();
-                      }
-                    }}
-                  />
+              <div className="view-exercise-menu-buttons-container">
+                <button
+                  className="view-exercise-menu-text-button"
+                  onClick={() => {
+                    setSelectedSetWeight(prev => Math.max((prev || 0) - 5, 0));
+                  }}
+                >
+                  <img className="button-link-image" src={removeIcon} />
+                </button>
+                
+                <input
+                  className="view-exercise-menu-input"
+                  value={selectedSetWeight ?? ''}
+                  type="number"
+                  onInput={(e) => {
+                    const value = e.currentTarget.value;
+                    setSelectedSetWeight(value === '' ? null : parseFloat(value));
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.currentTarget.blur();
+                    }
+                  }}
+                />
 
-                  <button
-                    className="view-exercise-menu-text-button"
-                    onClick={() => {
-                      setSelectedSetWeight(prev => (prev || 0) + 5);
-                    }}
-                  >
-                    +
-                  </button>
-                </div>
+                <button
+                  className="view-exercise-menu-text-button"
+                  onClick={() => {
+                    setSelectedSetWeight(prev => (prev || 0) + 5);
+                  }}
+                >
+                  <img className="button-link-image" src={addIcon} />
+                </button>
+              </div>
 
-                <p className="view-exercise-menu-section-column-text">
-                  Reps
-                </p>
+              <p className="view-exercise-menu-section-column-text">
+                Reps
+              </p>
 
-                <div className="view-exercise-menu-buttons-container">
-                  <button
-                    className="view-exercise-menu-text-button"
-                    onClick={() => {
-                      setSelectedSetReps(prev => Math.max((prev || 0) - 1, 0));
-                    }}
-                  >
-                    -
-                  </button>
-                  
-                  <input
-                    className="view-exercise-menu-input"
-                    value={selectedSetReps ?? ''}
-                    onInput={(e) => {
-                      const value = e.currentTarget.value;
-                      setSelectedSetReps(value === '' ? null : parseFloat(value));
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.currentTarget.blur();
-                      }
-                    }}
-                  />
+              <div className="view-exercise-menu-buttons-container">
+                <button
+                  className="view-exercise-menu-text-button"
+                  onClick={() => {
+                    setSelectedSetReps(prev => Math.max((prev || 0) - 1, 0));
+                  }}
+                >
+                  <img className="button-link-image" src={removeIcon} />
+                </button>
+                
+                <input
+                  className="view-exercise-menu-input"
+                  value={selectedSetReps ?? ''}
+                  onInput={(e) => {
+                    const value = e.currentTarget.value;
+                    setSelectedSetReps(value === '' ? null : parseFloat(value));
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.currentTarget.blur();
+                    }
+                  }}
+                />
 
-                  <button
-                    className="view-exercise-menu-text-button"
-                    onClick={() => {
-                      setSelectedSetReps(prev => Math.max((prev || 0) + 1, 0));
-                    }}
-                  >
-                    +
-                  </button>
-                </div>
+                <button
+                  className="view-exercise-menu-text-button"
+                  onClick={() => {
+                    setSelectedSetReps(prev => Math.max((prev || 0) + 1, 0));
+                  }}
+                >
+                  <img className="button-link-image" src={addIcon} />
+                </button>
+              </div>
 
-                <div className="view-exercise-menu-buttons-container">
-                  <button
-                    className={`
-                      view-exercise-menu-text-button
-                      ${(!selectedSetWeight || !selectedSetReps) && 'view-exercise-menu-text-button-disabled'}
-                    `}
-                    onClick={async () => {
-                      let workoutLogExerciseId = editingWorkoutLogExerciseId;
-                      if (!editingWorkoutLogExerciseId && viewExerciseMenuOpenId) {
-                        const newWorkoutLogExercise = await handleAddExercise(viewExerciseMenuOpenId);
-                        if (!newWorkoutLogExercise) {
-                          return;
-                        }
-                        workoutLogExerciseId = newWorkoutLogExercise.id;
-                        setEditingWorkoutLogExerciseId(workoutLogExerciseId)
-                      }
-
-                      if (!workoutLogExerciseId) {
+              <div className="view-exercise-menu-buttons-container">
+                <button
+                  className={`
+                    view-exercise-menu-text-button
+                    ${(!selectedSetWeight || !selectedSetReps) && 'view-exercise-menu-text-button-disabled'}
+                  `}
+                  onClick={async () => {
+                    let workoutLogExerciseId = editingWorkoutLogExerciseId;
+                    if (!editingWorkoutLogExerciseId && viewExerciseMenuOpenId) {
+                      const newWorkoutLogExercise = await handleAddExercise(viewExerciseMenuOpenId);
+                      if (!newWorkoutLogExercise) {
                         return;
                       }
+                      workoutLogExerciseId = newWorkoutLogExercise.id;
+                      setEditingWorkoutLogExerciseId(workoutLogExerciseId)
+                    }
 
-                      if (selectedExerciseSetId && selectedSetWeight && selectedSetReps) {
-                        const exerciseSet = {
-                          workout_log_exercise_id: workoutLogExerciseId,
-                          weight: selectedSetWeight,
-                          reps: selectedSetReps,
-                          unit: 'lbs',
-                          rest_after_secs: null,
-                          duration_secs: null,
-                          calories_burned: null
-                        };
-                        handleUpdateExerciseSet(selectedExerciseSetId, exerciseSet);
-                        return;
-                      }
-                    
+                    if (!workoutLogExerciseId) {
+                      return;
+                    }
+
+                    if (selectedExerciseSetId && selectedSetWeight && selectedSetReps) {
                       const exerciseSet = {
                         workout_log_exercise_id: workoutLogExerciseId,
                         weight: selectedSetWeight,
@@ -264,90 +241,100 @@ export default function ViewExerciseMenu({
                         duration_secs: null,
                         calories_burned: null
                       };
-                      handleAddExerciseSet(exerciseSet);
-                    }}
-                    disabled={!selectedSetWeight || !selectedSetReps}
-                  >
-                    {selectedExerciseSetId ? 'Update' : 'Save'}
-                  </button>
+                      handleUpdateExerciseSet(selectedExerciseSetId, exerciseSet);
+                      return;
+                    }
+                  
+                    const exerciseSet = {
+                      workout_log_exercise_id: workoutLogExerciseId,
+                      weight: selectedSetWeight,
+                      reps: selectedSetReps,
+                      unit: 'lbs',
+                      rest_after_secs: null,
+                      duration_secs: null,
+                      calories_burned: null
+                    };
+                    handleAddExerciseSet(exerciseSet);
+                  }}
+                  disabled={!selectedSetWeight || !selectedSetReps}
+                >
+                  {selectedExerciseSetId ? 'Update' : 'Save'}
+                </button>
 
-                  <button
-                    className={`
-                        view-exercise-menu-text-button
-                        ${(!selectedSetWeight && !selectedSetReps) && 'view-exercise-menu-text-button-disabled'}
-                      `}
-                    onClick={() => {
-                      if (!selectedExerciseSetId) {
-                        setSelectedSetWeight(null);
-                        setSelectedSetReps(null);
-                        return;
-                      }
+                <button
+                  className={`
+                      view-exercise-menu-text-button
+                      ${(!selectedSetWeight && !selectedSetReps) && 'view-exercise-menu-text-button-disabled'}
+                    `}
+                  onClick={() => {
+                    if (!selectedExerciseSetId) {
+                      setSelectedSetWeight(null);
+                      setSelectedSetReps(null);
+                      return;
+                    }
 
-                      handleDeleteExerciseSet(selectedExerciseSetId);
-                      setSelectedExerciseSetId(null);
-                    }}
-                    disabled={!selectedSetWeight && !selectedSetReps}
-                  >
-                    {selectedExerciseSetId ? 'Delete' : 'Clear'}
-                  </button>
-                </div>
+                    handleDeleteExerciseSet(selectedExerciseSetId);
+                    setSelectedExerciseSetId(null);
+                  }}
+                  disabled={!selectedSetWeight && !selectedSetReps}
+                >
+                  {selectedExerciseSetId ? 'Delete' : 'Clear'}
+                </button>
               </div>
             </div>
-          </section>
-
-        
-          <header className="view-exercise-menu-sets-header">
-            <div className="view-exercise-menu-section-content">
-              <p className="view-exercise-menu-section-column-text">Sets</p>
-            </div>
-          </header>
-
-          <div className="view-exercise-menu-sets-container">
-            {
-              editingWorkoutLogExerciseId &&
-              exerciseSets[editingWorkoutLogExerciseId]?.map((exerciseSet: ExerciseSet, index: number) => {
-                return (
-                  <section
-                    className={`
-                      view-exercise-menu-set
-                      view-exercise-menu-section
-                      ${exerciseSet.id === selectedExerciseSetId && 'view-exercise-menu-set-selected'}
-                    `}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (selectedExerciseSetId === exerciseSet.id) {
-                        setSelectedExerciseSetId(null);
-                        setSelectedSetWeight(null);
-                        setSelectedSetReps(null);
-                        return;
-                      }
-
-                      setSelectedExerciseSetId(exerciseSet.id);
-                      setSelectedSetWeight(exerciseSet.weight);
-                      setSelectedSetReps(exerciseSet.reps);
-                    }}
-                  >
-                    <div className="view-exercise-menu-section-content">
-                      <p className="view-exercise-menu-section-column-text">
-                        {index + 1}
-                      </p>
-
-                      <p className="view-exercise-menu-section-column-text">
-                        {exerciseSet.weight}{" "}
-                        {exerciseSet.unit}{" "}
-                      </p>
-                      
-                      <p className="view-exercise-menu-section-column-text">
-                        {exerciseSet.reps} reps
-                      </p>
-                    </div>
-                  </section>
-                );
-              })
-            }
           </div>
+        </section>
+
+      
+        <header className="view-exercise-menu-sets-header">
+          <div className="view-exercise-menu-section-content">
+            <p className="view-exercise-menu-section-column-text">Sets</p>
+          </div>
+        </header>
+
+        <div className="view-exercise-menu-sets-container">
+          {
+            editingWorkoutLogExerciseId &&
+            exerciseSets[editingWorkoutLogExerciseId]?.map((exerciseSet: ExerciseSet, index: number) => {
+              return (
+                <section
+                  className={`
+                    view-exercise-menu-set
+                    view-exercise-menu-section
+                    ${exerciseSet.id === selectedExerciseSetId && 'view-exercise-menu-set-selected'}
+                  `}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (selectedExerciseSetId === exerciseSet.id) {
+                      setSelectedExerciseSetId(null);
+                      return;
+                    }
+
+                    setSelectedExerciseSetId(exerciseSet.id);
+                    setSelectedSetWeight(exerciseSet.weight);
+                    setSelectedSetReps(exerciseSet.reps);
+                  }}
+                >
+                  <div className="view-exercise-menu-section-content">
+                    <p className="view-exercise-menu-section-column-text">
+                      {index + 1}
+                    </p>
+
+                    <p className="view-exercise-menu-section-column-text">
+                      {exerciseSet.weight}{" "}
+                      {exerciseSet.unit}{" "}
+                    </p>
+                    
+                    <p className="view-exercise-menu-section-column-text">
+                      {exerciseSet.reps} reps
+                    </p>
+                  </div>
+                </section>
+              );
+            })
+          }
         </div>
-        {/* )} */}
+      </div>
     </div>
   );
 }

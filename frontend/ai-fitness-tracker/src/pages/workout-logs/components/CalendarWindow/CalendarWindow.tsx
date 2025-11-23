@@ -17,6 +17,7 @@ type CalendarWindowProps = {
   currentWorkoutLogDate: Value;
   setSelectingWorkoutLogExercises: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedWorkoutLogExerciseIds: React.Dispatch<React.SetStateAction<number[]>>;
+  setAllItemsSelected: React.Dispatch<React.SetStateAction<boolean>>;
   handleSetCalendarDate: (value: Value) => Promise<void>;
   handleCopyWorkoutLogExercises: () => Promise<void>;
   handleMoveWorkoutLogExercises: () => Promise<void>;
@@ -32,6 +33,7 @@ export default function CalendarWindow({
   currentWorkoutLogDate,
   setSelectingWorkoutLogExercises,
   setSelectedWorkoutLogExerciseIds,
+  setAllItemsSelected,
   handleSetCalendarDate,
   handleCopyWorkoutLogExercises,
   handleMoveWorkoutLogExercises
@@ -60,6 +62,7 @@ export default function CalendarWindow({
 
             setSelectingWorkoutLogExercises(false);
             setSelectedWorkoutLogExerciseIds([]);
+            setAllItemsSelected(false);
           }}
         >
           Cancel
@@ -81,6 +84,7 @@ export default function CalendarWindow({
 
             setSelectingWorkoutLogExercises(false);
             setSelectedWorkoutLogExerciseIds([]);
+            setAllItemsSelected(false);
           }}
         >
           Ok

@@ -98,9 +98,9 @@ const useWorkoutLogsClickOutside = (
         target instanceof Node &&
         !(target instanceof HTMLElement && target.classList.contains('view-exercise-menu-set')) &&
         !(target instanceof HTMLElement && target.classList.contains('view-exercise-menu-section-content')) &&
-        !(target instanceof HTMLElement && target.classList.contains('view-exercise-menu-text-button'))
+        !(target instanceof HTMLElement && target.classList.contains('view-exercise-menu-text-button')) &&
+        !(target instanceof HTMLElement && target.classList.contains('view-exercise-menu-input'))
       ) {
-        console.log(target);
         setSelectedExerciseSetId(null);
       }
 

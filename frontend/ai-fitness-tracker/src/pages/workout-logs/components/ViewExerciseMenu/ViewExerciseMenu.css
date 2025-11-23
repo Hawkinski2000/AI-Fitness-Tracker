@@ -103,6 +103,12 @@
   text-align: center;
 }
 
+.view-exercise-menu-input[type="number"]::-webkit-inner-spin-button,
+.view-exercise-menu-input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .serving-size-button {
   width: 5rem;
 }
