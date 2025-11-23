@@ -65,12 +65,12 @@ export default function ExercisesMenu({
 
   return (
     <div
-      className={`foods-menu ${exercisesMenuOpen && 'foods-menu-open'}`}
+      className={`exercises-menu ${exercisesMenuOpen && 'exercises-menu-open'}`}
       ref={foodsMenuRef}
     >
 
       <button
-        className="foods-menu-close-button"
+        className="exercises-menu-close-button"
         onClick={(e) => {
           e.stopPropagation();
           setExercisesMenuOpen(false);

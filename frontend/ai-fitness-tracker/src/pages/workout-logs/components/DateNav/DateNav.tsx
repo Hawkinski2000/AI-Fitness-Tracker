@@ -135,7 +135,7 @@ export default function DateNav({
           e.stopPropagation();
           setEditingWorkoutLogExerciseId(null);
           setViewExerciseMenuOpenId(null);
-          setExercisesMenuOpen(true);
+          setExercisesMenuOpen(prev => !prev);
         }}
       >
         <img className="button-link-image" src={plusIcon} />

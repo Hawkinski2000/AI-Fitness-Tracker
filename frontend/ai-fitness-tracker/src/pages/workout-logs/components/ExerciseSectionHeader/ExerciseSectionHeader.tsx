@@ -1,4 +1,3 @@
-import { useCallback } from "react";
 import ExerciseOptionsMenu from "../ExerciseOptionsMenu/ExerciseOptionsMenu";
 import {
   type WorkoutLog,
@@ -7,7 +6,6 @@ import {
 } from '../../types/workout-logs';
 import type { Value } from "react-calendar/dist/shared/types.js";
 import { capitalizeFirstLetter } from "../../../../utils/app";
-import { getDateKey } from '../../../../utils/dates';
 import dotsIcon from '../../../../assets/dots-icon.svg';
 import boxIcon from '../../../meal-logs/components/MealLogsPage/assets/box-icon.svg';
 import checkBoxIcon from '../../../meal-logs/components/MealLogsPage/assets/check-box-2-icon.svg';
@@ -39,11 +37,7 @@ export default function ExerciseSectionHeader({
   exerciseOptionsMenuOpenName,
   setExerciseOptionsMenuOpenName,
   exerciseOptionsMenuRefs,
-  workoutLogs,
-  workoutLogExercises,
   exercises,
-  currentWorkoutLogDate,
-  setAllItemsSelected,
   selectedWorkoutLogExerciseIds,
   setSelectedWorkoutLogExerciseIds,
   selectingWorkoutLogExercises,
@@ -56,50 +50,9 @@ export default function ExerciseSectionHeader({
     capitalizeFirstLetter(exercises[workoutLogExercise.exercise_id].name)
   );
 
-  const handleSelectExercise = useCallback(async () => {
-    if (!currentWorkoutLogDate) {
-        return;
-    }
-    const dateKey = getDateKey(currentWorkoutLogDate);
-    if (!dateKey) {
-      return;
-    }
-    const currentWorkoutLogId = workoutLogs[dateKey].id;
-    const currentWorkoutLogExercises = workoutLogExercises[currentWorkoutLogId];
 
-    if (selectedWorkoutLogExerciseIds.includes(workoutLogExercise.id)) {
-      setAllItemsSelected(false);
-      setSelectedWorkoutLogExerciseIds(prev =>
-        prev.filter(workoutLogExerciseId => workoutLogExerciseId !== workoutLogExercise.id)
-      );
-    }
-    else {
-      if (selectedWorkoutLogExerciseIds.length + 1 === currentWorkoutLogExercises.length) {
-        setAllItemsSelected(true);
-      }
-      setSelectedWorkoutLogExerciseIds(prev =>
-        [...prev, workoutLogExercise.id]
-      );
-    }
-  }, [
-    workoutLogExercise,
-    currentWorkoutLogDate,
-    selectedWorkoutLogExerciseIds,
-    setSelectedWorkoutLogExerciseIds,
-    setAllItemsSelected,
-    workoutLogs,
-    workoutLogExercises
-  ]);
   return (
-    <div
-      className={`exercise-container ${selectingWorkoutLogExercises && 'selectable-exercise-container'}`}
-      onClick={(e) => {
-        if (selectingWorkoutLogExercises) {
-          e.stopPropagation();
-        }
-        handleSelectExercise();
-      }}
-    >
+    <div className='exercise-container'>
       <h3>
         {exerciseName}
       </h3>

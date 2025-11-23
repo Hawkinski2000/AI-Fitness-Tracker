@@ -153,6 +153,10 @@
   background-color: #8085a6;
 }
 
+.view-exercise-menu-set .view-exercise-menu-section-column-text {
+  pointer-events: none;
+}
+
 @media (max-width: 500px) {
   .view-exercise-menu-content {
     font-size: 14px;

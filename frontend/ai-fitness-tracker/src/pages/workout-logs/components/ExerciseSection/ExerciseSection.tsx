@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import {
   type WorkoutLog,
   type WorkoutLogExercise,
@@ -5,6 +6,7 @@ import {
   type ExerciseSet
 } from "../../types/workout-logs";
 import type { Value } from "react-calendar/dist/shared/types.js";
+import { getDateKey } from '../../../../utils/dates';
 import ExerciseSectionHeader from "../ExerciseSectionHeader/ExerciseSectionHeader";
 import ExerciseSectionSets from "../ExerciseSectionSets/ExerciseSectionSets";
 import './ExerciseSection.css';
@@ -29,7 +31,6 @@ type ExerciseSectionProps = {
   setExercisesMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   viewExerciseMenuOpenId: number | null;
   setViewExerciseMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
-  editingWorkoutLogExerciseId: number | null;
   setEditingWorkoutLogExerciseId: React.Dispatch<React.SetStateAction<number | null>>;
   exerciseOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
   handleDeleteWorkoutLogExercises: (ids: number[]) => Promise<void>;
@@ -55,27 +56,60 @@ export default function ExerciseSection({
   setExercisesMenuOpen,
   viewExerciseMenuOpenId,
   setViewExerciseMenuOpenId,
-  editingWorkoutLogExerciseId,
   setEditingWorkoutLogExerciseId,
   exerciseOptionsMenuRefs,
   handleDeleteWorkoutLogExercises,
 }: ExerciseSectionProps) {
+   const handleSelectExercise = useCallback(async () => {
+    if (!currentWorkoutLogDate) {
+        return;
+    }
+    const dateKey = getDateKey(currentWorkoutLogDate);
+    if (!dateKey) {
+      return;
+    }
+    const currentWorkoutLogId = workoutLogs[dateKey].id;
+    const currentWorkoutLogExercises = workoutLogExercises[currentWorkoutLogId];
+
+    if (selectedWorkoutLogExerciseIds.includes(workoutLogExercise.id)) {
+      setAllItemsSelected(false);
+      setSelectedWorkoutLogExerciseIds(prev =>
+        prev.filter(workoutLogExerciseId => workoutLogExerciseId !== workoutLogExercise.id)
+      );
+    }
+    else {
+      if (selectedWorkoutLogExerciseIds.length + 1 === currentWorkoutLogExercises.length) {
+        setAllItemsSelected(true);
+      }
+      setSelectedWorkoutLogExerciseIds(prev =>
+        [...prev, workoutLogExercise.id]
+      );
+    }
+  }, [
+    workoutLogExercise,
+    currentWorkoutLogDate,
+    selectedWorkoutLogExerciseIds,
+    setSelectedWorkoutLogExerciseIds,
+    setAllItemsSelected,
+    workoutLogs,
+    workoutLogExercises
+  ]);
+
+
   return (
     <section
       className="exercise-section"
       onClick={(e) => {
         e.stopPropagation();
 
-        if (viewExerciseMenuOpenId === workoutLogExercise.exercise_id) {
-          setEditingWorkoutLogExerciseId(null);
-          setExercisesMenuOpen(false);
-          setViewExerciseMenuOpenId(null);
+        if (selectingWorkoutLogExercises) {
+          handleSelectExercise();
           return;
         }
 
-        if (editingWorkoutLogExerciseId === workoutLogExercise.id) {
-          setEditingWorkoutLogExerciseId(null);
+        if (viewExerciseMenuOpenId === workoutLogExercise.exercise_id) {
           setExercisesMenuOpen(false);
+          setViewExerciseMenuOpenId(null);
           return;
         }
 

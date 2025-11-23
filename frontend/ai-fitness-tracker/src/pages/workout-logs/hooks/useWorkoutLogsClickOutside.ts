@@ -16,6 +16,8 @@ const useWorkoutLogsClickOutside = (
   setFoodMenuInputFocused: React.Dispatch<React.SetStateAction<boolean>>,
   setEditingWorkoutLogExerciseId: React.Dispatch<React.SetStateAction<number | null>>,
   setViewExerciseMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>,
+  selectedExerciseSetId: number | null,
+  setSelectedExerciseSetId: React.Dispatch<React.SetStateAction<number | null>>,
   selectMealMenuOpenType: string,
   setSelectMealMenuOpenType: React.Dispatch<React.SetStateAction<string>>,
   selectServingSizeMenuOpen: boolean,
@@ -73,27 +75,33 @@ const useWorkoutLogsClickOutside = (
         target instanceof Node &&
         !mealLogOptionsMenuRef.current.contains(target) &&
         !(target instanceof HTMLElement &&
-          target.classList.contains('meal-log-options-button'))
+          target.classList.contains('workout-log-options-button'))
       ) {
         setMealLogOptionsMenuOpen(false);
       }
 
       if (
         exercisesMenuOpen &&
-        foodsMenuRef.current &&
         target instanceof Node &&
-        !foodsMenuRef.current.contains(target) &&
-        !(target instanceof HTMLElement && target.classList.contains('add-food-button'))
+        !(target instanceof HTMLElement && target.classList.contains('exercise-section')) &&
+        !(target instanceof HTMLElement && target.classList.contains('workout-log-add-button')) &&
+        !(target instanceof HTMLElement && target.closest('.exercises-menu'))
       ) {
         setExercisesMenuOpen(false);
         setFoodSearch('');
         setFoodMenuInputFocused(false);
-        setEditingWorkoutLogExerciseId(null);
         setViewExerciseMenuOpenId(null);
       }
 
-      if (target instanceof HTMLElement && target.classList.contains('add-food-button')) {
-        setViewExerciseMenuOpenId(null);
+      if (
+        selectedExerciseSetId &&
+        target instanceof Node &&
+        !(target instanceof HTMLElement && target.classList.contains('view-exercise-menu-set')) &&
+        !(target instanceof HTMLElement && target.classList.contains('view-exercise-menu-section-content')) &&
+        !(target instanceof HTMLElement && target.classList.contains('view-exercise-menu-text-button'))
+      ) {
+        console.log(target);
+        setSelectedExerciseSetId(null);
       }
 
       if (
@@ -146,6 +154,8 @@ const useWorkoutLogsClickOutside = (
     setFoodMenuInputFocused,
     setEditingWorkoutLogExerciseId,
     setViewExerciseMenuOpenId,
+    setSelectedExerciseSetId,
+    selectedExerciseSetId,
     selectMealMenuOpenType,
     setSelectMealMenuOpenType,
     selectServingSizeMenuOpen,

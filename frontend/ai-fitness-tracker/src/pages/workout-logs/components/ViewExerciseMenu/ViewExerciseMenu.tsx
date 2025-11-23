@@ -20,12 +20,13 @@ type ViewExerciseMenuProps = {
   workoutLogExercises: Record<number, WorkoutLogExercise[]>;
   exercises: Record<number, Exercise>;
   exerciseSets: Record<number, ExerciseSet[]>;
-  exercisesMenuOpen: boolean;
   setExercisesMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   editingWorkoutLogExerciseId: number | null;
   setEditingWorkoutLogExerciseId: React.Dispatch<React.SetStateAction<number | null>>;
   viewExerciseMenuOpenId: number | null;
   setViewExerciseMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
+  selectedExerciseSetId: number | null;
+  setSelectedExerciseSetId: React.Dispatch<React.SetStateAction<number | null>>;
   exerciseSearchResults: Exercise[];
   foodsMenuRef: React.RefObject<HTMLDivElement | null>;
   handleAddExercise: (exerciseId: number) => Promise<WorkoutLogExercise | undefined>;
@@ -41,12 +42,13 @@ export default function ViewExerciseMenu({
   workoutLogExercises,
   exercises,
   exerciseSets,
-  exercisesMenuOpen,
   setExercisesMenuOpen,
   editingWorkoutLogExerciseId,
   setEditingWorkoutLogExerciseId,
   viewExerciseMenuOpenId,
   setViewExerciseMenuOpenId,
+  selectedExerciseSetId,
+  setSelectedExerciseSetId,
   exerciseSearchResults,
   foodsMenuRef,
   handleAddExercise,
@@ -54,7 +56,6 @@ export default function ViewExerciseMenu({
   handleUpdateExerciseSet,
   handleDeleteExerciseSet
 }: ViewExerciseMenuProps) {
-  const [selectedExerciseSetId, setSelectedExerciseSetId] = useState<number | null>(null);
   const [selectedSetWeight, setSelectedSetWeight] = useState<number | null>(null);
   const [selectedSetReps, setSelectedSetReps] = useState<number | null>(null);
 
@@ -77,7 +78,7 @@ export default function ViewExerciseMenu({
   
   return (
     <div
-      className={`foods-menu ${exercisesMenuOpen && 'foods-menu-open'}`}
+      className={`exercises-menu ${viewExerciseMenuOpenId && 'exercises-menu-open'}`}
       ref={foodsMenuRef}
     >
       <header className="view-exercise-menu-header">

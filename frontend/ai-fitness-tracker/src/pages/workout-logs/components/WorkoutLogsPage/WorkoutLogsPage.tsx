@@ -90,6 +90,8 @@ export default function WorkoutLogsPage() {
   const [selectServingSizeMenuOpen, setSelectServingSizeMenuOpen] = useState<boolean>(false);
   const selectServingSizeMenuRef = useRef<HTMLDivElement | null>(null);
 
+  const [selectedExerciseSetId, setSelectedExerciseSetId] = useState<number | null>(null);
+
 // ---------------------------------------------------------------------------
 
   const currentDateKey = currentWorkoutLogDate ? getDateKey(currentWorkoutLogDate) : null;
@@ -126,6 +128,8 @@ export default function WorkoutLogsPage() {
     setFoodMenuInputFocused,
     setEditingWorkoutLogExerciseId,
     setViewExerciseMenuOpenId,
+    selectedExerciseSetId,
+    setSelectedExerciseSetId,
     selectMealMenuOpenType,
     setSelectMealMenuOpenType,
     selectServingSizeMenuOpen,
@@ -256,27 +260,28 @@ export default function WorkoutLogsPage() {
                 workoutLogExercises={workoutLogExercises}
               />
 
-              {viewExerciseMenuOpenId ? (
-                <ViewExerciseMenu
-                  currentWorkoutLogDate={currentWorkoutLogDate}
-                  workoutLogs={workoutLogs}
-                  workoutLogExercises={workoutLogExercises}
-                  exercises={exercises}
-                  exerciseSets={exerciseSets}
-                  exercisesMenuOpen={exercisesMenuOpen}
-                  setExercisesMenuOpen={setExercisesMenuOpen}
-                  editingWorkoutLogExerciseId={editingWorkoutLogExerciseId}
-                  setEditingWorkoutLogExerciseId={setEditingWorkoutLogExerciseId}
-                  viewExerciseMenuOpenId={viewExerciseMenuOpenId}
-                  setViewExerciseMenuOpenId={setViewExerciseMenuOpenId}
-                  exerciseSearchResults={exerciseSearchResults}
-                  foodsMenuRef={foodsMenuRef}
-                  handleAddExercise={handleAddExercise}
-                  handleAddExerciseSet={handleAddExerciseSet}
-                  handleUpdateExerciseSet={handleUpdateExerciseSet}
-                  handleDeleteExerciseSet={handleDeleteExerciseSet}
-                />
-              ) : (
+              <ViewExerciseMenu
+                currentWorkoutLogDate={currentWorkoutLogDate}
+                workoutLogs={workoutLogs}
+                workoutLogExercises={workoutLogExercises}
+                exercises={exercises}
+                exerciseSets={exerciseSets}
+                setExercisesMenuOpen={setExercisesMenuOpen}
+                editingWorkoutLogExerciseId={editingWorkoutLogExerciseId}
+                setEditingWorkoutLogExerciseId={setEditingWorkoutLogExerciseId}
+                viewExerciseMenuOpenId={viewExerciseMenuOpenId}
+                setViewExerciseMenuOpenId={setViewExerciseMenuOpenId}
+                selectedExerciseSetId={selectedExerciseSetId}
+                setSelectedExerciseSetId={setSelectedExerciseSetId}
+                exerciseSearchResults={exerciseSearchResults}
+                foodsMenuRef={foodsMenuRef}
+                handleAddExercise={handleAddExercise}
+                handleAddExerciseSet={handleAddExerciseSet}
+                handleUpdateExerciseSet={handleUpdateExerciseSet}
+                handleDeleteExerciseSet={handleDeleteExerciseSet}
+              />
+
+              {!viewExerciseMenuOpenId &&
                 <ExercisesMenu
                   exercisesMenuOpen={exercisesMenuOpen}
                   setExercisesMenuOpen={setExercisesMenuOpen}
@@ -294,7 +299,7 @@ export default function WorkoutLogsPage() {
                   updateExerciseSearch={updateExerciseSearch}
                   handleExerciseSearch={handleExerciseSearch}
                 />
-              )} 
+              }
 
               <div
                 className={
@@ -324,7 +329,6 @@ export default function WorkoutLogsPage() {
                       setExercisesMenuOpen={setExercisesMenuOpen}
                       viewExerciseMenuOpenId={viewExerciseMenuOpenId}
                       setViewExerciseMenuOpenId={setViewExerciseMenuOpenId}
-                      editingWorkoutLogExerciseId={editingWorkoutLogExerciseId}
                       setEditingWorkoutLogExerciseId={setEditingWorkoutLogExerciseId}
                       exerciseOptionsMenuRefs={exerciseOptionsMenuRefs}
                       handleDeleteWorkoutLogExercises={handleDeleteWorkoutLogExercises}

@@ -1,4 +1,4 @@
-.foods-menu {
+.exercises-menu {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -16,13 +16,13 @@
   transition: height 0.1s;
 }
 
-.foods-menu-open {
+.exercises-menu-open {
   height: calc(100vh - 150px);
   box-shadow: 0 5px 10px 5px rgba(0, 0, 0, 0.25);
   pointer-events: all;
 }
 
-.foods-menu-close-button {
+.exercises-menu-close-button {
   display: flex;
   height: 0;
   width: 2rem;
@@ -42,12 +42,12 @@
   transition: background-color 0.25s,
               transform 0.25s;
 }
-.foods-menu-close-button:hover {
+.exercises-menu-close-button:hover {
   background-color: #8085a6;
   transform: rotate(90deg);
 }
 
-.foods-menu-open .foods-menu-close-button {
+.exercises-menu-open .exercises-menu-close-button {
   height: 2rem;
   padding: 0.5rem;
   pointer-events: all;
