@@ -6,8 +6,8 @@ const useWorkoutLogsClickOutside = (
   setAccountMenuOpen: React.Dispatch<React.SetStateAction<boolean>>,
   mealLogOptionsMenuOpen: boolean,
   setMealLogOptionsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  exerciseOptionsMenuOpenName: string,
-  setExerciseOptionsMenuOpenName: React.Dispatch<React.SetStateAction<string>>,
+  exerciseOptionsMenuOpenId: number | null,
+  setExerciseOptionsMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>,
   mealFoodOptionsMenuOpenId: number | null,
   setMealFoodOptionsMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>,
   exercisesMenuOpen: boolean,
@@ -28,7 +28,7 @@ const useWorkoutLogsClickOutside = (
   currentMealLogDate: Value,
   accountMenuRef: React.RefObject<HTMLDivElement | null>,
   mealLogOptionsMenuRef: React.RefObject<HTMLDivElement | null>,
-  exerciseOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>,
+  exerciseOptionsMenuRefs: React.RefObject<Record<number, HTMLDivElement | null>>,
   mealFoodOptionsMenuRefs: React.RefObject<Record<number, HTMLDivElement | null>>,
   foodsMenuRef: React.RefObject<HTMLDivElement | null>,
   selectMealMenuRef: React.RefObject<HTMLDivElement | null>,
@@ -49,13 +49,13 @@ const useWorkoutLogsClickOutside = (
       }
 
       if (
-        exerciseOptionsMenuOpenName &&
-        exerciseOptionsMenuRefs.current[exerciseOptionsMenuOpenName] &&
+        exerciseOptionsMenuOpenId &&
+        exerciseOptionsMenuRefs.current[exerciseOptionsMenuOpenId] &&
         target instanceof Node &&
-        !exerciseOptionsMenuRefs.current[exerciseOptionsMenuOpenName].contains(target) &&
+        !exerciseOptionsMenuRefs.current[exerciseOptionsMenuOpenId].contains(target) &&
         !(target instanceof HTMLElement && target.classList.contains('exercise-options-button'))
       ) {
-        setExerciseOptionsMenuOpenName('');
+        setExerciseOptionsMenuOpenId(null);
       }
 
       if (
@@ -144,8 +144,8 @@ const useWorkoutLogsClickOutside = (
     setAccountMenuOpen,
     mealLogOptionsMenuOpen,
     setMealLogOptionsMenuOpen,
-    exerciseOptionsMenuOpenName,
-    setExerciseOptionsMenuOpenName,
+    exerciseOptionsMenuOpenId,
+    setExerciseOptionsMenuOpenId,
     mealFoodOptionsMenuOpenId,
     setMealFoodOptionsMenuOpenId,
     exercisesMenuOpen,

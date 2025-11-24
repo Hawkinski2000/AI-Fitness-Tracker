@@ -7,10 +7,9 @@ import './ExerciseOptionsMenu.css';
 
 type ExerciseOptionsMenuProps = {
   workoutLogExercise: WorkoutLogExercise;
-  exerciseName: string;
-  exerciseOptionsMenuOpenName: string;
-  setExerciseOptionsMenuOpenName: React.Dispatch<React.SetStateAction<string>>;
-  exerciseOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
+  exerciseOptionsMenuOpenId: number | null;
+  setExerciseOptionsMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
+  exerciseOptionsMenuRefs: React.RefObject<Record<number, HTMLDivElement | null>>;
   selectedWorkoutLogExerciseIds: number[];
   setSelectedWorkoutLogExerciseIds: React.Dispatch<React.SetStateAction<number[]>>;
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>;
@@ -20,9 +19,8 @@ type ExerciseOptionsMenuProps = {
 
 export default function ExerciseOptionsMenu({
   workoutLogExercise,
-  exerciseName,
-  exerciseOptionsMenuOpenName,
-  setExerciseOptionsMenuOpenName,
+  exerciseOptionsMenuOpenId,
+  setExerciseOptionsMenuOpenId,
   exerciseOptionsMenuRefs,
   selectedWorkoutLogExerciseIds,
   setSelectedWorkoutLogExerciseIds,
@@ -31,10 +29,10 @@ export default function ExerciseOptionsMenu({
 }: ExerciseOptionsMenuProps) {
   return (
     <div
-      ref={el => { exerciseOptionsMenuRefs.current[exerciseName] = el }}
+      ref={el => { exerciseOptionsMenuRefs.current[workoutLogExercise.id] = el }}
       className={
         `exercise-options-menu
-        ${exerciseOptionsMenuOpenName === exerciseName &&
+        ${exerciseOptionsMenuOpenId === workoutLogExercise.id &&
         'exercise-options-menu-open'}`
       }
       onClick={(e) => e.stopPropagation()}
@@ -45,7 +43,7 @@ export default function ExerciseOptionsMenu({
           e.stopPropagation();
           setSelectedWorkoutLogExerciseIds(prev => [...prev, workoutLogExercise.id]);
           setCalendarOpenType('copyWorkoutLogExercises');
-          setExerciseOptionsMenuOpenName('');
+          setExerciseOptionsMenuOpenId(null);
         }}
       >
         <img className="button-link-image" src={copyIcon} />
@@ -58,7 +56,7 @@ export default function ExerciseOptionsMenu({
           e.stopPropagation();
           setSelectedWorkoutLogExerciseIds(prev => [...prev, workoutLogExercise.id]);
           setCalendarOpenType('moveWorkoutLogExercises');
-          setExerciseOptionsMenuOpenName('');
+          setExerciseOptionsMenuOpenId(null);
         }}
       >
         <img className="button-link-image" src={moveIcon} />
@@ -72,7 +70,7 @@ export default function ExerciseOptionsMenu({
           handleDeleteWorkoutLogExercises(
             [...selectedWorkoutLogExerciseIds, workoutLogExercise.id]
           );
-          setExerciseOptionsMenuOpenName('');
+          setExerciseOptionsMenuOpenId(null);
         }}
       >
         <img className="button-link-image" src={deleteIcon} />

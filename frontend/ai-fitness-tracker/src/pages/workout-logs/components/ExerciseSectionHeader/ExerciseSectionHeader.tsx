@@ -14,9 +14,9 @@ import './ExerciseSectionHeader.css';
 
 type ExerciseSectionHeaderProps = {
   workoutLogExercise: WorkoutLogExercise;
-  exerciseOptionsMenuOpenName: string;
-  setExerciseOptionsMenuOpenName: React.Dispatch<React.SetStateAction<string>>;
-  exerciseOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
+  exerciseOptionsMenuOpenId: number | null;
+  setExerciseOptionsMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
+  exerciseOptionsMenuRefs: React.RefObject<Record<number, HTMLDivElement | null>>;
   workoutLogs: Record<string, WorkoutLog>;
   workoutLogExercises: Record<number, WorkoutLogExercise[]>;
   exercises: Record<number, Exercise>;
@@ -34,8 +34,8 @@ type ExerciseSectionHeaderProps = {
 
 export default function ExerciseSectionHeader({
   workoutLogExercise,
-  exerciseOptionsMenuOpenName,
-  setExerciseOptionsMenuOpenName,
+  exerciseOptionsMenuOpenId,
+  setExerciseOptionsMenuOpenId,
   exerciseOptionsMenuRefs,
   exercises,
   selectedWorkoutLogExerciseIds,
@@ -70,7 +70,7 @@ export default function ExerciseSectionHeader({
           className="exercise-options-button"
           onClick={(e) => {
             e.stopPropagation();
-            setExerciseOptionsMenuOpenName((prev) => (prev === exerciseName ? '' : exerciseName));
+            setExerciseOptionsMenuOpenId((prev) => (prev === workoutLogExercise.id ? null : workoutLogExercise.id));
           }}
         >
           <img className="button-link-image" src={dotsIcon} />
@@ -79,9 +79,8 @@ export default function ExerciseSectionHeader({
 
       <ExerciseOptionsMenu
         workoutLogExercise={workoutLogExercise}
-        exerciseName={exerciseName}
-        exerciseOptionsMenuOpenName={exerciseOptionsMenuOpenName}
-        setExerciseOptionsMenuOpenName={setExerciseOptionsMenuOpenName}
+        exerciseOptionsMenuOpenId={exerciseOptionsMenuOpenId}
+        setExerciseOptionsMenuOpenId={setExerciseOptionsMenuOpenId}
         exerciseOptionsMenuRefs={exerciseOptionsMenuRefs}
         selectedWorkoutLogExerciseIds={selectedWorkoutLogExerciseIds}
         setSelectedWorkoutLogExerciseIds={setSelectedWorkoutLogExerciseIds}

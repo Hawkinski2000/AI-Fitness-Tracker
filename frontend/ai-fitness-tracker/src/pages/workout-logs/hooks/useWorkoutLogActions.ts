@@ -142,6 +142,10 @@ const handleCopyWorkoutLogExercises = useCallback(async () => {
         targetWorkoutLog = workoutLogs[targetDateKey];
       }
 
+      if (!targetWorkoutLog) {
+        return;
+      }
+
       const targetWorkoutLogId = targetWorkoutLog.id;
       await copyWorkoutLogExercises(
         targetWorkoutLogId,

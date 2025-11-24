@@ -19,8 +19,8 @@ type ExerciseSectionProps = {
   workoutLogExercises: Record<number, WorkoutLogExercise[]>;
   exercises: Record<number, Exercise>;
   exerciseSets: Record<number, ExerciseSet[]>;
-  exerciseOptionsMenuOpenName: string;
-  setExerciseOptionsMenuOpenName: React.Dispatch<React.SetStateAction<string>>;
+  exerciseOptionsMenuOpenId: number | null;
+  setExerciseOptionsMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
   selectedMealTypes: string[];
   setAllItemsSelected: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedMealTypes: React.Dispatch<React.SetStateAction<string[]>>;
@@ -32,7 +32,7 @@ type ExerciseSectionProps = {
   viewExerciseMenuOpenId: number | null;
   setViewExerciseMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
   setEditingWorkoutLogExerciseId: React.Dispatch<React.SetStateAction<number | null>>;
-  exerciseOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
+  exerciseOptionsMenuRefs: React.RefObject<Record<number, HTMLDivElement | null>>;
   handleDeleteWorkoutLogExercises: (ids: number[]) => Promise<void>;
 };
 
@@ -44,8 +44,8 @@ export default function ExerciseSection({
   workoutLogExercises,
   exercises,
   exerciseSets,
-  exerciseOptionsMenuOpenName,
-  setExerciseOptionsMenuOpenName,
+  exerciseOptionsMenuOpenId,
+  setExerciseOptionsMenuOpenId,
   selectedMealTypes,
   setAllItemsSelected,
   setSelectedMealTypes,
@@ -120,8 +120,8 @@ export default function ExerciseSection({
     >
       <ExerciseSectionHeader
         workoutLogExercise={workoutLogExercise}
-        exerciseOptionsMenuOpenName={exerciseOptionsMenuOpenName}
-        setExerciseOptionsMenuOpenName={setExerciseOptionsMenuOpenName}
+        exerciseOptionsMenuOpenId={exerciseOptionsMenuOpenId}
+        setExerciseOptionsMenuOpenId={setExerciseOptionsMenuOpenId}
         exerciseOptionsMenuRefs={exerciseOptionsMenuRefs}
         workoutLogs={workoutLogs}
         workoutLogExercises={workoutLogExercises}

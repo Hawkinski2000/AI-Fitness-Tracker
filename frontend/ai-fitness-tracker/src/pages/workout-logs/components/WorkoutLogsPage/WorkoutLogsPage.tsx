@@ -49,8 +49,8 @@ export default function WorkoutLogsPage() {
   const [workoutLogOptionsMenuOpen, setWorkoutLogOptionsMenuOpen] = useState<boolean>(false);
   const workoutLogOptionsMenuRef = useRef<HTMLDivElement | null>(null);
 
-  const [exerciseOptionsMenuOpenName, setExerciseOptionsMenuOpenName] = useState<string>(''); // Switch to workout log exercise id!
-  const exerciseOptionsMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [exerciseOptionsMenuOpenId, setExerciseOptionsMenuOpenId] = useState<number | null>(null);
+  const exerciseOptionsMenuRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
   const [mealFoodOptionsMenuOpenId, setMealFoodOptionsMenuOpenId] = useState<number | null>(null);
   const mealFoodOptionsMenuRefs = useRef<Record<number, HTMLDivElement | null>>({});
@@ -118,8 +118,8 @@ export default function WorkoutLogsPage() {
     setAccountMenuOpen,
     workoutLogOptionsMenuOpen,
     setWorkoutLogOptionsMenuOpen,
-    exerciseOptionsMenuOpenName,
-    setExerciseOptionsMenuOpenName,
+    exerciseOptionsMenuOpenId,
+    setExerciseOptionsMenuOpenId,
     mealFoodOptionsMenuOpenId,
     setMealFoodOptionsMenuOpenId,
     exercisesMenuOpen,
@@ -317,8 +317,8 @@ export default function WorkoutLogsPage() {
                       workoutLogExercises={workoutLogExercises}
                       exercises={exercises}
                       exerciseSets={exerciseSets}
-                      exerciseOptionsMenuOpenName={exerciseOptionsMenuOpenName}
-                      setExerciseOptionsMenuOpenName={setExerciseOptionsMenuOpenName}
+                      exerciseOptionsMenuOpenId={exerciseOptionsMenuOpenId}
+                      setExerciseOptionsMenuOpenId={setExerciseOptionsMenuOpenId}
                       setAllItemsSelected={setAllItemsSelected}
                       selectedMealTypes={selectedMealTypes}
                       setSelectedMealTypes={setSelectedMealTypes}
