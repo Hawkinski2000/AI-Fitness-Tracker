@@ -123,10 +123,28 @@ export default function WorkoutLogOptionsMenu({
         className="exercise-options-menu-button exercise-options-delete-button"
         onClick={(e) => {
           e.stopPropagation();
-          handleDeleteWorkoutLogExercises(selectedWorkoutLogExerciseIds);
+
+          if (!selectingWorkoutLogExercises) {
+            if (!currentWorkoutLogDate) {
+              return;
+            }
+            const dateKey = getDateKey(currentWorkoutLogDate);
+            if (!dateKey) {
+              return;
+            }
+            const currentWorkoutLogId = workoutLogs[dateKey].id;
+            const currentWorkoutLogExercises = workoutLogExercises[currentWorkoutLogId];
+            const workoutLogExerciseIds = currentWorkoutLogExercises.map(
+              (workoutLogExercise: WorkoutLogExercise) => workoutLogExercise.id
+            );
+            handleDeleteWorkoutLogExercises(workoutLogExerciseIds);
+          } else {
+            handleDeleteWorkoutLogExercises(selectedWorkoutLogExerciseIds);
+            setSelectedWorkoutLogExerciseIds([]);
+            setSelectingWorkoutLogExercises(false);
+          }
+          
           setWorkoutLogOptionsMenuOpen(false);
-          setSelectedWorkoutLogExerciseIds([]);
-          setSelectingWorkoutLogExercises(false);
         }}
       >
         <img className="button-link-image" src={deleteIcon} />
