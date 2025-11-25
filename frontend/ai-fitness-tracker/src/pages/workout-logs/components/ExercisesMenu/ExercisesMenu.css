@@ -132,6 +132,14 @@
   background-color: #1e1e3f;
 }
 
+.exercises-menu-results-exercise-label {
+  margin: 0;
+  color: #8085a6;
+  font-size: 12px;
+  text-align: center;
+  user-select: text;
+}
+
 .foods-menu-add-button {
   display: flex;
   height: 2rem;

@@ -137,6 +137,7 @@ export default function ExercisesMenu({
                 >
                   <div className="meal-log-food-section">
                     <p className="meal-log-food-text">{exercise.name}</p>
+                    <p className="exercises-menu-results-exercise-label">{exercise.body_part}</p>
                   </div>
                 </div>
               )
