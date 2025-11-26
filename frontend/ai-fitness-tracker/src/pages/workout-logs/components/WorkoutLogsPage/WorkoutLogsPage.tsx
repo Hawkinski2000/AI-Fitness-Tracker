@@ -57,7 +57,6 @@ export default function WorkoutLogsPage() {
 
   const [selectingWorkoutLogExercises, setSelectingWorkoutLogExercises] = useState<boolean>(false);
   const [allItemsSelected, setAllItemsSelected] = useState<boolean>(false);
-  const [selectedMealTypes, setSelectedMealTypes] = useState<string[]>([]);
   const [selectedWorkoutLogExerciseIds, setSelectedWorkoutLogExerciseIds] = useState<number[]>([]);
   
   const [calendarOpenType, setCalendarOpenType] = useState<string>('');
@@ -236,7 +235,6 @@ export default function WorkoutLogsPage() {
                 selectingWorkoutLogExercises={selectingWorkoutLogExercises}
                 setSelectingWorkoutLogExercises={setSelectingWorkoutLogExercises}
                 setAllItemsSelected={setAllItemsSelected}
-                setSelectedMealTypes={setSelectedMealTypes}
                 selectedWorkoutLogExerciseIds={selectedWorkoutLogExerciseIds}
                 setSelectedWorkoutLogExerciseIds={setSelectedWorkoutLogExerciseIds}
                 workoutLogs={workoutLogs}
@@ -320,8 +318,6 @@ export default function WorkoutLogsPage() {
                       exerciseOptionsMenuOpenId={exerciseOptionsMenuOpenId}
                       setExerciseOptionsMenuOpenId={setExerciseOptionsMenuOpenId}
                       setAllItemsSelected={setAllItemsSelected}
-                      selectedMealTypes={selectedMealTypes}
-                      setSelectedMealTypes={setSelectedMealTypes}
                       selectedWorkoutLogExerciseIds={selectedWorkoutLogExerciseIds}
                       setSelectedWorkoutLogExerciseIds={setSelectedWorkoutLogExerciseIds}
                       selectingWorkoutLogExercises={selectingWorkoutLogExercises}

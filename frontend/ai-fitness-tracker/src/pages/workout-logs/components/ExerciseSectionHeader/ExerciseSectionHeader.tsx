@@ -7,8 +7,8 @@ import {
 import type { Value } from "react-calendar/dist/shared/types.js";
 import { capitalizeFirstLetter } from "../../../../utils/app";
 import dotsIcon from '../../../../assets/dots-icon.svg';
-import boxIcon from '../../../meal-logs/components/MealLogsPage/assets/box-icon.svg';
-import checkBoxIcon from '../../../meal-logs/components/MealLogsPage/assets/check-box-2-icon.svg';
+import boxIcon from '../../../../assets/box-icon.svg';
+import checkBoxIcon from '../../../../assets/check-box-2-icon.svg';
 import './ExerciseSectionHeader.css';
 
 
@@ -22,8 +22,6 @@ type ExerciseSectionHeaderProps = {
   exercises: Record<number, Exercise>;
   currentWorkoutLogDate: Value;
   setAllItemsSelected: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedMealTypes: string[];
-  setSelectedMealTypes: React.Dispatch<React.SetStateAction<string[]>>;
   selectedWorkoutLogExerciseIds: number[];
   setSelectedWorkoutLogExerciseIds: React.Dispatch<React.SetStateAction<number[]>>;
   selectingWorkoutLogExercises: boolean;

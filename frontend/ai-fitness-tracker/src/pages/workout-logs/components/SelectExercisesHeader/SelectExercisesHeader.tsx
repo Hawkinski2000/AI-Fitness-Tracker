@@ -3,8 +3,8 @@ import { type WorkoutLog, type WorkoutLogExercise } from '../../types/workout-lo
 import { type Value } from 'react-calendar/dist/shared/types.js';
 import { getDateKey } from '../../../../utils/dates';
 import closeIcon from '../../../../assets/close-icon.svg';
-import boxIcon from '../../../meal-logs/components/MealLogsPage/assets/box-icon.svg';
-import checkBoxIcon from '../../../meal-logs/components/MealLogsPage/assets/check-box-2-icon.svg';
+import boxIcon from '../../../../assets/box-icon.svg';
+import checkBoxIcon from '../../../../assets/check-box-2-icon.svg';
 import './SelectExercisesHeader.css';
 
 

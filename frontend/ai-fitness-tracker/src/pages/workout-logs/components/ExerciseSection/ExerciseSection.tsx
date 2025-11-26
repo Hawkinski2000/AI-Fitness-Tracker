@@ -21,9 +21,7 @@ type ExerciseSectionProps = {
   exerciseSets: Record<number, ExerciseSet[]>;
   exerciseOptionsMenuOpenId: number | null;
   setExerciseOptionsMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
-  selectedMealTypes: string[];
   setAllItemsSelected: React.Dispatch<React.SetStateAction<boolean>>;
-  setSelectedMealTypes: React.Dispatch<React.SetStateAction<string[]>>;
   selectedWorkoutLogExerciseIds: number[];
   setSelectedWorkoutLogExerciseIds: React.Dispatch<React.SetStateAction<number[]>>;
   selectingWorkoutLogExercises: boolean;
@@ -46,9 +44,7 @@ export default function ExerciseSection({
   exerciseSets,
   exerciseOptionsMenuOpenId,
   setExerciseOptionsMenuOpenId,
-  selectedMealTypes,
   setAllItemsSelected,
-  setSelectedMealTypes,
   selectedWorkoutLogExerciseIds,
   setSelectedWorkoutLogExerciseIds,
   selectingWorkoutLogExercises,
@@ -128,8 +124,6 @@ export default function ExerciseSection({
         exercises={exercises}
         currentWorkoutLogDate={currentWorkoutLogDate}
         setAllItemsSelected={setAllItemsSelected}
-        selectedMealTypes={selectedMealTypes}
-        setSelectedMealTypes={setSelectedMealTypes}
         selectedWorkoutLogExerciseIds={selectedWorkoutLogExerciseIds}
         setSelectedWorkoutLogExerciseIds={setSelectedWorkoutLogExerciseIds}
         selectingWorkoutLogExercises={selectingWorkoutLogExercises}

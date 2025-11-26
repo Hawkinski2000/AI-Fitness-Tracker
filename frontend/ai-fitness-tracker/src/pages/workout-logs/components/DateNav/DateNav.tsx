@@ -30,7 +30,6 @@ type DateNavProps = {
   selectingWorkoutLogExercises: boolean;
   setSelectingWorkoutLogExercises: React.Dispatch<React.SetStateAction<boolean>>;
   setAllItemsSelected: React.Dispatch<React.SetStateAction<boolean>>;
-  setSelectedMealTypes: React.Dispatch<React.SetStateAction<string[]>>;
   selectedWorkoutLogExerciseIds: number[];
   setSelectedWorkoutLogExerciseIds: React.Dispatch<React.SetStateAction<number[]>>;
   workoutLogs: Record<string, WorkoutLog>;
@@ -61,7 +60,6 @@ export default function DateNav({
   selectingWorkoutLogExercises,
   setSelectingWorkoutLogExercises,
   setAllItemsSelected,
-  setSelectedMealTypes,
   selectedWorkoutLogExerciseIds,
   setSelectedWorkoutLogExerciseIds,
   workoutLogs,
@@ -81,7 +79,6 @@ export default function DateNav({
             handleChangeDate('previous');
             setSelectingWorkoutLogExercises(false);
             setAllItemsSelected(false);
-            setSelectedMealTypes([]);
             setSelectedWorkoutLogExerciseIds([]);
           }}
         >
@@ -107,7 +104,6 @@ export default function DateNav({
             handleChangeDate('next');
             setSelectingWorkoutLogExercises(false);
             setAllItemsSelected(false);
-            setSelectedMealTypes([]);
             setSelectedWorkoutLogExerciseIds([]);
           }}
         >
