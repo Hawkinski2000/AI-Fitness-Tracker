@@ -26,18 +26,18 @@ const useWorkoutLogsDate = (
   const { accessToken, setAccessToken } = useAuth();
 
 
-  const getDateLabel = useCallback((currentMealLogDate: Value, today: Value) => {
-    if (!currentMealLogDate || !today) {
+  const getDateLabel = useCallback((currentWorkoutLogDate: Value, today: Value) => {
+    if (!currentWorkoutLogDate || !today) {
       return "";
     }
     
-    let mealLogDate: Value;
-    if (Array.isArray(currentMealLogDate)) {
-      mealLogDate = currentMealLogDate[0];
+    let workoutLogDate: Value;
+    if (Array.isArray(currentWorkoutLogDate)) {
+      workoutLogDate = currentWorkoutLogDate[0];
     } else {
-      mealLogDate = currentMealLogDate;
+      workoutLogDate = currentWorkoutLogDate;
     }
-    if (!mealLogDate) {
+    if (!workoutLogDate) {
       return;
     }
 
@@ -51,7 +51,7 @@ const useWorkoutLogsDate = (
       return;
     }
 
-    const differenceTime = mealLogDate.getTime() - todayDate.getTime();
+    const differenceTime = workoutLogDate.getTime() - todayDate.getTime();
     const differenceInDays = Math.round(differenceTime / (1000 * 60 * 60 * 24));
     if (differenceInDays === 0) {
       return 'Today';
@@ -60,9 +60,9 @@ const useWorkoutLogsDate = (
     } else if (differenceInDays === -1) {
       return 'Yesterday';
     }
-    const weekday = mealLogDate.toLocaleDateString('en-US', { weekday: 'long' });
-    const month = mealLogDate.toLocaleDateString('en-US', { month: 'short' });
-    const day = mealLogDate.toLocaleDateString('en-US', { day: 'numeric' });
+    const weekday = workoutLogDate.toLocaleDateString('en-US', { weekday: 'long' });
+    const month = workoutLogDate.toLocaleDateString('en-US', { month: 'short' });
+    const day = workoutLogDate.toLocaleDateString('en-US', { day: 'numeric' });
     return `${weekday}, ${month} ${day}`;
   }, []);
 

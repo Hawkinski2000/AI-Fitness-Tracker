@@ -40,7 +40,7 @@ type MealSectionProps = {
   setServingSize: React.Dispatch<React.SetStateAction<number | null>>;
   setServingSizeUnit: React.Dispatch<React.SetStateAction<string>>;
   setFoodSearch: React.Dispatch<React.SetStateAction<string>>;
-  setFoodMenuInputFocused: React.Dispatch<React.SetStateAction<boolean>>;
+  setFoodsMenuInputFocused: React.Dispatch<React.SetStateAction<boolean>>;
   mealOptionsMenuRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
   mealFoodOptionsMenuRefs: React.RefObject<Record<number, HTMLDivElement | null>>;
   handleDeleteMealLogFoods: () => Promise<void>;
@@ -76,7 +76,7 @@ export default function MealSection({
   setServingSize,
   setServingSizeUnit,
   setFoodSearch,
-  setFoodMenuInputFocused,
+  setFoodsMenuInputFocused,
   mealOptionsMenuRefs,
   mealFoodOptionsMenuRefs,
   handleDeleteMealLogFoods,
@@ -136,7 +136,7 @@ export default function MealSection({
         <AddFoodButton
           mealType={mealType}
           setFoodSearch={setFoodSearch}
-          setFoodMenuInputFocused={setFoodMenuInputFocused}
+          setFoodsMenuInputFocused={setFoodsMenuInputFocused}
           editingMealLogFoodId={editingMealLogFoodId}
           setEditingMealLogFoodId={setEditingMealLogFoodId}
           setFoodsMenuOpenMealType={setFoodsMenuOpenMealType}

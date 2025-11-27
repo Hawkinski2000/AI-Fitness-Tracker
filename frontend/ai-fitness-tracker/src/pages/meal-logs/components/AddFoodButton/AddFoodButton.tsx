@@ -4,7 +4,7 @@ import './AddFoodButton.css';
 type AddFoodButtonProps = {
   mealType: string;
   setFoodSearch: React.Dispatch<React.SetStateAction<string>>;
-  setFoodMenuInputFocused: React.Dispatch<React.SetStateAction<boolean>>;
+  setFoodsMenuInputFocused: React.Dispatch<React.SetStateAction<boolean>>;
   editingMealLogFoodId: number | null;
   setEditingMealLogFoodId: React.Dispatch<React.SetStateAction<number | null>>;
   setFoodsMenuOpenMealType: React.Dispatch<React.SetStateAction<string>>;
@@ -15,7 +15,7 @@ type AddFoodButtonProps = {
 export default function AddFoodButton({
   mealType,
   setFoodSearch,
-  setFoodMenuInputFocused,
+  setFoodsMenuInputFocused,
   editingMealLogFoodId,
   setEditingMealLogFoodId,
   setFoodsMenuOpenMealType,
@@ -27,7 +27,7 @@ export default function AddFoodButton({
       onClick={(e) => {
         e.stopPropagation();
         setFoodSearch('');
-        setFoodMenuInputFocused(false);
+        setFoodsMenuInputFocused(false);
         if (!editingMealLogFoodId) {
           setFoodsMenuOpenMealType((prev) => (prev === mealType ? '' : mealType));
         }

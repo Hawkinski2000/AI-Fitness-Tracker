@@ -87,7 +87,7 @@ export default function MealLogsPage() {
   const [foodSearch, setFoodSearch] = useState<string>('');
   const searchTimeoutRef = useRef<number | null>(null);
   const [isSearching, setIsSearching] = useState(false);
-  const [foodMenuInputFocused, setFoodMenuInputFocused] = useState<boolean>(false);
+  const [foodsMenuInputFocused, setFoodsMenuInputFocused] = useState<boolean>(false);
   const [foodSearchResults, setFoodSearchResults] = useState<Food[]>([]);
 
   const [totalPages, setTotalPages] = useState<number | null>(null);
@@ -140,7 +140,7 @@ export default function MealLogsPage() {
     foodsMenuOpenMealType,
     setFoodsMenuOpenMealType,
     setFoodSearch,
-    setFoodMenuInputFocused,
+    setFoodsMenuInputFocused,
     setEditingMealLogFoodId,
     setViewFoodMenuOpenId,
     selectMealMenuOpenType,
@@ -315,8 +315,8 @@ export default function MealLogsPage() {
                   foodsMenuOpenMealType={foodsMenuOpenMealType}
                   setFoodsMenuOpenMealType={setFoodsMenuOpenMealType}
                   foodSearch={foodSearch}
-                  foodMenuInputFocused={foodMenuInputFocused}
-                  setFoodMenuInputFocused={setFoodMenuInputFocused}
+                  foodsMenuInputFocused={foodsMenuInputFocused}
+                  setFoodsMenuInputFocused={setFoodsMenuInputFocused}
                   isSearching={isSearching}
                   foodSearchResults={foodSearchResults}
                   setNumServings={setNumServings}
@@ -373,7 +373,7 @@ export default function MealLogsPage() {
                       setServingSize={setServingSize}
                       setServingSizeUnit={setServingSizeUnit}
                       setFoodSearch={setFoodSearch}
-                      setFoodMenuInputFocused={setFoodMenuInputFocused}
+                      setFoodsMenuInputFocused={setFoodsMenuInputFocused}
                       mealOptionsMenuRefs={mealOptionsMenuRefs}
                       mealFoodOptionsMenuRefs={mealFoodOptionsMenuRefs}
                       handleDeleteMealLogFoods={handleDeleteMealLogFoods}

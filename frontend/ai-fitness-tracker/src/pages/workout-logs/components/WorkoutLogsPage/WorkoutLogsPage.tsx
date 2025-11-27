@@ -52,9 +52,6 @@ export default function WorkoutLogsPage() {
   const [exerciseOptionsMenuOpenId, setExerciseOptionsMenuOpenId] = useState<number | null>(null);
   const exerciseOptionsMenuRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
-  const [mealFoodOptionsMenuOpenId, setMealFoodOptionsMenuOpenId] = useState<number | null>(null);
-  const mealFoodOptionsMenuRefs = useRef<Record<number, HTMLDivElement | null>>({});
-
   const [selectingWorkoutLogExercises, setSelectingWorkoutLogExercises] = useState<boolean>(false);
   const [allItemsSelected, setAllItemsSelected] = useState<boolean>(false);
   const [selectedWorkoutLogExerciseIds, setSelectedWorkoutLogExerciseIds] = useState<number[]>([]);
@@ -66,12 +63,12 @@ export default function WorkoutLogsPage() {
 // ---------------------------------------------------------------------------
 
   const [exercisesMenuOpen, setExercisesMenuOpen] = useState<boolean>(false);
-  const foodsMenuRef = useRef<HTMLDivElement | null>(null);
+  const exercisesMenuRef = useRef<HTMLDivElement | null>(null);
 
   const [exerciseSearch, setExerciseSearch] = useState<string>('');
   const searchTimeoutRef = useRef<number | null>(null);
   const [isSearching, setIsSearching] = useState(false);
-  const [foodMenuInputFocused, setFoodMenuInputFocused] = useState<boolean>(false);
+  const [exercisesMenuInputFocused, setExercisesMenuInputFocused] = useState<boolean>(false);
   const [exerciseSearchResults, setExerciseSearchResults] = useState<Exercise[]>([]);
 
   const [totalPages, setTotalPages] = useState<number | null>(null);
@@ -82,12 +79,6 @@ export default function WorkoutLogsPage() {
   const [viewExerciseMenuOpenId, setViewExerciseMenuOpenId] = useState<number | null>(null);
 
   const [editingWorkoutLogExerciseId, setEditingWorkoutLogExerciseId] = useState<number | null>(null);
-
-  const [selectMealMenuOpenType, setSelectMealMenuOpenType] = useState<string>('');
-  const selectMealMenuRef = useRef<HTMLDivElement | null>(null);
-
-  const [selectServingSizeMenuOpen, setSelectServingSizeMenuOpen] = useState<boolean>(false);
-  const selectServingSizeMenuRef = useRef<HTMLDivElement | null>(null);
 
   const [selectedExerciseSetId, setSelectedExerciseSetId] = useState<number | null>(null);
 
@@ -119,20 +110,14 @@ export default function WorkoutLogsPage() {
     setWorkoutLogOptionsMenuOpen,
     exerciseOptionsMenuOpenId,
     setExerciseOptionsMenuOpenId,
-    mealFoodOptionsMenuOpenId,
-    setMealFoodOptionsMenuOpenId,
     exercisesMenuOpen,
     setExercisesMenuOpen,
     setExerciseSearch,
-    setFoodMenuInputFocused,
+    setExercisesMenuInputFocused,
     setEditingWorkoutLogExerciseId,
     setViewExerciseMenuOpenId,
     selectedExerciseSetId,
     setSelectedExerciseSetId,
-    selectMealMenuOpenType,
-    setSelectMealMenuOpenType,
-    selectServingSizeMenuOpen,
-    setSelectServingSizeMenuOpen,
     calendarOpenType,
     setCalendarOpenType,
     setCalendarDate,
@@ -140,10 +125,6 @@ export default function WorkoutLogsPage() {
     accountMenuRef,
     workoutLogOptionsMenuRef,
     exerciseOptionsMenuRefs,
-    mealFoodOptionsMenuRefs,
-    foodsMenuRef,
-    selectMealMenuRef,
-    selectServingSizeMenuRef,
     calendarRef
   );
 
@@ -202,7 +183,7 @@ export default function WorkoutLogsPage() {
 
   return (
     <>
-      <div className='meal-logs-page'>
+      <div className='workout-logs-page'>
         <Header
           isRemovingTokens={null}
           tokensRemaining={tokensRemaining}
@@ -272,7 +253,7 @@ export default function WorkoutLogsPage() {
                 selectedExerciseSetId={selectedExerciseSetId}
                 setSelectedExerciseSetId={setSelectedExerciseSetId}
                 exerciseSearchResults={exerciseSearchResults}
-                foodsMenuRef={foodsMenuRef}
+                exercisesMenuRef={exercisesMenuRef}
                 handleAddExercise={handleAddExercise}
                 handleAddExerciseSet={handleAddExerciseSet}
                 handleUpdateExerciseSet={handleUpdateExerciseSet}
@@ -284,15 +265,15 @@ export default function WorkoutLogsPage() {
                   exercisesMenuOpen={exercisesMenuOpen}
                   setExercisesMenuOpen={setExercisesMenuOpen}
                   exerciseSearch={exerciseSearch}
-                  foodMenuInputFocused={foodMenuInputFocused}
-                  setFoodMenuInputFocused={setFoodMenuInputFocused}
+                  exercisesMenuInputFocused={exercisesMenuInputFocused}
+                  setExercisesMenuInputFocused={setExercisesMenuInputFocused}
                   isSearching={isSearching}
                   exerciseSearchResults={exerciseSearchResults}
                   setViewExerciseMenuOpenId={setViewExerciseMenuOpenId}
                   totalPages={totalPages}
                   currentPageNumber={currentPageNumber}
                   setCurrentPageNumber={setCurrentPageNumber}
-                  foodsMenuRef={foodsMenuRef}
+                  exercisesMenuRef={exercisesMenuRef}
                   searchTimeoutRef={searchTimeoutRef}
                   updateExerciseSearch={updateExerciseSearch}
                   handleExerciseSearch={handleExerciseSearch}

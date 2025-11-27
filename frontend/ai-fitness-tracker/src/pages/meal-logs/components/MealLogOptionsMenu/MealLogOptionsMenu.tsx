@@ -1,7 +1,7 @@
 import { type MealLog, type MealLogFood } from '../../types/meal-logs';
 import type { Value } from 'react-calendar/dist/shared/types.js';
 import { getDateKey } from '../../../../utils/dates';
-import checkBoxIcon from '../../../meal-logs/components/MealLogsPage/assets/check-box-icon.svg';
+import checkBoxIcon from '../../../../assets/check-box-icon.svg';
 import copyIcon from '../../../../assets/copy-icon.svg';
 import moveIcon from '../../../../assets/move-icon.svg';
 import deleteIcon from '../../../../assets/delete-icon.svg';

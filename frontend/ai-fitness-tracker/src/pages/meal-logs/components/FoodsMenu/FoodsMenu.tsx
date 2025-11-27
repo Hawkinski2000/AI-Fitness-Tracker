@@ -11,8 +11,8 @@ type FoodsMenuProps = {
   foodsMenuOpenMealType: string;
   setFoodsMenuOpenMealType: React.Dispatch<React.SetStateAction<string>>;
   foodSearch: string;
-  foodMenuInputFocused: boolean;
-  setFoodMenuInputFocused: React.Dispatch<React.SetStateAction<boolean>>;
+  foodsMenuInputFocused: boolean;
+  setFoodsMenuInputFocused: React.Dispatch<React.SetStateAction<boolean>>;
   isSearching: boolean;
   foodSearchResults: Food[];
   setNumServings: React.Dispatch<React.SetStateAction<number | null>>;
@@ -40,8 +40,8 @@ export default function FoodsMenu({
   foodsMenuOpenMealType,
   setFoodsMenuOpenMealType,
   foodSearch,
-  foodMenuInputFocused,
-  setFoodMenuInputFocused,
+  foodsMenuInputFocused,
+  setFoodsMenuInputFocused,
   isSearching,
   foodSearchResults,
   setNumServings,
@@ -103,8 +103,8 @@ export default function FoodsMenu({
             type='text'
             value={foodSearch}
             onChange={updateFoodSearch}
-            onFocus={() => setFoodMenuInputFocused(true)}
-            onBlur={() => setFoodMenuInputFocused(false)}
+            onFocus={() => setFoodsMenuInputFocused(true)}
+            onBlur={() => setFoodsMenuInputFocused(false)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 if (searchTimeoutRef.current) {
@@ -119,7 +119,7 @@ export default function FoodsMenu({
             className={
               `placeholder foods-menu-placeholder
               ${foodSearch ? 'float' : ''}
-              ${foodMenuInputFocused ? 'float focus' : ''}`
+              ${foodsMenuInputFocused ? 'float focus' : ''}`
             }
           >
             Search foods

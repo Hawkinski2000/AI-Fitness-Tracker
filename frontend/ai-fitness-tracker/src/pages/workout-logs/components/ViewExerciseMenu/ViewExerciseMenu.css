@@ -87,16 +87,6 @@
   opacity: 0.5;
 }
 
-.select-meal-button {
-  width: 5rem;
-}
-
-.select-meal-menu {
-  position: absolute;
-  top: 2.5rem;
-  right: 0;
-}
-
 .view-exercise-menu-input {
   width: 5rem;
   padding: 0.25rem;
@@ -107,16 +97,6 @@
 .view-exercise-menu-input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
-}
-
-.serving-size-button {
-  width: 5rem;
-}
-
-.select-serving-size-menu {
-  position: absolute;
-  top: 2.5rem;
-  right: 0;
 }
 
 .view-exercise-menu-section-container {

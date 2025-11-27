@@ -29,7 +29,7 @@ type ViewExerciseMenuProps = {
   selectedExerciseSetId: number | null;
   setSelectedExerciseSetId: React.Dispatch<React.SetStateAction<number | null>>;
   exerciseSearchResults: Exercise[];
-  foodsMenuRef: React.RefObject<HTMLDivElement | null>;
+  exercisesMenuRef: React.RefObject<HTMLDivElement | null>;
   handleAddExercise: (exerciseId: number) => Promise<WorkoutLogExercise | undefined>;
   handleAddExerciseSet: (exerciseSet: ExerciseSetCreate) => Promise<void>;
   handleUpdateExerciseSet: (exerciseSetId: number, exerciseSet: ExerciseSetCreate) => Promise<void>;
@@ -51,7 +51,7 @@ export default function ViewExerciseMenu({
   selectedExerciseSetId,
   setSelectedExerciseSetId,
   exerciseSearchResults,
-  foodsMenuRef,
+  exercisesMenuRef,
   handleAddExercise,
   handleAddExerciseSet,
   handleUpdateExerciseSet,
@@ -80,7 +80,7 @@ export default function ViewExerciseMenu({
   return (
     <div
       className={`exercises-menu ${viewExerciseMenuOpenId && 'exercises-menu-open'}`}
-      ref={foodsMenuRef}
+      ref={exercisesMenuRef}
     >
       <header className="view-exercise-menu-header">
         <div className="view-exercise-menu-section-content">

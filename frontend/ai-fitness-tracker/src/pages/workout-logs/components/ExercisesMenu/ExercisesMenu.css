@@ -53,7 +53,7 @@
   pointer-events: all;
 }
 
-.foods-menu-input-container {
+.exercises-menu-input-container {
   display: flex;
   justify-content: center;
   width: 100%;
@@ -61,38 +61,38 @@
   user-select: none;
 }
 
-.foods-menu-input-placeholder-container {
+.exercises-menu-input-placeholder-container {
   position: relative;
   width: 80%;
 }
 
-.foods-menu-input {
+.exercises-menu-input {
   background-color: #eceff4;
 }
 
-.foods-menu-placeholder {
+.exercises-menu-placeholder {
   background: none;
 }
 
-.foods-menu-placeholder.float {
+.exercises-menu-placeholder.float {
   color: #eceff4;
   top: -1.75rem;
   left: 1em;
   padding: 0 0.2em;
 }
 
-.foods-menu-placeholder.focus {
+.exercises-menu-placeholder.focus {
   color: #00ffcc;
 }
 
-.foods-menu-results-header {
+.exercises-menu-results-header {
   width: 80%;
   margin-bottom: 0.25rem;
   text-align: left;
   user-select: none;
 }
 
-.food-menu-results {
+.exercises-menu-results {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -102,7 +102,7 @@
   overflow-y: auto;
 }
 
-.food-menu-results-loading-container {
+.exercises-menu-results-loading-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -113,7 +113,7 @@
   left: 150px;
 }
 
-.foods-menu-results-food {
+.exercises-menu-results-exercise {
   display: flex;
   justify-content: space-between;
   width: calc(100% - 2rem);
@@ -128,8 +128,20 @@
   cursor: pointer;
   transition: all 0.25s;
 }
-.foods-menu-results-food:hover {
+.exercises-menu-results-exercise:hover {
   background-color: #1e1e3f;
+}
+
+.exercises-menu-results-exercise-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+}
+
+.exercises-menu-results-exercise-text {
+  text-align: left;
+  margin: 0;
 }
 
 .exercises-menu-results-exercise-label {
@@ -138,25 +150,6 @@
   font-size: 12px;
   text-align: center;
   user-select: text;
-}
-
-.foods-menu-add-button {
-  display: flex;
-  height: 2rem;
-  width: 2rem;
-  justify-content: center;
-  align-items: center;
-  border-radius: 20px;
-  padding: 0.5rem;
-  border: none;
-  background: none;
-  user-select: none;
-  cursor: pointer;
-  transition: all 0.25s;
-}
-.foods-menu-add-button:hover {
-  background-color: #8085a6;
-  transform: rotate(90deg);
 }
 
 .search-results-page-nav {
@@ -198,25 +191,25 @@
 }
 
 @media (max-width: 500px) {
-  .foods-menu {
+  .exercises-menu {
     width: calc(100vw - 50px);
     left: 50px;
   }
 
-  .foods-menu-open {
+  .exercises-menu-open {
     height: calc(100vh - 100px);
   }
 
-  .food-menu-results {
+  .exercises-menu-results {
     width: 95%;
   }
 
-  .foods-menu-close-button {
+  .exercises-menu-close-button {
     right: 0.5rem;
     top: calc(100px + 0.5rem);
   }
 
-  .food-menu-results-loading-container {
+  .exercises-menu-results-loading-container {
     height: calc(100vh - 150px);
     width: calc(100vw - 50px);
     top: 100px;

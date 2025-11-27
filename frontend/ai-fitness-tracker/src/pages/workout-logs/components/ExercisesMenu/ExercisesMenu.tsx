@@ -10,15 +10,15 @@ type ExercisesMenuProps = {
   exercisesMenuOpen: boolean;
   setExercisesMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   exerciseSearch: string;
-  foodMenuInputFocused: boolean;
-  setFoodMenuInputFocused: React.Dispatch<React.SetStateAction<boolean>>;
+  exercisesMenuInputFocused: boolean;
+  setExercisesMenuInputFocused: React.Dispatch<React.SetStateAction<boolean>>;
   isSearching: boolean;
   exerciseSearchResults: Exercise[];
   setViewExerciseMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
   totalPages: number | null;
   currentPageNumber: number | null;
   setCurrentPageNumber: React.Dispatch<React.SetStateAction<number | null>>;
-  foodsMenuRef: React.RefObject<HTMLDivElement | null>;
+  exercisesMenuRef: React.RefObject<HTMLDivElement | null>;
   searchTimeoutRef: React.RefObject<number | null>;
   updateExerciseSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleExerciseSearch: (search: string, pageNumber: number) => Promise<void>;
@@ -29,15 +29,15 @@ export default function ExercisesMenu({
   exercisesMenuOpen,
   setExercisesMenuOpen,
   exerciseSearch,
-  foodMenuInputFocused,
-  setFoodMenuInputFocused,
+  exercisesMenuInputFocused,
+  setExercisesMenuInputFocused,
   isSearching,
   exerciseSearchResults,
   setViewExerciseMenuOpenId,
   totalPages,
   currentPageNumber,
   setCurrentPageNumber,
-  foodsMenuRef,
+  exercisesMenuRef,
   searchTimeoutRef,
   updateExerciseSearch,
   handleExerciseSearch,
@@ -66,7 +66,7 @@ export default function ExercisesMenu({
   return (
     <div
       className={`exercises-menu ${exercisesMenuOpen && 'exercises-menu-open'}`}
-      ref={foodsMenuRef}
+      ref={exercisesMenuRef}
     >
 
       <button
@@ -79,15 +79,15 @@ export default function ExercisesMenu({
         <img className="button-link-image" src={closeIcon} />
       </button>
 
-      <div className="foods-menu-input-container">
-        <div className="foods-menu-input-placeholder-container">
+      <div className="exercises-menu-input-container">
+        <div className="exercises-menu-input-placeholder-container">
           <input
-            className='foods-menu-input'
+            className='exercises-menu-input'
             type='text'
             value={exerciseSearch}
             onChange={updateExerciseSearch}
-            onFocus={() => setFoodMenuInputFocused(true)}
-            onBlur={() => setFoodMenuInputFocused(false)}
+            onFocus={() => setExercisesMenuInputFocused(true)}
+            onBlur={() => setExercisesMenuInputFocused(false)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 if (searchTimeoutRef.current) {
@@ -100,9 +100,9 @@ export default function ExercisesMenu({
           />
           <span
             className={
-              `placeholder foods-menu-placeholder
+              `placeholder exercises-menu-placeholder
               ${exerciseSearch ? 'float' : ''}
-              ${foodMenuInputFocused ? 'float focus' : ''}`
+              ${exercisesMenuInputFocused ? 'float focus' : ''}`
             }
           >
             Search exercises
@@ -110,10 +110,10 @@ export default function ExercisesMenu({
         </div>
       </div>
       
-      <h3 className="foods-menu-results-header">Search Results</h3>
+      <h3 className="exercises-menu-results-header">Search Results</h3>
 
         {isSearching ? (
-          <div className="food-menu-results-loading-container">
+          <div className="exercises-menu-results-loading-container">
             <PropagateLoader
               size={20}
               cssOverride={{
@@ -124,19 +124,19 @@ export default function ExercisesMenu({
             />
           </div>
         ) : (
-          <div className="food-menu-results">
+          <div className="exercises-menu-results">
             {exerciseSearchResults.map((exercise: Exercise) => {
               return (
                 <div
                   key={exercise.id}
-                  className="foods-menu-results-food"
+                  className="exercises-menu-results-exercise"
                   onClick={(e) => {
                     e.stopPropagation();
                     setViewExerciseMenuOpenId(exercise.id);
                   }}
                 >
-                  <div className="meal-log-food-section">
-                    <p className="meal-log-food-text">{exercise.name}</p>
+                  <div className="exercises-menu-results-exercise-section">
+                    <p className="exercises-menu-results-exercise-text">{exercise.name}</p>
                     <p className="exercises-menu-results-exercise-label">{exercise.body_part}</p>
                   </div>
                 </div>

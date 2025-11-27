@@ -45,7 +45,7 @@ const useExerciseSearch = (
 
         const skip = (pageNumber - 1) * MAX_RESULTS_PER_PAGE;
 
-        const foodSearchObject = await getExercises(
+        const exerciseSearchObject = await getExercises(
           MAX_RESULTS_PER_PAGE,
           skip,
           search,
@@ -53,7 +53,7 @@ const useExerciseSearch = (
           token
         );
 
-        const numPages = Math.ceil(foodSearchObject.total_count / MAX_RESULTS_PER_PAGE);
+        const numPages = Math.ceil(exerciseSearchObject.total_count / MAX_RESULTS_PER_PAGE);
         setTotalPages(numPages);
         setCurrentPageNumber(pageNumber);
 

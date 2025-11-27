@@ -1,4 +1,4 @@
-.meal-logs-page {
+.workout-logs-page {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -121,12 +121,12 @@
 }
 
 @media (max-width: 500px) {
-  .meal-logs-page-main {
+  .workout-logs-page-main {
     margin-left: 50px;
     width: calc(100vw - 50px);
   }
 
-  .meals-container {
+  .exercises-container {
     width: calc(100vw - 50px);
   }
 }

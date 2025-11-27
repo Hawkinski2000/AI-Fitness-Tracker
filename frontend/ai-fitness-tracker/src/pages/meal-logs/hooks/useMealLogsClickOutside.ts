@@ -13,7 +13,7 @@ const useMealLogsClickOutside = (
   foodsMenuOpenMealType: string,
   setFoodsMenuOpenMealType: React.Dispatch<React.SetStateAction<string>>,
   setFoodSearch: React.Dispatch<React.SetStateAction<string>>,
-  setFoodMenuInputFocused: React.Dispatch<React.SetStateAction<boolean>>,
+  setFoodsMenuInputFocused: React.Dispatch<React.SetStateAction<boolean>>,
   setEditingMealLogFoodId: React.Dispatch<React.SetStateAction<number | null>>,
   setViewFoodMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>,
   selectMealMenuOpenType: string,
@@ -87,7 +87,7 @@ const useMealLogsClickOutside = (
       ) {
         setFoodsMenuOpenMealType('');
         setFoodSearch('');
-        setFoodMenuInputFocused(false);
+        setFoodsMenuInputFocused(false);
         setEditingMealLogFoodId(null);
       }
 
@@ -142,7 +142,7 @@ const useMealLogsClickOutside = (
     foodsMenuOpenMealType,
     setFoodsMenuOpenMealType,
     setFoodSearch,
-    setFoodMenuInputFocused,
+    setFoodsMenuInputFocused,
     setEditingMealLogFoodId,
     setViewFoodMenuOpenId,
     selectMealMenuOpenType,

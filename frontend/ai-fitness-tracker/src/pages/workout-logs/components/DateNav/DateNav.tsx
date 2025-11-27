@@ -16,7 +16,7 @@ type DateNavProps = {
   currentWorkoutLogDate: Value;
   today: Value;
   handleChangeDate: (direction: string) => Promise<void>;
-  getDateLabel: (currentMealLogDate: Value, today: Value) => string | undefined;
+  getDateLabel: (currentWorkoutLogDate: Value, today: Value) => string | undefined;
   calendarOpenType: string;
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>;
   calendarRef: React.RefObject<HTMLDivElement | null>;
