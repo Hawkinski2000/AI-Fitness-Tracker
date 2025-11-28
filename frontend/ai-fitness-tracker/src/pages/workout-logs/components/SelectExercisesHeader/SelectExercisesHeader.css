@@ -20,11 +20,11 @@
   border-bottom: 1px solid #2e2e5e;
 }
 
-.select-items-header-text {
+.select-exercises-header-text {
   margin: 0;
 }
 
-.select-items-header-section {
+.select-exercises-header-section {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -32,34 +32,28 @@
   gap: 0.5rem;
 }
 
-.select-items-header-close-button {
+.select-exercises-header-close-button {
   display: flex;
-  height: 0;
+  height: 2rem;
   width: 2rem;
   right: calc(50px + 0.75rem);
   top: calc(100px + 0.75rem);
   justify-content: center;
   align-items: center;
   border-radius: 20px;
-  padding: 0;
+  padding: 0.5rem;
   border: none;
   background: none;
   overflow: hidden;
   user-select: none;
-  pointer-events: none;
+  pointer-events: all;
   cursor: pointer;
   transition: background-color 0.25s,
               transform 0.25s;
 }
-.select-items-header-close-button:hover {
+.select-exercises-header-close-button:hover {
   background-color: #8085a6;
   transform: rotate(90deg);
-}
-
-.select-items-header-close-button {
-  height: 2rem;
-  padding: 0.5rem;
-  pointer-events: all;
 }
 
 .select-all-check-box {
@@ -67,7 +61,7 @@
 }
 
 @media (max-width: 500px) {
-  .select-items-header {
+  .select-exercises-header {
     width: calc(100vw - 50px);
   }
 }

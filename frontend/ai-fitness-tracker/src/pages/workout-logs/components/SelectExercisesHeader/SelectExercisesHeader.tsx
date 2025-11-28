@@ -68,9 +68,9 @@ export default function SelectExercisesHeader({
         ${selectingWorkoutLogExercises && 'select-exercises-header-open'}`
       }
     >
-      <div className='select-items-header-section'>
+      <div className='select-exercises-header-section'>
         <button
-          className='select-items-header-close-button'
+          className='select-exercises-header-close-button'
           onClick={() => {
             setSelectingWorkoutLogExercises(false);
             setAllItemsSelected(false);
@@ -80,7 +80,7 @@ export default function SelectExercisesHeader({
           <img className="button-link-image" src={closeIcon} />
         </button>
 
-        <p className='select-items-header-text'>
+        <p className='select-exercises-header-text'>
           {selectedWorkoutLogExerciseIds.length > 0
             ? `Selected ${selectedWorkoutLogExerciseIds.length}
               item${selectedWorkoutLogExerciseIds.length !== 1 ? 's' : ''}`
@@ -89,7 +89,7 @@ export default function SelectExercisesHeader({
         </p>
       </div>
 
-      <div className='select-items-header-section'>
+      <div className='select-exercises-header-section'>
         <div
           className="check-box select-all-check-box"
           onClick={() => {

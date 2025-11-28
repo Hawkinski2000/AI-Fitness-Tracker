@@ -33,6 +33,10 @@
   background-color: #2e2e5e;
 }
 
+.open-calendar-button {
+  width: fit-content;
+}
+
 .workout-log-options-button {
   display: flex;
   position: absolute;
@@ -74,5 +78,10 @@
 
   .date-nav {
     width: 70%;
+  }
+
+  .workout-log-add-button {
+    left: 1rem;
+    right: auto;
   }
 }
