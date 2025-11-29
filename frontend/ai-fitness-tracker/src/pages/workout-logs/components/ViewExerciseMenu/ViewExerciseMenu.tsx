@@ -62,7 +62,9 @@ export default function ViewExerciseMenu({
 
   const dateKey = getDateKey(currentWorkoutLogDate);
 
-  const currentExercise = editingWorkoutLogExerciseId && currentWorkoutLogDate && dateKey
+  const currentExercise = editingWorkoutLogExerciseId &&
+                          dateKey &&
+                          workoutLogs[dateKey]
     ? (
         exercises[
           workoutLogExercises[workoutLogs[dateKey].id]
