@@ -13,7 +13,7 @@ export default function CaloriesHeader({ foodCalories }: CaloriesHeaderProps) {
 
       <div className="calories-remaining-calculation">
         <div className="calories-remaining-section">
-          <p>3,500</p>
+          <p>2,000</p>
           <p className="calories-remaining-section-label">Goal</p>
         </div>
 

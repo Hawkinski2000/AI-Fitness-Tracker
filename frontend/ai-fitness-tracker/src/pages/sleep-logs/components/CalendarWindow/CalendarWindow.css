@@ -1,0 +1,119 @@
+.calendar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  height: 0;
+  width: 30rem;
+  padding: 0 1rem;
+  top: 50px;
+  left: 50%;
+  gap: 1rem;
+  transform: translateX(-50%);
+  overflow: hidden;
+  border-radius: 10px;
+  background-color: #2e2e5e;
+  pointer-events: none;
+  user-select: none;
+  transition: height 0.1s,
+              padding 0.1s;
+}
+
+.calendar-open {
+  height: fit-content;
+  padding: 1rem;
+  box-shadow: 0 5px 10px 5px rgba(0, 0, 0, 0.25);
+  pointer-events: all;
+}
+
+.react-calendar {
+  display: flex;
+  flex-direction: column;
+  width: 100% !important;
+  gap: 1rem;
+  background: none !important;
+  border: none !important;
+  font-family: inherit !important;
+}
+
+.react-calendar__navigation {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.react-calendar__tile,
+.react-calendar__navigation button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  border-radius: 5px;
+  padding: 0.5rem;
+  font-size: 18px;
+  font-family: inherit;
+  transition: background-color 0.25s;
+}
+.react-calendar__tile:hover,
+.react-calendar__navigation button:hover {
+  background-color: #8085a6 !important;
+}
+.react-calendar__tile:focus,
+.react-calendar__navigation button:focus {
+  background-color: #8085a6 !important;
+}
+
+.react-calendar__tile--active {
+  background-color: #8085a6 !important;
+}
+
+.react-calendar__tile--now {
+  background-color: #00ffcc !important;
+}
+
+.react-calendar__navigation button[disabled] {
+  background: none !important;
+}
+
+.calendar-confirmation-nav {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
+.calendar-confirmation-nav-button {
+  cursor: pointer;
+}
+
+@media (max-width: 500px) {
+  .calendar {
+    width: 17.5rem;
+    padding: 0 0.5;
+  }
+
+  .calendar-open {
+    padding: 0.5;
+  }
+
+  
+  .react-calendar__navigation {
+    gap: 0.5rem;
+  }
+
+  .react-calendar__tile,
+  .react-calendar__navigation button {
+    height: 2rem;
+    min-width: 2rem;
+    font-size: 14px;
+  }
+
+  .react-calendar__navigation button {
+    padding: 0.25rem;
+    font-size: 14px;
+  }
+
+  .react-calendar__navigation__label {
+    z-index: 1;
+  }
+}

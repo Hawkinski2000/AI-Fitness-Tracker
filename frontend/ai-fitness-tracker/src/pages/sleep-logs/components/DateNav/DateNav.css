@@ -1,0 +1,87 @@
+.date-nav-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  width: calc(100vw - 100px);
+  position: fixed;
+  top: 50px;
+  background-color: #0c0c1d;
+  border-bottom: 1px solid #2e2e5e;
+  z-index: 3;
+}
+
+.date-nav {
+  display: flex;
+  justify-content: space-between;
+  width: 50%;
+}
+
+.date-nav-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: none;
+  border: none;
+  border-radius: 10px;
+  padding: 0.5rem;
+  user-select: none;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.date-nav-button:hover {
+  background-color: #2e2e5e;
+}
+
+.open-calendar-button {
+  width: fit-content;
+}
+
+.workout-log-options-button {
+  display: flex;
+  position: absolute;
+  right: 1rem;
+  height: 2rem;
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.25s;
+}
+.workout-log-options-button:hover {
+  background-color: #2e2e5e;
+}
+
+.workout-log-add-button {
+  display: flex;
+  position: absolute;
+  right: 4rem;
+  height: 2rem;
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.25s;
+}
+.workout-log-add-button:hover {
+  background-color: #2e2e5e;
+}
+
+@media (max-width: 500px) {
+  .date-nav-container {
+    width: calc(100vw - 50px);
+  }
+
+  .date-nav {
+    width: 70%;
+  }
+
+  .workout-log-add-button {
+    left: 1rem;
+    right: auto;
+  }
+}
