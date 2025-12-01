@@ -13,8 +13,14 @@ def create_sleep_log(sleep_log: sleep_log.SleepLogCreate, user_id: int, db: Sess
     db.refresh(new_sleep_log)
     return new_sleep_log
 
-def get_sleep_logs(user_id: int, db: Session):
-    sleep_logs = db.query(SleepLog).filter(SleepLog.user_id == user_id).all()
+def get_sleep_logs(date: str, user_id: int, db: Session):
+    query = db.query(SleepLog).filter(SleepLog.user_id == user_id)
+
+    if date:
+        query = query.filter(SleepLog.log_date == date)
+
+    sleep_logs = query.all()
+
     return sleep_logs
 
 def get_sleep_log(id: int, user_id: int, db: Session):

@@ -1,5 +1,6 @@
 from fastapi import Response, status, APIRouter, Depends
 from sqlalchemy.orm import Session
+from typing import Optional
 from app.core.db import get_db
 from app.schemas import sleep_log, token
 from app.crud import sleep_logs as crud_sleep_logs
@@ -19,8 +20,10 @@ def create_sleep_log(sleep_log: sleep_log.SleepLogCreate,
 
 # Get all sleep logs
 @router.get("", response_model=list[sleep_log.SleepLogResponse])
-def get_sleep_logs(current_user: token.TokenData = Depends(get_current_user), db: Session = Depends(get_db)):
-    sleep_logs = crud_sleep_logs.get_sleep_logs(current_user.user_id, db)
+def get_sleep_logs(date: Optional[str] = None,
+                   current_user: token.TokenData = Depends(get_current_user),
+                   db: Session = Depends(get_db)):
+    sleep_logs = crud_sleep_logs.get_sleep_logs(date, current_user.user_id, db)
     return sleep_logs
 
 # Get a sleep log

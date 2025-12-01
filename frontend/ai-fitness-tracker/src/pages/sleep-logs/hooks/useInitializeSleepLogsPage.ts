@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
+import { type SleepLog } from "../types/sleep-logs";
 import { useNavigate } from 'react-router-dom';
 import { type UserType } from "../../../types/app";
 import { type Value } from "react-calendar/dist/shared/types.js";
 import { useAuth } from "../../../context/auth/useAuth";
 import { refreshAccessToken, getUserFromToken } from "../../../utils/auth";
+import { loadSleepLog } from "../../../utils/sleep-logs";
 
 
 const useInitializeSleepLogsPage = (
   setTokensRemaining: React.Dispatch<React.SetStateAction<number>>,
+  setSleepLogs: React.Dispatch<React.SetStateAction<Record<string, SleepLog>>>,
   setToday: React.Dispatch<React.SetStateAction<Value>>,
   setCurrentSleepLogDate: React.Dispatch<React.SetStateAction<Value>>
 ) => {
@@ -43,6 +46,12 @@ const useInitializeSleepLogsPage = (
         setToday(normalizedToday);
         setCurrentSleepLogDate(new Date(normalizedToday));
 
+        await loadSleepLog(
+          normalizedToday,
+          setSleepLogs,
+          token
+        )
+
       } catch (err) {
         console.error(err);
         setAccessToken(null);
@@ -58,6 +67,7 @@ const useInitializeSleepLogsPage = (
     setAccessToken,
     navigate,
     setTokensRemaining,
+    setSleepLogs,
     setToday,
     setCurrentSleepLogDate,
   ]);
