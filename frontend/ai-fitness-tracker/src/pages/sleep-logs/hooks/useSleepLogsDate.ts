@@ -1,13 +1,17 @@
 import { useCallback } from "react";
+import { type SleepLog } from "../types/sleep-logs";
 import { type Value } from 'react-calendar/dist/shared/types.js';
 import { useAuth } from "../../../context/auth/useAuth";
 import { refreshAccessToken, isTokenExpired } from "../../../utils/auth";
+import { loadSleepLog } from "../../../utils/sleep-logs";
 import { getDateKey, normalizeDate } from "../../../utils/dates";
 
 
 const useSleepLogsDate = (
   currentSleepLogDate: Value,
   setCurrentSleepLogDate: React.Dispatch<React.SetStateAction<Value>>,
+  sleepLogs: Record<string, SleepLog>,
+  setSleepLogs: React.Dispatch<React.SetStateAction<Record<string, SleepLog>>>,
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>,
   setCalendarDate: React.Dispatch<React.SetStateAction<Value>>
 ) => {
@@ -101,6 +105,16 @@ const useSleepLogsDate = (
       if (!dateKey) {
         return;
       }
+
+      if (sleepLogs[dateKey]) {
+        return;
+      }
+
+      await loadSleepLog(
+        normalizedDate,
+        setSleepLogs,
+        token
+      )
     
     } catch (err) {
       console.error(err);
@@ -111,6 +125,8 @@ const useSleepLogsDate = (
     setAccessToken,
     currentSleepLogDate,
     setCurrentSleepLogDate,
+    sleepLogs,
+    setSleepLogs
   ])
 
 // ---------------------------------------------------------------------------
@@ -151,6 +167,16 @@ const handleSetCalendarDate = useCallback(async (value: Value) => {
     if (!dateKey) {
       return;
     }
+
+    if (sleepLogs[dateKey]) {
+        return;
+      }
+
+    await loadSleepLog(
+      normalizedDate,
+      setSleepLogs,
+      token
+    )
     
   } catch (err) {
     console.error(err);
@@ -160,6 +186,8 @@ const handleSetCalendarDate = useCallback(async (value: Value) => {
     accessToken,
     setAccessToken,
     setCurrentSleepLogDate,
+    sleepLogs,
+    setSleepLogs,
     setCalendarOpenType,
     setCalendarDate
   ])
