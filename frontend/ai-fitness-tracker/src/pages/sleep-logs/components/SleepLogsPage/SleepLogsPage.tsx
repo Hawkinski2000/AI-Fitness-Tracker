@@ -1,13 +1,13 @@
 import { useState, useRef } from "react";
 import { type SleepLog } from "../../types/sleep-logs";
 import { type Value } from 'react-calendar/dist/shared/types.js';
-import { getDateKey } from '../../../../utils/dates';
 import useInitializeSleepLogsPage from "../../hooks/useInitializeSleepLogsPage";
 import useSleepLogsDate from "../../hooks/useSleepLogsDate";
 import LoadingScreen from "../../../../components/LoadingScreen/LoadingScreen";
 import Header from "../../../../components/Header/Header";
 import Sidebar from "../../../../components/Sidebar/Sidebar";
 import DateNav from "../DateNav/DateNav";
+import SleepLogSummary from "../SleepLogSummary/SleepLogSummary";
 import './SleepLogsPage.css';
 
 
@@ -31,11 +31,6 @@ export default function SleepLogsPage() {
   const [calendarOpenType, setCalendarOpenType] = useState<string>('');
   const calendarRef = useRef<HTMLDivElement | null>(null);
   const [calendarDate, setCalendarDate] = useState<Value>(new Date());
-
-// ---------------------------------------------------------------------------
-
-  const date = getDateKey(currentSleepLogDate);
-  const currentSleepLog = date && sleepLogs[date]
 
 // ---------------------------------------------------------------------------
 
@@ -93,16 +88,10 @@ export default function SleepLogsPage() {
                 handleSetCalendarDate={handleSetCalendarDate}
               />
 
-              {currentSleepLog &&
-                <div className="sleep-log">
-                  <p>id: {currentSleepLog.id}</p>
-                  <p>log date: {currentSleepLog.log_date}</p>
-                  <p>time to bed: {currentSleepLog.time_to_bed}</p>
-                  <p>time awake: {currentSleepLog.time_awake}</p>
-                  <p>duration: {currentSleepLog.duration}</p>
-                  <p>sleep score: {currentSleepLog.sleep_score}</p>
-                </div>
-              }
+              <SleepLogSummary
+                currentSleepLogDate={currentSleepLogDate}
+                sleepLogs={sleepLogs}
+              />
             </div>
           </main>
         </div>

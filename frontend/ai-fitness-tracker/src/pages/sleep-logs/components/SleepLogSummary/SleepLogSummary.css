@@ -1,0 +1,41 @@
+.sleep-log-summary {
+  margin-top: 75px;
+  background-color: #0c0c1d;
+  box-shadow: 0 5px 10px 5px rgba(0, 0, 0, 0.25);
+}
+
+.sleep-log-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  border-bottom: 1px solid #2e2e5e;
+}
+
+.sleep-log-section-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  width: 50%;
+}
+
+.sleep-log-text-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: fit-content;
+  width: fit-content;
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  border-radius: 5px;
+  color: #00ffcc;
+  font-size: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.sleep-log-text-button:hover {
+  background-color: #2e2e5e;
+}
