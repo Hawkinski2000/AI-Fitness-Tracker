@@ -7,6 +7,9 @@ import LoadingScreen from "../../../../components/LoadingScreen/LoadingScreen";
 import Header from "../../../../components/Header/Header";
 import Sidebar from "../../../../components/Sidebar/Sidebar";
 import DateNav from "../DateNav/DateNav";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { StaticTimePicker } from '@mui/x-date-pickers/StaticTimePicker';
 import SleepLogSummary from "../SleepLogSummary/SleepLogSummary";
 import './SleepLogsPage.css';
 
@@ -87,6 +90,20 @@ export default function SleepLogsPage() {
                 setCalendarDate={setCalendarDate}
                 handleSetCalendarDate={handleSetCalendarDate}
               />
+
+              <div className="edit-menu edit-menu-open">
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <StaticTimePicker
+                    slotProps={{
+                      layout: {
+                        sx: {
+                          backgroundColor: "#2e2e5e"
+                        }
+                      }
+                    }}
+                  />
+                </LocalizationProvider>
+              </div>
 
               <SleepLogSummary
                 currentSleepLogDate={currentSleepLogDate}
