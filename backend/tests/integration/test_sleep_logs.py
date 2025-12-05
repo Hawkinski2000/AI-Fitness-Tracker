@@ -64,7 +64,7 @@ def test_create_sleep_log(authorized_client, user, data, status_code):
     "data, status_code",
     [
         ({"log_date": datetime.now().isoformat(),
-          "time_to_bed": datetime.now().isoformat()},
+          "time_to_bed": []},
           422),
         ({"time_to_bed": datetime.now().isoformat(),
           "time_awake": datetime.now().isoformat()},
@@ -122,56 +122,47 @@ def test_sleep_log_not_found(authorized_client, sleep_logs, session):
 @pytest.mark.parametrize(
     "data, status_code",
     [
-        ({"log_date": datetime.now().isoformat(),
-          "time_to_bed": datetime.now().isoformat(),
+        ({"time_to_bed": datetime.now().isoformat(),
           "time_awake": datetime.now().isoformat()},
           200),
-        ({"log_date": datetime.now().isoformat(),
-          "time_to_bed": datetime.now().isoformat(),
+        ({"time_to_bed": datetime.now().isoformat(),
           "time_awake": datetime.now().isoformat(),
           "sleep_score": 100},
           200),
     ]
 )
 def test_update_sleep_log(authorized_client, sleep_logs, data, status_code):
-    res = authorized_client.put(f"/api/sleep-logs/{sleep_logs[0].id}", json=data)
+    res = authorized_client.patch(f"/api/sleep-logs/{sleep_logs[0].id}", json=data)
     assert res.status_code == status_code
 
 @pytest.mark.parametrize(
     "data, status_code",
     [
-        ({"log_date": datetime.now().isoformat(),
-          "time_to_bed": datetime.now().isoformat()},
-          422),
-        ({"time_to_bed": datetime.now().isoformat(),
-          "time_awake": datetime.now().isoformat()},
-          422),
+        ({"time_to_bed": []},
+          422)
     ]
 )
 def test_update_sleep_log_invalid(authorized_client, sleep_logs, data, status_code):
-    res = authorized_client.put(f"/api/sleep-logs/{sleep_logs[0].id}", json=data)
+    res = authorized_client.patch(f"/api/sleep-logs/{sleep_logs[0].id}", json=data)
     assert res.status_code == status_code
 
 def test_update_sleep_log_unauthorized(client, sleep_logs):
-    res = client.put(f"/api/sleep-logs/{sleep_logs[0].id}",
-                     json={"log_date": datetime.now().isoformat(),
-                           "time_to_bed": datetime.now().isoformat(),
+    res = client.patch(f"/api/sleep-logs/{sleep_logs[0].id}",
+                     json={"time_to_bed": datetime.now().isoformat(),
                            "time_awake": datetime.now().isoformat()})
     assert res.status_code == 401
 
 def test_update_sleep_log_not_owner(authorized_client, sleep_logs):
-    res = authorized_client.put(f"/api/sleep-logs/{sleep_logs[2].id}",
-                                json={"log_date": datetime.now().isoformat(),
-                                      "time_to_bed": datetime.now().isoformat(),
+    res = authorized_client.patch(f"/api/sleep-logs/{sleep_logs[2].id}",
+                                json={"time_to_bed": datetime.now().isoformat(),
                                       "time_awake": datetime.now().isoformat()})
     assert res.status_code == 404
 
 def test_update_sleep_log_not_found(authorized_client, sleep_logs, session):
     max_id = session.query(SleepLog.id).order_by(SleepLog.id.desc()).first()[0]
     non_existent_id = max_id + 1000
-    res = authorized_client.put(f"/api/sleep-logs/{non_existent_id}",
-                                json={"log_date": datetime.now().isoformat(),
-                                      "time_to_bed": datetime.now().isoformat(),
+    res = authorized_client.patch(f"/api/sleep-logs/{non_existent_id}",
+                                json={"time_to_bed": datetime.now().isoformat(),
                                       "time_awake": datetime.now().isoformat()})
     assert res.status_code == 404
 
