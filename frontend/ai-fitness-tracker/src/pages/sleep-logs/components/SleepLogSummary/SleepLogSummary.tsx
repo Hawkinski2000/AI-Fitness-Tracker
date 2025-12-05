@@ -1,3 +1,4 @@
+import dayjs, { Dayjs } from "dayjs";
 import { type SleepLog } from "../../types/sleep-logs";
 import { type Value } from 'react-calendar/dist/shared/types.js';
 import { getDateKey } from '../../../../utils/dates';
@@ -7,12 +8,16 @@ import './SleepLogSummary.css';
 type SleepLogSummaryProps = {
   currentSleepLogDate: Value;
   sleepLogs: Record<string, SleepLog>;
+  setEditMenuOpenType: React.Dispatch<React.SetStateAction<string>>;
+  setTime: React.Dispatch<React.SetStateAction<Dayjs | null>>;
 };
 
 
 export default function SleepLogSummary({
   currentSleepLogDate,
-  sleepLogs
+  sleepLogs,
+  setEditMenuOpenType,
+  setTime
 }: SleepLogSummaryProps) {
   const date = getDateKey(currentSleepLogDate);
   const currentSleepLog = date && sleepLogs[date]
@@ -23,8 +28,20 @@ export default function SleepLogSummary({
       <section className="sleep-log-section">
         <div className="sleep-log-section-content">
           <p>Time asleep</p>
-          <button className="sleep-log-text-button">
-            {currentSleepLog ? currentSleepLog.time_to_bed : 'Add'}
+          <button
+            className="sleep-log-text-button"
+            onClick={() => {
+              setEditMenuOpenType(prev => prev === 'timeAsleep' ? '' : 'timeAsleep');
+              if (currentSleepLog && currentSleepLog.time_to_bed) {
+                setTime(dayjs(currentSleepLog.time_to_bed));
+              }
+            }}
+          >
+            {
+              currentSleepLog && currentSleepLog.time_to_bed
+                ? dayjs(currentSleepLog.time_to_bed).format('hh:mm A')
+                : 'Add'
+            }
           </button>
         </div>
       </section>
@@ -32,8 +49,20 @@ export default function SleepLogSummary({
       <section className="sleep-log-section">
         <div className="sleep-log-section-content">
           <p>Time awake</p>
-          <button className="sleep-log-text-button">
-            {currentSleepLog ? currentSleepLog.time_awake : 'Add'}
+          <button
+            className="sleep-log-text-button"
+            onClick={() => {
+              setEditMenuOpenType(prev => prev === 'timeAwake' ? '' : 'timeAwake');
+              if (currentSleepLog && currentSleepLog.time_awake) {
+                setTime(dayjs(currentSleepLog.time_awake));
+              }
+            }}
+          >
+            {
+              currentSleepLog && currentSleepLog.time_awake
+                ? dayjs(currentSleepLog.time_awake).format('hh:mm A')
+                : 'Add'
+            }
           </button>
         </div>
       </section>
@@ -41,15 +70,20 @@ export default function SleepLogSummary({
       <section className="sleep-log-section">
         <div className="sleep-log-section-content">
           <p>Duration</p>
-          <p>{currentSleepLog ? currentSleepLog.duration : ''}</p>
+          <p>{currentSleepLog && currentSleepLog.duration ? currentSleepLog.duration : ''}</p>
         </div>
       </section>
       
       <section className="sleep-log-section">
         <div className="sleep-log-section-content">
           <p>Sleep score</p>
-          <button className="sleep-log-text-button">
-            {currentSleepLog ? currentSleepLog.sleep_score : 'Add'}
+          <button
+            className="sleep-log-text-button"
+            onClick={() =>
+              setEditMenuOpenType(prev => prev === 'sleepScore' ? '' : 'sleepScore')
+            }
+          >
+            {currentSleepLog && currentSleepLog.sleep_score ? currentSleepLog.sleep_score : 'Add'}
           </button>
         </div>
       </section>

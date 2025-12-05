@@ -1,0 +1,64 @@
+.edit-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  max-height: 0;
+  width: 30rem;
+  padding: 0 1rem;
+  top: 50px;
+  left: 50%;
+  gap: 1rem;
+  transform: translateX(-50%);
+  overflow: hidden;
+  border-radius: 10px;
+  background-color: #2e2e5e;
+  pointer-events: none;
+  user-select: none;
+  transition: max-height 0.1s,
+              padding 0.1s;
+}
+
+.edit-menu-open {
+  max-height: 450px;
+  padding: 1rem;
+  box-shadow: 0 5px 10px 5px rgba(0, 0, 0, 0.25);
+  pointer-events: all;
+}
+
+.edit-menu-confirmation-nav {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
+.edit-menu-text-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: fit-content;
+  width: fit-content;
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  border-radius: 5px;
+  color: #eceff4;
+  font-size: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.edit-menu-text-button:hover {
+  background-color: #8085a6;
+}
+
+@media (max-width: 500px) {
+  .edit-menu {
+    width: 17.5rem;
+    padding: 0 0.5;
+  }
+
+  .MuiClock-squareMask {
+    border-radius: 50%;
+  }
+}

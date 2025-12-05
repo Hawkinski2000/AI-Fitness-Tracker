@@ -33,8 +33,8 @@ def get_sleep_log(id: int, current_user: token.TokenData = Depends(get_current_u
     return sleep_log
 
 # Update a sleep log
-@router.put("/{id}", response_model=sleep_log.SleepLogResponse)
-def update_sleep_log(id: int, sleep_log: sleep_log.SleepLogCreate, current_user: token.TokenData = Depends(get_current_user), db: Session = Depends(get_db)):
+@router.patch("/{id}", response_model=sleep_log.SleepLogResponse)
+def update_sleep_log(id: int, sleep_log: sleep_log.SleepLogUpdate, current_user: token.TokenData = Depends(get_current_user), db: Session = Depends(get_db)):
     updated_sleep_log = crud_sleep_logs.update_sleep_log(id, sleep_log, current_user.user_id, db)
     return updated_sleep_log
 

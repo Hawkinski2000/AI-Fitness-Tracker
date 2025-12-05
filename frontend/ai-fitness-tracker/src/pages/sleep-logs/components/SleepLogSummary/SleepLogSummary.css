@@ -39,3 +39,9 @@
 .sleep-log-text-button:hover {
   background-color: #2e2e5e;
 }
+
+@media (max-width: 500px) {
+  .sleep-log-section-content {
+    width: 70%;
+  }
+}

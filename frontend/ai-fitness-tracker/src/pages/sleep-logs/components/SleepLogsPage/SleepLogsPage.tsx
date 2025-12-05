@@ -1,15 +1,15 @@
 import { useState, useRef } from "react";
+import { Dayjs } from "dayjs";
 import { type SleepLog } from "../../types/sleep-logs";
 import { type Value } from 'react-calendar/dist/shared/types.js';
 import useInitializeSleepLogsPage from "../../hooks/useInitializeSleepLogsPage";
 import useSleepLogsDate from "../../hooks/useSleepLogsDate";
+import useSleepLogActions from "../../hooks/useSleepLogActions";
 import LoadingScreen from "../../../../components/LoadingScreen/LoadingScreen";
 import Header from "../../../../components/Header/Header";
 import Sidebar from "../../../../components/Sidebar/Sidebar";
 import DateNav from "../DateNav/DateNav";
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { StaticTimePicker } from '@mui/x-date-pickers/StaticTimePicker';
+import EditMenu from "../EditMenu/EditMenu";
 import SleepLogSummary from "../SleepLogSummary/SleepLogSummary";
 import './SleepLogsPage.css';
 
@@ -37,6 +37,12 @@ export default function SleepLogsPage() {
 
 // ---------------------------------------------------------------------------
 
+  const [editMenuOpenType, setEditMenuOpenType] = useState<string>('');
+  
+  const [time, setTime] = useState<Dayjs | null>(null);
+
+// ---------------------------------------------------------------------------
+
     const { userData, loading } = useInitializeSleepLogsPage(
     setTokensRemaining,
     setSleepLogs,
@@ -55,6 +61,12 @@ export default function SleepLogsPage() {
     setSleepLogs,
     setCalendarOpenType,
     setCalendarDate
+  );
+
+  const { handleUpdateSleepLog } = useSleepLogActions(
+    currentSleepLogDate,
+    sleepLogs,
+    setSleepLogs
   );
 
   if (loading) {
@@ -91,23 +103,19 @@ export default function SleepLogsPage() {
                 handleSetCalendarDate={handleSetCalendarDate}
               />
 
-              <div className="edit-menu edit-menu-open">
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <StaticTimePicker
-                    slotProps={{
-                      layout: {
-                        sx: {
-                          backgroundColor: "#2e2e5e"
-                        }
-                      }
-                    }}
-                  />
-                </LocalizationProvider>
-              </div>
+              <EditMenu
+                editMenuOpenType={editMenuOpenType}
+                setEditMenuOpenType={setEditMenuOpenType}
+                time={time}
+                setTime={setTime}
+                handleUpdateSleepLog={handleUpdateSleepLog}
+              />
 
               <SleepLogSummary
                 currentSleepLogDate={currentSleepLogDate}
                 sleepLogs={sleepLogs}
+                setEditMenuOpenType={setEditMenuOpenType}
+                setTime={setTime}
               />
             </div>
           </main>
