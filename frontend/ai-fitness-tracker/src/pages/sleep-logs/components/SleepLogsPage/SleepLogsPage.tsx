@@ -3,6 +3,7 @@ import { Dayjs } from "dayjs";
 import { type SleepLog } from "../../types/sleep-logs";
 import { type Value } from 'react-calendar/dist/shared/types.js';
 import useInitializeSleepLogsPage from "../../hooks/useInitializeSleepLogsPage";
+import useSleepLogsClickOutside from "../../hooks/useSleepLogsClickOutside";
 import useSleepLogsDate from "../../hooks/useSleepLogsDate";
 import useSleepLogActions from "../../hooks/useSleepLogActions";
 import LoadingScreen from "../../../../components/LoadingScreen/LoadingScreen";
@@ -16,20 +17,20 @@ import './SleepLogsPage.css';
 
 export default function SleepLogsPage() {
   const [accountMenuOpen, setAccountMenuOpen] = useState<boolean>(false);
-    const accountMenuRef = useRef<HTMLDivElement | null>(null);
-  
-    const [tokensRemaining, setTokensRemaining] = useState<number>(0);
-  
-  // ----------------------------------------------------------------------
+  const accountMenuRef = useRef<HTMLDivElement | null>(null);
 
-    const [currentSleepLogDate, setCurrentSleepLogDate] = useState<Value>(new Date());
-    const [today, setToday] = useState<Value>(new Date());
-  
-  // ---------------------------------------------------------------------------
+  const [tokensRemaining, setTokensRemaining] = useState<number>(0);
 
-    const [sleepLogs, setSleepLogs] = useState<Record<string, SleepLog>>({});
+// ----------------------------------------------------------------------
 
-  // ---------------------------------------------------------------------------
+  const [currentSleepLogDate, setCurrentSleepLogDate] = useState<Value>(new Date());
+  const [today, setToday] = useState<Value>(new Date());
+
+// ---------------------------------------------------------------------------
+
+  const [sleepLogs, setSleepLogs] = useState<Record<string, SleepLog>>({});
+
+// ---------------------------------------------------------------------------
 
   const [calendarOpenType, setCalendarOpenType] = useState<string>('');
   const calendarRef = useRef<HTMLDivElement | null>(null);
@@ -38,7 +39,8 @@ export default function SleepLogsPage() {
 // ---------------------------------------------------------------------------
 
   const [editMenuOpenType, setEditMenuOpenType] = useState<string>('');
-  
+  const editMenuRef = useRef<HTMLDivElement | null>(null);
+
   const [time, setTime] = useState<Dayjs | null>(null);
 
 // ---------------------------------------------------------------------------
@@ -48,6 +50,20 @@ export default function SleepLogsPage() {
     setSleepLogs,
     setToday,
     setCurrentSleepLogDate
+  );
+
+    useSleepLogsClickOutside(
+    setAccountMenuOpen,
+    editMenuOpenType,
+    setEditMenuOpenType,
+    calendarOpenType,
+    setCalendarOpenType,
+    setCalendarDate,
+    currentSleepLogDate,
+    setTime,
+    accountMenuRef,
+    editMenuRef,
+    calendarRef
   );
 
   const {
@@ -104,10 +120,12 @@ export default function SleepLogsPage() {
               />
 
               <EditMenu
+                currentSleepLogDate={currentSleepLogDate}
                 editMenuOpenType={editMenuOpenType}
                 setEditMenuOpenType={setEditMenuOpenType}
                 time={time}
                 setTime={setTime}
+                editMenuRef={editMenuRef}
                 handleUpdateSleepLog={handleUpdateSleepLog}
               />
 

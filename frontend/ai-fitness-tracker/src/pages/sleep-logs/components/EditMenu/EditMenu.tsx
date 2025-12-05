@@ -3,33 +3,39 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { StaticTimePicker } from '@mui/x-date-pickers/StaticTimePicker';
 import { type SleepLogUpdate } from "../../types/sleep-logs";
+import { type Value } from "react-calendar/dist/shared/types.js";
 import './EditMenu.css';
 
 
 type EditMenuProps = {
-  editMenuOpenType : string;
+  currentSleepLogDate: Value;
+  editMenuOpenType: string;
   setEditMenuOpenType: React.Dispatch<React.SetStateAction<string>>;
   time: Dayjs | null;
   setTime: React.Dispatch<React.SetStateAction<Dayjs | null>>;
+  editMenuRef: React.RefObject<HTMLDivElement | null>;
   handleUpdateSleepLog: (sleepLogUpdate: SleepLogUpdate) => Promise<void>;
 };
 
 
 export default function EditMenu({
+  currentSleepLogDate,
   editMenuOpenType,
   setEditMenuOpenType,
   time,
   setTime,
+  editMenuRef,
   handleUpdateSleepLog
 }: EditMenuProps) {
   return (
-    <div className={`edit-menu ${editMenuOpenType && 'edit-menu-open'}`}>
+    <div
+      className={`edit-menu ${editMenuOpenType && 'edit-menu-open'}`}
+      ref={editMenuRef}
+    >
       {(editMenuOpenType === 'timeAsleep' || editMenuOpenType === 'timeAwake') && (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <StaticTimePicker
-            onChange={(e) => {
-              setTime(e);
-            }}
+            onChange={(e) => setTime(e)}
             value={time}
             slotProps={{
               toolbar: {
@@ -105,9 +111,16 @@ export default function EditMenu({
             if (!time) {
               return;
             }
+            
+            if (currentSleepLogDate instanceof Date) {
+              time = time
+                .set("year", currentSleepLogDate.getFullYear())
+                .set("month", currentSleepLogDate.getMonth())
+                .set("date", currentSleepLogDate.getDate());
+            }
 
             if (editMenuOpenType === 'timeAsleep') {
-              handleUpdateSleepLog({"time_to_bed": time.toISOString()});
+              handleUpdateSleepLog({"time_to_bed": time.subtract(1, 'day').toISOString()});
             }
             else if (editMenuOpenType === 'timeAwake') {
               handleUpdateSleepLog({"time_awake": time.toISOString()});
