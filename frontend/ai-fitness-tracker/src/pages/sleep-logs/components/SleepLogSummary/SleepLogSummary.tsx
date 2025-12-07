@@ -70,7 +70,13 @@ export default function SleepLogSummary({
       <section className="sleep-log-section">
         <div className="sleep-log-section-content">
           <p>Duration</p>
-          <p>{currentSleepLog && currentSleepLog.duration ? currentSleepLog.duration : ''}</p>
+          <p>
+            {
+              currentSleepLog && currentSleepLog.duration
+                ? `${Math.floor(currentSleepLog.duration / 60)} hours ${currentSleepLog.duration % 60} minutes`
+                : ''
+            }
+          </p>
         </div>
       </section>
       

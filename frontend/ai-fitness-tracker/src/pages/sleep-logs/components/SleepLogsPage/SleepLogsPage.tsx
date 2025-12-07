@@ -45,14 +45,14 @@ export default function SleepLogsPage() {
 
 // ---------------------------------------------------------------------------
 
-    const { userData, loading } = useInitializeSleepLogsPage(
+  const { userData, loading } = useInitializeSleepLogsPage(
     setTokensRemaining,
     setSleepLogs,
     setToday,
     setCurrentSleepLogDate
   );
 
-    useSleepLogsClickOutside(
+  useSleepLogsClickOutside(
     setAccountMenuOpen,
     editMenuOpenType,
     setEditMenuOpenType,

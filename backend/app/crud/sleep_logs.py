@@ -38,8 +38,16 @@ def update_sleep_log(id: int, sleep_log: sleep_log.SleepLogCreate, user_id: int,
     if not sleep_log_query.first():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="Sleep log not found")
+    
+    time_awake = sleep_log.time_awake or sleep_log_query.first().time_awake
+    time_to_bed = sleep_log.time_to_bed or sleep_log_query.first().time_to_bed
+    duration = (time_awake - time_to_bed).total_seconds() / 60
 
-    sleep_log_query.update(sleep_log.model_dump(), synchronize_session=False)
+    sleep_log_query.update(
+        {**sleep_log.model_dump(), "duration": duration},
+        synchronize_session=False
+    )
+    
     db.commit()
     updated_sleep_log = sleep_log_query.first()
     return updated_sleep_log
