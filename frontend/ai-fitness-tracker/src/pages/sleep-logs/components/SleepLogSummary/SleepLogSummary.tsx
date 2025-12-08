@@ -89,7 +89,7 @@ export default function SleepLogSummary({
               setEditMenuOpenType(prev => prev === 'sleepScore' ? '' : 'sleepScore')
             }
           >
-            {currentSleepLog && currentSleepLog.sleep_score ? currentSleepLog.sleep_score : 'Add'}
+            {currentSleepLog && currentSleepLog.sleep_score !== null ? currentSleepLog.sleep_score : 'Add'}
           </button>
         </div>
       </section>

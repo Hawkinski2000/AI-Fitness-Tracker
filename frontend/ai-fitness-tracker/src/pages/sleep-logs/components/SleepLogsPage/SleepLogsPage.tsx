@@ -43,6 +43,8 @@ export default function SleepLogsPage() {
 
   const [time, setTime] = useState<Dayjs | null>(null);
 
+  const [sleepScore, setSleepScore] = useState<number>(0);
+
 // ---------------------------------------------------------------------------
 
   const { userData, loading } = useInitializeSleepLogsPage(
@@ -125,6 +127,8 @@ export default function SleepLogsPage() {
                 setEditMenuOpenType={setEditMenuOpenType}
                 time={time}
                 setTime={setTime}
+                sleepScore={sleepScore}
+                setSleepScore={setSleepScore}
                 editMenuRef={editMenuRef}
                 handleUpdateSleepLog={handleUpdateSleepLog}
               />

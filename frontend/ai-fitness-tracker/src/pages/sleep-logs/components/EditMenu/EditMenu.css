@@ -52,6 +52,12 @@
   background-color: #8085a6;
 }
 
+.sleep-score-menu-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 @media (max-width: 500px) {
   .edit-menu {
     width: 17.5rem;

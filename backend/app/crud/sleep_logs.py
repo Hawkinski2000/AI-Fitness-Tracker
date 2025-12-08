@@ -41,7 +41,9 @@ def update_sleep_log(id: int, sleep_log: sleep_log.SleepLogCreate, user_id: int,
     
     time_awake = sleep_log.time_awake or sleep_log_query.first().time_awake
     time_to_bed = sleep_log.time_to_bed or sleep_log_query.first().time_to_bed
-    duration = (time_awake - time_to_bed).total_seconds() / 60
+    duration = None
+    if time_awake and time_to_bed:
+        duration = (time_awake - time_to_bed).total_seconds() / 60
 
     sleep_log_query.update(
         {**sleep_log.model_dump(), "duration": duration},
