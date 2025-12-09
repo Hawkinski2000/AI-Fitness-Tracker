@@ -129,6 +129,7 @@ export default function EditMenu({
           onClick={() => {
             setEditMenuOpenType('');
             setTime(null);
+            setSleepScore(0);
           }}
         >
           Cancel

@@ -10,6 +10,7 @@ type SleepLogSummaryProps = {
   sleepLogs: Record<string, SleepLog>;
   setEditMenuOpenType: React.Dispatch<React.SetStateAction<string>>;
   setTime: React.Dispatch<React.SetStateAction<Dayjs | null>>;
+  setSleepScore: React.Dispatch<React.SetStateAction<number>>;
 };
 
 
@@ -17,7 +18,8 @@ export default function SleepLogSummary({
   currentSleepLogDate,
   sleepLogs,
   setEditMenuOpenType,
-  setTime
+  setTime,
+  setSleepScore
 }: SleepLogSummaryProps) {
   const date = getDateKey(currentSleepLogDate);
   const currentSleepLog = date && sleepLogs[date]
@@ -85,9 +87,12 @@ export default function SleepLogSummary({
           <p>Sleep score</p>
           <button
             className="sleep-log-text-button"
-            onClick={() =>
-              setEditMenuOpenType(prev => prev === 'sleepScore' ? '' : 'sleepScore')
-            }
+            onClick={() => {
+              setEditMenuOpenType(prev => prev === 'sleepScore' ? '' : 'sleepScore');
+              if (currentSleepLog && currentSleepLog.sleep_score) {
+                setSleepScore(currentSleepLog.sleep_score);
+              }
+            }}
           >
             {currentSleepLog && currentSleepLog.sleep_score !== null ? currentSleepLog.sleep_score : 'Add'}
           </button>

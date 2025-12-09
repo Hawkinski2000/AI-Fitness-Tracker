@@ -12,6 +12,7 @@ const useSleepLogsClickOutside = (
   setCalendarDate: React.Dispatch<React.SetStateAction<Value>>,
   currentSleepLogDate: Value,
   setTime: React.Dispatch<React.SetStateAction<Dayjs | null>>,
+  setSleepScore: React.Dispatch<React.SetStateAction<number>>,
   accountMenuRef: React.RefObject<HTMLDivElement | null>,
   editMenuRef: React.RefObject<HTMLDivElement | null>,
   calendarRef: React.RefObject<HTMLDivElement | null>
@@ -37,6 +38,7 @@ const useSleepLogsClickOutside = (
       ) {
         setEditMenuOpenType('');
         setTime(null);
+        setSleepScore(0);
       }
 
       if (
@@ -60,6 +62,7 @@ const useSleepLogsClickOutside = (
     editMenuOpenType,
     setEditMenuOpenType,
     setTime,
+    setSleepScore,
     calendarOpenType,
     setCalendarOpenType,
     setCalendarDate,

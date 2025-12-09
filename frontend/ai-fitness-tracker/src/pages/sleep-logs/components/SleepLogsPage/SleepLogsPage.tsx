@@ -63,6 +63,7 @@ export default function SleepLogsPage() {
     setCalendarDate,
     currentSleepLogDate,
     setTime,
+    setSleepScore,
     accountMenuRef,
     editMenuRef,
     calendarRef
@@ -138,6 +139,7 @@ export default function SleepLogsPage() {
                 sleepLogs={sleepLogs}
                 setEditMenuOpenType={setEditMenuOpenType}
                 setTime={setTime}
+                setSleepScore={setSleepScore}
               />
             </div>
           </main>
