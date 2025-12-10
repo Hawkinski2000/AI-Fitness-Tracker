@@ -34,7 +34,8 @@ const useSleepLogsClickOutside = (
         editMenuOpenType &&
         editMenuRef.current &&
         target instanceof Node &&
-        !editMenuRef.current.contains(target)
+        !editMenuRef.current.contains(target) &&
+        !(target instanceof HTMLElement && target.classList.contains('sleep-log-text-button'))
       ) {
         setEditMenuOpenType('');
         setTime(null);
