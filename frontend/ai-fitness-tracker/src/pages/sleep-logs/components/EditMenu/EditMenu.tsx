@@ -38,61 +38,77 @@ export default function EditMenu({
       ref={editMenuRef}
     >
       {(editMenuOpenType === 'timeAsleep' || editMenuOpenType === 'timeAwake') && (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <StaticTimePicker
-            onChange={(e) => setTime(e)}
-            value={time}
-            slotProps={{
-              toolbar: {
-                sx: {
-                  "& .MuiTypography-root": { color: "#8085a6" },
-                  "& .MuiTypography-overline": { color: "#eceff4" },
-                  "& .MuiPickersToolbar-root [data-selected='true']": { color: "#eceff4" },
-                  "& .MuiTouchRipple-root": { color: "#1e1e3f" },
-                  "& .MuiButtonBase-root:hover": { backgroundColor: "rgba(128, 133, 166, 0.5)" }
-                }
-              },
-              layout: {
-                sx: {
-                  backgroundColor: "#2e2e5e",
-                  "& .MuiClock-pin": { backgroundColor: "#00ffcc" },                          
-                  "& .MuiClockPointer-root": { backgroundColor: "#00ffcc" },
-                  "& .MuiClockPointer-thumb": {
-                    borderColor: "#00ffcc",
-                    backgroundColor: "#00ffcc"
-                  },
-                  "& .MuiClock-squareMask": {
-                    backgroundColor: "#1e1e3f",
-                  },
-                  "& .MuiClockNumber-root": {
-                    color: "#8085a6",
-                    fontFamily: "Outfit"
+        <div>
+          <div className="edit-menu-date-section">
+            <p>Date</p>
+
+            <button
+              className="edit-menu-text-button"
+            >
+              12/10/2025
+            </button>
+          </div>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <StaticTimePicker
+              onChange={(e) => setTime(e)}
+              value={time}
+              slotProps={{
+                toolbar: {
+                  sx: {
+                    "& .MuiTypography-root": { color: "#8085a6", fontFamily: "Outfit" },
+                    "& .MuiTypography-overline": {
+                      color: "#eceff4",
+                      fontSize: "16px",
+                      fontFamily: "Outfit",
+                      textTransform: "none"
                     },
-                  "& .Mui-selected": { color: "#eceff4" },
-                }
-              },
-              previousIconButton: {
-                sx: {
-                  "& .MuiSvgIcon-root path": { fill: "#eceff4" },
-                  "&.Mui-disabled": {
-                    "& .MuiSvgIcon-root path": { fill: "#8085a6" }
-                  },
-                  "& .MuiTouchRipple-root": { color: "#1e1e3f" }
-                }
-              },
-              nextIconButton: {
-                sx: {
-                  "& .MuiSvgIcon-root path": { fill: "#eceff4" },
-                  "&.Mui-disabled": {
-                    "& .MuiSvgIcon-root path": { fill: "#8085a6" }
-                  },
-                  "& .MuiTouchRipple-root": { color: "#1e1e3f" }
-                }
-              },
-              actionBar: { actions : [] }
-            }}
-          />
-        </LocalizationProvider>
+                    "& .MuiPickersToolbar-root [data-selected='true']": { color: "#eceff4" },
+                    "& .MuiTouchRipple-root": { color: "#1e1e3f" },
+                    "& .MuiButtonBase-root:hover": { backgroundColor: "rgba(128, 133, 166, 0.5)" }
+                  }
+                },
+                layout: {
+                  sx: {
+                    backgroundColor: "#2e2e5e",
+                    "& .MuiClock-pin": { backgroundColor: "#00ffcc" },                          
+                    "& .MuiClockPointer-root": { backgroundColor: "#00ffcc" },
+                    "& .MuiClockPointer-thumb": {
+                      borderColor: "#00ffcc",
+                      backgroundColor: "#00ffcc"
+                    },
+                    "& .MuiClock-squareMask": {
+                      backgroundColor: "#1e1e3f",
+                    },
+                    "& .MuiClockNumber-root": {
+                      color: "#8085a6",
+                      fontFamily: "Outfit"
+                      },
+                    "& .Mui-selected": { color: "#eceff4" },
+                  }
+                },
+                previousIconButton: {
+                  sx: {
+                    "& .MuiSvgIcon-root path": { fill: "#eceff4" },
+                    "&.Mui-disabled": {
+                      "& .MuiSvgIcon-root path": { fill: "#8085a6" }
+                    },
+                    "& .MuiTouchRipple-root": { color: "#1e1e3f" }
+                  }
+                },
+                nextIconButton: {
+                  sx: {
+                    "& .MuiSvgIcon-root path": { fill: "#eceff4" },
+                    "&.Mui-disabled": {
+                      "& .MuiSvgIcon-root path": { fill: "#8085a6" }
+                    },
+                    "& .MuiTouchRipple-root": { color: "#1e1e3f" }
+                  }
+                },
+                actionBar: { actions : [] }
+              }}
+            />
+          </LocalizationProvider>
+        </div>
       )}
 
       {editMenuOpenType === 'sleepScore' && (
