@@ -33,6 +33,50 @@
   padding: 0 24px;
 }
 
+.change-date-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  height: 0;
+  width: fit-content;
+  top: 3.5rem;
+  right: 7rem;
+  padding: 0 0.5rem 0 0.5rem;
+  overflow: hidden;
+  background-color: #8085a6;
+  border: none;
+  border-radius: 10px;
+  cursor: default;
+  z-index: 2;
+  transition: all 0.1s;
+}
+
+.change-date-menu-open {
+  height: fit-content;
+  padding: 0.5rem;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
+}
+
+.change-date-menu-button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.5rem;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  user-select: none;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.change-date-menu-button:hover {
+  background-color: #2e2e5e;
+}
+
 .edit-menu-confirmation-nav {
   display: flex;
   justify-content: space-evenly;

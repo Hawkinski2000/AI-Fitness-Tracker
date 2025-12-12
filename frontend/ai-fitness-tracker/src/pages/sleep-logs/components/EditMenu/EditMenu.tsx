@@ -5,6 +5,7 @@ import { StaticTimePicker } from '@mui/x-date-pickers/StaticTimePicker';
 import Slider from '@mui/material/Slider';
 import { type SleepLogUpdate } from "../../types/sleep-logs";
 import { type Value } from "react-calendar/dist/shared/types.js";
+import { getDateKey } from '../../../../utils/dates';
 import './EditMenu.css';
 
 
@@ -32,6 +33,9 @@ export default function EditMenu({
   editMenuRef,
   handleUpdateSleepLog
 }: EditMenuProps) {
+  const date = getDateKey(currentSleepLogDate);
+
+
   return (
     <div
       className={`edit-menu ${editMenuOpenType && 'edit-menu-open'}`}
@@ -45,8 +49,20 @@ export default function EditMenu({
             <button
               className="edit-menu-text-button"
             >
-              12/10/2025
+              {date}
             </button>
+
+            <div
+              className={
+                `change-date-menu
+                ${'change-date-menu-open'}`
+              }
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button className="change-date-menu-button">
+                {date}
+              </button>
+            </div>
           </div>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <StaticTimePicker
