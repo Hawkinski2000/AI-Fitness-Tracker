@@ -50,6 +50,7 @@ export default function EditMenu({
   yesterdaySleepLogDate.setDate(yesterdaySleepLogDate.getDate() - 1);
   const yesterdayDate = getDateKey(yesterdaySleepLogDate);
 
+
   return (
     <div
       className={`edit-menu ${editMenuOpenType && 'edit-menu-open'}`}
@@ -57,37 +58,39 @@ export default function EditMenu({
     >
       {(editMenuOpenType === 'timeAsleep' || editMenuOpenType === 'timeAwake') && (
         <div>
-          <div className="edit-menu-date-section">
-            <p>Date</p>
+          {editMenuOpenType === 'timeAsleep' &&
+            <div className="edit-menu-date-section">
+              <p>Date</p>
 
-            <button
-              className="edit-menu-text-button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setChangeDateMenuOpen((prev) => !prev);
-              }}
-            >
-              {date}
-            </button>
-
-            <div
-              className={
-                `change-date-menu
-                ${changeDateMenuOpen && 'change-date-menu-open'}`
-              }
-              onClick={(e) => e.stopPropagation()}
-            >
               <button
-                className="change-date-menu-button"
-                onClick={() => {
-                  setDate(prev => prev === yesterdayDate ? todayDate : yesterdayDate);
-                  setChangeDateMenuOpen(false);
+                className="edit-menu-text-button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setChangeDateMenuOpen((prev) => !prev);
                 }}
               >
-                {date === todayDate ? yesterdayDate : todayDate}
+                {date}
               </button>
+
+              <div
+                className={
+                  `change-date-menu
+                  ${changeDateMenuOpen && 'change-date-menu-open'}`
+                }
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  className="change-date-menu-button"
+                  onClick={() => {
+                    setDate(prev => prev === yesterdayDate ? todayDate : yesterdayDate);
+                    setChangeDateMenuOpen(false);
+                  }}
+                >
+                  {date === todayDate ? yesterdayDate : todayDate}
+                </button>
+              </div>
             </div>
-          </div>
+          }
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <StaticTimePicker
               onChange={(e) => setTime(e)}
@@ -212,7 +215,8 @@ export default function EditMenu({
             }
 
             if (editMenuOpenType === 'timeAsleep') {
-              handleUpdateSleepLog({"time_to_bed": time.subtract(1, 'day').toISOString()});
+              const timeToBed = date === yesterdayDate ? time.subtract(1, 'day') : time;  
+              handleUpdateSleepLog({"time_to_bed": timeToBed.toISOString()});
             }
             else if (editMenuOpenType === 'timeAwake') {
               handleUpdateSleepLog({"time_awake": time.toISOString()});
