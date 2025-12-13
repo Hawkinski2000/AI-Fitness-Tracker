@@ -41,6 +41,8 @@ export default function SleepLogsPage() {
   const [editMenuOpenType, setEditMenuOpenType] = useState<string>('');
   const editMenuRef = useRef<HTMLDivElement | null>(null);
 
+  const [changeDateMenuOpen, setChangeDateMenuOpen] = useState<boolean>(false);
+
   const [time, setTime] = useState<Dayjs | null>(null);
 
   const [sleepScore, setSleepScore] = useState<number>(0);
@@ -126,6 +128,8 @@ export default function SleepLogsPage() {
                 currentSleepLogDate={currentSleepLogDate}
                 editMenuOpenType={editMenuOpenType}
                 setEditMenuOpenType={setEditMenuOpenType}
+                changeDateMenuOpen={changeDateMenuOpen}
+                setChangeDateMenuOpen={setChangeDateMenuOpen}
                 time={time}
                 setTime={setTime}
                 sleepScore={sleepScore}

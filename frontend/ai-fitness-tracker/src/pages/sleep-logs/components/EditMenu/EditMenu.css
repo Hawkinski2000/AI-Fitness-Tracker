@@ -30,6 +30,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
   padding: 0 24px;
 }
 
@@ -41,11 +42,11 @@
   position: absolute;
   height: 0;
   width: fit-content;
-  top: 3.5rem;
-  right: 7rem;
+  top: 3rem;
+  right: 23px;
   padding: 0 0.5rem 0 0.5rem;
   overflow: hidden;
-  background-color: #8085a6;
+  background-color: #1e1e3f;
   border: none;
   border-radius: 10px;
   cursor: default;
@@ -74,7 +75,7 @@
   transition: all 0.25s;
 }
 .change-date-menu-button:hover {
-  background-color: #2e2e5e;
+  background-color: #8085a6;
 }
 
 .edit-menu-confirmation-nav {

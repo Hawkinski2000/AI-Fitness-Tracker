@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Dayjs } from "dayjs";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -13,6 +14,8 @@ type EditMenuProps = {
   currentSleepLogDate: Value;
   editMenuOpenType: string;
   setEditMenuOpenType: React.Dispatch<React.SetStateAction<string>>;
+  changeDateMenuOpen: boolean;
+  setChangeDateMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   time: Dayjs | null;
   setTime: React.Dispatch<React.SetStateAction<Dayjs | null>>;
   sleepScore: number;
@@ -26,6 +29,8 @@ export default function EditMenu({
   currentSleepLogDate,
   editMenuOpenType,
   setEditMenuOpenType,
+  changeDateMenuOpen,
+  setChangeDateMenuOpen,
   time,
   setTime,
   sleepScore,
@@ -33,8 +38,17 @@ export default function EditMenu({
   editMenuRef,
   handleUpdateSleepLog
 }: EditMenuProps) {
-  const date = getDateKey(currentSleepLogDate);
+  const todayDate = getDateKey(currentSleepLogDate);
 
+  const [date, setDate] = useState<string | null>(todayDate);
+
+  const sleepLogDate = Array.isArray(currentSleepLogDate) ? currentSleepLogDate[0] : currentSleepLogDate;
+  if (!sleepLogDate) {
+    return;
+  }
+  const yesterdaySleepLogDate = new Date(sleepLogDate);
+  yesterdaySleepLogDate.setDate(yesterdaySleepLogDate.getDate() - 1);
+  const yesterdayDate = getDateKey(yesterdaySleepLogDate);
 
   return (
     <div
@@ -48,6 +62,10 @@ export default function EditMenu({
 
             <button
               className="edit-menu-text-button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setChangeDateMenuOpen((prev) => !prev);
+              }}
             >
               {date}
             </button>
@@ -55,12 +73,18 @@ export default function EditMenu({
             <div
               className={
                 `change-date-menu
-                ${'change-date-menu-open'}`
+                ${changeDateMenuOpen && 'change-date-menu-open'}`
               }
               onClick={(e) => e.stopPropagation()}
             >
-              <button className="change-date-menu-button">
-                {date}
+              <button
+                className="change-date-menu-button"
+                onClick={() => {
+                  setDate(prev => prev === yesterdayDate ? todayDate : yesterdayDate);
+                  setChangeDateMenuOpen(false);
+                }}
+              >
+                {date === todayDate ? yesterdayDate : todayDate}
               </button>
             </div>
           </div>
