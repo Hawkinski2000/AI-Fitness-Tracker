@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Dayjs } from "dayjs";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -16,11 +15,15 @@ type EditMenuProps = {
   setEditMenuOpenType: React.Dispatch<React.SetStateAction<string>>;
   changeDateMenuOpen: boolean;
   setChangeDateMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  yesterdayDate: string | null;
+  date: string | null;
+  setDate: React.Dispatch<React.SetStateAction<string | null>>;
   time: Dayjs | null;
   setTime: React.Dispatch<React.SetStateAction<Dayjs | null>>;
   sleepScore: number;
   setSleepScore: React.Dispatch<React.SetStateAction<number>>;
   editMenuRef: React.RefObject<HTMLDivElement | null>;
+  changeDateMenuRef: React.RefObject<HTMLDivElement | null>;
   handleUpdateSleepLog: (sleepLogUpdate: SleepLogUpdate) => Promise<void>;
 };
 
@@ -31,25 +34,19 @@ export default function EditMenu({
   setEditMenuOpenType,
   changeDateMenuOpen,
   setChangeDateMenuOpen,
+  yesterdayDate,
+  date,
+  setDate,
   time,
   setTime,
   sleepScore,
   setSleepScore,
   editMenuRef,
+  changeDateMenuRef,
   handleUpdateSleepLog
 }: EditMenuProps) {
   const todayDate = getDateKey(currentSleepLogDate);
-
-  const [date, setDate] = useState<string | null>(todayDate);
-
-  const sleepLogDate = Array.isArray(currentSleepLogDate) ? currentSleepLogDate[0] : currentSleepLogDate;
-  if (!sleepLogDate) {
-    return;
-  }
-  const yesterdaySleepLogDate = new Date(sleepLogDate);
-  yesterdaySleepLogDate.setDate(yesterdaySleepLogDate.getDate() - 1);
-  const yesterdayDate = getDateKey(yesterdaySleepLogDate);
-
+  
 
   return (
     <div
@@ -73,6 +70,7 @@ export default function EditMenu({
               </button>
 
               <div
+                ref={changeDateMenuRef}
                 className={
                   `change-date-menu
                   ${changeDateMenuOpen && 'change-date-menu-open'}`

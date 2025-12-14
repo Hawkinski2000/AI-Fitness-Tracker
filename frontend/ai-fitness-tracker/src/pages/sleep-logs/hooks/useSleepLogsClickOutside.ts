@@ -7,14 +7,19 @@ const useSleepLogsClickOutside = (
   setAccountMenuOpen: React.Dispatch<React.SetStateAction<boolean>>,
   editMenuOpenType: string,
   setEditMenuOpenType: React.Dispatch<React.SetStateAction<string>>,
+  changeDateMenuOpen: boolean,
+  setChangeDateMenuOpen: React.Dispatch<React.SetStateAction<boolean>>,
   calendarOpenType: string,
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>,
   setCalendarDate: React.Dispatch<React.SetStateAction<Value>>,
   currentSleepLogDate: Value,
+  yesterdayDate: string | null,
+  setDate: React.Dispatch<React.SetStateAction<string | null>>,
   setTime: React.Dispatch<React.SetStateAction<Dayjs | null>>,
   setSleepScore: React.Dispatch<React.SetStateAction<number>>,
   accountMenuRef: React.RefObject<HTMLDivElement | null>,
   editMenuRef: React.RefObject<HTMLDivElement | null>,
+  changeDateMenuRef: React.RefObject<HTMLDivElement | null>,
   calendarRef: React.RefObject<HTMLDivElement | null>
 ) => {
   useEffect(() => {
@@ -40,6 +45,17 @@ const useSleepLogsClickOutside = (
         setEditMenuOpenType('');
         setTime(null);
         setSleepScore(0);
+        setDate(yesterdayDate);
+      }
+
+      if (
+        changeDateMenuOpen &&
+        changeDateMenuRef.current &&
+        target instanceof Node &&
+        !changeDateMenuRef.current.contains(target) &&
+        !(target instanceof HTMLElement && target.classList.contains('edit-menu-text-button'))
+      ) {
+        setChangeDateMenuOpen(false);
       }
 
       if (
@@ -62,6 +78,10 @@ const useSleepLogsClickOutside = (
     setAccountMenuOpen,
     editMenuOpenType,
     setEditMenuOpenType,
+    changeDateMenuOpen,
+    setChangeDateMenuOpen,
+    yesterdayDate,
+    setDate,
     setTime,
     setSleepScore,
     calendarOpenType,
@@ -70,6 +90,7 @@ const useSleepLogsClickOutside = (
     currentSleepLogDate,
     accountMenuRef,
     editMenuRef,
+    changeDateMenuRef,
     calendarRef
   ]);
 };

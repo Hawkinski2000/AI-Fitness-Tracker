@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { Dayjs } from "dayjs";
 import { type SleepLog } from "../../types/sleep-logs";
 import { type Value } from 'react-calendar/dist/shared/types.js';
+import { getDateKey } from '../../../../utils/dates';
 import useInitializeSleepLogsPage from "../../hooks/useInitializeSleepLogsPage";
 import useSleepLogsClickOutside from "../../hooks/useSleepLogsClickOutside";
 import useSleepLogsDate from "../../hooks/useSleepLogsDate";
@@ -42,6 +43,13 @@ export default function SleepLogsPage() {
   const editMenuRef = useRef<HTMLDivElement | null>(null);
 
   const [changeDateMenuOpen, setChangeDateMenuOpen] = useState<boolean>(false);
+  const changeDateMenuRef = useRef<HTMLDivElement | null>(null);
+
+  const sleepLogDate = Array.isArray(currentSleepLogDate) ? currentSleepLogDate[0] : currentSleepLogDate;
+  const yesterdaySleepLogDate = new Date(sleepLogDate || '');
+  yesterdaySleepLogDate.setDate(yesterdaySleepLogDate.getDate() - 1);
+  const yesterdayDate = getDateKey(yesterdaySleepLogDate);
+  const [date, setDate] = useState<string | null>(yesterdayDate);
 
   const [time, setTime] = useState<Dayjs | null>(null);
 
@@ -60,14 +68,19 @@ export default function SleepLogsPage() {
     setAccountMenuOpen,
     editMenuOpenType,
     setEditMenuOpenType,
+    changeDateMenuOpen,
+    setChangeDateMenuOpen,
     calendarOpenType,
     setCalendarOpenType,
     setCalendarDate,
     currentSleepLogDate,
+    yesterdayDate,
+    setDate,
     setTime,
     setSleepScore,
     accountMenuRef,
     editMenuRef,
+    changeDateMenuRef,
     calendarRef
   );
 
@@ -130,11 +143,15 @@ export default function SleepLogsPage() {
                 setEditMenuOpenType={setEditMenuOpenType}
                 changeDateMenuOpen={changeDateMenuOpen}
                 setChangeDateMenuOpen={setChangeDateMenuOpen}
+                yesterdayDate={yesterdayDate}
+                date={date}
+                setDate={setDate}
                 time={time}
                 setTime={setTime}
                 sleepScore={sleepScore}
                 setSleepScore={setSleepScore}
                 editMenuRef={editMenuRef}
+                changeDateMenuRef={changeDateMenuRef}
                 handleUpdateSleepLog={handleUpdateSleepLog}
               />
 
