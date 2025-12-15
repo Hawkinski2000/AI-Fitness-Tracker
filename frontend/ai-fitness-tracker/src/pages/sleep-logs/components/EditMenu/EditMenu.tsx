@@ -185,6 +185,7 @@ export default function EditMenu({
           className="edit-menu-text-button"
           onClick={() => {
             setEditMenuOpenType('');
+            setDate(yesterdayDate);
             setTime(null);
             setSleepScore(0);
           }}
@@ -221,6 +222,7 @@ export default function EditMenu({
             }
 
             setEditMenuOpenType('');
+            setDate(yesterdayDate);
             setTime(null);
           }}
         >
