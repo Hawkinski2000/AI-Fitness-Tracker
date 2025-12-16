@@ -194,7 +194,10 @@ export default function EditMenu({
         </button>
 
         <button
-          className="edit-menu-text-button"
+          className={
+            `edit-menu-text-button
+            ${!time && editMenuOpenType !== 'sleepScore' && "edit-menu-text-button-disabled"}`
+          }
           onClick={() => {
             if (editMenuOpenType === 'sleepScore') {
               handleUpdateSleepLog({"sleep_score": sleepScore});

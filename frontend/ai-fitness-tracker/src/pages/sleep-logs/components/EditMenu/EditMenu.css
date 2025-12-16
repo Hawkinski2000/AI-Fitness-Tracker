@@ -104,6 +104,11 @@
   background-color: #8085a6;
 }
 
+.edit-menu-text-button-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .sleep-score-menu-container {
   display: flex;
   flex-direction: column;

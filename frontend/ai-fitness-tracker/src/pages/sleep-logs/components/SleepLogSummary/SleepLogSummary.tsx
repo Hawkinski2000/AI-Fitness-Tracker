@@ -29,7 +29,7 @@ export default function SleepLogSummary({
     <div className="sleep-log-summary">
       <section className="sleep-log-section">
         <div className="sleep-log-section-content">
-          <p>Time asleep yesterday</p>
+          <p>Time asleep</p>
           <button
             className="sleep-log-text-button"
             onClick={() => {
@@ -50,7 +50,7 @@ export default function SleepLogSummary({
 
       <section className="sleep-log-section">
         <div className="sleep-log-section-content">
-          <p>Time awake today</p>
+          <p>Time awake</p>
           <button
             className="sleep-log-text-button"
             onClick={() => {
