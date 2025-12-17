@@ -31,6 +31,9 @@ export default function SleepLogsPage() {
 
   const [sleepLogs, setSleepLogs] = useState<Record<string, SleepLog>>({});
 
+  const dateKey = getDateKey(currentSleepLogDate);
+  const currentSleepLog = dateKey && sleepLogs[dateKey];
+
 // ---------------------------------------------------------------------------
 
   const [calendarOpenType, setCalendarOpenType] = useState<string>('');
@@ -45,11 +48,15 @@ export default function SleepLogsPage() {
   const [changeDateMenuOpen, setChangeDateMenuOpen] = useState<boolean>(false);
   const changeDateMenuRef = useRef<HTMLDivElement | null>(null);
 
+  const timeAsleep = currentSleepLog && currentSleepLog.time_to_bed;
+  const timeAsleepDate = timeAsleep && getDateKey(new Date(timeAsleep))
+
   const sleepLogDate = Array.isArray(currentSleepLogDate) ? currentSleepLogDate[0] : currentSleepLogDate;
   const yesterdaySleepLogDate = new Date(sleepLogDate || '');
   yesterdaySleepLogDate.setDate(yesterdaySleepLogDate.getDate() - 1);
   const yesterdayDate = getDateKey(yesterdaySleepLogDate);
-  const [date, setDate] = useState<string | null>(yesterdayDate);
+
+  const [date, setDate] = useState<string | null>(timeAsleepDate || yesterdayDate);
 
   const [time, setTime] = useState<Dayjs | null>(null);
 
@@ -74,6 +81,7 @@ export default function SleepLogsPage() {
     setCalendarOpenType,
     setCalendarDate,
     currentSleepLogDate,
+    timeAsleepDate,
     yesterdayDate,
     setDate,
     setTime,
@@ -143,6 +151,7 @@ export default function SleepLogsPage() {
                 setEditMenuOpenType={setEditMenuOpenType}
                 changeDateMenuOpen={changeDateMenuOpen}
                 setChangeDateMenuOpen={setChangeDateMenuOpen}
+                timeAsleepDate={timeAsleepDate}
                 yesterdayDate={yesterdayDate}
                 date={date}
                 setDate={setDate}
@@ -156,8 +165,7 @@ export default function SleepLogsPage() {
               />
 
               <SleepLogSummary
-                currentSleepLogDate={currentSleepLogDate}
-                sleepLogs={sleepLogs}
+                currentSleepLog={currentSleepLog}
                 setEditMenuOpenType={setEditMenuOpenType}
                 setTime={setTime}
                 setSleepScore={setSleepScore}

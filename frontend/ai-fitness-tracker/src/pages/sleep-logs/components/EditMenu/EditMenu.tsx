@@ -15,6 +15,7 @@ type EditMenuProps = {
   setEditMenuOpenType: React.Dispatch<React.SetStateAction<string>>;
   changeDateMenuOpen: boolean;
   setChangeDateMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  timeAsleepDate: string | null;
   yesterdayDate: string | null;
   date: string | null;
   setDate: React.Dispatch<React.SetStateAction<string | null>>;
@@ -34,6 +35,7 @@ export default function EditMenu({
   setEditMenuOpenType,
   changeDateMenuOpen,
   setChangeDateMenuOpen,
+  timeAsleepDate,
   yesterdayDate,
   date,
   setDate,
@@ -60,7 +62,7 @@ export default function EditMenu({
               <p>Date</p>
 
               <button
-                className="edit-menu-text-button"
+                className="open-change-date-menu-button edit-menu-text-button"
                 onClick={(e) => {
                   e.stopPropagation();
                   setChangeDateMenuOpen((prev) => !prev);
@@ -185,7 +187,7 @@ export default function EditMenu({
           className="edit-menu-text-button"
           onClick={() => {
             setEditMenuOpenType('');
-            setDate(yesterdayDate);
+            setDate(timeAsleepDate || yesterdayDate);
             setTime(null);
             setSleepScore(0);
           }}
@@ -225,7 +227,7 @@ export default function EditMenu({
             }
 
             setEditMenuOpenType('');
-            setDate(yesterdayDate);
+            setDate(timeAsleepDate || yesterdayDate);
             setTime(null);
           }}
         >

@@ -13,6 +13,7 @@ const useSleepLogsClickOutside = (
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>,
   setCalendarDate: React.Dispatch<React.SetStateAction<Value>>,
   currentSleepLogDate: Value,
+  timeAsleepDate: string | null,
   yesterdayDate: string | null,
   setDate: React.Dispatch<React.SetStateAction<string | null>>,
   setTime: React.Dispatch<React.SetStateAction<Dayjs | null>>,
@@ -45,7 +46,7 @@ const useSleepLogsClickOutside = (
         setEditMenuOpenType('');
         setTime(null);
         setSleepScore(0);
-        setDate(yesterdayDate);
+        setDate(timeAsleepDate || yesterdayDate);
       }
 
       if (
@@ -53,7 +54,7 @@ const useSleepLogsClickOutside = (
         changeDateMenuRef.current &&
         target instanceof Node &&
         !changeDateMenuRef.current.contains(target) &&
-        !(target instanceof HTMLElement && target.classList.contains('edit-menu-text-button'))
+        !(target instanceof HTMLElement && target.classList.contains('open-change-date-menu-button'))
       ) {
         setChangeDateMenuOpen(false);
       }
@@ -80,6 +81,7 @@ const useSleepLogsClickOutside = (
     setEditMenuOpenType,
     changeDateMenuOpen,
     setChangeDateMenuOpen,
+    timeAsleepDate,
     yesterdayDate,
     setDate,
     setTime,

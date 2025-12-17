@@ -1,13 +1,10 @@
 import dayjs, { Dayjs } from "dayjs";
 import { type SleepLog } from "../../types/sleep-logs";
-import { type Value } from 'react-calendar/dist/shared/types.js';
-import { getDateKey } from '../../../../utils/dates';
 import './SleepLogSummary.css';
 
 
 type SleepLogSummaryProps = {
-  currentSleepLogDate: Value;
-  sleepLogs: Record<string, SleepLog>;
+  currentSleepLog: "" | SleepLog | null;
   setEditMenuOpenType: React.Dispatch<React.SetStateAction<string>>;
   setTime: React.Dispatch<React.SetStateAction<Dayjs | null>>;
   setSleepScore: React.Dispatch<React.SetStateAction<number>>;
@@ -15,16 +12,11 @@ type SleepLogSummaryProps = {
 
 
 export default function SleepLogSummary({
-  currentSleepLogDate,
-  sleepLogs,
+  currentSleepLog,
   setEditMenuOpenType,
   setTime,
   setSleepScore
 }: SleepLogSummaryProps) {
-  const date = getDateKey(currentSleepLogDate);
-  const currentSleepLog = date && sleepLogs[date]
-
-
   return (
     <div className="sleep-log-summary">
       <section className="sleep-log-section">
