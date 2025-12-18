@@ -169,6 +169,9 @@ export default function SleepLogsPage() {
                 setEditMenuOpenType={setEditMenuOpenType}
                 setTime={setTime}
                 setSleepScore={setSleepScore}
+                timeAsleepDate={timeAsleepDate}
+                yesterdayDate={yesterdayDate}
+                setDate={setDate}
               />
             </div>
           </main>

@@ -8,6 +8,9 @@ type SleepLogSummaryProps = {
   setEditMenuOpenType: React.Dispatch<React.SetStateAction<string>>;
   setTime: React.Dispatch<React.SetStateAction<Dayjs | null>>;
   setSleepScore: React.Dispatch<React.SetStateAction<number>>;
+  timeAsleepDate: string | null;
+  yesterdayDate: string | null;
+  setDate: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
 
@@ -15,7 +18,10 @@ export default function SleepLogSummary({
   currentSleepLog,
   setEditMenuOpenType,
   setTime,
-  setSleepScore
+  setSleepScore,
+  timeAsleepDate,
+  yesterdayDate,
+  setDate
 }: SleepLogSummaryProps) {
   return (
     <div className="sleep-log-summary">
@@ -25,6 +31,7 @@ export default function SleepLogSummary({
           <button
             className="sleep-log-text-button"
             onClick={() => {
+              setDate(timeAsleepDate || yesterdayDate);
               setEditMenuOpenType(prev => prev === 'timeAsleep' ? '' : 'timeAsleep');
               if (currentSleepLog && currentSleepLog.time_to_bed) {
                 setTime(dayjs(currentSleepLog.time_to_bed));
