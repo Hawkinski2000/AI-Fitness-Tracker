@@ -91,6 +91,9 @@ export default function SleepLogSummary({
               if (currentSleepLog && currentSleepLog.sleep_score) {
                 setSleepScore(currentSleepLog.sleep_score);
               }
+              else {
+                setSleepScore(0);
+              }
             }}
           >
             {currentSleepLog && currentSleepLog.sleep_score !== null ? currentSleepLog.sleep_score : 'Add'}

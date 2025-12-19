@@ -32,7 +32,7 @@ def get_sleep_log(id: int, user_id: int, db: Session):
 
     return sleep_log
 
-def update_sleep_log(id: int, sleep_log: sleep_log.SleepLogCreate, user_id: int, db: Session):
+def update_sleep_log(id: int, sleep_log: sleep_log.SleepLogUpdate, user_id: int, db: Session):
     sleep_log_query = db.query(SleepLog).filter(SleepLog.id == id, SleepLog.user_id == user_id)
 
     if not sleep_log_query.first():

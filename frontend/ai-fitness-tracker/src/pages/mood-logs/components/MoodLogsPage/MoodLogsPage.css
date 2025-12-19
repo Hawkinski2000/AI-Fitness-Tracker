@@ -1,0 +1,36 @@
+.mood-logs-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100vw;
+}
+
+.mood-logs-page-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 100px;
+  margin-top: 50px;
+  height: calc(100vh - 50px);
+  width: calc(100vw - 100px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  box-sizing: border-box;
+  background-color: #1e1e3f;
+}
+
+.mood-logs-page-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+@media (max-width: 500px) {
+  .mood-logs-page-main {
+    margin-left: 50px;
+    width: calc(100vw - 50px);
+  }
+}

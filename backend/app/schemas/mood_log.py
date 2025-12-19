@@ -11,6 +11,9 @@ class MoodLogBase(BaseModel):
 class MoodLogCreate(MoodLogBase):
     pass
 
+class MoodLogUpdate(BaseModel):
+    mood_score: Optional[int] = None
+
 class MoodLogResponse(MoodLogBase):
     id: int
     user_id: int

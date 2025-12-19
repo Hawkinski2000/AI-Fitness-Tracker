@@ -6,10 +6,10 @@ import './DateNav.css';
 
 
 type DateNavProps = {
-  currentSleepLogDate: Value;
+  currentMoodLogDate: Value;
   today: Value;
   handleChangeDate: (direction: string) => Promise<void>;
-  getDateLabel: (currentSleepLogDate: Value, today: Value) => string | undefined;
+  getDateLabel: (currentMoodLogDate: Value, today: Value) => string | undefined;
   calendarOpenType: string;
   setCalendarOpenType: React.Dispatch<React.SetStateAction<string>>;
   calendarRef: React.RefObject<HTMLDivElement | null>;
@@ -20,7 +20,7 @@ type DateNavProps = {
 
 
 export default function DateNav({
-  currentSleepLogDate,
+  currentMoodLogDate,
   today,
   handleChangeDate,
   getDateLabel,
@@ -45,13 +45,13 @@ export default function DateNav({
         <button
           className="date-nav-button open-calendar-button"
           onClick={() => {
-            if (currentSleepLogDate) {
-              setCalendarDate(currentSleepLogDate);
+            if (currentMoodLogDate) {
+              setCalendarDate(currentMoodLogDate);
             }
-            setCalendarOpenType(prev => prev === 'changeSleepLog' ? '' : 'changeSleepLog');
+            setCalendarOpenType(prev => prev === 'changeMoodLog' ? '' : 'changeMoodLog');
           }}
         >
-          {(currentSleepLogDate && today) ? getDateLabel(currentSleepLogDate, today) : ""}
+          {(currentMoodLogDate && today) ? getDateLabel(currentMoodLogDate, today) : ""}
         </button>
         <button
           className="date-nav-button"
@@ -68,7 +68,7 @@ export default function DateNav({
           calendarRef={calendarRef}
           calendarDate={calendarDate}
           setCalendarDate={setCalendarDate}
-          currentSleepLogDate={currentSleepLogDate}
+          currentMoodLogDate={currentMoodLogDate}
           handleSetCalendarDate={handleSetCalendarDate}
         />
       </nav>

@@ -14,7 +14,7 @@ type CalendarWindowProps = {
   calendarRef: React.RefObject<HTMLDivElement | null>;
   calendarDate: Value;
   setCalendarDate: React.Dispatch<React.SetStateAction<Value>>;
-  currentSleepLogDate: Value;
+  currentMoodLogDate: Value;
   handleSetCalendarDate: (value: Value) => Promise<void>;
 };
 
@@ -25,7 +25,7 @@ export default function CalendarWindow({
   calendarRef,
   calendarDate,
   setCalendarDate,
-  currentSleepLogDate,
+  currentMoodLogDate,
   handleSetCalendarDate,
 }: CalendarWindowProps) {  
   return (
@@ -46,8 +46,8 @@ export default function CalendarWindow({
           className='react-calendar__tile calendar-confirmation-nav-button'
           onClick={() => {
             setCalendarOpenType('');
-            if (currentSleepLogDate) {
-              setCalendarDate(currentSleepLogDate);
+            if (currentMoodLogDate) {
+              setCalendarDate(currentMoodLogDate);
             }
           }}
         >
@@ -57,11 +57,11 @@ export default function CalendarWindow({
         <button
           className='react-calendar__tile calendar-confirmation-nav-button'
           onClick={() => {
-            if (calendarOpenType === 'changeSleepLog') {
+            if (calendarOpenType === 'changeMoodLog') {
               handleSetCalendarDate(calendarDate);
             }
-            if (currentSleepLogDate) {
-              setCalendarDate(currentSleepLogDate);
+            if (currentMoodLogDate) {
+              setCalendarDate(currentMoodLogDate);
             }
           }}
         >

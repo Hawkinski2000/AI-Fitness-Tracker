@@ -13,9 +13,13 @@ def create_mood_log(mood_log: mood_log.MoodLogCreate, user_id: int, db: Session)
     db.refresh(new_mood_log)
     return new_mood_log
 
-def get_mood_logs(user_id: int, db: Session):
-    mood_logs = db.query(MoodLog).filter(MoodLog.user_id == user_id).all()
-    return mood_logs
+def get_mood_logs(date: str, user_id: int, db: Session):
+    query = db.query(MoodLog).filter(MoodLog.user_id == user_id)
+
+    if date:
+        query = query.filter(MoodLog.log_date == date)
+        
+    return query.all()
 
 def get_mood_log(id: int, user_id: int, db: Session):
     mood_log = db.query(MoodLog).filter(MoodLog.id == id, MoodLog.user_id == user_id).first()
@@ -26,7 +30,7 @@ def get_mood_log(id: int, user_id: int, db: Session):
 
     return mood_log
 
-def update_mood_log(id: int, mood_log: mood_log.MoodLogCreate, user_id: int, db: Session):
+def update_mood_log(id: int, mood_log: mood_log.MoodLogUpdate, user_id: int, db: Session):
     mood_log_query = db.query(MoodLog).filter(MoodLog.id == id, MoodLog.user_id == user_id)
 
     if not mood_log_query.first():

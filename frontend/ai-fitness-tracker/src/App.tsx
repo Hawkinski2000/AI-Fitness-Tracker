@@ -9,6 +9,7 @@ import ChatPage from './pages/chat/components/ChatPage/ChatPage';
 import MealLogsPage from './pages/meal-logs/components/MealLogsPage/MealLogsPage';
 import WorkoutLogsPage from './pages/workout-logs/components/WorkoutLogsPage/WorkoutLogsPage';
 import SleepLogsPage from './pages/sleep-logs/components/SleepLogsPage/SleepLogsPage';
+import MoodLogsPage from './pages/mood-logs/components/MoodLogsPage/MoodLogsPage';
 
 
 export default function App() {
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="meal-logs" element={<MealLogsPage />} />
         <Route path="workout-logs" element={<WorkoutLogsPage />} />
         <Route path="sleep-logs" element={<SleepLogsPage />} />
+        <Route path="mood-logs" element={<MoodLogsPage />} />
       </Routes>
     </AuthProvider>
   )

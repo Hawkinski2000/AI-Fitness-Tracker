@@ -176,7 +176,6 @@ export default function SleepLogsPage() {
             </div>
           </main>
         </div>
-
       </div>
     </>
   );
