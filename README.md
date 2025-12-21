@@ -10,6 +10,10 @@ An AI-powered fitness tracker that generates insights based on diet, exercise, s
 
 ![View Food Menu](images/view_food_menu.png)
 
+![View Exercise Menu](images/view-exercise-menu.png)
+
+![Sleep Logs Page](images/sleep-logs-page.png)
+
 ![User Flow Diagram](images/User%20Flow%20Diagram%20-%20AI%20Fitness%20Tracker.png)
 
 ![Entity Relationship Diagram](images/Entity%20Relationship%20Diagram%20-%20AI%20Fitness%20Tracker.svg)
@@ -38,7 +42,7 @@ An AI-powered fitness tracker that generates insights based on diet, exercise, s
 
 ## User Experience
 - As a user, I want the app to be fast and easy to use so that I can quickly get started and build a daily habit without feeling overwhelmed.
-- As a user, I want the app to automatically track and organize my health and fitness data over time, as well has remember past insights and conversations so that so that I can get deeper, more personalized insights than I would from one-off prompts to ChatGPT.
+- As a user, I want the app to automatically track and organize my health and fitness data over time, as well has remember past insights and conversations so that I can get deeper, more personalized insights than I would from one-off prompts to ChatGPT.
 
 ## Authentication
 - As a new user, I want to register with my email and password so that I can create an account.
