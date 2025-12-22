@@ -87,8 +87,8 @@
 
 .select-meal-menu {
   position: absolute;
-  top: 2.5rem;
-  right: 0;
+  top: 2.5rem !important;
+  right: 0.5rem !important;
 }
 
 .view-food-menu-input {
@@ -104,8 +104,8 @@
 
 .select-serving-size-menu {
   position: absolute;
-  top: 2.5rem;
-  right: 0;
+  top: 2.5rem !important;
+  right: 2rem !important;
 }
 
 @media (max-width: 500px) {
