@@ -14,7 +14,7 @@ def create_weight_log(weight_log: weight_log.WeightLogCreate, user_id: int, db: 
     return new_weight_log
 
 def get_weight_logs(user_id: int, db: Session):
-    weight_logs = db.query(WeightLog).filter(WeightLog.user_id == user_id).all()
+    weight_logs = db.query(WeightLog).filter(WeightLog.user_id == user_id).order_by(WeightLog.log_date.desc()).all()
     return weight_logs
 
 def get_weight_log(id: int, user_id: int, db: Session):

@@ -1,0 +1,95 @@
+.weight-logs-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100vw;
+}
+
+.weight-logs-page-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 100px;
+  margin-top: 50px;
+  height: calc(100vh - 50px);
+  width: calc(100vw - 100px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  box-sizing: border-box;
+  background-color: #1e1e3f;
+}
+
+.weight-logs-page-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.weight-log {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  padding: 1rem;
+  border-bottom: 1px solid #2e2e5e;
+  user-select: none;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.weight-log:hover {
+  background-color: #2e2e5e;
+}
+
+.weight-log-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  width: 50%;
+}
+
+.weight-log-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+}
+
+.weight-log-text {
+  text-align: left;
+  margin: 0;
+}
+
+.weight-log-weight-text {
+  margin: 0;
+}
+
+.weight-log-options-button-container {
+  display: flex;
+  justify-content: end;
+  width: 100%;
+}
+
+.weight-log-options-button {
+  display: flex;
+  height: 2rem;
+  border-radius: 10px;
+  padding: 0.5rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.weight-log-options-button:hover {
+  background-color: #8085a6;
+}
+
+@media (max-width: 500px) {
+  .weight-logs-page-main {
+    margin-left: 50px;
+    width: calc(100vw - 50px);
+  }
+}

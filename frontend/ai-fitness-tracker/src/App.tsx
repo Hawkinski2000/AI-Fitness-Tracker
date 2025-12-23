@@ -10,6 +10,7 @@ import MealLogsPage from './pages/meal-logs/components/MealLogsPage/MealLogsPage
 import WorkoutLogsPage from './pages/workout-logs/components/WorkoutLogsPage/WorkoutLogsPage';
 import SleepLogsPage from './pages/sleep-logs/components/SleepLogsPage/SleepLogsPage';
 import MoodLogsPage from './pages/mood-logs/components/MoodLogsPage/MoodLogsPage';
+import WeightLogsPage from './pages/weight-logs/components/WeightLogsPage/WeightLogsPage';
 
 
 export default function App() {
@@ -25,6 +26,7 @@ export default function App() {
         <Route path="workout-logs" element={<WorkoutLogsPage />} />
         <Route path="sleep-logs" element={<SleepLogsPage />} />
         <Route path="mood-logs" element={<MoodLogsPage />} />
+        <Route path="weight-logs" element={<WeightLogsPage />} />
       </Routes>
     </AuthProvider>
   )
