@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import dayjs from "dayjs";
 import { type WeightLog } from "../../types/weight-logs";
 import useInitializeWeightLogsPage from "../../hooks/useInitializeWeightLogsPage";
 // import useWeightLogsClickOutside from "../../hooks/useWeightLogsClickOutside";
@@ -10,7 +9,7 @@ import Header from "../../../../components/Header/Header";
 import Sidebar from "../../../../components/Sidebar/Sidebar";
 // import DateNav from "../DateNav/DateNav";
 // import EditMenu from "../EditMenu/EditMenu";
-import dotsIcon from '../../../../assets/dots-icon.svg';
+import WeightLogEntry from "../WeightLogEntry/WeightLogEntry";
 import './WeightLogsPage.css';
 
 
@@ -98,25 +97,7 @@ export default function WeightLogsPage() {
 
               {weightLogs.map((weightLog: WeightLog) => {
                 return (
-                  <div className="weight-log">
-                    <div className="weight-log-content">
-                      <div className="weight-log-section">
-                        <p className="weight-log-text">{dayjs(weightLog.log_date).format("DD/MM/YYYY")}</p>
-                        <p className="weight-log-weight-text">
-                          {weightLog.weight}{' '}
-                          {weightLog.unit}
-                        </p>
-                      </div>
-
-                      <div className="weight-log-section">
-                        <div className="weight-log-options-button-container">
-                          <button className="weight-log-options-button">
-                            <img className="button-link-image" src={dotsIcon} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <WeightLogEntry weightLog={weightLog} />
                 );
               })
               }
