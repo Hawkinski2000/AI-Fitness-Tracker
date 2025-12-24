@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { type WeightLog } from "../../types/weight-logs";
 import dotsIcon from '../../../../assets/dots-icon.svg';
+import './WeightLogEntry.css';
 
 
 type WeightLogEntryProps = {

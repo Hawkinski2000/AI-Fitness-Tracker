@@ -7,7 +7,8 @@ import useInitializeWeightLogsPage from "../../hooks/useInitializeWeightLogsPage
 import LoadingScreen from "../../../../components/LoadingScreen/LoadingScreen";
 import Header from "../../../../components/Header/Header";
 import Sidebar from "../../../../components/Sidebar/Sidebar";
-// import DateNav from "../DateNav/DateNav";
+import DateNav from "../DateNav/DateNav";
+import DateRangeHeader from "../DateRangeHeader/DateRangeHeader";
 // import EditMenu from "../EditMenu/EditMenu";
 import WeightLogEntry from "../WeightLogEntry/WeightLogEntry";
 import './WeightLogsPage.css';
@@ -27,6 +28,10 @@ export default function WeightLogsPage() {
 
   // const [editMenuOpenId, setEditMenuOpenId] = useState<number | null>(null);
   // const editMenuRef = useRef<HTMLDivElement | null>(null);
+
+// ---------------------------------------------------------------------------
+
+const [dateRange, setDateRange] = useState<string>("3 Months");
 
 // ---------------------------------------------------------------------------
 
@@ -73,18 +78,12 @@ export default function WeightLogsPage() {
 
         <main className="weight-logs-page-main">
             <div className='weight-logs-page-content'>
-              {/* <DateNav
-                currentMoodLogDate={currentMoodLogDate}
-                today={today}
-                handleChangeDate={handleChangeDate}
-                getDateLabel={getDateLabel}
-                calendarOpenType={calendarOpenType}
-                setCalendarOpenType={setCalendarOpenType}
-                calendarRef={calendarRef}
-                calendarDate={calendarDate}
-                setCalendarDate={setCalendarDate}
-                handleSetCalendarDate={handleSetCalendarDate}
-              /> */}
+              <DateNav />
+
+              <DateRangeHeader
+                dateRange={dateRange}
+                setDateRange={setDateRange}
+              />
 
               {/* <EditMenu
                 editMenuOpenType={editMenuOpenType}
@@ -95,12 +94,13 @@ export default function WeightLogsPage() {
                 handleUpdateMoodLog={handleUpdateMoodLog}
               /> */}
 
-              {weightLogs.map((weightLog: WeightLog) => {
-                return (
-                  <WeightLogEntry weightLog={weightLog} />
-                );
-              })
-              }
+              <div className="weight-logs-container">
+                {weightLogs.map((weightLog: WeightLog) => {
+                  return (
+                    <WeightLogEntry weightLog={weightLog} />
+                  );
+                })}
+              </div>
             </div>
         </main>
       </div>

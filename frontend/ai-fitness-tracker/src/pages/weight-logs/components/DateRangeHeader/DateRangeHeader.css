@@ -1,23 +1,26 @@
-.date-nav-container {
+.date-range-header {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 50px;
   width: calc(100vw - 100px);
   position: fixed;
-  top: 50px;
+  top: 100px;
   background-color: #0c0c1d;
   border-bottom: 1px solid #2e2e5e;
-  z-index: 3;
+  box-shadow: 0 5px 10px 5px rgba(0, 0, 0, 0.25);
+  user-select: none;
+  z-index: 2;
 }
 
-.date-nav {
+.date-range-header-button-container {
   display: flex;
   justify-content: space-between;
-  width: 50%;
+  width: 25%;
 }
 
-.date-nav-button {
+.date-range-header-button {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -25,25 +28,21 @@
   border: none;
   border-radius: 10px;
   padding: 0.5rem;
-  font-family: Outfit;
   user-select: none;
   cursor: pointer;
   transition: all 0.25s;
 }
-.date-nav-button:hover {
+.date-range-header-button:hover {
   background-color: #2e2e5e;
 }
 
-.open-calendar-button {
-  width: fit-content;
+.date-range-header-button-selected {
+  background-color: #2e2e5e;
 }
 
 @media (max-width: 500px) {
-  .date-nav-container {
-    width: calc(100vw - 50px);
-  }
-
-  .date-nav {
-    width: 70%;
+  .date-range-header {
+    width: calc(100vw - 50px - 2rem);
+    padding: 1rem;
   }
 }
