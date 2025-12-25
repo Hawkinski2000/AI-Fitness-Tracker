@@ -28,9 +28,28 @@
   position: relative;
 }
 
+.weight-logs-page-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid #2e2e5e;
+  padding: 1rem;
+}
+
+.weight-logs-page-section-content {
+  padding: 0.5rem 1rem;
+  width: 50%;
+}
+
+.weight-logs-page-text {
+  text-align: left;
+  margin: 0;
+}
+
 .weight-logs-container {
   position: relative;
-  top: 102px;
+  top: calc(102px + 6rem);
 }
 
 @media (max-width: 500px) {

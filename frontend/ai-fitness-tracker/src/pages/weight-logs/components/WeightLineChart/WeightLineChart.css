@@ -1,0 +1,13 @@
+.weight-chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  position: relative;
+  top: calc(102px + 2rem);
+}
+
+.weight-chart-canvas {
+  height: auto !important;
+  width: 50% !important;
+}

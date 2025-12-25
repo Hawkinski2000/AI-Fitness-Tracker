@@ -10,6 +10,7 @@ import Sidebar from "../../../../components/Sidebar/Sidebar";
 import DateNav from "../DateNav/DateNav";
 import DateRangeHeader from "../DateRangeHeader/DateRangeHeader";
 // import EditMenu from "../EditMenu/EditMenu";
+import WeightLineChart from "../WeightLineChart/WeightLineChart";
 import WeightLogEntry from "../WeightLogEntry/WeightLogEntry";
 import './WeightLogsPage.css';
 
@@ -31,7 +32,7 @@ export default function WeightLogsPage() {
 
 // ---------------------------------------------------------------------------
 
-const [dateRange, setDateRange] = useState<string>("3 Months");
+  const [dateRange, setDateRange] = useState<string>("3 Months");
 
 // ---------------------------------------------------------------------------
 
@@ -94,7 +95,15 @@ const [dateRange, setDateRange] = useState<string>("3 Months");
                 handleUpdateMoodLog={handleUpdateMoodLog}
               /> */}
 
+              <WeightLineChart weightLogs={weightLogs} />
+
               <div className="weight-logs-container">
+                <div className="weight-logs-page-section">
+                  <div className="weight-logs-page-section-content">
+                    <h3 className="weight-logs-page-text">Entries</h3>
+                  </div>
+                </div>
+
                 {weightLogs.map((weightLog: WeightLog) => {
                   return (
                     <WeightLogEntry weightLog={weightLog} />
