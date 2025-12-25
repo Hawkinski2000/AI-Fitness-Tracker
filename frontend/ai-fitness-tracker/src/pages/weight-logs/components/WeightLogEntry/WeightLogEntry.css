@@ -56,3 +56,10 @@
 .weight-log-options-button:hover {
   background-color: #8085a6;
 }
+
+@media (max-width: 500px) {
+  .weight-log-content {
+    width: 100%;
+    padding: 1rem 0;
+  }
+}

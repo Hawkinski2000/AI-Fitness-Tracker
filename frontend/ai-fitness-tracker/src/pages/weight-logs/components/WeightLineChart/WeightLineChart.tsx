@@ -31,21 +31,46 @@ Chart.register(
 
 interface WeightLineChartProps {
   weightLogs: WeightLog[];
+  dateRange: string;
 }
 
-export default function WeightLineChart({ weightLogs }: WeightLineChartProps) {
+export default function WeightLineChart({
+  weightLogs,
+  dateRange
+}: WeightLineChartProps) {
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstanceRef = useRef<Chart | null>(null);
+
+  let earliestDate = null;
+  switch (dateRange) {
+    case "Week":
+      earliestDate = dayjs().subtract(1, "week");
+      break;
+    case "Month":
+      earliestDate = dayjs().subtract(1, "month");
+      break;
+    case "3 Months":
+      earliestDate = dayjs().subtract(3, "month");
+      break;
+    case "Year":
+      earliestDate = dayjs().subtract(1, "year");
+  }
 
   const { labels, data } = useMemo(() => {
     const labels: string[] = [];
     const data: number[] = [];
+
     for (let i = weightLogs.length - 1; i >= 0; i--) {
+      if (earliestDate && dayjs(weightLogs[i].log_date).isBefore(earliestDate)) {
+        continue;
+      }
+
       labels.push(dayjs(weightLogs[i].log_date).format("MM/DD/YYYY"));
       data.push(weightLogs[i].weight);
     }
+
     return { labels, data };
-  }, [weightLogs]);
+  }, [weightLogs, earliestDate]);
 
   useEffect(() => {
     if (chartInstanceRef.current) {

@@ -95,7 +95,10 @@ export default function WeightLogsPage() {
                 handleUpdateMoodLog={handleUpdateMoodLog}
               /> */}
 
-              <WeightLineChart weightLogs={weightLogs} />
+              <WeightLineChart
+                weightLogs={weightLogs}
+                dateRange={dateRange}
+              />
 
               <div className="weight-logs-container">
                 <div className="weight-logs-page-section">

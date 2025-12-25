@@ -42,7 +42,13 @@
 
 @media (max-width: 500px) {
   .date-range-header {
-    width: calc(100vw - 50px - 2rem);
-    padding: 1rem;
+    width: calc(100vw - 50px - 1rem);
+    padding: 0 0.5rem;
   }
+
+  .date-range-header-button-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
 }

@@ -11,3 +11,9 @@
   height: auto !important;
   width: 50% !important;
 }
+
+@media (max-width: 500px) {
+  .weight-chart-canvas {
+    width: 100% !important;
+  }
+}

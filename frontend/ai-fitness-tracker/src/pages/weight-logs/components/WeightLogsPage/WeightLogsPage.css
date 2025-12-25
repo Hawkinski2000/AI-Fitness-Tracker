@@ -57,4 +57,9 @@
     margin-left: 50px;
     width: calc(100vw - 50px);
   }
+
+  .weight-logs-page-section-content {
+    padding: 0.5rem 1rem;
+    width: 100%;
+  }
 }
