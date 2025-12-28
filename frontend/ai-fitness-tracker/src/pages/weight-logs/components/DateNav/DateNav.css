@@ -38,6 +38,23 @@
   width: fit-content;
 }
 
+.weight-log-add-button {
+  display: flex;
+  position: absolute;
+  right: 1rem;
+  height: 2rem;
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.25s;
+}
+.weight-log-add-button:hover {
+  background-color: #2e2e5e;
+}
+
 @media (max-width: 500px) {
   .date-nav-container {
     width: calc(100vw - 50px);
@@ -45,5 +62,10 @@
 
   .date-nav {
     width: 70%;
+  }
+
+  .weight-log-add-button {
+    left: 1rem;
+    right: auto;
   }
 }

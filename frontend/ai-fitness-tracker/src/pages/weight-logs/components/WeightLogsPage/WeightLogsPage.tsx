@@ -30,6 +30,8 @@ export default function WeightLogsPage() {
   // const [editMenuOpenId, setEditMenuOpenId] = useState<number | null>(null);
   // const editMenuRef = useRef<HTMLDivElement | null>(null);
 
+  // const [addingWeight, setAddingWeight] = useState<boolean>(false);
+
 // ---------------------------------------------------------------------------
 
   const [dateRange, setDateRange] = useState<string>("3 Months");
@@ -79,7 +81,10 @@ export default function WeightLogsPage() {
 
         <main className="weight-logs-page-main">
             <div className='weight-logs-page-content'>
-              <DateNav />
+              <DateNav
+                // setEditMenuOpenId={setEditMenuOpenId}
+                // setAddingWeight={setAddingWeight}
+              />
 
               <DateRangeHeader
                 dateRange={dateRange}
