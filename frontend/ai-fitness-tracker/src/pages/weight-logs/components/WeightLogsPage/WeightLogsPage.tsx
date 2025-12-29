@@ -9,7 +9,7 @@ import Header from "../../../../components/Header/Header";
 import Sidebar from "../../../../components/Sidebar/Sidebar";
 import DateNav from "../DateNav/DateNav";
 import DateRangeHeader from "../DateRangeHeader/DateRangeHeader";
-// import EditMenu from "../EditMenu/EditMenu";
+import EditMenu from "../EditMenu/EditMenu";
 import WeightLineChart from "../WeightLineChart/WeightLineChart";
 import WeightLogEntry from "../WeightLogEntry/WeightLogEntry";
 import './WeightLogsPage.css';
@@ -23,12 +23,12 @@ export default function WeightLogsPage() {
   
 // ---------------------------------------------------------------------------
 
-  const [weightLogs, setWeightLogs] = useState<WeightLog[]>([]);
+  const [weightLogs, setWeightLogs] = useState<Record<number, WeightLog>>({});
 
 // ---------------------------------------------------------------------------
 
-  // const [editMenuOpenId, setEditMenuOpenId] = useState<number | null>(null);
-  // const editMenuRef = useRef<HTMLDivElement | null>(null);
+  const [editMenuOpenId, setEditMenuOpenId] = useState<number | null>(null);
+  const editMenuRef = useRef<HTMLDivElement | null>(null);
 
   // const [addingWeight, setAddingWeight] = useState<boolean>(false);
 
@@ -91,14 +91,14 @@ export default function WeightLogsPage() {
                 setDateRange={setDateRange}
               />
 
-              {/* <EditMenu
-                editMenuOpenType={editMenuOpenType}
-                setEditMenuOpenType={setEditMenuOpenType}
-                moodScore={moodScore}
-                setMoodScore={setMoodScore}
+              <EditMenu
+                editMenuOpenId={editMenuOpenId}
+                setEditMenuOpenId={setEditMenuOpenId}
+                // addingWeight={addingWeight}
+                // setAddingWeight={setAddingWeight}
+                weightLogs={weightLogs}
                 editMenuRef={editMenuRef}
-                handleUpdateMoodLog={handleUpdateMoodLog}
-              /> */}
+              />
 
               <WeightLineChart
                 weightLogs={weightLogs}
@@ -112,9 +112,13 @@ export default function WeightLogsPage() {
                   </div>
                 </div>
 
-                {weightLogs.map((weightLog: WeightLog) => {
+                {Object.entries(weightLogs).map(([id, weightLog]) => {
                   return (
-                    <WeightLogEntry weightLog={weightLog} />
+                    <WeightLogEntry
+                      key={id}
+                      weightLog={weightLog}
+                      setEditMenuOpenId={setEditMenuOpenId}
+                    />
                   );
                 })}
               </div>

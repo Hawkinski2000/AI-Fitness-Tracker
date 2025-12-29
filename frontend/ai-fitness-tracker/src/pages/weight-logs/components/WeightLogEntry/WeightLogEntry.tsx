@@ -5,15 +5,20 @@ import './WeightLogEntry.css';
 
 
 type WeightLogEntryProps = {
-  weightLog: WeightLog
+  weightLog: WeightLog;
+  setEditMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
 };
 
 
 export default function WeightLogEntry({
-  weightLog
+  weightLog,
+  setEditMenuOpenId
 }: WeightLogEntryProps) {  
   return (
-    <div className="weight-log">
+    <div
+      className="weight-log"
+      onClick={() => setEditMenuOpenId(weightLog.id)}
+    >
       <div className="weight-log-content">
         <div className="weight-log-section">
           <p className="weight-log-text">{dayjs(weightLog.log_date).format("MM/DD/YYYY")}</p>

@@ -9,7 +9,7 @@ import { loadWeightLogs } from "../../../utils/weight-logs";
 
 const useInitializeWeightLogsPage = (
   setTokensRemaining: React.Dispatch<React.SetStateAction<number>>,
-  setWeightLogs: React.Dispatch<React.SetStateAction<WeightLog[]>>
+  setWeightLogs: React.Dispatch<React.SetStateAction<Record<number, WeightLog>>>
 ) => {
   const { setAccessToken } = useAuth();
 

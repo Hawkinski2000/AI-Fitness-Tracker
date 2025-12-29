@@ -7,7 +7,7 @@ import { API_BASE_URL } from '../config/api';
 
 
 export const loadWeightLogs = async (
-  setWeightLogs: React.Dispatch<React.SetStateAction<WeightLog[]>>,
+  setWeightLogs: React.Dispatch<React.SetStateAction<Record<number, WeightLog>>>,
   token: string,
 ) => {
   const weightLogsResponse = await axios.get(`${API_BASE_URL}/weight-logs`,
@@ -19,15 +19,23 @@ export const loadWeightLogs = async (
   );
 
   if (weightLogsResponse.data.length === 0) {
-    setWeightLogs([]);
+    setWeightLogs({});
     return null;
   }
 
-  const weightLogsResponseObject: WeightLog[] = weightLogsResponse.data;
+  const weightLogsObjects: Record<number, WeightLog> = {};
+  weightLogsResponse.data.forEach((weightLog: WeightLog) => {
+    weightLogsObjects[weightLog.id] = {
+      id: weightLog.id,
+      log_date: weightLog.log_date,
+      weight: weightLog.weight,
+      unit: weightLog.unit
+    };
+  });
 
-  setWeightLogs(weightLogsResponseObject);
+  setWeightLogs(weightLogsObjects);
 
-  return weightLogsResponseObject;
+  return weightLogsObjects;
 };
 
 // export const createMoodLog = async (

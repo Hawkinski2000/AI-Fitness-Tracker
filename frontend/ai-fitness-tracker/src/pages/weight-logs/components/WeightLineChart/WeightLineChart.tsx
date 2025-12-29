@@ -30,7 +30,7 @@ Chart.register(
 );
 
 interface WeightLineChartProps {
-  weightLogs: WeightLog[];
+  weightLogs: Record<number, WeightLog>;
   dateRange: string;
 }
 
@@ -41,32 +41,32 @@ export default function WeightLineChart({
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstanceRef = useRef<Chart | null>(null);
 
-  let earliestDate = null;
-  switch (dateRange) {
-    case "Week":
-      earliestDate = dayjs().subtract(1, "week");
-      break;
-    case "Month":
-      earliestDate = dayjs().subtract(1, "month");
-      break;
-    case "3 Months":
-      earliestDate = dayjs().subtract(3, "month");
-      break;
-    case "Year":
-      earliestDate = dayjs().subtract(1, "year");
-  }
+  const earliestDate = useMemo(() => {
+    switch (dateRange) {
+      case "Week":
+        return dayjs().subtract(1, "week");
+      case "Month":
+        return dayjs().subtract(1, "month");
+      case "3 Months":
+        return dayjs().subtract(3, "month");
+      case "Year":
+        return dayjs().subtract(1, "year");
+      default:
+        return null;
+    }
+  }, [dateRange]);
 
   const { labels, data } = useMemo(() => {
     const labels: string[] = [];
     const data: number[] = [];
 
-    for (let i = weightLogs.length - 1; i >= 0; i--) {
-      if (earliestDate && dayjs(weightLogs[i].log_date).isBefore(earliestDate)) {
+    for (let i = Object.entries(weightLogs).length - 1; i >= 0; i--) {
+      if (earliestDate && dayjs(Object.entries(weightLogs)[i][1].log_date).isBefore(earliestDate)) {
         continue;
       }
 
-      labels.push(dayjs(weightLogs[i].log_date).format("MM/DD/YYYY"));
-      data.push(weightLogs[i].weight);
+      labels.push(dayjs(Object.entries(weightLogs)[i][1].log_date).format("MM/DD/YYYY"));
+      data.push(Object.entries(weightLogs)[i][1].weight);
     }
 
     return { labels, data };
