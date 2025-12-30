@@ -3,7 +3,7 @@ import { type WeightLog } from "../../types/weight-logs";
 import useInitializeWeightLogsPage from "../../hooks/useInitializeWeightLogsPage";
 // import useWeightLogsClickOutside from "../../hooks/useWeightLogsClickOutside";
 // import useWeightLogsDate from "../../hooks/useWeightLogsDate";
-// import useWeightLogActions from "../../hooks/useWeightLogActions";
+import useWeightLogActions from "../../hooks/useWeightLogActions";
 import LoadingScreen from "../../../../components/LoadingScreen/LoadingScreen";
 import Header from "../../../../components/Header/Header";
 import Sidebar from "../../../../components/Sidebar/Sidebar";
@@ -30,7 +30,7 @@ export default function WeightLogsPage() {
   const [editMenuOpenId, setEditMenuOpenId] = useState<number | null>(null);
   const editMenuRef = useRef<HTMLDivElement | null>(null);
 
-  // const [addingWeight, setAddingWeight] = useState<boolean>(false);
+  const [addingWeight, setAddingWeight] = useState<boolean>(false);
 
 // ---------------------------------------------------------------------------
 
@@ -51,13 +51,13 @@ export default function WeightLogsPage() {
   //   editMenuRef
   // );
 
-  // const {
-  //   handleAddWeightLog,
-  //   handleUpdateWeightLog
-  // } = useWeightLogActions(
-  //   weightLogs,
-  //   setWeightLogs
-  // );
+  const {
+    handleCreateWeightLog,
+    // handleUpdateWeightLog
+  } = useWeightLogActions(
+    // editMenuOpenId,
+    setWeightLogs
+  );
 
   if (loading) {
     return <LoadingScreen />;
@@ -82,8 +82,8 @@ export default function WeightLogsPage() {
         <main className="weight-logs-page-main">
             <div className='weight-logs-page-content'>
               <DateNav
-                // setEditMenuOpenId={setEditMenuOpenId}
-                // setAddingWeight={setAddingWeight}
+                setEditMenuOpenId={setEditMenuOpenId}
+                setAddingWeight={setAddingWeight}
               />
 
               <DateRangeHeader
@@ -94,10 +94,11 @@ export default function WeightLogsPage() {
               <EditMenu
                 editMenuOpenId={editMenuOpenId}
                 setEditMenuOpenId={setEditMenuOpenId}
-                // addingWeight={addingWeight}
-                // setAddingWeight={setAddingWeight}
+                addingWeight={addingWeight}
+                setAddingWeight={setAddingWeight}
                 weightLogs={weightLogs}
                 editMenuRef={editMenuRef}
+                handleCreateWeightLog={handleCreateWeightLog}
               />
 
               <WeightLineChart

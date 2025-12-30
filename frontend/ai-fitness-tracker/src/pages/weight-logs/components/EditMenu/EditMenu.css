@@ -38,6 +38,7 @@
 .edit-menu-input {
   width: 5rem;
   padding: 0.25rem;
+  padding-left: 1rem;
   text-align: center;
 }
 
@@ -73,8 +74,9 @@
 }
 
 @media (max-width: 500px) {
-  .edit-menu {
+  .weight-logs-edit-menu {
     width: 17.5rem;
     padding: 0 0.5;
+    left: calc(50% + 25px);
   }
 }

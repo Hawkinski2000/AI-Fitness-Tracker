@@ -5,6 +5,12 @@ export interface WeightLog {
   unit: string;
 }
 
+export interface WeightLogCreate {
+  log_date: string;
+  weight: number;
+  unit: string;
+}
+
 export interface WeightLogUpdate {
   weight?: number | null;
   unit?: string | null;

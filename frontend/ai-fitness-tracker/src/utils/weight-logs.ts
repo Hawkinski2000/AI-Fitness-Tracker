@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {
   type WeightLog,
+  type WeightLogCreate,
   // type WeightLogUpdate
 } from "../pages/weight-logs/types/weight-logs";
 import { API_BASE_URL } from '../config/api';
@@ -38,35 +39,28 @@ export const loadWeightLogs = async (
   return weightLogsObjects;
 };
 
-// export const createMoodLog = async (
-//   logDate: Value,
-//   setMoodLogs: React.Dispatch<React.SetStateAction<Record<string, MoodLog>>>,
-//   token: string
-// ) => {
-//   const date = getDateKey(logDate);
-//   if (!date) {
-//     return;
-//   }
+export const createWeightLog = async (
+  weightLog: WeightLogCreate,
+  setWeightLogs: React.Dispatch<React.SetStateAction<Record<number, WeightLog>>>,
+  token: string
+) => {
+  const weightLogResponse = await axios.post(`${API_BASE_URL}/weight-logs`,
+    weightLog,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+  const newWeightLog: WeightLog = weightLogResponse.data;
 
-//   const moodLogResponse = await axios.post(`${API_BASE_URL}/mood-logs`,
-//     {
-//       log_date: date
-//     },
-//     {
-//       headers: {
-//         Authorization: `Bearer ${token}`
-//       }
-//     }
-//   );
-//   const moodLog = moodLogResponse.data;
+  setWeightLogs(prev => ({
+    ...prev,
+    [newWeightLog.id]: newWeightLog
+  }));
 
-//   setMoodLogs(prev => ({
-//     ...prev,
-//     [date]: moodLog
-//   }));
-
-//   return moodLog;
-// };
+  return newWeightLog;
+};
 
 // export const updateMoodLog = async (
 //   logDate: string,

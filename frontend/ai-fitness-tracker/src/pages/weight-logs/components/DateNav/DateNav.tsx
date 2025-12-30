@@ -4,7 +4,16 @@ import plusIcon from '../../../../assets/plus-icon.svg';
 import './DateNav.css';
 
 
-export default function DateNav() {
+type DateNavProps = {
+  setEditMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
+  setAddingWeight: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+
+export default function DateNav({
+  setEditMenuOpenId,
+  setAddingWeight
+}: DateNavProps) {
   return (
     <div className="date-nav-container">
       <nav className="date-nav">
@@ -28,8 +37,8 @@ export default function DateNav() {
         className="weight-log-add-button"
         onClick={(e) => {
           e.stopPropagation();
-          // setEditMenuOpenId(null);
-          // setAddingWeight(True);
+          setEditMenuOpenId(null);
+          setAddingWeight(true);
         }}
       >
         <img className="button-link-image" src={plusIcon} />
