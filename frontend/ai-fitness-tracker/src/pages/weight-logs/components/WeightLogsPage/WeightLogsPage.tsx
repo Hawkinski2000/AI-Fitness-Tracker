@@ -1,4 +1,5 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
+import dayjs from "dayjs";
 import { type WeightLog } from "../../types/weight-logs";
 import useInitializeWeightLogsPage from "../../hooks/useInitializeWeightLogsPage";
 // import useWeightLogsClickOutside from "../../hooks/useWeightLogsClickOutside";
@@ -24,6 +25,14 @@ export default function WeightLogsPage() {
 // ---------------------------------------------------------------------------
 
   const [weightLogs, setWeightLogs] = useState<Record<number, WeightLog>>({});
+
+  const sortedEntries = useMemo(() => {
+    return Object.entries(weightLogs).sort((a, b) => {
+      const aDate = dayjs(a[1].log_date);
+      const bDate = dayjs(b[1].log_date);
+      return aDate.isBefore(bDate) ? 1 : -1;
+    });
+  }, [weightLogs]);
 
 // ---------------------------------------------------------------------------
 
@@ -102,7 +111,7 @@ export default function WeightLogsPage() {
               />
 
               <WeightLineChart
-                weightLogs={weightLogs}
+                sortedEntries={sortedEntries}
                 dateRange={dateRange}
               />
 
@@ -113,15 +122,13 @@ export default function WeightLogsPage() {
                   </div>
                 </div>
 
-                {Object.entries(weightLogs).map(([id, weightLog]) => {
-                  return (
-                    <WeightLogEntry
-                      key={id}
-                      weightLog={weightLog}
-                      setEditMenuOpenId={setEditMenuOpenId}
-                    />
-                  );
-                })}
+                {sortedEntries.map(([id, weightLog]) => (
+                  <WeightLogEntry
+                    key={id}
+                    weightLog={weightLog}
+                    setEditMenuOpenId={setEditMenuOpenId}
+                  />
+                ))}
               </div>
             </div>
         </main>

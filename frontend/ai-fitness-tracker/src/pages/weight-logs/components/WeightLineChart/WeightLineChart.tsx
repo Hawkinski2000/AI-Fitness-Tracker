@@ -30,12 +30,12 @@ Chart.register(
 );
 
 interface WeightLineChartProps {
-  weightLogs: Record<number, WeightLog>;
+  sortedEntries: [string, WeightLog][];
   dateRange: string;
 }
 
 export default function WeightLineChart({
-  weightLogs,
+  sortedEntries,
   dateRange
 }: WeightLineChartProps) {
   const chartRef = useRef<HTMLCanvasElement>(null);
@@ -60,17 +60,18 @@ export default function WeightLineChart({
     const labels: string[] = [];
     const data: number[] = [];
 
-    for (let i = Object.entries(weightLogs).length - 1; i >= 0; i--) {
-      if (earliestDate && dayjs(Object.entries(weightLogs)[i][1].log_date).isBefore(earliestDate)) {
+    for (let i = sortedEntries.length - 1; i >= 0; i--) {
+      const weightLog = sortedEntries[i][1];
+      if (earliestDate && dayjs(weightLog.log_date).isBefore(earliestDate)) {
         continue;
       }
 
-      labels.push(dayjs(Object.entries(weightLogs)[i][1].log_date).format("MM/DD/YYYY"));
-      data.push(Object.entries(weightLogs)[i][1].weight);
+      labels.push(dayjs(weightLog.log_date).format("MM/DD/YYYY"));
+      data.push(weightLog.weight);
     }
 
     return { labels, data };
-  }, [weightLogs, earliestDate]);
+  }, [sortedEntries, earliestDate]);
 
   useEffect(() => {
     if (chartInstanceRef.current) {
@@ -139,7 +140,7 @@ export default function WeightLineChart({
     return () => {
       chartInstanceRef.current?.destroy();
     };
-  }, [weightLogs, data, labels]);
+  }, [sortedEntries, data, labels]);
 
 
   return (
