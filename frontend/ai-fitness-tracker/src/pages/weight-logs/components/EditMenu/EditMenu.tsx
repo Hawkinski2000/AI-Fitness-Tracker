@@ -48,6 +48,10 @@ export default function EditMenu({
       className={`weight-logs-edit-menu ${(editMenuOpenId || addingWeight) && 'edit-menu-open'}`}
       ref={editMenuRef}
     >
+      <h3>
+        {addingWeight ? "Add Weight Entry" : "Edit Weight Entry"}
+      </h3>
+
       <div className='edit-menu-section'>
         <p>Log date</p>
 

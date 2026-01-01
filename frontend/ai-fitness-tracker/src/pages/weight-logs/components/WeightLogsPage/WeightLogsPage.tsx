@@ -47,6 +47,11 @@ export default function WeightLogsPage() {
 
 // ---------------------------------------------------------------------------
 
+  const [weightEntryOptionsMenuOpenId, setWeightEntryOptionsMenuOpenId] = useState<number | null>(null);
+  const weightEntryOptionsMenuRefs = useRef<Record<number, HTMLDivElement | null>>({});
+
+// ---------------------------------------------------------------------------
+
   const { userData, loading } = useInitializeWeightLogsPage(
     setTokensRemaining,
     setWeightLogs
@@ -62,7 +67,8 @@ export default function WeightLogsPage() {
 
   const {
     handleCreateWeightLog,
-    handleUpdateWeightLog
+    handleUpdateWeightLog,
+    
   } = useWeightLogActions(
     editMenuOpenId,
     setWeightLogs
@@ -128,6 +134,10 @@ export default function WeightLogsPage() {
                     key={id}
                     weightLog={weightLog}
                     setEditMenuOpenId={setEditMenuOpenId}
+                    weightEntryOptionsMenuOpenId={weightEntryOptionsMenuOpenId}
+                    setWeightEntryOptionsMenuOpenId={setWeightEntryOptionsMenuOpenId}
+                    weightEntryOptionsMenuRefs={weightEntryOptionsMenuRefs}
+                    // handleDeleteWeightLog={handleDeleteWeightLog}
                   />
                 ))}
               </div>
