@@ -1,8 +1,7 @@
 import axios from 'axios';
 import {
   type WeightLog,
-  type WeightLogCreate,
-  // type WeightLogUpdate
+  type WeightLogCreate
 } from "../pages/weight-logs/types/weight-logs";
 import { API_BASE_URL } from '../config/api';
 
@@ -62,25 +61,24 @@ export const createWeightLog = async (
   return newWeightLog;
 };
 
-// export const updateMoodLog = async (
-//   logDate: string,
-//   moodLogId: number,
-//   moodLog: MoodLogUpdate,
-//   setMoodLogs: React.Dispatch<React.SetStateAction<Record<string, MoodLog>>>,
-//   token: string
-// ) => {
-//   const moodLogResponse = await axios.patch(`${API_BASE_URL}/mood-logs/${moodLogId}`,
-//     moodLog,
-//     {
-//       headers: {
-//         Authorization: `Bearer ${token}`
-//       }
-//     }
-//   );
-//   const updatedMoodLog = moodLogResponse.data;
+export const updateWeightLog = async (
+  editMenuOpenId: number,
+  weightLog: WeightLogCreate,
+  setWeightLogs: React.Dispatch<React.SetStateAction<Record<number, WeightLog>>>,
+  token: string
+) => {
+  const weightLogResponse = await axios.put(`${API_BASE_URL}/weight-logs/${editMenuOpenId}`,
+    weightLog,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+  const updatedWeightLog = weightLogResponse.data;
 
-//   setMoodLogs(prev => ({
-//     ...prev,
-//     [logDate]: updatedMoodLog
-//   }));
-// };
+  setWeightLogs(prev => ({
+    ...prev,
+    [editMenuOpenId]: updatedWeightLog
+  }));
+};

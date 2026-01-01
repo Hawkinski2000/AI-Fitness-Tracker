@@ -10,8 +10,3 @@ export interface WeightLogCreate {
   weight: number;
   unit: string;
 }
-
-export interface WeightLogUpdate {
-  weight?: number | null;
-  unit?: string | null;
-}

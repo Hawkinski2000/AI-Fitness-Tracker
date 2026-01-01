@@ -62,9 +62,9 @@ export default function WeightLogsPage() {
 
   const {
     handleCreateWeightLog,
-    // handleUpdateWeightLog
+    handleUpdateWeightLog
   } = useWeightLogActions(
-    // editMenuOpenId,
+    editMenuOpenId,
     setWeightLogs
   );
 
@@ -108,6 +108,7 @@ export default function WeightLogsPage() {
                 weightLogs={weightLogs}
                 editMenuRef={editMenuRef}
                 handleCreateWeightLog={handleCreateWeightLog}
+                handleUpdateWeightLog={handleUpdateWeightLog}
               />
 
               <WeightLineChart

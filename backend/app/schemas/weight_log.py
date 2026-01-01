@@ -10,6 +10,10 @@ class WeightLogBase(BaseModel):
 class WeightLogCreate(WeightLogBase):
     pass
 
+class WeightLogUpdate(BaseModel):
+    weight: float
+    unit: str
+
 class WeightLogResponse(WeightLogBase):
     id: int
     user_id: int

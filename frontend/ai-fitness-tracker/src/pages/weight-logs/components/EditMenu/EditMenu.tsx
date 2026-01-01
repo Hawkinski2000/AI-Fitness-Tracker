@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import {
   type WeightLog,
-  type WeightLogCreate,
-  // type WeightLogUpdate
+  type WeightLogCreate
 } from "../../types/weight-logs";
 import './EditMenu.css';
 
@@ -16,7 +15,7 @@ type EditMenuProps = {
   weightLogs: Record<number, WeightLog>;
   editMenuRef: React.RefObject<HTMLDivElement | null>;
   handleCreateWeightLog: (weightLog: WeightLogCreate) => Promise<void>;
-  // handleUpdateWeightLog: (weightLogUpdate: WeightLogUpdate) => Promise<void>;
+  handleUpdateWeightLog: (weightLog: WeightLogCreate) => Promise<void>;
 };
 
 
@@ -27,7 +26,8 @@ export default function EditMenu({
   setAddingWeight,
   weightLogs,
   editMenuRef,
-  handleCreateWeightLog
+  handleCreateWeightLog,
+  handleUpdateWeightLog
 }: EditMenuProps) {
   const currentWeightLog = editMenuOpenId && weightLogs[editMenuOpenId];
 
@@ -35,10 +35,11 @@ export default function EditMenu({
 
   const [weight, setWeight] = useState<number | null>(null);
 
-  // const [unit, setUnit] = useState<string | null>(null);
+  const [unit, setUnit] = useState<string | null>(null);
 
   useEffect(() => {
-    setWeight(currentWeightLog && currentWeightLog.weight)
+    setWeight(currentWeightLog ? currentWeightLog.weight : null);
+    setUnit(currentWeightLog ? currentWeightLog.unit : 'lbs');
   }, [currentWeightLog]);
 
 
@@ -95,11 +96,7 @@ export default function EditMenu({
         <p>Unit</p>
 
         <button className='edit-menu-text-button'>
-          {
-            currentWeightLog
-              ? currentWeightLog.unit
-              : 'lbs'
-          }
+          {unit}
         </button>
       </div>
 
@@ -132,9 +129,8 @@ export default function EditMenu({
               }
               handleCreateWeightLog(weightLog);
               setAddingWeight(false);
-            } else {
-              // handleUpdateWeightLog();
-              setEditMenuOpenId(null);
+            } else if (currentWeightLog && weight && unit) {
+              handleUpdateWeightLog({"log_date": currentWeightLog.log_date, "weight": weight, "unit": unit});
             }
 
             setEditMenuOpenId(null);

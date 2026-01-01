@@ -1,19 +1,18 @@
 import { useCallback } from "react";
 import {
   type WeightLog,
-  type WeightLogCreate,
-  // type WeightLogUpdate
+  type WeightLogCreate
 } from "../types/weight-logs";
 import { useAuth } from "../../../context/auth/useAuth";
 import { refreshAccessToken, isTokenExpired } from "../../../utils/auth";
 import {
   createWeightLog,
-  // updateWeightLog
+  updateWeightLog
 } from "../../../utils/weight-logs";
 
 
 const useWeightLogActions = (
-  // editMenuOpenId: number | null,
+  editMenuOpenId: number | null,
   setWeightLogs: React.Dispatch<React.SetStateAction<Record<number, WeightLog>>>
 ) => {
   const { accessToken, setAccessToken } = useAuth();
@@ -47,46 +46,43 @@ const useWeightLogActions = (
   ]);
 
 
-  // const handleUpdateWeightLog = useCallback(async (weightLogUpdate: WeightLogUpdate) => {
-  //   try {
-  //     let token: string | null = accessToken;
-  //     if (!accessToken || isTokenExpired(accessToken)) {
-  //       token = await refreshAccessToken();  
-  //       setAccessToken(token);
-  //     }
-  //     if (!token) {
-  //       throw new Error("No access token");
-  //     }
-
-  //     const key = Object.keys(weightLogUpdate)[0];
-  //     const value = Object.values(weightLogUpdate)[0];
-
-  //     const updatedWeightLog: WeightLogUpdate = {
-  //       [key]: value
-  //     };
+  const handleUpdateWeightLog = useCallback(async (weightLog: WeightLogCreate) => {
+    try {
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();  
+        setAccessToken(token);
+      }
+      if (!token) {
+        throw new Error("No access token");
+      }
       
-  //     await updateWeightLog(
-  //       editMenuOpenId,
-  //       updatedWeightLog,
-  //       setWeightLogs,
-  //       token
-  //     );
+      if (!editMenuOpenId) {
+        return;
+      }
 
-  //   } catch (err) {
-  //     console.error(err);
-  //     setAccessToken(null);
-  //   }
-  // }, [
-  //   accessToken,
-  //   setAccessToken,
-  //   editMenuOpenId,
-  //   setWeightLogs
-  // ]);
+      await updateWeightLog(
+        editMenuOpenId,
+        weightLog,
+        setWeightLogs,
+        token
+      );
+
+    } catch (err) {
+      console.error(err);
+      setAccessToken(null);
+    }
+  }, [
+    accessToken,
+    setAccessToken,
+    editMenuOpenId,
+    setWeightLogs
+  ]);
 
   
   return {
     handleCreateWeightLog,
-    // handleUpdateWeightLog
+    handleUpdateWeightLog
   }
 };
 
