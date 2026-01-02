@@ -26,7 +26,7 @@ export default function WeightLogEntry({
   return (
     <div
       className="weight-log"
-      onClick={() => setEditMenuOpenId(weightLog.id)}
+      onClick={() => setEditMenuOpenId(prev => prev === weightLog.id ? null : weightLog.id)}
     >
       <div className="weight-log-content">
         <div className="weight-log-section">

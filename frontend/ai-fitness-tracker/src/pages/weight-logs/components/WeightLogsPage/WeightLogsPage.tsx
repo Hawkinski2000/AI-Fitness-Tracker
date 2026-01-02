@@ -2,7 +2,7 @@ import { useState, useRef, useMemo } from "react";
 import dayjs from "dayjs";
 import { type WeightLog } from "../../types/weight-logs";
 import useInitializeWeightLogsPage from "../../hooks/useInitializeWeightLogsPage";
-// import useWeightLogsClickOutside from "../../hooks/useWeightLogsClickOutside";
+import useWeightLogsClickOutside from "../../hooks/useWeightLogsClickOutside";
 // import useWeightLogsDate from "../../hooks/useWeightLogsDate";
 import useWeightLogActions from "../../hooks/useWeightLogActions";
 import LoadingScreen from "../../../../components/LoadingScreen/LoadingScreen";
@@ -57,13 +57,18 @@ export default function WeightLogsPage() {
     setWeightLogs
   );
 
-  // useWeightLogsClickOutside(
-  //   setAccountMenuOpen,
-  //   editMenuOpenId,
-  //   setEditMenuOpenId,
-  //   accountMenuRef,
-  //   editMenuRef
-  // );
+  useWeightLogsClickOutside(
+    setAccountMenuOpen,
+    editMenuOpenId,
+    setEditMenuOpenId,
+    addingWeight,
+    setAddingWeight,
+    weightEntryOptionsMenuOpenId,
+    setWeightEntryOptionsMenuOpenId,
+    accountMenuRef,
+    editMenuRef,
+    weightEntryOptionsMenuRefs
+  );
 
   const {
     handleCreateWeightLog,

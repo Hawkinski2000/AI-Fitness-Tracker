@@ -38,7 +38,7 @@ export default function DateNav({
         onClick={(e) => {
           e.stopPropagation();
           setEditMenuOpenId(null);
-          setAddingWeight(true);
+          setAddingWeight(prev => !prev);
         }}
       >
         <img className="button-link-image" src={plusIcon} />

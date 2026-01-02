@@ -80,4 +80,8 @@
     padding: 0 0.5;
     left: calc(50% + 25px);
   }
+
+  .edit-menu-input {
+    padding-left: 0;
+  }
 }

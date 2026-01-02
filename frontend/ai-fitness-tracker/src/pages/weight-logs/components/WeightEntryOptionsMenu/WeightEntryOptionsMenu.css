@@ -48,3 +48,10 @@
 .weight-entry-options-delete-button:hover {
   background-color: rgba(255, 0, 0, 0.25);
 }
+
+@media (max-width: 500px) {
+  .weight-entry-options-menu {
+    top: 5rem;
+    right: 1rem;
+  }
+}
