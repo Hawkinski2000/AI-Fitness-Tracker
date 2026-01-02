@@ -68,7 +68,7 @@ export default function WeightLogsPage() {
   const {
     handleCreateWeightLog,
     handleUpdateWeightLog,
-    
+    handleDeleteWeightLog
   } = useWeightLogActions(
     editMenuOpenId,
     setWeightLogs
@@ -137,7 +137,7 @@ export default function WeightLogsPage() {
                     weightEntryOptionsMenuOpenId={weightEntryOptionsMenuOpenId}
                     setWeightEntryOptionsMenuOpenId={setWeightEntryOptionsMenuOpenId}
                     weightEntryOptionsMenuRefs={weightEntryOptionsMenuRefs}
-                    // handleDeleteWeightLog={handleDeleteWeightLog}
+                    handleDeleteWeightLog={handleDeleteWeightLog}
                   />
                 ))}
               </div>

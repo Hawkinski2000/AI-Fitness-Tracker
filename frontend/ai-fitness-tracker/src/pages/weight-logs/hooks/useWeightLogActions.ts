@@ -7,7 +7,8 @@ import { useAuth } from "../../../context/auth/useAuth";
 import { refreshAccessToken, isTokenExpired } from "../../../utils/auth";
 import {
   createWeightLog,
-  updateWeightLog
+  updateWeightLog,
+  deleteWeightLog
 } from "../../../utils/weight-logs";
 
 
@@ -79,11 +80,37 @@ const useWeightLogActions = (
     setWeightLogs
   ]);
 
-  
+  const handleDeleteWeightLog = useCallback(async (weightLogId: number) => {
+    try {
+      let token: string | null = accessToken;
+      if (!accessToken || isTokenExpired(accessToken)) {
+        token = await refreshAccessToken();  
+        setAccessToken(token);
+      }
+      if (!token) {
+        throw new Error("No access token");
+      }
+      
+      await deleteWeightLog(
+        weightLogId,
+        setWeightLogs,
+        token
+      );
+
+    } catch (err) {
+      console.error(err);
+      setAccessToken(null);
+    }
+  }, [
+    accessToken,
+    setAccessToken,
+    setWeightLogs
+  ]);
   
   return {
     handleCreateWeightLog,
-    handleUpdateWeightLog
+    handleUpdateWeightLog,
+    handleDeleteWeightLog
   }
 };
 

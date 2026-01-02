@@ -8,7 +8,7 @@ type WeightEntryOptionsMenuProps = {
   weightEntryOptionsMenuOpenId: number | null;
   setWeightEntryOptionsMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
   weightEntryOptionsMenuRefs: React.RefObject<Record<number, HTMLDivElement | null>>;
-  // handleDeleteWeightLog: (weightLogId: number) => Promise<void>;
+  handleDeleteWeightLog: (weightLogId: number) => Promise<void>;
 };
 
 
@@ -17,7 +17,7 @@ export default function WeightEntryOptionsMenu({
   weightEntryOptionsMenuOpenId,
   setWeightEntryOptionsMenuOpenId,
   weightEntryOptionsMenuRefs,
-  // handleDeleteWeightLog
+  handleDeleteWeightLog
 }: WeightEntryOptionsMenuProps) {
   return (
     <div
@@ -31,7 +31,7 @@ export default function WeightEntryOptionsMenu({
         className="weight-entry-options-menu-button weight-entry-options-delete-button"
         onClick={(e) => {
           e.stopPropagation();
-          // handleDeleteWeightLog(weightLog.id);
+          handleDeleteWeightLog(weightLog.id);
           setWeightEntryOptionsMenuOpenId(null);
         }}
       >

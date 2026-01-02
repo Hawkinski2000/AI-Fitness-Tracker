@@ -83,4 +83,22 @@ export const updateWeightLog = async (
   }));
 };
 
+export const deleteWeightLog = async (
+  weightLogId: number,
+  setWeightLogs: React.Dispatch<React.SetStateAction<Record<number, WeightLog>>>,
+  token: string
+) => {
+  await axios.delete(`${API_BASE_URL}/weight-logs/${weightLogId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
 
+  setWeightLogs(prev =>
+    Object.fromEntries(Object.entries(prev).filter(([, weightLog]) =>
+      weightLog.id !== weightLogId
+    ))
+  );
+};
