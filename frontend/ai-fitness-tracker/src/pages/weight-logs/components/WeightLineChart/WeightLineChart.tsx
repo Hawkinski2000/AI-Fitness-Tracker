@@ -31,30 +31,17 @@ Chart.register(
 
 interface WeightLineChartProps {
   sortedEntries: [string, WeightLog][];
-  dateRange: string;
+  earliestDate: dayjs.Dayjs | null;
+  latestDate: dayjs.Dayjs | null;
 }
 
 export default function WeightLineChart({
   sortedEntries,
-  dateRange
+  earliestDate,
+  latestDate
 }: WeightLineChartProps) {
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstanceRef = useRef<Chart | null>(null);
-
-  const earliestDate = useMemo(() => {
-    switch (dateRange) {
-      case "Week":
-        return dayjs().subtract(1, "week");
-      case "Month":
-        return dayjs().subtract(1, "month");
-      case "3 Months":
-        return dayjs().subtract(3, "month");
-      case "Year":
-        return dayjs().subtract(1, "year");
-      default:
-        return null;
-    }
-  }, [dateRange]);
 
   const { labels, data } = useMemo(() => {
     const labels: string[] = [];
@@ -62,7 +49,8 @@ export default function WeightLineChart({
 
     for (let i = sortedEntries.length - 1; i >= 0; i--) {
       const weightLog = sortedEntries[i][1];
-      if (earliestDate && dayjs(weightLog.log_date).isBefore(earliestDate)) {
+      if ((earliestDate && dayjs(weightLog.log_date).isBefore(earliestDate)) ||
+          (latestDate && dayjs(weightLog.log_date).isAfter(latestDate))) {
         continue;
       }
 
@@ -71,7 +59,7 @@ export default function WeightLineChart({
     }
 
     return { labels, data };
-  }, [sortedEntries, earliestDate]);
+  }, [sortedEntries, earliestDate, latestDate]);
 
   useEffect(() => {
     if (chartInstanceRef.current) {

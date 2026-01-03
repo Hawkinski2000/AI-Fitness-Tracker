@@ -3,7 +3,6 @@ import dayjs from "dayjs";
 import { type WeightLog } from "../../types/weight-logs";
 import useInitializeWeightLogsPage from "../../hooks/useInitializeWeightLogsPage";
 import useWeightLogsClickOutside from "../../hooks/useWeightLogsClickOutside";
-// import useWeightLogsDate from "../../hooks/useWeightLogsDate";
 import useWeightLogActions from "../../hooks/useWeightLogActions";
 import LoadingScreen from "../../../../components/LoadingScreen/LoadingScreen";
 import Header from "../../../../components/Header/Header";
@@ -44,6 +43,37 @@ export default function WeightLogsPage() {
 // ---------------------------------------------------------------------------
 
   const [dateRange, setDateRange] = useState<string>("3 Months");
+  const [dateRangeOffset, setDateRangeOffset] = useState<number>(0);
+
+  const earliestDate = useMemo(() => {
+    switch (dateRange) {
+      case "Week":
+        return dayjs().subtract(1 * (dateRangeOffset + 1), "week");
+      case "Month":
+        return dayjs().subtract(1 * (dateRangeOffset + 1), "month");
+      case "3 Months":
+        return dayjs().subtract(3 * (dateRangeOffset + 1), "month");
+      case "Year":
+        return dayjs().subtract(1 * (dateRangeOffset + 1), "year");
+      default:
+        return null;
+    }
+  }, [dateRange, dateRangeOffset]);
+
+  const latestDate = useMemo(() => {
+    switch (dateRange) {
+      case "Week":
+        return dayjs().subtract(1 * dateRangeOffset, "week");
+      case "Month":
+        return dayjs().subtract(1 * dateRangeOffset, "month");
+      case "3 Months":
+        return dayjs().subtract(3 * dateRangeOffset, "month");
+      case "Year":
+        return dayjs().subtract(1 * dateRangeOffset, "year");
+      default:
+        return null;
+    }
+  }, [dateRange, dateRangeOffset]);
 
 // ---------------------------------------------------------------------------
 
@@ -104,6 +134,9 @@ export default function WeightLogsPage() {
               <DateNav
                 setEditMenuOpenId={setEditMenuOpenId}
                 setAddingWeight={setAddingWeight}
+                setDateRangeOffset={setDateRangeOffset}
+                earliestDate={earliestDate}
+                latestDate={latestDate}
               />
 
               <DateRangeHeader
@@ -124,7 +157,8 @@ export default function WeightLogsPage() {
 
               <WeightLineChart
                 sortedEntries={sortedEntries}
-                dateRange={dateRange}
+                earliestDate={earliestDate}
+                latestDate={latestDate}
               />
 
               <div className="weight-logs-container">

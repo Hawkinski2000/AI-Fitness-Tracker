@@ -34,8 +34,12 @@
   background-color: #2e2e5e;
 }
 
-.open-calendar-button {
-  width: fit-content;
+.date-nav-text {
+  padding: 0.5rem;
+  margin: 0;
+  font-family: Outfit;
+  font-size: 14px;
+  user-select: none;
 }
 
 .weight-log-add-button {
