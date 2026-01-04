@@ -56,9 +56,9 @@ export default function WeightLogsPage() {
       case "Year":
         return dayjs().subtract(1 * (dateRangeOffset + 1), "year");
       default:
-        return null;
+        return dayjs(sortedEntries[sortedEntries.length - 1][1].log_date);
     }
-  }, [dateRange, dateRangeOffset]);
+  }, [dateRange, dateRangeOffset, sortedEntries]);
 
   const latestDate = useMemo(() => {
     switch (dateRange) {
@@ -71,9 +71,9 @@ export default function WeightLogsPage() {
       case "Year":
         return dayjs().subtract(1 * dateRangeOffset, "year");
       default:
-        return null;
+        return dayjs(sortedEntries[0][1].log_date);
     }
-  }, [dateRange, dateRangeOffset]);
+  }, [dateRange, dateRangeOffset, sortedEntries]);
 
 // ---------------------------------------------------------------------------
 
@@ -134,14 +134,17 @@ export default function WeightLogsPage() {
               <DateNav
                 setEditMenuOpenId={setEditMenuOpenId}
                 setAddingWeight={setAddingWeight}
+                dateRangeOffset={dateRangeOffset}
                 setDateRangeOffset={setDateRangeOffset}
                 earliestDate={earliestDate}
                 latestDate={latestDate}
+                dateRange={dateRange}
               />
 
               <DateRangeHeader
                 dateRange={dateRange}
                 setDateRange={setDateRange}
+                setDateRangeOffset={setDateRangeOffset}
               />
 
               <EditMenu

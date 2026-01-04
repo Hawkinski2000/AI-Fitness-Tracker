@@ -31,8 +31,8 @@ Chart.register(
 
 interface WeightLineChartProps {
   sortedEntries: [string, WeightLog][];
-  earliestDate: dayjs.Dayjs | null;
-  latestDate: dayjs.Dayjs | null;
+  earliestDate: dayjs.Dayjs;
+  latestDate: dayjs.Dayjs;
 }
 
 export default function WeightLineChart({
@@ -45,17 +45,23 @@ export default function WeightLineChart({
 
   const { labels, data } = useMemo(() => {
     const labels: string[] = [];
-    const data: number[] = [];
+    const data: (number | null)[] = [];
 
-    for (let i = sortedEntries.length - 1; i >= 0; i--) {
-      const weightLog = sortedEntries[i][1];
-      if ((earliestDate && dayjs(weightLog.log_date).isBefore(earliestDate)) ||
-          (latestDate && dayjs(weightLog.log_date).isAfter(latestDate))) {
-        continue;
-      }
+    const entryMap = new Map<string, number>();
+    for (let i = 0; i < sortedEntries.length; i++) {
+      const entry = sortedEntries[i][1];
+      const key = dayjs(entry.log_date).format("MM/DD/YYYY");
+      entryMap.set(key, entry.weight);
+    }
+    const start = (earliestDate).startOf('day');
+    const end = (latestDate).startOf('day');
 
-      labels.push(dayjs(weightLog.log_date).format("MM/DD/YYYY"));
-      data.push(weightLog.weight);
+    let current = start;
+    while (current.isBefore(end) || current.isSame(end)) {
+      const key = current.format("MM/DD/YYYY");
+      labels.push(key);
+      data.push(entryMap.has(key) ? entryMap.get(key)! : null);
+      current = current.add(1, 'day');
     }
 
     return { labels, data };
@@ -71,13 +77,14 @@ export default function WeightLineChart({
       return;
     }
 
-    const config: ChartConfiguration<'line', number[], string> = {
+    const config: ChartConfiguration<'line', (number | null)[], string> = {
       type: 'line',
       data: {
         labels: labels,
         datasets: [{
           data: data,
-          borderColor: '#00ffcc'
+          borderColor: '#00ffcc',
+          spanGaps: true
         }]
       },
       options: {
@@ -93,9 +100,8 @@ export default function WeightLineChart({
           },
           y: {
             ticks: {
-              callback: function(value) {
-                return value + ' lbs';
-              },
+              display: sortedEntries.length > 0,
+              callback: (weight) => weight + ' lbs',
               font: {
                 size: 12,
                 family: "Outfit",

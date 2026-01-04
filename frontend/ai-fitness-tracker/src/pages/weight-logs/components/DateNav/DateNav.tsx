@@ -8,35 +8,45 @@ import './DateNav.css';
 type DateNavProps = {
   setEditMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
   setAddingWeight: React.Dispatch<React.SetStateAction<boolean>>;
+  dateRangeOffset: number;
   setDateRangeOffset: React.Dispatch<React.SetStateAction<number>>;
-  earliestDate: dayjs.Dayjs | null;
-  latestDate: dayjs.Dayjs | null;
+  earliestDate: dayjs.Dayjs;
+  latestDate: dayjs.Dayjs;
+  dateRange: string;
 };
 
 
 export default function DateNav({
   setEditMenuOpenId,
   setAddingWeight,
+  dateRangeOffset,
   setDateRangeOffset,
   earliestDate,
-  latestDate
+  latestDate,
+  dateRange
 }: DateNavProps) {
   return (
     <div className="date-nav-container">
       <nav className="date-nav">
         <button
-          className="date-nav-button"
+          className={
+            `date-nav-button
+            ${dateRange === "All time" && 'date-nav-button-disabled'}`
+          }
           onClick={() => setDateRangeOffset(prev => prev + 1)}
         >
           <img className="button-link-image" src={arrowLeftIcon} />
         </button>
 
         <p className="date-nav-text">
-          {earliestDate?.format("MM/DD/YYYY")} - {latestDate?.format("MM/DD/YYYY")}
+          {earliestDate.format("MM/DD/YYYY")} - {latestDate.format("MM/DD/YYYY")}
         </p>
         
         <button
-          className="date-nav-button"
+          className={
+            `date-nav-button
+            ${(dateRange === "All time" || dateRangeOffset === 0) && 'date-nav-button-disabled'}`
+          }
           onClick={() => setDateRangeOffset(prev => Math.max(prev - 1, 0))}
         >
           <img className="button-link-image" src={arrowRightIcon} />
