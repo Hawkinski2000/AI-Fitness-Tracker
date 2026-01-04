@@ -7,11 +7,15 @@ from app.models.models import WeightLog
 
 
 def create_weight_log(weight_log: weight_log.WeightLogCreate, user_id: int, db: Session):
-    new_weight_log = WeightLog(**weight_log.model_dump(), user_id=user_id)
-    db.add(new_weight_log)
+    weight_log_query = db.query(WeightLog).filter(WeightLog.log_date == weight_log.log_date, WeightLog.user_id == user_id)
+    if weight_log_query.first():
+        weight_log_query.update(weight_log.model_dump(), synchronize_session=False)
+    else:
+        new_weight_log = WeightLog(**weight_log.model_dump(), user_id=user_id)
+        db.add(new_weight_log)
+
     db.commit()
-    db.refresh(new_weight_log)
-    return new_weight_log
+    return weight_log_query.first()
 
 def get_weight_logs(user_id: int, db: Session):
     weight_logs = db.query(WeightLog).filter(WeightLog.user_id == user_id).order_by(WeightLog.log_date.desc()).all()
