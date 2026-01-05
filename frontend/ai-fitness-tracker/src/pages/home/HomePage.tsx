@@ -11,6 +11,7 @@ import chatPageImage from '../../assets/chat-page.png';
 import viewFoodMenuImage from '../../assets/view-food-menu.png';
 import viewExerciseMenuImage from '../../assets/view-exercise-menu.png';
 import sleepLogsPageImage from '../../assets/sleep-logs-page.png';
+import weightLogsPageImage from '../../assets/weight-logs-page.png';
 import './HomePage.css';
 
 
@@ -120,6 +121,13 @@ export default function HomePage() {
                   className="ai-fitness-tracker-image"
                   src={sleepLogsPageImage}
                   alt="sleep-logs-page"
+                />
+              </SwiperSlide>
+              <SwiperSlide>
+                <img
+                  className="ai-fitness-tracker-image"
+                  src={weightLogsPageImage}
+                  alt="weight-logs-page"
                 />
               </SwiperSlide>
 
