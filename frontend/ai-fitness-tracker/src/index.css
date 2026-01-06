@@ -1,3 +1,7 @@
+html {
+  overflow-x: hidden;
+}
+
 :root {
   font-family: Outfit, Arial;
   line-height: 1.5;
@@ -16,10 +20,11 @@
 body {
   display: flex;
   margin: 0;
-  width: 100vw;
+  width: 100%;
   min-width: 320px;
   min-height: 100vh;
   place-items: center;
+  overflow-x: hidden;
 }
 
 h1 {
