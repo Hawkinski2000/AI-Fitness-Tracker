@@ -7,10 +7,28 @@
   gap: 1.5rem;
 }
 
+.loading-spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  background-color: white;
+  transition: opacity 0.5s;
+  pointer-events: none;
+}
+
+.loading-spinner-container-hidden {
+  opacity: 0;
+}
+
 .recaptcha-container {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   margin-bottom: 2.5rem;
   min-height: 78px;
+  position: relative;
 }
