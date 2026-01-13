@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { type UserType } from "../../../types/app"
 import { type Chat, type ConversationItemType } from "../types/chat";
 import { useAuth } from "../../../context/auth/useAuth";
-import { refreshAccessToken, getUserFromToken } from "../../../utils/auth";
+import { refreshAccessToken, getUserFromToken, isTokenExpired } from "../../../utils/auth";
 import { loadChats, loadChatHistory } from "../utils/chat";
 
 
@@ -16,7 +16,7 @@ const useInitializeChatPage = (
   scrollToBottom: (chatId: number, behavior?: ScrollBehavior) => void,
   handleCreateChat: () => Promise<void>,
 ) => {
-  const { setAccessToken } = useAuth();
+  const { accessToken, setAccessToken } = useAuth();
 
   const [userData, setUserData] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
@@ -27,13 +27,18 @@ const useInitializeChatPage = (
   useEffect(() => {
     const initializeChatPage = async () => {
       try {
-        const token = await refreshAccessToken();  
+        let token: string | null = accessToken;
+        
+        if (!accessToken || (accessToken && isTokenExpired(accessToken))) {
+          token = await refreshAccessToken();
+          if (token) {
+            setAccessToken(token);
+          }
+        }
 
         if (!token) {
           throw new Error("No access token");
         }
-
-        setAccessToken(token);
 
         const userData = await getUserFromToken(token);
         setUserData(userData);
@@ -60,6 +65,7 @@ const useInitializeChatPage = (
       } catch (err) {
         console.error(err);
         setAccessToken(null);
+        console.log("Navigating back to HomePage");
         navigate("/");
 
       } finally {
@@ -69,6 +75,7 @@ const useInitializeChatPage = (
 
     initializeChatPage();
     }, [
+      accessToken,
       setAccessToken,
       setUserData,
       setTokensRemaining,

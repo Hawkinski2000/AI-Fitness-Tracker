@@ -19,7 +19,7 @@ export default function LoginPage() {
   const [invalidCredentials, setInvalidCredentials] = useState(false);
   const [logInFailed, setLogInFailed] = useState(false);
 
-  const { setAccessToken } = useAuth();
+  const { accessToken, setAccessToken } = useAuth();
   
   const navigate = useNavigate();
 
@@ -43,6 +43,12 @@ export default function LoginPage() {
     return () => clearTimeout(handler);
   }, [email]);
 
+  useEffect(() => {
+    if (accessToken) {
+      navigate('/chat');
+    }
+  }, [accessToken, navigate]);
+
   const logInUser = async () => {
     if (invalidCredentials) {
       setInvalidCredentials(false);
@@ -55,11 +61,9 @@ export default function LoginPage() {
       const response = await logIn(email, password);
       
       const token = response.data.access_token;
-      setAccessToken(token)
+      setAccessToken(token);
 
       console.log('logInUser successful.');
-
-      navigate('/chat');
 
     } catch (error: unknown) {
       if (axios.isAxiosError(error) && error.response?.status === 403) {

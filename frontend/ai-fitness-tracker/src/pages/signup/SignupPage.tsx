@@ -41,7 +41,7 @@ export default function SignupPage() {
 
   const [signUpFailed, setSignUpFailed] = useState(false);
 
-  const { setAccessToken } = useAuth();
+  const { accessToken, setAccessToken } = useAuth();
 
   const navigate = useNavigate();
 
@@ -72,8 +72,6 @@ export default function SignupPage() {
       setAccessToken(token);
 
       console.log('signUp successful.');
-
-      navigate('about-you');
 
     } catch (error) {
       setSignUpFailed(true);
@@ -143,6 +141,12 @@ export default function SignupPage() {
 
     return () => clearTimeout(handler);
   }, [signUpData.password, repeatPassword]);
+
+  useEffect(() => {
+    if (accessToken) {
+      navigate('/about-you');
+    }
+  }, [accessToken, navigate]);
 
   const passwordsMatch =
     signUpData.password &&
