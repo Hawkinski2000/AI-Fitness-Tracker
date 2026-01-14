@@ -1,55 +1,38 @@
 # AI-Fitness-Tracker
 
-An AI-powered fitness tracker that generates insights based on diet, exercise, sleep, and mood data.
+An AI-powered fitness tracker that generates insights based on diet, exercise, sleep, mood, and bodyweight data.
 
-- A full-stack, agentic AI fitness tracker using FastAPI, Pydantic, PostgreSQL, SQLAlchemy, Alembic, Docker, and EC2, featuring a GPT-5-powered autonomous agent that can analyze users' health data, interact with the app, call specialized tools, and generate actionable recommendations.
-- Implements CI/CD with GitHub Actions, running 121+ Python tests, building Docker containers, and deploying to EC2.
-- Features a responsive React + TypeScript frontend with HTML/CSS. Uses secure authentication (JWTs, HTTP-only refresh tokens), reCAPTCHA, and Nginx proxy with rate limiting for production readiness.
+**Try it now** → [aitracker.fit](https://aitracker.fit)
 
+- A full-stack, agentic AI fitness tracker using FastAPI, PostgreSQL, Docker, and EC2, featuring a GPT-5-powered autonomous agent that can analyze users' health data, interact with the app, call specialized tools, and generate actionable recommendations.
+- Implements CI/CD with GitHub Actions, running ~120 Pytest tests, building Docker containers, and deploying to EC2.
+- Features a responsive React + TypeScript frontend with HTML/CSS, reusable components, and custom hooks.
+- Uses secure authentication (JWTs, HTTP-only refresh tokens), reCAPTCHA, and Nginx for rate/connection limiting.
+
+### AI Chat Interface
 ![Chat Page](images/chat_page.png)
+*Conversational AI agent that analyzes your health data and provides personalized insights*
 
+### Meal Tracking
 ![View Food Menu](images/view_food_menu.png)
+*Comprehensive nutrition logging with custom food database containing ~2 million foods*
 
+### Exercise Tracking
 ![View Exercise Menu](images/view-exercise-menu.png)
+*Detailed workout tracking across ~3,000 exercises, including sets, reps, and performance metrics*
 
+### Sleep Tracking
 ![Sleep Logs Page](images/sleep-logs-page.png)
+*Sleep pattern tracking with subjective quality scores*
 
+### Weight Tracking
 ![Weight Logs Page](images/weight-logs-page.png)
+*Bodyweight tracking with visual progress charts*
 
+### User Experience
 ![User Flow Diagram](images/User%20Flow%20Diagram%20-%20AI%20Fitness%20Tracker.png)
+*User flow diagram*
 
+### Database Design
 ![Entity Relationship Diagram](images/Entity%20Relationship%20Diagram%20-%20AI%20Fitness%20Tracker.svg)
-
-# User Stories
-
-## Meal Tracking
-- As a user, I want to log the various foods in my meals so that I can track my nutrition over time.
-- As a user, I want to be able to add new foods so that I can accurately track what I eat, even if it's not already in the system.
-
-## Exercise Tracking
-- As a user, I want to record exercises, sets, reps, rest times, and/or exercise duration so that I can measure my progress over time.
-- As a user, I want to view metrics about exercises so that I can evaluate my performance.
-
-## Sleep Tracking
-- As a user, I want to log sleep and wake times as well as subjective sleep scores so that I can monitor my sleep patterns.
-- As a user, I want to see trends in my sleep duration, consistency, and subjective quality over time so that I can understand how my sleep habits are affecting my overall health.
-
-## Mood Tracking
-- As a user, I want to log my subjective mood scores so that I can monitor my emotional well-being over time.
-- As a user, I want to see trends in my subjective mood scores over time so that I can identify emotional patterns and understand how my lifestyle affects my mental well-being.
-
-## AI Insights
-- As a user, I want to receive personalized health insights based on combining information from my logs as well as past insights so that I can improve my habits.
-- As a user, I want AI summaries of specific actions I can take so that I can immediately improve my health and fitness habits.
-
-## User Experience
-- As a user, I want the app to be fast and easy to use so that I can quickly get started and build a daily habit without feeling overwhelmed.
-- As a user, I want the app to automatically track and organize my health and fitness data over time, as well has remember past insights and conversations so that I can get deeper, more personalized insights than I would from one-off prompts to ChatGPT.
-
-## Authentication
-- As a new user, I want to register with my email and password so that I can create an account.
-- As a returning user, I want to log in securely so that I can access my past data.
-
-## Privacy
-- As a user, I want to be confident that my data is private and secure so that I feel safe using the app every day.
-- As a user, I want to have the option to delete my account and all associated data so that I can control what information is stored about me.
+*Database schema and entity relationships*
