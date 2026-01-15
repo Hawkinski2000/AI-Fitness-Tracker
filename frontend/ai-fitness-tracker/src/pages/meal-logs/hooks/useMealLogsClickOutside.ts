@@ -83,12 +83,14 @@ const useMealLogsClickOutside = (
         foodsMenuRef.current &&
         target instanceof Node &&
         !foodsMenuRef.current.contains(target) &&
-        !(target instanceof HTMLElement && target.classList.contains('add-food-button'))
+        !(target instanceof HTMLElement && target.classList.contains('add-food-button')) &&
+        !(target instanceof HTMLElement && target.closest('.meal-log-food'))
       ) {
         setFoodsMenuOpenMealType('');
         setFoodSearch('');
         setFoodsMenuInputFocused(false);
         setEditingMealLogFoodId(null);
+        setViewFoodMenuOpenId(null);
       }
 
       if (target instanceof HTMLElement && target.classList.contains('add-food-button')) {
