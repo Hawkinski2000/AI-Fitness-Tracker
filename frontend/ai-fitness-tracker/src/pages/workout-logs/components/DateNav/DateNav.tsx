@@ -23,6 +23,7 @@ type DateNavProps = {
   calendarDate: Value;
   setCalendarDate: React.Dispatch<React.SetStateAction<Value>>;
   setExercisesMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  viewExerciseMenuOpenId: number | null;
   setViewExerciseMenuOpenId: React.Dispatch<React.SetStateAction<number | null>>;
   setEditingWorkoutLogExerciseId: React.Dispatch<React.SetStateAction<number | null>>;
   workoutLogOptionsMenuOpen: boolean;
@@ -53,6 +54,7 @@ export default function DateNav({
   calendarDate,
   setCalendarDate,
   setExercisesMenuOpen,
+  viewExerciseMenuOpenId,
   setViewExerciseMenuOpenId,
   setEditingWorkoutLogExerciseId,
   workoutLogOptionsMenuOpen,
@@ -132,7 +134,9 @@ export default function DateNav({
           e.stopPropagation();
           setEditingWorkoutLogExerciseId(null);
           setViewExerciseMenuOpenId(null);
-          setExercisesMenuOpen(prev => !prev);
+          if (!viewExerciseMenuOpenId) {
+            setExercisesMenuOpen(prev => !prev);
+          }
         }}
       >
         <img className="button-link-image" src={plusIcon} />
