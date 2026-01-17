@@ -15,3 +15,6 @@ class TokenResponse(TokenBase):
 
 class TokenData(BaseModel):
     user_id: Optional[int] = None
+
+class GoogleTokenRequest(BaseModel):
+    id_token: str

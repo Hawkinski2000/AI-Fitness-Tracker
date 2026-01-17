@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int
     openai_api_key: str
     recaptcha_secret_key: str
+    google_client_id: str
     postgres_password: str
     postgres_db: str
 

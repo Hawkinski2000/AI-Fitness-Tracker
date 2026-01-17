@@ -15,8 +15,8 @@ class UserBase(BaseModel):
     settings: Optional[dict] = None
 
 class UserCreate(UserBase):
-    password: str
-    recaptcha_token: str
+    password: Optional[str] = None
+    recaptcha_token: Optional[str] = None
 
 class UserUpdate(BaseModel):
     username: Optional[str] = None

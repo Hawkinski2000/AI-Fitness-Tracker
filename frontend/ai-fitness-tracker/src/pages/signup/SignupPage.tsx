@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
 import ReCAPTCHA from "react-google-recaptcha";
+import { GoogleLogin } from "@react-oauth/google";
 import axios from 'axios';
 import validator from "validator";
 import { PropagateLoader } from 'react-spinners';
 import { API_BASE_URL } from "../../config/api";
-import { logIn } from '../../utils/auth';
+import { logIn, logInWithGoogle } from '../../utils/auth';
 import { useAuth } from "../../context/auth/useAuth";
 import './SignupPage.css';
 
@@ -76,6 +77,21 @@ export default function SignupPage() {
     } catch (error) {
       setSignUpFailed(true);
       console.error('signUp failed:', error);
+    }
+  };
+
+  const signUpWithGoogle = async (googleIdToken: string) => {
+    try {
+      const response = await logInWithGoogle(googleIdToken);
+      
+      const token = response.data.access_token;
+      setAccessToken(token);
+
+      console.log('signUpWithGoogle successful.');
+
+    } catch (error) {
+      setSignUpFailed(true);
+      console.error('signUpWithGoogle failed:', error);
     }
   };
 
@@ -344,6 +360,21 @@ export default function SignupPage() {
                   </span>
                 }
               </div>
+
+              <GoogleLogin
+                onSuccess={tokenResponse  => {
+                  if (tokenResponse.credential) {
+                    signUpWithGoogle(tokenResponse.credential);
+                  } else {
+                    console.error("No credential returned from Google");
+                  }
+                }}
+                onError={() => console.log("Login Failed")}
+                theme="outline"
+                size="large"
+                text="continue_with"
+                shape="pill"
+              />
             </div>
 
             <div>

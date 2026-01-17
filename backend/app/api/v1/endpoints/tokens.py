@@ -46,6 +46,52 @@ def create_token(response: Response,
 
     return {"access_token": access_token, "token_type": "bearer"}
 
+# Create a token from Google login
+@router.post("/google", status_code=status.HTTP_201_CREATED, response_model=token.TokenResponse)
+def create_token_google(response: Response,
+                        payload: token.GoogleTokenRequest,
+                        db: Session = Depends(get_db)):
+    idinfo = oauth2.verify_google_token(payload.id_token)
+
+    google_sub = idinfo["sub"]
+    email = idinfo.get("email")
+    first_name = idinfo.get("given_name")
+
+    user = (
+        db.query(User)
+        .filter(User.google_sub == google_sub)
+        .first()
+    )
+
+    if not user:
+        user = User(
+            username=email,
+            email=email,
+            first_name=first_name,
+            google_sub=google_sub,
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
+    access_token = oauth2.create_access_token(data={"user_id": user.id})
+
+    raw_token = oauth2.generate_refresh_token()
+    token_hash = oauth2.hash_token(raw_token)
+    expires_at = datetime.now(timezone.utc) + timedelta(hours=24)
+
+    new_refresh_token = RefreshToken(
+        user_id=user.id,
+        token_hash=token_hash,
+        expires_at=expires_at
+    )
+    db.add(new_refresh_token)
+    db.commit()
+
+    oauth2.set_refresh_cookie(response, raw_token, 24 * 3600)
+
+    return {"access_token": access_token, "token_type": "bearer"}
+
 # Refresh an access token using a valid refresh token
 @router.post("/refresh")
 def refresh_token(response: Response,

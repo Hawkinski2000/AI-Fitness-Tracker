@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
-import './App.css';
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { AuthProvider } from "./context/auth/AuthProvider";
+import './App.css';
 import HomePage from './pages/home/HomePage';
 import LoginPage from './pages/login/LoginPage';
 import SignupPage from './pages/signup/SignupPage';
@@ -15,19 +16,21 @@ import WeightLogsPage from './pages/weight-logs/components/WeightLogsPage/Weight
 
 export default function App() {
   return (
-    <AuthProvider>
-      <Routes>
-        <Route index element={<HomePage />} />
-        <Route path="login" element={<LoginPage />} />
-        <Route path="signup" element={<SignupPage />} />
-        <Route path="signup/about-you" element={<AboutYouPage />} />
-        <Route path="chat" element={<ChatPage />} />
-        <Route path="meal-logs" element={<MealLogsPage />} />
-        <Route path="workout-logs" element={<WorkoutLogsPage />} />
-        <Route path="sleep-logs" element={<SleepLogsPage />} />
-        <Route path="mood-logs" element={<MoodLogsPage />} />
-        <Route path="weight-logs" element={<WeightLogsPage />} />
-      </Routes>
-    </AuthProvider>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <AuthProvider>
+        <Routes>
+          <Route index element={<HomePage />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="signup" element={<SignupPage />} />
+          <Route path="signup/about-you" element={<AboutYouPage />} />
+          <Route path="chat" element={<ChatPage />} />
+          <Route path="meal-logs" element={<MealLogsPage />} />
+          <Route path="workout-logs" element={<WorkoutLogsPage />} />
+          <Route path="sleep-logs" element={<SleepLogsPage />} />
+          <Route path="mood-logs" element={<MoodLogsPage />} />
+          <Route path="weight-logs" element={<WeightLogsPage />} />
+        </Routes>
+      </AuthProvider>
+    </GoogleOAuthProvider>
   )
 }

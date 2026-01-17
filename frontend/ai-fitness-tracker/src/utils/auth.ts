@@ -28,6 +28,28 @@ export const logIn = async (emailString: string, passwordString: string) => {
   }
 };
 
+export const logInWithGoogle = async (idToken: string) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/tokens/google`,
+      { id_token: idToken },
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        withCredentials: true
+      }
+    );
+
+    console.log('logInWithGoogle successful.');
+    
+    return response;
+
+  } catch (error) {
+    console.error('logInWithGoogle failed:', error);
+    throw error;
+  }
+};
+
 export const logOut = async () => {
   try {
     await axios.post(`${API_BASE_URL}/tokens/revoke`, {}, { withCredentials: true });

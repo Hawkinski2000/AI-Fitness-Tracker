@@ -16,6 +16,7 @@ email_validator==2.2.0
 fastapi==0.115.14
 fastapi-cli==0.0.8
 fastapi-cloud-cli==0.1.4
+google-auth==2.47.0
 greenlet==3.2.3
 griffe==1.10.0
 h11==0.16.0
@@ -24,6 +25,7 @@ httptools==0.6.4
 httpx==0.28.1
 httpx-sse==0.4.1
 idna==3.10
+iniconfig==2.1.0
 itsdangerous==2.2.0
 Jinja2==3.1.6
 jiter==0.10.0
@@ -38,9 +40,13 @@ numpy==2.3.2
 openai==1.99.1
 openai-agents==0.2.4
 orjson==3.11.0
+packaging==25.0
 pandas==2.3.1
 passlib==1.7.4
+pluggy==1.6.0
 psycopg2-binary==2.9.10
+pyasn1==0.6.2
+pyasn1_modules==0.4.2
 pycparser==2.22
 pydantic==2.11.7
 pydantic-extra-types==2.10.5
@@ -48,6 +54,7 @@ pydantic-settings==2.10.1
 pydantic_core==2.33.2
 Pygments==2.19.2
 PyJWT==2.10.1
+pytest==8.4.1
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.1
 python-multipart==0.0.20
@@ -60,6 +67,7 @@ rich==14.0.0
 rich-toolkit==0.14.8
 rignore==0.6.2
 rpds-py==0.26.0
+rsa==4.9.1
 sentry-sdk==2.33.0
 shellingham==1.5.4
 six==1.17.0

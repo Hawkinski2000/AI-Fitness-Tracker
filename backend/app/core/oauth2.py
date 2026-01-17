@@ -5,11 +5,15 @@ from fastapi.security import OAuth2PasswordBearer
 from datetime import datetime, timezone, timedelta
 import secrets
 import hashlib
+from google.oauth2 import id_token
+from google.auth.transport import requests
 from .config import settings
 from app.schemas.token import TokenData
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="tokens")
+
+GOOGLE_CLIENT_ID = settings.GOOGLE_CLIENT_ID
 
 def create_access_token(data: dict):
     to_encode = data.copy()    
@@ -42,6 +46,21 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
                                           detail="Could not validate credentials",
                                           headers={"WWW-Authenticate": "Bearer"})
     return verify_access_token(token, credentials_exception)
+
+# ----------------------------------------------------------------------------
+
+def verify_google_token(token: str) -> dict:
+    try:
+        return id_token.verify_oauth2_token(
+            token,
+            requests.Request(),
+            GOOGLE_CLIENT_ID,
+        )
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid Google token",
+        )
 
 # ----------------------------------------------------------------------------
 
