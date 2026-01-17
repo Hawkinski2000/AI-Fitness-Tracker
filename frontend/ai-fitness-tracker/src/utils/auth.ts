@@ -32,12 +32,7 @@ export const logInWithGoogle = async (idToken: string) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/tokens/google`,
       { id_token: idToken },
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        withCredentials: true
-      }
+      { withCredentials: true }
     );
 
     console.log('logInWithGoogle successful.');

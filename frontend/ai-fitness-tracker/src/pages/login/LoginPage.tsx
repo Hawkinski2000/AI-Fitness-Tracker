@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
+import { GoogleLogin } from "@react-oauth/google";
 import axios from 'axios';
 import validator from "validator";
-import { logIn } from '../../utils/auth';
+import { logIn, logInWithGoogle } from '../../utils/auth';
 import { useAuth } from "../../context/auth/useAuth";
 import './LoginPage.css';
 
@@ -73,6 +74,27 @@ export default function LoginPage() {
       else {
         setLogInFailed(true);
         console.error('logInUser failed', error);
+      }
+    }
+  };
+
+  const logInUserWithGoogle = async (googleIdToken: string) => {
+    try {
+      const response = await logInWithGoogle(googleIdToken);
+      
+      const token = response.data.access_token;
+      setAccessToken(token);
+
+      console.log('logInUserWithGoogle successful.');
+
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error) && error.response?.status === 403) {
+        setInvalidCredentials(true);
+        console.error('Invalid credentials', error);
+      }
+      else {
+        setLogInFailed(true);
+        console.error('logInUserWithGoogle failed', error);
       }
     }
   };
@@ -161,6 +183,21 @@ export default function LoginPage() {
                   </span>
                 }
               </div>
+
+              <GoogleLogin
+                onSuccess={tokenResponse  => {
+                  if (tokenResponse.credential) {
+                    logInUserWithGoogle(tokenResponse.credential);
+                  } else {
+                    console.error("No credential returned from Google");
+                  }
+                }}
+                onError={() => console.log("Login Failed")}
+                theme="outline"
+                size="large"
+                text="continue_with"
+                shape="pill"
+              />
             </div>
 
             <div>

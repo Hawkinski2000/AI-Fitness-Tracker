@@ -160,7 +160,7 @@ export default function SignupPage() {
 
   useEffect(() => {
     if (accessToken) {
-      navigate('/about-you');
+      navigate('/signup/about-you');
     }
   }, [accessToken, navigate]);
 

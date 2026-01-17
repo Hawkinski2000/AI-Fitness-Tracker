@@ -13,8 +13,6 @@ from app.schemas.token import TokenData
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="tokens")
 
-GOOGLE_CLIENT_ID = settings.GOOGLE_CLIENT_ID
-
 def create_access_token(data: dict):
     to_encode = data.copy()    
 
@@ -54,7 +52,7 @@ def verify_google_token(token: str) -> dict:
         return id_token.verify_oauth2_token(
             token,
             requests.Request(),
-            GOOGLE_CLIENT_ID,
+            settings.google_client_id,
         )
     except Exception:
         raise HTTPException(
