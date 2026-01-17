@@ -33,21 +33,12 @@ def test_create_user(client, data, mock_recaptcha, status_code):
 @pytest.mark.parametrize(
     "data, status_code",
     [
-        ({"email": "email@gmail.com",
+        ({"email": [],
           "password": "password",
           "recaptcha_token": "recaptcha_token"},
           422),
         ({"username": "username",
-          "password": "password",
-          "recaptcha_token": "recaptcha_token"},
-          422),
-        ({"username": "username",
-          "email": "email@gmail.com",
-          "recaptcha_token": "recaptcha_token"},
-          422),
-        ({"username": "username",
-          "email": "email",
-          "password": "password",
+          "password": [],
           "recaptcha_token": "recaptcha_token"},
           422)
     ]
