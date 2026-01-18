@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
-import { GoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
 import axios from 'axios';
 import validator from "validator";
 import { logIn, logInWithGoogle } from '../../utils/auth';
 import { useAuth } from "../../context/auth/useAuth";
+import GoogleLoginButton from "../../components/GoogleLoginButton/GoogleLoginButton";
 import './LoginPage.css';
 
 
@@ -78,26 +79,22 @@ export default function LoginPage() {
     }
   };
 
-  const logInUserWithGoogle = async (googleIdToken: string) => {
-    try {
-      const response = await logInWithGoogle(googleIdToken);
+  const logInUserWithGoogle = useGoogleLogin({
+    onSuccess: async tokenResponse => {
+      try {
+        const response = await logInWithGoogle(tokenResponse.access_token);
       
-      const token = response.data.access_token;
-      setAccessToken(token);
+        const token = response.data.access_token;
+        setAccessToken(token);
 
-      console.log('logInUserWithGoogle successful.');
+        console.log('logInUserWithGoogle successful.');
 
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error) && error.response?.status === 403) {
-        setInvalidCredentials(true);
-        console.error('Invalid credentials', error);
-      }
-      else {
+      } catch (error) {
         setLogInFailed(true);
-        console.error('logInUserWithGoogle failed', error);
+        console.error('logInUserWithGoogle failed:', error);
       }
     }
-  };
+  });
 
   const buttonDisabled = !email || !password || invalidEmail;
 
@@ -183,21 +180,8 @@ export default function LoginPage() {
                   </span>
                 }
               </div>
-
-              <GoogleLogin
-                onSuccess={tokenResponse  => {
-                  if (tokenResponse.credential) {
-                    logInUserWithGoogle(tokenResponse.credential);
-                  } else {
-                    console.error("No credential returned from Google");
-                  }
-                }}
-                onError={() => console.log("Login Failed")}
-                theme="outline"
-                size="large"
-                text="continue_with"
-                shape="pill"
-              />
+                
+              <GoogleLoginButton continueWithGoogle={logInUserWithGoogle} />
             </div>
 
             <div>

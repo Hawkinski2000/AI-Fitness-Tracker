@@ -51,11 +51,13 @@ def create_token(response: Response,
 def create_token_google(response: Response,
                         payload: token.GoogleTokenRequest,
                         db: Session = Depends(get_db)):
-    idinfo = oauth2.verify_google_token(payload.id_token)
+    idinfo = oauth2.verify_google_access_token(payload.access_token)
 
     google_sub = idinfo["sub"]
     email = idinfo.get("email")
     first_name = idinfo.get("given_name")
+
+    user_exists = False
 
     user = (
         db.query(User)
@@ -73,6 +75,8 @@ def create_token_google(response: Response,
         db.add(user)
         db.commit()
         db.refresh(user)
+    else:
+        user_exists = True
 
     access_token = oauth2.create_access_token(data={"user_id": user.id})
 
@@ -90,7 +94,7 @@ def create_token_google(response: Response,
 
     oauth2.set_refresh_cookie(response, raw_token, 24 * 3600)
 
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer", "user_exists": user_exists}
 
 # Refresh an access token using a valid refresh token
 @router.post("/refresh")

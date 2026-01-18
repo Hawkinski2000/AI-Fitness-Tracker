@@ -5,8 +5,7 @@ from fastapi.security import OAuth2PasswordBearer
 from datetime import datetime, timezone, timedelta
 import secrets
 import hashlib
-from google.oauth2 import id_token
-from google.auth.transport import requests
+import requests
 from .config import settings
 from app.schemas.token import TokenData
 
@@ -47,18 +46,16 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 
 # ----------------------------------------------------------------------------
 
-def verify_google_token(token: str) -> dict:
-    try:
-        return id_token.verify_oauth2_token(
-            token,
-            requests.Request(),
-            settings.google_client_id,
-        )
-    except Exception:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid Google token",
-        )
+def verify_google_access_token(access_token: str) -> dict:
+    response = requests.get(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        headers={"Authorization": f"Bearer {access_token}"}
+    )
+
+    if response.status_code != 200:
+        raise HTTPException(status_code=401, detail="Invalid Google access token")
+
+    return response.json()
 
 # ----------------------------------------------------------------------------
 

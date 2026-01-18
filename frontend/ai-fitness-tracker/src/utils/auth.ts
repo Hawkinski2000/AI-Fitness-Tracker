@@ -28,10 +28,10 @@ export const logIn = async (emailString: string, passwordString: string) => {
   }
 };
 
-export const logInWithGoogle = async (idToken: string) => {
+export const logInWithGoogle = async (accessToken: string) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/tokens/google`,
-      { id_token: idToken },
+      { access_token: accessToken },
       { withCredentials: true }
     );
 

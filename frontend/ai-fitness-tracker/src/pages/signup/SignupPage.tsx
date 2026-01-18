@@ -1,13 +1,14 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
 import ReCAPTCHA from "react-google-recaptcha";
-import { GoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
 import axios from 'axios';
 import validator from "validator";
 import { PropagateLoader } from 'react-spinners';
 import { API_BASE_URL } from "../../config/api";
 import { logIn, logInWithGoogle } from '../../utils/auth';
 import { useAuth } from "../../context/auth/useAuth";
+import GoogleLoginButton from "../../components/GoogleLoginButton/GoogleLoginButton";
 import './SignupPage.css';
 
 
@@ -43,6 +44,8 @@ export default function SignupPage() {
   const [signUpFailed, setSignUpFailed] = useState(false);
 
   const { accessToken, setAccessToken } = useAuth();
+
+  const [userExists, setUserExists] = useState<boolean | null>(null);
 
   const navigate = useNavigate();
 
@@ -80,20 +83,24 @@ export default function SignupPage() {
     }
   };
 
-  const signUpWithGoogle = async (googleIdToken: string) => {
-    try {
-      const response = await logInWithGoogle(googleIdToken);
+  const signUpWithGoogle = useGoogleLogin({
+    onSuccess: async tokenResponse => {
+      try {
+        const response = await logInWithGoogle(tokenResponse.access_token);
       
-      const token = response.data.access_token;
-      setAccessToken(token);
+        setUserExists(response.data.user_exists);
 
-      console.log('signUpWithGoogle successful.');
+        const token = response.data.access_token;
+        setAccessToken(token);
 
-    } catch (error) {
-      setSignUpFailed(true);
-      console.error('signUpWithGoogle failed:', error);
+        console.log('signUpWithGoogle successful.');
+
+      } catch (error) {
+        setSignUpFailed(true);
+        console.error('signUpWithGoogle failed:', error);
+      }
     }
-  };
+  });
 
   useEffect(() => {
     if (!signUpData.username) {
@@ -159,10 +166,16 @@ export default function SignupPage() {
   }, [signUpData.password, repeatPassword]);
 
   useEffect(() => {
-    if (accessToken) {
+    if (!accessToken || userExists === null) {
+      return;
+    }
+
+    if (userExists) {
+      navigate('/chat');
+    } else {
       navigate('/signup/about-you');
     }
-  }, [accessToken, navigate]);
+  }, [accessToken, userExists, navigate]);
 
   const passwordsMatch =
     signUpData.password &&
@@ -361,20 +374,7 @@ export default function SignupPage() {
                 }
               </div>
 
-              <GoogleLogin
-                onSuccess={tokenResponse  => {
-                  if (tokenResponse.credential) {
-                    signUpWithGoogle(tokenResponse.credential);
-                  } else {
-                    console.error("No credential returned from Google");
-                  }
-                }}
-                onError={() => console.log("Login Failed")}
-                theme="outline"
-                size="large"
-                text="continue_with"
-                shape="pill"
-              />
+              <GoogleLoginButton continueWithGoogle={signUpWithGoogle} />
             </div>
 
             <div>
