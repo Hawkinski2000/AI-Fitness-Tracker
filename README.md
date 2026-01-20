@@ -17,33 +17,33 @@
 ## Features
 
 ### AI Chat Interface
-![Chat Page](images/chat_page.png)
+![Chat Page](images/chat_page.png)  
 *Conversational AI agent that analyzes your health data and provides personalized insights*
 
 ### Meal Tracking
-![View Food Menu](images/view_food_menu.png)
+![View Food Menu](images/view_food_menu.png)  
 *Comprehensive nutrition logging with custom food database containing ~2 million foods*
 
 ### Exercise Tracking
-![View Exercise Menu](images/view-exercise-menu.png)
+![View Exercise Menu](images/view-exercise-menu.png)  
 *Detailed workout tracking across ~3,000 exercises, including sets, reps, and performance metrics*
 
 ### Sleep Tracking
-![Sleep Logs Page](images/sleep-logs-page.png)
+![Sleep Logs Page](images/sleep-logs-page.png)  
 *Sleep pattern tracking with subjective quality scores*
 
 ### Weight Tracking
-![Weight Logs Page](images/weight-logs-page.png)
+![Weight Logs Page](images/weight-logs-page.png)  
 *Bodyweight tracking with visual progress charts*
 
 ## System Architecture
-![System Architecture Diagram](images/System%20Architecture%20Diagram%20-%20AI%20Fitness%20Tracker.svg)
+![System Architecture Diagram](images/system-architecture-diagram.svg)  
 *System architecture diagram*
 
 ## User Experience
-![User Flow Diagram](images/User%20Flow%20Diagram%20-%20AI%20Fitness%20Tracker.png)
+![User Flow Diagram](images/User%20Flow%20Diagram%20-%20AI%20Fitness%20Tracker.png)  
 *User flow diagram*
 
 ## Database Design
-![Entity Relationship Diagram](images/Entity%20Relationship%20Diagram%20-%20AI%20Fitness%20Tracker.svg)
+![Entity Relationship Diagram](images/Entity%20Relationship%20Diagram%20-%20AI%20Fitness%20Tracker.svg)  
 *Database schema and entity relationships*
