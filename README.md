@@ -36,6 +36,10 @@
 ![Weight Logs Page](images/weight-logs-page.png)
 *Bodyweight tracking with visual progress charts*
 
+## System Architecture
+![System Architecture Diagram](images/System%20Architecture%20Diagram%20-%20AI%20Fitness%20Tracker.svg)
+*System architecture diagram*
+
 ## User Experience
 ![User Flow Diagram](images/User%20Flow%20Diagram%20-%20AI%20Fitness%20Tracker.png)
 *User flow diagram*
