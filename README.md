@@ -40,6 +40,35 @@
 ![System Architecture Diagram](images/system-architecture-diagram.svg)  
 *System architecture diagram*
 
+The application is deployed on a single AWS EC2 instance and composed of multiple Docker containers, with NGINX acting as the public entry point.
+
+User (Browser)
+- Interacts with the application via HTTPS.
+
+NGINX (Reverse Proxy)
+- Terminates TLS (HTTPS).
+- Routes requests to frontend and backend containers.
+- Applies rate limiting and connection limits to protect the API.
+
+Frontend Container (React + Vite)
+- Serves the single-page application.
+- Handles user interaction and state management.
+- Communicates with the backend via REST API.
+
+Backend Container (FastAPI + SQLAlchemy)
+- Handles authentication and authorization.
+- Validates and processes user-submitted health data.
+- Exposes REST endpoints consumed by the frontend.
+- Orchestrates AI workflow and tool-calling logic.
+
+PostgreSQL Container
+- Stores user accounts, health/fitness logs, and chats/messages.
+- Accessed by the backend container.
+
+OpenAI API (External Service)
+- Provides GPT-5 model inference for the AI agent.
+- Queried by the backend for analysis and insight generation.
+
 ## User Experience
 ![User Flow Diagram](images/User%20Flow%20Diagram%20-%20AI%20Fitness%20Tracker.png)  
 *User flow diagram*
