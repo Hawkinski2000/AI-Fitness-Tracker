@@ -40,20 +40,22 @@
 ![System Architecture Diagram](images/system-architecture-diagram.svg)  
 *System architecture diagram*
 
-The application is deployed on a single AWS EC2 instance and composed of multiple Docker containers, with NGINX acting as the public entry point.
+The application is deployed on a single AWS EC2 instance and composed of multiple Docker containers.
 
-User (Browser)
-- Interacts with the application via HTTPS.
+User (Client-Side)
+- Interacts with the React-based frontend directly through the browser.
+- Initiates an encrypted HTTPS connection with the Nginx gateway.
+- Runs the application's UI logic locally, sending requests to the API as needed.
 
-NGINX (Reverse Proxy)
-- Terminates TLS (HTTPS).
-- Routes requests to frontend and backend containers.
-- Applies rate limiting and connection limits to protect the API.
+Frontend Container (Nginx)
+- Acts as the public entry point for the entire application, listening on ports 80 and 443.
+- Handles SSL/TLS encryption.
+- Serves the compiled React SPA (built via Vite) using Nginx.
+- Routes /api traffic to the backend container, applying rate limiting and connection limits.
 
-Frontend Container (React + Vite)
-- Serves the single-page application.
-- Handles user interaction and state management.
-- Communicates with the backend via REST API.
+Certbot Sidecar Container (SSL Management)
+- Runs alongside the Frontend container to automate Let's Encrypt certificate issuance and renewal.
+- Communicates with Nginx via shared volumes to complete ACME HTTP-01 challenges and update certificate files without downtime.
 
 Backend Container (FastAPI + SQLAlchemy)
 - Handles authentication and authorization.
