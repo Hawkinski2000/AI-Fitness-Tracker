@@ -27,12 +27,6 @@ def check_email(email: str, db: Session = Depends(get_db)):
     response = crud_users.check_email(email, db)
     return response
 
-# Get all users
-# @router.get("", response_model=list[user.UserResponse])
-# def get_users(db: Session = Depends(get_db)):
-#     users = crud_users.get_users(db)
-#     return users
-
 # Get a user
 @router.get("/{id}", response_model=user.UserResponse)
 def get_user(id: int,

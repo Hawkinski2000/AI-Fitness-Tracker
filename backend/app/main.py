@@ -1,8 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import argparse
-from .models.models import Base
-from .core.db import engine
 from .api.v1.endpoints import (
     users,
     tokens,
@@ -105,7 +103,6 @@ app.add_middleware(
 
 @app.get("/api/")
 def root():
-    # TODO
     return {"data": "root"}
 
 app.include_router(users.router)
